@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+  "name": "TabSearch",
+  "version": "0.1.0",
+  "description": "Command-palette style searchbar for switching tabs",
+  "permissions": [
+    "activeTab",
+    "tabs"
+  ],
+  "icons": {
+    "48": "search_48.png"
+  },
+  "browser_action": {
+    "default_icon": "icons/search-32.png",
+    "default_title": "TabSearch",
+    "default_popup": "popup/tab_search.html"
+  }
+}
