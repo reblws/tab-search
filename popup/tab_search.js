@@ -1,7 +1,11 @@
 const searchInput = document.querySelector('input[type="search"]');
 const tabList = document.querySelector('.tab-list');
-// Initialize window
-// getAllTabs().then(injectTabsInList);
+
+// Initialize tabs
+
+{
+  getAllTabs().then(injectTabsInList);
+}
 
 tabList.addEventListener('click', switchTabs);
 searchInput.addEventListener('change', updateSearch);
@@ -14,7 +18,7 @@ function getAllTabs() {
 
 function updateSearch(event) {
   const query = event.target.value.toLowerCase();
-  const tabFilter = tab => tab.title.includes(query);
+  const tabFilter = tab => tab.title.toLowerCase().includes(query);
   return getAllTabs()
     .then(tabArray => tabArray.filter(tabFilter))
     .then(injectTabsInList);
