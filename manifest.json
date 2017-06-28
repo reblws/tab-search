@@ -20,5 +20,11 @@
     "default_icon": "icons/search-32.png",
     "default_title": "SearchTab",
     "default_popup": "popup/tab_search.html"
+  },
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": { "default": "Ctrl+Shift+L" },
+      "description": "Execute this browser action"
+    }
   }
 }
