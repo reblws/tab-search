@@ -1,5 +1,6 @@
 html, body {
   width: auto;
+  max-width: 500px;
 }
 
 .tab-list {
@@ -12,5 +13,11 @@ html, body {
 }
 
 .tab-link {
+  display: block;
   cursor: pointer;
+}
+
+.tab-link:focus {
+  background-color: blue;
+  color: white;
 }
