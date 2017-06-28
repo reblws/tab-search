@@ -38,20 +38,23 @@ function handleKeyDown(event) {
 }
 
 function navigateResults(direction) {
-  if (document.activeElement.nodeName === 'INPUT') {
+  if (document.activeElement.nodeName !== 'A') {
     document.querySelector('.tab-link').focus();
     return;
   }
+
 
   switch (direction) {
     case "Tab":
     case "ArrowRight":
     case "ArrowDown":
-      document.activeElement.nextElementSibling.focus();
+      const nextSibling = document.activeElement.nextElementSibling;
+      if (nextSibling) nextSibling.focus();
       break;
     case "ArrowLeft":
     case "ArrowUp":
-      document.activeElement.previousElementSibling.focus();
+      const prevSibling = document.activeElement.previousElementSibling;
+      if (prevSibling) prevSibling.focus();
       break;
   }
 }
