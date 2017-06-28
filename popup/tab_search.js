@@ -1,12 +1,14 @@
 const searchInput = document.querySelector('input[type="search"]');
 const tabList = document.querySelector('.tab-list');
 
-// Initialize tabs
 
+
+// Initialize tabs
 {
   getAllTabs().then(injectTabsInList);
 }
-
+// Set a timeout on focus so input is focused on popup
+setTimeout(() => { searchInput.focus() }, 100);
 tabList.addEventListener('click', switchTabs);
 searchInput.addEventListener('change', updateSearch);
 searchInput.addEventListener('keyup', updateSearch);
@@ -28,7 +30,6 @@ function injectTabsInList(tabArray) {
   tabList.innerHTML = tabArray.map(tabToTag).join('');
 }
 
-// Got to make this an onClick event that switches tab
 function tabToTag(tab) {
   return `
     <li class="tab">
