@@ -16,14 +16,14 @@ searchInput.addEventListener('keyup', updateSearch);
 
 function handleKeyDown(event) {
   switch (event.key) {
+    case "Tab":
+      event.preventDefault();
     case "ArrowRight":
     case "ArrowDown":
-      document.activeElement.nextElementSibling.focus();
-      // navigateResults(1);
-      break;
     case "ArrowLeft":
     case "ArrowUp":
-      document.activeElement.previousElementSibling.focus();
+      navigateResults(event.key);
+      // document.activeElement.previousElementSibling.focus();
       break;
     case "Enter":
       if (document.activeElement.nodeName === "INPUT") {
@@ -37,15 +37,21 @@ function handleKeyDown(event) {
   }
 }
 
-function navigateResults(number) {
-  const active = document.activeElement;
-  switch (activeElement) {
-    case "INPUT":
-      document.querySelector('.selected').focus();
-      const newTab = document.activeElement.dataset.id;
-      switchActiveTab(newTab);
+function navigateResults(direction) {
+  if (document.activeElement.nodeName === 'INPUT') {
+    document.querySelector('.tab-link').focus();
+    return;
+  }
+
+  switch (direction) {
+    case "Tab":
+    case "ArrowRight":
+    case "ArrowDown":
+      document.activeElement.nextElementSibling.focus();
       break;
-    default:
+    case "ArrowLeft":
+    case "ArrowUp":
+      document.activeElement.previousElementSibling.focus();
       break;
   }
 }
