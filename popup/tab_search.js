@@ -81,7 +81,7 @@ function tabToTag(tab, index) {
     // ? 'tab-link selected'
     // : 'tab-link';
   return `
-    <a class="tab-link" class="${className}" data-href="${tab.url}" data-id="${tab.id}" href="#">
+    <a class="${className}" data-href="${tab.url}" data-id="${tab.id}" href="#">
       ${tab.title}
     </a>
   `;
