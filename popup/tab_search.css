@@ -1,15 +1,19 @@
-html, body {
-  width: auto;
-  max-width: 500px;
+.container {
+  min-width: 800px;
 }
 
 .tab-list {
   font-family: sans-serif;
   font-size: 12px;
+  list-style-type: none;
 }
 
 .search {
-  width: auto;
+  top: 10px;
+  padding-left: 15px;
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .tab-link {
@@ -20,4 +24,16 @@ html, body {
 .tab-link:focus {
   background-color: blue;
   color: white;
+}
+
+.tab-favicon {
+  width: 20px;
+}
+
+.input-svg img {
+  position: absolute;
+  left: 12px;
+  top: 13px;
+  height: 16px;
+  width: 16px;
 }
