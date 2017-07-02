@@ -13,14 +13,17 @@
     "activeTab"
   ],
   "icon": {
-    "32": "icons/search-32.png",
-    "48": "icons/search-48.png"
+    "32": "assets/search.svg",
+    "48": "assets/search.svg"
   },
   "browser_action": {
-    "default_icon": "icons/search-32.png",
+    "default_icon": "assets/search.svg",
     "default_title": "SearchTab",
     "default_popup": "popup/tab_search.html"
   },
+  "web_accessible_resources": [
+    "assets/search.svg"
+  ],
   "commands": {
     "_execute_browser_action": {
       "suggested_key": { "default": "Ctrl+Shift+L" },

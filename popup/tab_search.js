@@ -27,9 +27,9 @@ function handleKeyDown(event) {
       break;
     case "Enter":
       if (document.activeElement.nodeName === "INPUT") {
-        document.querySelector('.tab-link').focus();
+        document.querySelector('.tab-object').focus();
       }
-      switchTabs(document.activeElement.dataset.id)
+      switchTabs(document.activeElement.dataset.id);
       break;
     default:
       searchInput.focus();
@@ -42,7 +42,6 @@ function navigateResults(direction) {
     document.querySelector('.tab-link').focus();
     return;
   }
-
 
   switch (direction) {
     case "Tab":
@@ -65,8 +64,15 @@ function getAllTabs() {
 
 function updateSearch(event) {
   const query = event.target.value.toLowerCase();
-  const tabFilter = tab => tab.title.toLowerCase().includes(query);
-  return getAllTabs()
+  const tabFilter = tab => {
+    // Check if tab has the query in title, url
+    const queryInTitle = tab.title.toLowerCase().includes(query);
+    const queryInUrl = tab.url.toLowerCase().includes;
+    // Remove 'New Tab' from results
+    const isNewTab = tab.title === 'New Tab';
+    return !isNewTab && (queryInTitle || queryInUrl);
+  };
+  return browser.tabs.query({ currentWindow: true })
     .then(tabArray => tabArray.filter(tabFilter))
     .then(injectTabsInList);
 }
@@ -77,18 +83,19 @@ function injectTabsInList(tabArray) {
 
 function tabToTag(tab, index) {
   const className = 'tab-link';
-    // index === 0
-    // ? 'tab-link selected'
-    // : 'tab-link';
   return `
-    <a class="${className}" data-href="${tab.url}" data-id="${tab.id}" href="#">
-      ${tab.title}
-    </a>
+    <div class="tab-object" data-id="${tab.id}">
+      <img src="${tab.favIconUrl}">
+      <div class="tab-info">
+        <strong>${tab.title}</strong>
+        <p>${tab.url}</p>
+      </div>
+    </div>
   `;
 }
 
 function switchTabs(event) {
-  if (event.target.className !== 'tab-link') return;
+  if (event.target.className !== 'tab-object') return;
   event.preventDefault();
   const tabId = parseInt(event.target.dataset.id);
   switchActiveTab(tabId);
