@@ -59,7 +59,8 @@ function navigateResults(direction) {
 }
 
 function getAllTabs() {
-  return browser.tabs.query({ currentWindow: true });
+  return browser.tabs.query({ currentWindow: true })
+    .then(tabArray => tabArray.filter(isNewTab));
 }
 
 function updateSearch(event) {
@@ -68,9 +69,7 @@ function updateSearch(event) {
     // Check if tab has the query in title, url
     const queryInTitle = tab.title.toLowerCase().includes(query);
     const queryInUrl = tab.url.toLowerCase().includes;
-    // Remove 'New Tab' from results
-    const isNewTab = tab.title === 'New Tab';
-    return !isNewTab && (queryInTitle || queryInUrl);
+    return (queryInTitle || queryInUrl);
   };
   return browser.tabs.query({ currentWindow: true })
     .then(tabArray => tabArray.filter(tabFilter))
@@ -104,6 +103,10 @@ function switchTabs(event) {
 function switchActiveTab(id) {
   browser.tabs.update(id, { active: true });
   window.close();
+}
+
+function isNewTab(title) {
+  return title !== 'New Tab';
 }
 
 // To switch tabs
