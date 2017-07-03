@@ -1,4 +1,4 @@
-const searchInput = document.querySelector('input[type="search"]');
+const searchInput = document.querySelector('.search');
 const tabList = document.querySelector('.tab-list');
 
 // Initialize tabs
@@ -6,7 +6,11 @@ const tabList = document.querySelector('.tab-list');
   getAllTabs().then(injectTabsInList);
 }
 // Set a timeout on focus so input is focused on popup
-setTimeout(() => window.focus(), 100);
+setTimeout(() => {
+  console.log('FOCUSED');
+  searchInput.focus();
+}, 100);
+
 // Any keydown should activate the search field,
 // TODO: on arrow keys ignore focus and switch tab index
 window.addEventListener('keydown', handleKeyDown);
@@ -24,11 +28,10 @@ function handleKeyDown(event) {
     case "ArrowRight":
     case "ArrowLeft":
       navigateResults(event.key);
-      // document.activeElement.previousElementSibling.focus();
       break;
     case "Enter":
       if (document.activeElement.nodeName === "INPUT") {
-        document.querySelector('.tab-object').focus();
+        tabList.querySelector('.tab-object').focus();
       }
       switchActiveTab(document.activeElement.dataset.id);
       break;
@@ -66,8 +69,7 @@ function navigateResults(direction) {
 }
 
 function getAllTabs() {
-  return browser.tabs.query({ currentWindow: true })
-    .then(tabArray => tabArray.filter(isNewTab));
+  return browser.tabs.query({ currentWindow: true });
 }
 
 function updateSearch(event) {
@@ -75,8 +77,8 @@ function updateSearch(event) {
   const tabFilter = tab => {
     // Check if tab has the query in title, url
     const queryInTitle = tab.title.toLowerCase().includes(query);
-    const queryInUrl = tab.url.toLowerCase().includes;
-    return (queryInTitle || queryInUrl);
+    const queryInUrl = tab.url.toLowerCase().includes(query);
+    return (queryInTitle);
   };
   return browser.tabs.query({ currentWindow: true })
     .then(tabArray => tabArray.filter(tabFilter))
