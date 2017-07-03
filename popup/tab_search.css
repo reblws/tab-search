@@ -1,31 +1,23 @@
 .container {
-  width: 600px;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .tab-list {
+  background-color: #f9f9f9;
   font-family: sans-serif;
   font-size: 12px;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5em;
 }
 
 .search {
   top: 10px;
   padding-left: 15px;
-  width: 500px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 300px;
   /*border-radius: 2px;*/
-}
-
-.tab-link {
-  display: block;
-  cursor: pointer;
-}
-
-.tab-link:focus {
-  background-color: blue;
-  color: white;
 }
 
 .tab-favicon {
@@ -33,20 +25,20 @@
 }
 
 .input-svg img {
-  position: absolute;
-  left: 13px;
-  top: 13px;
-  height: 16px;
-  width: 16px;
+	width: 16px;
+	position: relative;
+	left: 25px;
+	top: 3px;
 }
 
 .tab-object {
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
   max-width: 20rem;
-  margin-left: 1rem;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .tab-object > img {
@@ -54,6 +46,7 @@
   max-width: 100%;
   max-height: 100%;
   margin-right: 1rem;
+  margin-left: 1rem;
 }
 
 .tab-object > .tab-info {
@@ -65,7 +58,18 @@
   font-size: 0.7rem;
 }
 
+.tab-info > p {
+  width: 272px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .tab-object:focus {
   background-color: blue;
   color: white;
+}
+
+p {
+  margin: 0;
 }
