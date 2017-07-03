@@ -63,7 +63,12 @@ function navigateResults(direction) {
     case "ArrowUp":
       const prevSibling = document.activeElement.previousElementSibling;
       // TODO: return to top on else
-      if (prevSibling) prevSibling.focus();
+      //        want to
+      if (prevSibling) {
+        prevSibling.focus()
+      } else {
+        searchInput.focus();
+      };
       break;
   }
 }
