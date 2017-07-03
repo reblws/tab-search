@@ -1,11 +1,10 @@
 .container {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  background-color: #f9f9f9;
 }
 
 .tab-list {
-  background-color: #f9f9f9;
   font-family: sans-serif;
   font-size: 12px;
   display: flex;
@@ -32,13 +31,17 @@
 }
 
 .tab-object {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: center;
-  max-width: 20rem;
-  margin-right: auto;
-  margin-left: auto;
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	justify-content: center;
+	max-width: 20rem;
+	margin-right: auto;
+	margin-left: auto;
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
 .tab-object > img {
@@ -66,7 +69,7 @@
 }
 
 .tab-object:focus {
-  background-color: blue;
+  background-color: #086DD6;
   color: white;
 }
 

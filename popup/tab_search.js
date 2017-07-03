@@ -95,9 +95,12 @@ function injectTabsInList(tabArray) {
 }
 
 function tabToTag(tab, index) {
+  const favIconLink = tab.favIconUrl
+    ? tab.favIconUrl
+    : '/assets/file.svg';
   return `
     <div class="tab-object" data-id="${tab.id}" tabIndex="0">
-      <img src="${tab.favIconUrl}">
+      <img src="${favIconLink}">
       <div class="tab-info">
         <strong>${tab.title}</strong>
         <p>${tab.url}</p>

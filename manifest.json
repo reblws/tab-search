@@ -22,7 +22,8 @@
     "default_popup": "popup/tab_search.html"
   },
   "web_accessible_resources": [
-    "assets/search.svg"
+    "assets/search.svg",
+    "assets/file.svg"
   ],
   "commands": {
     "_execute_browser_action": {
