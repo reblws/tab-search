@@ -9,7 +9,15 @@ body {
 
 header {
   padding: 0.5em;
-  border: 1px solid rgb(215, 215, 215);
+  border-color: rgb(215, 215, 215);
+  border-style: solid;
+  border-bottom: 1px;
+  border-right: 0;
+  border-left: 0;
+  border-top: 0;
+  width: 300px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .container {
@@ -22,26 +30,33 @@ header {
 	font-size: 12px;
 	display: flex;
 	flex-direction: column;
-	overflow-y: scroll;
+	overflow-y: auto;
 	overflow-x: hidden;
-	height: 500px;
-  background-color: #f9f9f9;
+	height: 400px;
+  background-color: #fff;
+  border-color: rgb(215, 215, 215);
+  border-style: solid;
+  border-top: 0;
+  border-bottom: 1px;
+  border-right: 1px;
+  border-left: 1px;
 }
 
 .search {
   top: 10px;
   width: 300px;
+  text-indent: 16px;
 }
 
 .tab-favicon {
   width: 20px;
 }
 
-.input-svg img {
+.input-svg > object {
 	width: 16px;
-	position: relative;
+	position: absolute;
 	left: 25px;
-	top: 3px;
+	top: 14px;
 }
 
 .tab-object {
@@ -49,13 +64,14 @@ header {
 	/*flex-wrap: nowrap;*/
 	align-items: center;
 	justify-content: center;
-	max-width: 20rem;
+	width: 20rem;
 	margin-right: auto;
 	margin-left: auto;
 	padding-top: 1rem;
 	padding-bottom: 1rem;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+  cursor: pointer;
 }
 
 .tab-object > img {
@@ -89,10 +105,14 @@ header {
 }
 
 .tab-info > p {
-  width: 272px;
+  width: 225px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.tab-info > strong {
+  padding-right: 0.5em;
 }
 
 .tab-object:focus {

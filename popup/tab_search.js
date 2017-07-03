@@ -7,19 +7,18 @@ const tabList = document.querySelector('.tab-list');
 }
 // Set a timeout on focus so input is focused on popup
 setTimeout(() => {
-  console.log('FOCUSED');
   searchInput.focus();
-}, 100);
+}, 500);
 
 // Any keydown should activate the search field,
 // TODO: on arrow keys ignore focus and switch tab index
 window.addEventListener('keydown', handleKeyDown);
+// TODO: attach listener to nodes directly instead of tabList
 tabList.addEventListener('click', switchTabs);
 searchInput.addEventListener('change', updateSearch);
 searchInput.addEventListener('keyup', updateSearch);
 
 function handleKeyDown(event) {
-  console.log('key');
   switch (event.key) {
     case "Tab":
     case "ArrowDown":
@@ -62,8 +61,6 @@ function navigateResults(direction) {
     case "ArrowLeft":
     case "ArrowUp":
       const prevSibling = document.activeElement.previousElementSibling;
-      // TODO: return to top on else
-      //        want to
       if (prevSibling) {
         prevSibling.focus()
       } else {
@@ -93,7 +90,8 @@ function updateSearch(event) {
 function injectTabsInList(tabArray) {
   const noResult = `
     <div class="tab-object no-result">
-      <img class="svg" src="/assets/alert-circle.svg">
+      <object type="image/svg+xml" data="/assets/alert-circle.svg">
+      </object>
       <strong>No tabs found.</strong>
     </div>
   `;
