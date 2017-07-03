@@ -1,7 +1,15 @@
 body {
-  background-color: #f9f9f9;
+  background-color: rgb(238, 238, 238);
   margin: 0;
   padding: 0;
+  overflow: hidden;
+  height: 100%;
+  font-family: sans-serif;
+}
+
+header {
+  padding: 0.5em;
+  border: 1px solid rgb(215, 215, 215);
 }
 
 .container {
@@ -11,18 +19,18 @@ body {
 }
 
 .tab-list {
-  font-family: sans-serif;
-  font-size: 12px;
-  display: flex;
-  flex-direction: column;
-  /*padding: 1.5em;*/
+	font-size: 12px;
+	display: flex;
+	flex-direction: column;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	height: 500px;
+  background-color: #f9f9f9;
 }
 
 .search {
   top: 10px;
-  padding-left: 15px;
   width: 300px;
-  /*border-radius: 2px;*/
 }
 
 .tab-favicon {

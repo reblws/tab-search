@@ -92,7 +92,7 @@ function updateSearch(event) {
 
 function injectTabsInList(tabArray) {
   const noResult = `
-    <div class="no-result">
+    <div class="tab-object no-result">
       <img class="svg" src="/assets/alert-circle.svg">
       <strong>No tabs found.</strong>
     </div>
