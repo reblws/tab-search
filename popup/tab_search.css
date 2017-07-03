@@ -65,7 +65,7 @@
   font-size: 0.7rem;
 }
 
-.selected {
+.tab-object:focus {
   background-color: blue;
   color: white;
 }
