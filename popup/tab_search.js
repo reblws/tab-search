@@ -91,7 +91,16 @@ function updateSearch(event) {
 }
 
 function injectTabsInList(tabArray) {
-  tabList.innerHTML = tabArray.map(tabToTag).join('');
+  const noResult = `
+    <div class="no-result">
+      <img class="svg" src="/assets/alert-circle.svg">
+      <strong>No tabs found.</strong>
+    </div>
+  `;
+
+  tabList.innerHTML = tabArray.length === 0
+    ? noResult
+    : tabArray.map(tabToTag).join('');
 }
 
 function tabToTag(tab, index) {
