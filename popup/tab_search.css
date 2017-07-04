@@ -125,3 +125,7 @@ p {
 	top: 14px;
 	right: 26px;
 }
+
+.hidden {
+  display: none;
+}

@@ -1,19 +1,19 @@
+const DELETE_BUTTON = document.querySelector('.delete-circle');
 const searchInput = document.querySelector('.search');
 const tabList = document.querySelector('.tab-list');
 
-// Initialize tabs
 {
+  // Initialize tabs
   getAllTabs().then(injectTabsInList);
+  // Set a timeout on focus so input is focused on popup
+  setTimeout(() => {
+    searchInput.focus();
+  }, 500);
 }
-// Set a timeout on focus so input is focused on popup
-setTimeout(() => {
-  searchInput.focus();
-}, 500);
 
 // Any keydown should activate the search field,
-// TODO: on arrow keys ignore focus and switch tab index
 window.addEventListener('keydown', handleKeyDown);
-// TODO: attach listener to nodes directly instead of tabList
+// TODO: attach listener to nosdes directly instead of tabList
 tabList.addEventListener('click', switchTabs);
 searchInput.addEventListener('change', updateSearch);
 searchInput.addEventListener('keyup', updateSearch);
@@ -75,6 +75,13 @@ function getAllTabs() {
 }
 
 function updateSearch(event) {
+  // If input is empty hide the button
+  if (searchInput.value.length === 0) {
+    DELETE_BUTTON.classList.add('hidden');
+  } else {
+    DELETE_BUTTON.classList.remove('hidden');
+  }
+
   const query = event.target.value.toLowerCase();
   const tabFilter = tab => {
     // Check if tab has the query in title, url
