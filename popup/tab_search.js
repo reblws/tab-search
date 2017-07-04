@@ -1,3 +1,5 @@
+const BROWSER = browser;
+
 const deleteButton = document.querySelector('.delete-circle');
 const searchInput = document.querySelector('.search');
 const tabList = document.querySelector('.tab-list');
@@ -6,7 +8,7 @@ function initializeTabs() {
   let tabs;
   return () => {
     if (typeof tabs === 'undefined') {
-      tabs = browser.tabs.query({ currentWindow: true });
+      tabs = BROWSER.tabs.query({ currentWindow: true });
     }
     return tabs;
   };
@@ -151,7 +153,7 @@ function switchTabs() {
 
 function switchActiveTab(id) {
   const numId = parseInt(id);
-  browser.tabs.update(numId, { active: true });
+  BROWSER.tabs.update(numId, { active: true });
   window.close();
 }
 

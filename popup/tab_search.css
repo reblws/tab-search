@@ -41,6 +41,7 @@ header {
   top: 10px;
   width: 300px;
   text-indent: 20px;
+  font-size: 12px;
 }
 
 .tab-favicon {
@@ -93,6 +94,15 @@ header {
 
 .tab-object > .tab-info {
   flex: 1;
+}
+
+.tab-object > strong {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.tab-object > p {
+  font-size: 0.8em;
 }
 
 .tab-info {
