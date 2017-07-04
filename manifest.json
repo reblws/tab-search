@@ -23,7 +23,10 @@
   },
   "commands": {
     "_execute_browser_action": {
-      "suggested_key": { "default": "Ctrl+Shift+L" },
+      "suggested_key": {
+        "default": "Ctrl+Shift+L",
+        "mac": "Cmd+Shift+L"
+      },
       "description": "Execute this browser action"
     }
   }
