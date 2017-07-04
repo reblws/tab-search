@@ -129,7 +129,7 @@ function injectTabsInList(tabArray) {
 }
 
 function tabToTag(tab) {
-  const favIconLink = tab.favIconUrl
+  const favIconLink = tab.favIconUrl && !isChromeLink(tab.favIconUrl)
     ? tab.favIconUrl
     : '/assets/file.svg';
   const title = tab.title.split(/\s/).length >= 1
@@ -139,7 +139,7 @@ function tabToTag(tab) {
     <div class="tab-object" data-id="${tab.id}" tabIndex="0">
       <img src="${favIconLink}">
       <div class="tab-info">
-        <strong>${tab.title}</strong>
+        <strong>${title}</strong>
         <p>${tab.url}</p>
       </div>
     </div>
@@ -148,8 +148,12 @@ function tabToTag(tab) {
 
 function shortenString(str) {
   return str.length >= 148
-    ? str.slice(0, 100) + '...'
+    ? str.slice(0, 120) + '...'
     : str;
+}
+
+function isChromeLink(src) {
+  return /chrome:\/\//.test(src);
 }
 
 function switchTabs() {
