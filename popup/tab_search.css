@@ -7,6 +7,10 @@ body {
   font-family: sans-serif;
 }
 
+input[type="search"] {
+  line-height: 2em;
+}
+
 header {
   padding: 0.5em;
   width: 300px;

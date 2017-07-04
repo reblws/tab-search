@@ -1,5 +1,3 @@
-const BROWSER = browser;
-
 const deleteButton = document.querySelector('.delete-circle');
 const searchInput = document.querySelector('.search');
 const tabList = document.querySelector('.tab-list');
@@ -8,7 +6,7 @@ function initializeTabs() {
   let tabs;
   return () => {
     if (typeof tabs === 'undefined') {
-      tabs = BROWSER.tabs.query({ currentWindow: true });
+      tabs = browser.tabs.query({ currentWindow: true });
     }
     return tabs;
   };
@@ -134,6 +132,9 @@ function tabToTag(tab) {
   const favIconLink = tab.favIconUrl
     ? tab.favIconUrl
     : '/assets/file.svg';
+  const title = tab.title.split(/\s/).length >= 1
+    ? tab.title
+    : shortenString(tab.title)
   return `
     <div class="tab-object" data-id="${tab.id}" tabIndex="0">
       <img src="${favIconLink}">
@@ -145,6 +146,12 @@ function tabToTag(tab) {
   `;
 }
 
+function shortenString(str) {
+  return str.length >= 148
+    ? str.slice(0, 100) + '...'
+    : str;
+}
+
 function switchTabs() {
   // this: should be the tab-object node
   const tabId = this.dataset.id;
@@ -153,7 +160,7 @@ function switchTabs() {
 
 function switchActiveTab(id) {
   const numId = parseInt(id);
-  BROWSER.tabs.update(numId, { active: true });
+  browser.tabs.update(numId, { active: true });
   window.close();
 }
 
