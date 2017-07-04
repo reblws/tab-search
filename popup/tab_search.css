@@ -69,6 +69,8 @@ header {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   cursor: pointer;
+  /* For chrome to prevent box shrinking */
+  flex-shrink: 0;
 }
 
 .tab-object:focus {
