@@ -5,7 +5,7 @@ Tab-Search is a Firefox and Chrome webextension for searching and managing the o
 ## Keyboard Shortcuts
 
 | Shortcut | Description |
-| --- | --- | --- |
+| --- | --- |
 | <kbd>Ctrl/Cmd</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> | Toggle extension |
 | <kbd>Enter</kbd> | Open selected tab or first in list if not selected |
 | <kbd>Up</kbd> / <kbd>Left</kbd> | Select next tab |
