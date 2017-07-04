@@ -1,0 +1,29 @@
+{
+  "manifest_version": 2,
+  "name": "TabSearch",
+  "version": "0.1.0",
+  "description": "Search for tabs",
+  "permissions": [
+    "tabs",
+    "activeTab"
+  ],
+  "icons": {
+    "32": "assets/search.svg",
+    "48": "assets/search.svg"
+  },
+  "minimum_chrome_version": "59.0.3071",
+  "browser_action": {
+    "default_icon": "assets/search.svg",
+    "default_title": "SearchTab",
+    "default_popup": "popup/tab_search.html"
+  },
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+L",
+        "mac": "Command+Shift+L"
+      },
+      "description": "Execute this browser action"
+    }
+  }
+}

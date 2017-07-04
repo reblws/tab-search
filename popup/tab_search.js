@@ -147,8 +147,8 @@ function tabToTag(tab) {
 }
 
 function shortenString(str) {
-  return str.length >= 148
-    ? str.slice(0, 120) + '...'
+  return str.length >= 120
+    ? str.slice(0, 90) + '...'
     : str;
 }
 
