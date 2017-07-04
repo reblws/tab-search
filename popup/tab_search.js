@@ -1,4 +1,4 @@
-const deleteButton = document.querySelector('.delete-circle');
+const DELETE_BUTTON = document.querySelector('.delete-circle');
 const searchInput = document.querySelector('.search');
 const tabList = document.querySelector('.tab-list');
 
@@ -27,7 +27,7 @@ const getAllTabs = initializeTabs();
 window.addEventListener('keydown', handleKeyDown);
 searchInput.addEventListener('change', updateSearch);
 searchInput.addEventListener('keyup', updateSearch);
-deleteButton.addEventListener('click', clearInput);
+DELETE_BUTTON.addEventListener('click', clearInput);
 
 function handleKeyDown(event) {
   switch (event.key) {
@@ -84,9 +84,9 @@ function navigateResults(direction) {
 function updateSearch(event) {
   // If input is empty hide the button
   if (searchInput.value.length === 0) {
-    deleteButton.classList.add('hidden');
+    DELETE_BUTTON.classList.add('hidden');
   } else {
-    deleteButton.classList.remove('hidden');
+    DELETE_BUTTON.classList.remove('hidden');
   }
 
   const query = event.target.value.toLowerCase();
