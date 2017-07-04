@@ -81,11 +81,11 @@ function updateSearch(event) {
   }
 
   const query = event.target.value.toLowerCase();
-  const tabFilter = tab => {
+  const tabFilter = (tab) => {
     // Check if tab has the query in title, url
     const queryInTitle = tab.title.toLowerCase().includes(query);
     const queryInUrl = tab.url.toLowerCase().includes(query);
-    return (queryInTitle);
+    return (queryInTitle || queryInUrl);
   };
   return browser.tabs.query({ currentWindow: true })
     .then(tabArray => tabArray.filter(tabFilter))
@@ -108,14 +108,14 @@ function injectTabsInList(tabArray) {
 
   // Attach event listeners here
   if (!showNoResult) {
-    const tabObjectNodes = [...tabList.querySelectorAll('.tab-object')]
+    const tabObjectNodes = [...tabList.querySelectorAll('.tab-object')];
     tabObjectNodes.forEach((node) => {
       node.addEventListener('click', switchTabs, true);
-    })
+    });
   }
 }
 
-function tabToTag(tab, index) {
+function tabToTag(tab) {
   const favIconLink = tab.favIconUrl
     ? tab.favIconUrl
     : '/assets/file.svg';
@@ -130,7 +130,7 @@ function tabToTag(tab, index) {
   `;
 }
 
-function switchTabs(event) {
+function switchTabs() {
   // this: should be the tab-object node
   const tabId = this.dataset.id;
   switchActiveTab(tabId);
@@ -140,10 +140,6 @@ function switchActiveTab(id) {
   const numId = parseInt(id);
   browser.tabs.update(numId, { active: true });
   window.close();
-}
-
-function isNewTab(title) {
-  return title !== 'New Tab';
 }
 
 function clearInput() {
