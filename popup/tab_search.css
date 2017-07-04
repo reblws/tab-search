@@ -56,16 +56,13 @@ header {
 
 .tab-object {
 	display: flex;
-	/*flex-wrap: nowrap;*/
 	align-items: center;
 	justify-content: center;
 	width: 20rem;
-	margin-right: auto;
-	margin-left: auto;
 	padding-top: 1rem;
 	padding-bottom: 1rem;
   padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  padding-right: 1rem;
   cursor: pointer;
 }
 
