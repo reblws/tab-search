@@ -52,7 +52,7 @@ function handleKeyDown(event) {
 }
 
 function navigateResults(direction) {
-  if (![...document.activeElement.classList].includes('tab-object')) {
+  if (document.activeElement.nodeName === 'INPUT') {
     document.querySelector('.tab-object').focus();
     return;
   }
