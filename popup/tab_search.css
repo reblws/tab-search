@@ -123,3 +123,10 @@ header {
 p {
   margin: 0;
 }
+
+.delete-circle {
+	position: absolute;
+	max-width: 16px;
+	top: 14px;
+	right: 26px;
+}
