@@ -2,6 +2,18 @@ const DELETE_BUTTON = document.querySelector('.delete-circle');
 const searchInput = document.querySelector('.search');
 const tabList = document.querySelector('.tab-list');
 
+function initializeTabs() {
+  let tabs;
+  return () => {
+    if (typeof tabs === 'undefined') {
+      tabs = browser.tabs.query({ currentWindow: true });
+    }
+    return tabs;
+  };
+}
+
+const getAllTabs = initializeTabs();
+
 {
   // Initialize tabs
   populateTabList();
@@ -15,6 +27,7 @@ const tabList = document.querySelector('.tab-list');
 window.addEventListener('keydown', handleKeyDown);
 searchInput.addEventListener('change', updateSearch);
 searchInput.addEventListener('keyup', updateSearch);
+DELETE_BUTTON.addEventListener('click', clearInput);
 
 function handleKeyDown(event) {
   switch (event.key) {
@@ -68,10 +81,6 @@ function navigateResults(direction) {
   }
 }
 
-function getAllTabs() {
-  return browser.tabs.query({ currentWindow: true });
-}
-
 function updateSearch(event) {
   // If input is empty hide the button
   if (searchInput.value.length === 0) {
@@ -87,7 +96,7 @@ function updateSearch(event) {
     const queryInUrl = tab.url.toLowerCase().includes(query);
     return (queryInTitle || queryInUrl);
   };
-  return browser.tabs.query({ currentWindow: true })
+  return getAllTabs()
     .then(tabArray => tabArray.filter(tabFilter))
     .then(injectTabsInList);
 }
@@ -100,8 +109,12 @@ function injectTabsInList(tabArray) {
       <strong>No tabs found.</strong>
     </div>
   `;
-
+  const wasNoResult = tabList.querySelectorAll('.tab-object').length === 0;
   const showNoResult = tabArray.length === 0;
+
+  // Don't update dom if we're going to show no results again
+  if (wasNoResult && showNoResult) return;
+
   tabList.innerHTML = showNoResult
     ? noResult
     : tabArray.map(tabToTag).join('');

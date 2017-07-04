@@ -120,6 +120,7 @@ p {
 	max-width: 16px;
 	top: 14px;
 	right: 31px;
+  cursor: pointer;
 }
 
 .hidden {
