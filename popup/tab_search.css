@@ -9,12 +9,6 @@ body {
 
 header {
   padding: 0.5em;
-  border-color: rgb(215, 215, 215);
-  border-style: solid;
-  border-bottom: 1px;
-  border-right: 0;
-  border-left: 0;
-  border-top: 0;
   width: 300px;
   margin-left: auto;
   margin-right: auto;
@@ -36,16 +30,17 @@ header {
   background-color: #fff;
   border-color: rgb(215, 215, 215);
   border-style: solid;
-  border-top: 0;
   border-bottom: 1px;
   border-right: 1px;
   border-left: 1px;
+  border-top: 1px;
+  border-top-color: rgb(51, 51, 51);
 }
 
 .search {
   top: 10px;
   width: 300px;
-  text-indent: 16px;
+  text-indent: 20px;
 }
 
 .tab-favicon {
