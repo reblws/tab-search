@@ -25,7 +25,7 @@
     "_execute_browser_action": {
       "suggested_key": {
         "default": "Ctrl+Shift+L",
-        "mac": "Cmd+Shift+L"
+        "mac": "Command+Shift+L"
       },
       "description": "Execute this browser action"
     }
