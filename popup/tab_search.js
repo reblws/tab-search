@@ -132,9 +132,10 @@ function tabToTag(tab) {
   const favIconLink = tab.favIconUrl && !isChromeLink(tab.favIconUrl)
     ? tab.favIconUrl
     : '/assets/file.svg';
-  const title = tab.title.split(/\s/).length >= 1
-    ? tab.title
-    : shortenString(tab.title)
+  // Just check if it's a url for now so we can shorten it
+  const title = isURL(tab.title)
+    ? getBasePath(tab.title)
+    : tab.title;
   return `
     <div class="tab-object" data-id="${tab.id}" tabIndex="0">
       <img src="${favIconLink}">
@@ -154,6 +155,15 @@ function shortenString(str) {
 
 function isChromeLink(src) {
   return /chrome:\/\//.test(src);
+}
+
+function isURL(src) {
+  return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(src);
+}
+
+function getBasePath(src) {
+  const url = new URL(src);
+  return url.origin;
 }
 
 function switchTabs() {
