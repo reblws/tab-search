@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "TabSearch",
   "version": "0.1.0",
-  "description": "Search for tabs",
+  "description": "Easy tab search & switching",
   "applications": {
     "gecko": {
       "strict_min_version": "52.0a1"
