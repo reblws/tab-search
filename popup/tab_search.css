@@ -69,6 +69,11 @@ header {
   cursor: pointer;
 }
 
+.tab-object:focus {
+  background-color: #086DD6;
+  color: white;
+}
+
 .tab-object > img {
   height: 2rem;
   max-width: 100%;
@@ -110,11 +115,6 @@ header {
   padding-right: 0.5em;
 }
 
-.tab-object:focus {
-  background-color: #086DD6;
-  color: white;
-}
-
 p {
   margin: 0;
 }
@@ -127,5 +127,5 @@ p {
 }
 
 .hidden {
-  display: none;
+  visibility: hidden;
 }

@@ -4,17 +4,15 @@ const tabList = document.querySelector('.tab-list');
 
 {
   // Initialize tabs
-  getAllTabs().then(injectTabsInList);
+  populateTabList();
   // Set a timeout on focus so input is focused on popup
   setTimeout(() => {
     searchInput.focus();
   }, 500);
 }
 
-// Any keydown should activate the search field,
+// Any (non-navigating) keydown should activate the search field,
 window.addEventListener('keydown', handleKeyDown);
-// TODO: attach listener to nosdes directly instead of tabList
-tabList.addEventListener('click', switchTabs);
 searchInput.addEventListener('change', updateSearch);
 searchInput.addEventListener('keyup', updateSearch);
 
@@ -103,9 +101,18 @@ function injectTabsInList(tabArray) {
     </div>
   `;
 
-  tabList.innerHTML = tabArray.length === 0
+  const showNoResult = tabArray.length === 0;
+  tabList.innerHTML = showNoResult
     ? noResult
     : tabArray.map(tabToTag).join('');
+
+  // Attach event listeners here
+  if (!showNoResult) {
+    const tabObjectNodes = [...tabList.querySelectorAll('.tab-object')]
+    tabObjectNodes.forEach((node) => {
+      node.addEventListener('click', switchTabs, true);
+    })
+  }
 }
 
 function tabToTag(tab, index) {
@@ -124,8 +131,8 @@ function tabToTag(tab, index) {
 }
 
 function switchTabs(event) {
-  if (event.target.className !== 'tab-object') return;
-  event.preventDefault();
+  // this: should be the tab-object node
+  const tabId = this.dataset.id;
   switchActiveTab(tabId);
 }
 
@@ -137,6 +144,15 @@ function switchActiveTab(id) {
 
 function isNewTab(title) {
   return title !== 'New Tab';
+}
+
+function clearInput() {
+  searchInput.value = '';
+  populateTabList();
+}
+
+function populateTabList() {
+  getAllTabs().then(injectTabsInList);
 }
 
 // To switch tabs
