@@ -45,6 +45,9 @@ function handleKeyDown(event) {
       }
       switchActiveTab(document.activeElement.dataset.id);
       break;
+    case "Escape":
+      window.close();
+      break;
     default:
       searchInput.focus();
       break;
