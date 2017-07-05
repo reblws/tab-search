@@ -46,7 +46,11 @@ function handleKeyDown(event) {
       switchActiveTab(document.activeElement.dataset.id);
       break;
     case "Escape":
-      window.close();
+      if (searchInput.value.length === 0) {
+        window.close();
+      } else {
+        clearInput();
+      }
       break;
     default:
       searchInput.focus();
