@@ -78,6 +78,11 @@ header {
   color: white;
 }
 
+.tab-object:hover {
+  background-color: #4B90D8;
+  color: white;
+}
+
 .tab-object > img {
   height: 2rem;
   max-width: 100%;
