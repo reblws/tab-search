@@ -74,12 +74,13 @@ header {
 }
 
 .tab-object:focus {
-  background-color: #086DD6;
-  color: white;
+  outline: 1px dotted black;
 }
 
-.tab-object:hover {
-  background-color: #4B90D8;
+.tab-object:hover,
+.tab-object:focus {
+  /*box-sizing: border-box;*/
+  background-color: #086DD6;
   color: white;
 }
 
