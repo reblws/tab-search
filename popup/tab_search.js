@@ -46,6 +46,7 @@ function handleKeyDown(event) {
       switchActiveTab(document.activeElement.dataset.id);
       break;
     case "Escape":
+      // This only works in chrome, in firefox it always closes the window
       if (searchInput.value.length === 0) {
         window.close();
       } else {
