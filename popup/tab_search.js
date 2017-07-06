@@ -20,7 +20,7 @@ const getAllTabs = initializeTabs();
   // Set a timeout on focus so input is focused on popup
   setTimeout(() => {
     searchInput.focus();
-  }, 500);
+  }, 250);
 }
 
 // Any (non-navigating) keydown should activate the search field,
