@@ -22,11 +22,11 @@ const getAllTabs = initializeTabs();
 
 // Initialize tabs
 populateTabList();
-// Set a timeout on focus so input is focused on popup
-setTimeout(() => {
-  searchInput.focus();
-}, 250);
 
+// Set a timeout on focus so input is focused on popup
+document.addEventListener('DOMContentLoaded', () =>
+  setTimeout(() => searchInput.focus(), 150)
+);
 // Any (non-navigating) keydown should activate the search field,
 window.addEventListener('keydown', handleKeyDown);
 searchInput.addEventListener('change', updateSearch);
@@ -126,8 +126,8 @@ function injectTabsInList(tabArray) {
     tabList.appendChild(noResultNode());
   } else {
     tabArray.map(tabToTag).forEach(tabNode => {
-    tabNode.addEventListener('click', switchTabs, true);
-    tabList.appendChild(tabNode);
+      tabNode.addEventListener('click', switchTabs, true);
+      tabList.appendChild(tabNode);
     });
   }
 }
@@ -184,11 +184,10 @@ function tabToTag({ favIconUrl, title, id, url }) {
 }
 
 function noResultNode() {
-  // tab-info
-  //    <div class="tab-info">
-  //      <strong>${title}</strong>
-  //      <p>${url}</p>
-  //    </div>
+  // <div class="no-result">
+  //   <object type="image/svg+xml" data="/assets/alert-circle.svg"></object>
+  //   <strong>No tabs found</strong>
+  // </div>
   const noResultNode = document.createElement('div');
   noResultNode.classList.add('no-result');
 
@@ -248,4 +247,8 @@ function clearInput() {
 
 function populateTabList() {
   getAllTabs().then(injectTabsInList);
+}
+
+function focusNode(node) {
+  node.focus();
 }
