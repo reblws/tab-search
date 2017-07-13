@@ -3,25 +3,20 @@ const searchInput = document.querySelector('.search');
 const tabList = document.querySelector('.tab-list');
 
 function initializeTabs() {
-  let tabs;
+  const tabs = browser.tabs.query({ currentWindow: true });
   return () => {
-    if (typeof tabs === 'undefined') {
-      tabs = browser.tabs.query({ currentWindow: true });
-    }
     return tabs;
   };
 }
 
 const getAllTabs = initializeTabs();
 
-{
-  // Initialize tabs
-  populateTabList();
-  // Set a timeout on focus so input is focused on popup
-  setTimeout(() => {
-    searchInput.focus();
-  }, 250);
-}
+// Initialize tabs
+populateTabList();
+// Set a timeout on focus so input is focused on popup
+setTimeout(() => {
+  searchInput.focus();
+}, 250);
 
 // Any (non-navigating) keydown should activate the search field,
 window.addEventListener('keydown', handleKeyDown);
@@ -110,49 +105,97 @@ function updateSearch(event) {
 }
 
 function injectTabsInList(tabArray) {
-  const noResult = `
-    <div class="tab-object no-result">
-      <object type="image/svg+xml" data="/assets/alert-circle.svg">
-      </object>
-      <strong>No tabs found.</strong>
-    </div>
-  `;
   const wasNoResult = tabList.querySelectorAll('.tab-object').length === 0;
   const showNoResult = tabArray.length === 0;
-
   // Don't update dom if we're going to show no results again
   if (wasNoResult && showNoResult) return;
 
-  tabList.innerHTML = showNoResult
-    ? noResult
-    : tabArray.map(tabToTag).join('');
+  clearChildren(tabList);
 
-  // Attach event listeners here
-  if (!showNoResult) {
-    const tabObjectNodes = [...tabList.querySelectorAll('.tab-object')];
-    tabObjectNodes.forEach((node) => {
-      node.addEventListener('click', switchTabs, true);
+  // Add nodes to tabList & attach event listeners
+  if (showNoResult) {
+    tabList.appendChild(noResultNode());
+  } else {
+    tabArray.map(tabToTag).forEach(tabNode => {
+    tabNode.addEventListener('click', switchTabs, true);
+    tabList.appendChild(tabNode);
     });
   }
 }
 
-function tabToTag(tab) {
-  const favIconLink = tab.favIconUrl && !isChromeLink(tab.favIconUrl)
-    ? tab.favIconUrl
-    : '/assets/file.svg';
+function tabToTag({ favIconUrl, title, id, url }) {
+  const fallBackSvg = '/assets/file.svg';
+  const favIconLink = favIconUrl && !isChromeLink(favIconUrl)
+    ? favIconUrl
+    : fallBackSvg;
   // Just check if it's a url for now so we can shorten it
-  const title = isURL(tab.title)
-    ? getBasePath(tab.title)
-    : tab.title;
-  return `
-    <div class="tab-object" data-id="${tab.id}" tabIndex="0">
-      <img src="${favIconLink}">
-      <div class="tab-info">
-        <strong>${title}</strong>
-        <p>${tab.url}</p>
-      </div>
-    </div>
-  `;
+  const tabTitle = isURL(title)
+    ? getBasePath(title)
+    : title;
+  // Create the parent div
+  // <div class="tab-object" data-id="${id}" tabIndex="0">
+
+  const tabObjectNode = document.createElement('div');
+  tabObjectNode.setAttribute('data-id', id);
+  tabObjectNode.setAttribute('tabindex', '0');
+  tabObjectNode.classList.add('tab-object');
+
+  // favicon
+  // <img src="${favIconLink}">
+  const favIconNode = document.createElement('img');
+  favIconNode.setAttribute('src', favIconLink);
+  favIconNode.onerror = function(event) {
+    this.src = fallBackSvg;
+  };
+
+  // tab-info
+  //    <div class="tab-info">
+  //      <strong>${title}</strong>
+  //      <p>${url}</p>
+  //    </div>
+  const tabInfoNode = document.createElement('div');
+  tabInfoNode.setAttribute('class', 'tab-info');
+
+  const titleNode = document.createElement('strong');
+  titleNode.appendChild(document.createTextNode(tabTitle));
+
+  const urlNode = document.createElement('p');
+  urlNode.appendChild(document.createTextNode(url));
+
+  tabInfoNode.appendChild(titleNode);
+  tabInfoNode.appendChild(urlNode);
+
+  tabObjectNode.appendChild(favIconNode);
+  tabObjectNode.appendChild(tabInfoNode);
+
+  return tabObjectNode;
+}
+
+function noResultNode() {
+  // tab-info
+  //    <div class="tab-info">
+  //      <strong>${title}</strong>
+  //      <p>${url}</p>
+  //    </div>
+  const noResultNode = document.createElement('div');
+  noResultNode.classList.add('no-result');
+
+  const alertCircleNode = document.createElement('object');
+  alertCircleNode.setAttribute('type', 'image/svg+xml');
+  alertCircleNode.setAttribute('data', '/assets/alert-circle.svg');
+
+  const strongMsgNode = document.createElement('strong');
+  strongMsgNode.appendChild(document.createTextNode('No tabs found'));
+
+  noResultNode.appendChild(alertCircleNode);
+  noResultNode.appendChild(strongMsgNode);
+  return noResultNode;
+}
+
+function clearChildren(node) {
+  while (node.firstChild) {
+    node.removeChild(node.firstChild);
+  };
 }
 
 function shortenString(str) {
