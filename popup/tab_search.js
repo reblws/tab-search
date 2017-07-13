@@ -9,6 +9,15 @@ function initializeTabs() {
   };
 }
 
+// Store all the bad favIcons so we don't get loading jank if a favIcon !exist
+function badFavIconCache() {
+  const badIconCache = [];
+  return () => {
+    return badIconCache;
+  }
+}
+
+const badFavIcons = badFavIconCache();
 const getAllTabs = initializeTabs();
 
 // Initialize tabs
@@ -125,16 +134,18 @@ function injectTabsInList(tabArray) {
 
 function tabToTag({ favIconUrl, title, id, url }) {
   const fallBackSvg = '/assets/file.svg';
-  const favIconLink = favIconUrl && !isChromeLink(favIconUrl)
-    ? favIconUrl
-    : fallBackSvg;
+  const favIconLink = favIconUrl
+    && !isChromeLink(favIconUrl)
+    && !badFavIcons().includes(favIconUrl)
+      ? favIconUrl
+      : fallBackSvg;
   // Just check if it's a url for now so we can shorten it
   const tabTitle = isURL(title)
     ? getBasePath(title)
     : title;
+
   // Create the parent div
   // <div class="tab-object" data-id="${id}" tabIndex="0">
-
   const tabObjectNode = document.createElement('div');
   tabObjectNode.setAttribute('data-id', id);
   tabObjectNode.setAttribute('tabindex', '0');
@@ -145,23 +156,24 @@ function tabToTag({ favIconUrl, title, id, url }) {
   const favIconNode = document.createElement('img');
   favIconNode.setAttribute('src', favIconLink);
   favIconNode.onerror = function(event) {
+    badFavIcons().push(this.src);
     this.src = fallBackSvg;
   };
 
   // tab-info
   //    <div class="tab-info">
-  //      <strong>${title}</strong>
-  //      <p>${url}</p>
-  //    </div>
   const tabInfoNode = document.createElement('div');
   tabInfoNode.setAttribute('class', 'tab-info');
 
+  //      <strong>${title}</strong>
   const titleNode = document.createElement('strong');
   titleNode.appendChild(document.createTextNode(tabTitle));
 
+  //      <p>${url}</p>
   const urlNode = document.createElement('p');
   urlNode.appendChild(document.createTextNode(url));
 
+  // Append all block elements
   tabInfoNode.appendChild(titleNode);
   tabInfoNode.appendChild(urlNode);
 
@@ -237,6 +249,3 @@ function clearInput() {
 function populateTabList() {
   getAllTabs().then(injectTabsInList);
 }
-
-// To switch tabs
-// onClick -> tabs.update(tab.id, { active: true })
