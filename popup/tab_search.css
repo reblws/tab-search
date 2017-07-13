@@ -117,13 +117,9 @@ header {
   flex: 1;
 }
 
-.tab-object > strong {
+.tab-title {
   font-weight: bold;
-  font-size: 1.2em;
-}
-
-.tab-object > p {
-  font-size: 0.8em;
+  font-size: 1.1em;
 }
 
 .tab-info {
@@ -133,6 +129,7 @@ header {
 
 .tab-info > p {
   width: 225px;
+  font-size: 0.8em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

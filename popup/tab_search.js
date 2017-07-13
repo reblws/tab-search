@@ -167,6 +167,7 @@ function tabToTag({ favIconUrl, title, id, url }) {
 
   //      <strong>${title}</strong>
   const titleNode = document.createElement('strong');
+  titleNode.classList.add('tab-title');
   titleNode.appendChild(document.createTextNode(tabTitle));
 
   //      <p>${url}</p>
