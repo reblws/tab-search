@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "TabSearch",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Easy tab search & switching",
   "applications": {
     "gecko": {
@@ -29,5 +29,6 @@
       },
       "description": "Execute this browser action"
     }
-  }
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';"
 }
