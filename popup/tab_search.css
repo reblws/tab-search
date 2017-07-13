@@ -42,6 +42,7 @@ header {
 }
 
 .search {
+  /* box-sizing: border-box; */
   top: 10px;
   width: 300px;
   text-indent: 20px;
@@ -49,16 +50,18 @@ header {
   background-image: url('/assets/search.svg');
   background-repeat: no-repeat;
   /* background-position: left center; */
-  background-position-x: left 3px;
-  background-position-y: top 50%;
+  background-position-x: 3px;
+  background-position-y: center;
   background-size: 16px 16px;
   border: 1px solid rgb(210, 210, 210);;
   border-radius: 5px;
   transition: all 0.15s ease-in-out;
+  outline: none;
 }
 
 .search:focus {
-  border: 1px solid #399cfc;
+  border-color: #399cfc;
+  box-shadow: 2px #399cfc;
 }
 
 .tab-favicon {
