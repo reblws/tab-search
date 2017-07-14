@@ -277,33 +277,22 @@ function updateSearch(event) {
   }
 
   const query = event.target.value.trim().toLowerCase();
-  const searchResults = filterResults(query);
+  const getSearchResults = filterResults(query);
   return getAllTabs()
-    .then(tabArray => tabArray.filter(searchResults))
+    .then(getSearchResults)
     .then(injectTabsInList);
 }
 
 function filterResults(query) {
-  return function checkForQuery({ title, url }) {
-    const queryInTitle = title.toLowerCase().includes(query);
-    const queryInUrl = url.toLowerCase().includes(query);
-    return (queryInTitle || queryInUrl);
-  }
+  const searchUrl = queryInUrl(query);
+  const extract = tab => tab.title;
+  return (tabArray) => {
+    const titleResults = fuzzy.filter(query, tabArray, { extract })
+      .map(result => result.original);
+    return tabArray.filter(tab => searchUrl(tab) || titleResults.includes(tab));
+  };
 }
 
-// Adapted from https://www.willmcgugan.com/blog/tech/post/sublime-text-like-fuzzy-matching-in-javascript/
-function matchQuery(text, query) {
-  // text is a title, query is the user's search
-  const searchQuery = query.replace(/\s/g, '').toLowerCase();
-  const tokens = [];
-  const searchPosition = 0;
-
-  for (let i = 0; i < text.length; i++) {
-    const textChar = text[i];
-    const matched = searchPosition < searchQuery.length
-      && textChar.toLowerCase() === search[searchPosition];
-    if (matched) {
-
-    }
-  }
+function queryInUrl(query) {
+  return ({ url }) => url.toLowerCase().includes(query);
 }
