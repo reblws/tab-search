@@ -182,15 +182,18 @@ function tabToTag({ favIconUrl, title, id, url }) {
 }
 
 function scrollIfNeeded(event) {
-  // If the height + offset of the selected tab is greater than the height
-  // of the tabList, we need to scroll down
+  // If the selected tab isn't completely visible in the scrolled view,
+  // force scroll
   const {
     parentHeight,
     selectedBottom,
     selectedTop,
   } = getNodePositions(event.target.parentNode, event.target);
   const shouldScrollDown = selectedBottom > parentHeight;
-  const shouldScrollUp = selectedTop <= 0;
+  const shouldScrollUp = selectedTop < 0;
+
+  if (!shouldScrollDown && !shouldScrollUp) return;
+
   if (shouldScrollDown) {
     event.target.scrollIntoView(false);
   } else if (shouldScrollUp) {
