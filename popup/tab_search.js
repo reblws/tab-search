@@ -4,17 +4,13 @@ const tabList = document.querySelector('.tab-list');
 
 function initializeTabs() {
   const tabs = browser.tabs.query({ currentWindow: true });
-  return () => {
-    return tabs;
-  };
+  return () => tabs;
 }
 
 // Store all the bad favIcons so we don't get loading jank if a favIcon !exist
 function badFavIconCache() {
   const badIconCache = [];
-  return () => {
-    return badIconCache;
-  }
+  return () => badIconCache;
 }
 
 const badFavIcons = badFavIconCache();
@@ -70,9 +66,9 @@ function navigateResults(direction) {
   }
 
   switch (direction) {
-    case "Tab":
-    case "ArrowRight":
-    case "ArrowDown":
+    case 'Tab':
+    case 'ArrowRight':
+    case 'ArrowDown':
       const nextSibling = document.activeElement.nextElementSibling;
       if (nextSibling) {
         nextSibling.focus();
@@ -81,8 +77,8 @@ function navigateResults(direction) {
         tabList.querySelector('.tab-object').focus();
       }
       break;
-    case "ArrowLeft":
-    case "ArrowUp":
+    case 'ArrowLeft':
+    case 'ArrowUp':
       const prevSibling = document.activeElement.previousElementSibling;
       if (prevSibling) {
         prevSibling.focus()
@@ -127,6 +123,7 @@ function injectTabsInList(tabArray) {
   } else {
     tabArray.map(tabToTag).forEach(tabNode => {
       tabNode.addEventListener('click', switchTabs, true);
+      tabNode.addEventListener('focus', scrollIfNeeded);
       tabList.appendChild(tabNode);
     });
   }
@@ -182,6 +179,36 @@ function tabToTag({ favIconUrl, title, id, url }) {
   tabObjectNode.appendChild(tabInfoNode);
 
   return tabObjectNode;
+}
+
+function scrollIfNeeded(event) {
+  // If the height + offset of the selected tab is greater than the height
+  // of the tabList, we need to scroll down
+  const {
+    parentHeight,
+    selectedBottom,
+    selectedTop,
+  } = getNodePositions(event.target.parentNode, event.target);
+  const shouldScrollDown = selectedBottom > parentHeight;
+  const shouldScrollUp = selectedTop <= 0;
+  if (shouldScrollDown) {
+    event.target.scrollIntoView(false);
+  } else if (shouldScrollUp) {
+    event.target.scrollIntoView(true);
+  }
+}
+
+// Get focused node's position relative to the current scrolled view
+function getNodePositions(parentNode, selectedNode) {
+  return {
+    parentHeight: parentNode.offsetHeight,
+    selectedBottom: selectedNode.offsetHeight + (
+      selectedNode.offsetTop - parentNode.offsetTop
+    ) - parentNode.scrollTop,
+    selectedTop: (
+      selectedNode.offsetTop - parentNode.offsetTop
+    ) - parentNode.scrollTop,
+  };
 }
 
 function noResultNode() {
