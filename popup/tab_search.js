@@ -98,10 +98,10 @@ function updateSearch(event) {
   }
 
   const query = event.target.value.toLowerCase();
-  const tabFilter = (tab) => {
+  const tabFilter = ({ title, url }) => {
     // Check if tab has the query in title, url
-    const queryInTitle = tab.title.toLowerCase().includes(query);
-    const queryInUrl = tab.url.toLowerCase().includes(query);
+    const queryInTitle = title.toLowerCase().includes(query);
+    const queryInUrl = url.toLowerCase().includes(query);
     return (queryInTitle || queryInUrl);
   };
   return getAllTabs()
