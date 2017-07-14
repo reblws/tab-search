@@ -89,26 +89,6 @@ function navigateResults(direction) {
   }
 }
 
-function updateSearch(event) {
-  // If input is empty hide the button
-  if (searchInput.value.length === 0) {
-    deleteButton.classList.add('hidden');
-  } else {
-    deleteButton.classList.remove('hidden');
-  }
-
-  const query = event.target.value.toLowerCase();
-  const tabFilter = ({ title, url }) => {
-    // Check if tab has the query in title, url
-    const queryInTitle = title.toLowerCase().includes(query);
-    const queryInUrl = url.toLowerCase().includes(query);
-    return (queryInTitle || queryInUrl);
-  };
-  return getAllTabs()
-    .then(tabArray => tabArray.filter(tabFilter))
-    .then(injectTabsInList);
-}
-
 function injectTabsInList(tabArray) {
   const wasNoResult = tabList.querySelectorAll('.tab-object').length === 0;
   const showNoResult = tabArray.length === 0;
@@ -282,4 +262,48 @@ function populateTabList() {
 
 function focusNode(node) {
   node.focus();
+}
+
+/*
+  SEARCH
+*/
+
+function updateSearch(event) {
+  // If input is empty hide the button
+  if (searchInput.value.length === 0) {
+    deleteButton.classList.add('hidden');
+  } else {
+    deleteButton.classList.remove('hidden');
+  }
+
+  const query = event.target.value.trim().toLowerCase();
+  const searchResults = filterResults(query);
+  return getAllTabs()
+    .then(tabArray => tabArray.filter(searchResults))
+    .then(injectTabsInList);
+}
+
+function filterResults(query) {
+  return function checkForQuery({ title, url }) {
+    const queryInTitle = title.toLowerCase().includes(query);
+    const queryInUrl = url.toLowerCase().includes(query);
+    return (queryInTitle || queryInUrl);
+  }
+}
+
+// Adapted from https://www.willmcgugan.com/blog/tech/post/sublime-text-like-fuzzy-matching-in-javascript/
+function matchQuery(text, query) {
+  // text is a title, query is the user's search
+  const searchQuery = query.replace(/\s/g, '').toLowerCase();
+  const tokens = [];
+  const searchPosition = 0;
+
+  for (let i = 0; i < text.length; i++) {
+    const textChar = text[i];
+    const matched = searchPosition < searchQuery.length
+      && textChar.toLowerCase() === search[searchPosition];
+    if (matched) {
+
+    }
+  }
 }
