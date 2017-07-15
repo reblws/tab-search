@@ -40,10 +40,12 @@ function handleKeyDown(event) {
       navigateResults(event.key);
       break;
     case "Enter":
-      if (document.activeElement.nodeName === "INPUT") {
-        tabList.querySelector('.tab-object').focus();
+      if (!document.activeElement.className.includes('tab-object')) {
+        tabList.childNodes[0].focus();
+        setTimeout(() => switchActiveTab(document.activeElement.dataset.id), 150);
+      } else {
+        switchActiveTab(document.activeElement.dataset.id);
       }
-      switchActiveTab(document.activeElement.dataset.id);
       break;
     case "Escape":
       // This only works in chrome, in firefox it always closes the window
@@ -246,7 +248,7 @@ function switchTabs() {
 }
 
 function switchActiveTab(id) {
-  const numId = parseInt(id);
+  const numId = parseInt(id, 10);
   browser.tabs.update(numId, { active: true });
   window.close();
 }
