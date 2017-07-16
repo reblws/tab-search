@@ -3,6 +3,10 @@ body {
   font-family: sans-serif;
 }
 
+strong {
+  font-weight: bold;
+}
+
 input[type="search"] {
   line-height: 2em;
 }
