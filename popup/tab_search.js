@@ -40,7 +40,11 @@ function handleKeyDown(event) {
       navigateResults(event.key);
       break;
     case "Enter":
-      if (!document.activeElement.className.includes('tab-object')) {
+      event.preventDefault();
+      if (
+        !document.activeElement.className.includes('tab-object')
+        && !document.activeElement.className.includes('no-result')
+      ) {
         tabList.childNodes[0].focus();
         setTimeout(() => switchActiveTab(document.activeElement.dataset.id), 150);
       } else {
@@ -237,8 +241,8 @@ function isURL(src) {
 }
 
 function getBasePath(src) {
-  const url = new URL(src);
-  return url.origin;
+  const { origin } = new URL(src);
+  return origin;
 }
 
 function switchTabs() {
@@ -287,12 +291,16 @@ function updateSearch(event) {
 
 function filterResults(query) {
   const searchUrl = queryInUrl(query);
-  const extract = tab => tab.title;
-  return (tabArray) => {
-    const titleResults = fuzzy.filter(query, tabArray, { extract })
-      .map(result => result.original);
-    return tabArray.filter(tab => searchUrl(tab) || titleResults.includes(tab));
+  const options = {
+    shouldSort: true,
+    // includeMatches: false,
+    threshold: 0.7,
+    maxPatternLength: 32,
+    minMatchCharLength: 1,
+    keys: ['title', 'url']
   };
+  const fuse = (array) => new Fuse(array, options);
+  return (tabArray) => fuse(tabArray).search(query);
 }
 
 function queryInUrl(query) {
