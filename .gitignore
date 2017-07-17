@@ -1,3 +1,4 @@
 webext
 build_chrome
 .vscode/
+node_modules/
