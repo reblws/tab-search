@@ -1,0 +1,8 @@
+{
+  "dependencies": {},
+  "devDependencies": {
+    "babel-loader": "^7.1.1",
+    "copy-webpack-plugin": "^4.0.1",
+    "webpack": "^3.3.0"
+  }
+}
