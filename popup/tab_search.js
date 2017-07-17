@@ -297,7 +297,7 @@ function filterResults(query) {
     threshold: 0.7,
     maxPatternLength: 32,
     minMatchCharLength: 1,
-    keys: ['title', 'url']
+    keys: ['title'],
   };
   const fuse = (array) => new Fuse(array, options);
   return (tabArray) => fuse(tabArray).search(query);
