@@ -6,5 +6,10 @@ module.exports = {
     "env": {
         "browser": true,
         "webextensions": true,
+    },
+    "rules": {
+        "no-use-before-define": 0,
+        "no-fallthrough": 0,
+        "no-param-reassign": 0,
     }
 };
