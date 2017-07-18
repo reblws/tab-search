@@ -56,7 +56,7 @@ function handleKeyDown(event) {
       if (searchInput.value.length === 0) {
         window.close();
       } else {
-        clearInput();
+        clearInput(searchInput);
       }
       break;
     default:
@@ -66,15 +66,18 @@ function handleKeyDown(event) {
 }
 
 function updateSearchResults(event) {
+  const isSearchEmpty = searchInput.value.length === 0;
   // If input is empty hide the button
-  if (searchInput.value.length === 0) {
+  if (isSearchEmpty) {
     deleteButton.classList.add('hidden');
   } else {
     deleteButton.classList.remove('hidden');
   }
 
   const query = event.target.value.trim().toLowerCase();
-  const getSearchResults = filterResults(query);
+  const getSearchResults = isSearchEmpty
+    ? x => x
+    : filterResults(query);
   return getAllTabs()
     .then(getSearchResults)
     .then(injectTabsInList);
