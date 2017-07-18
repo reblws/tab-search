@@ -1,3 +1,5 @@
+import Fuse from 'fuse.js';
+
 const deleteButton = document.querySelector('.delete-circle');
 const searchInput = document.querySelector('.search');
 const tabList = document.querySelector('.tab-list');
