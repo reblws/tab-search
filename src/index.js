@@ -13,7 +13,6 @@ import {
 } from './constants';
 import filterResults from './search';
 
-
 // Initialize tabs
 populateTabList();
 
@@ -25,7 +24,10 @@ document.addEventListener('DOMContentLoaded', () =>
 window.addEventListener('keydown', handleKeyDown);
 searchInput.addEventListener('change', updateSearchResults);
 searchInput.addEventListener('keyup', updateSearchResults);
-deleteButton.addEventListener('click', event => clearInput(event.target));
+deleteButton.addEventListener('click', (event) => {
+  clearInput(event.target);
+  tabList.childNodes[0].focus();
+});
 
 function handleKeyDown(event) {
   switch (event.key) {
