@@ -15,24 +15,13 @@ function initializeTabs() {
   return () => tabs;
 }
 
-export const badFavIcons = badFavIconCache();
+const badFavIcons = badFavIconCache();
 export const getAllTabs = initializeTabs();
 
-export function clearChildren(node) {
+function clearChildren(node) {
   while (node.firstChild) {
     node.removeChild(node.firstChild);
   }
-}
-
-function handleBadSvg() {
-  badFavIcons().push(this.src);
-  this.src = favIconFallback;
-}
-
-function shortenString(str) {
-  return str.length >= 120
-    ? `${str.slice(0, 90)}...`
-    : str;
 }
 
 function isChromeLink(src) {
@@ -55,7 +44,7 @@ export function switchActiveTab(id) {
   window.close();
 }
 
-export function switchTabs() {
+function switchTabs() {
   // this: should be the tab-object node
   const tabId = this.dataset.id;
   switchActiveTab(tabId);
@@ -130,6 +119,11 @@ function createTabObject({
   tabObjectNode.appendChild(tabInfoNode);
 
   return tabObjectNode;
+}
+
+function handleBadSvg() {
+  badFavIcons().push(this.src);
+  this.src = favIconFallback;
 }
 
 // Get focused node's position relative to the current scrolled view
