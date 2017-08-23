@@ -3,6 +3,7 @@
 TabSearch is a Firefox and Chrome browser extension for searching and managing the open tabs in a window. It provides a keyboard-accessible, incremental search interface for managing open tabs.
 
 [Available from Mozilla Addons](https://addons.mozilla.org/en-US/firefox/addon/tab_search/)
+
 ![screenshot](https://user-images.githubusercontent.com/9971847/29625159-f34baa02-87f8-11e7-965d-a76d8262c643.png)
 
 ## Keyboard Shortcuts
