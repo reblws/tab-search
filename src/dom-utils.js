@@ -29,7 +29,9 @@ function isChromeLink(src) {
 }
 
 function isURL(src) {
-  return /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(src);
+  const urlPattern = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+  const spacePattern = /\s+/g;
+  return urlPattern.test(src) && !spacePattern.test(src);
 }
 
 function getBasePath(src) {
