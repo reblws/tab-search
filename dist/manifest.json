@@ -18,7 +18,7 @@
   },
   "browser_action": {
     "default_icon": "icons/logo-48.png",
-    "default_title": "SearchTab",
+    "default_title": "TabSearch",
     "default_popup": "popup/index.html"
   },
   "commands": {
