@@ -76,7 +76,7 @@ function transformToChromeManifest(content) {
   delete manifest.icon;
   delete manifest.applications;
 
-  manifest.browser_action.default_icon = 'assets/search64.png';
+  manifest.browser_action.default_icon = 'icons/logo-48.png';
   manifest.minimum_chrome_version = '59.0.3071';
   return JSON.stringify(manifest, null, 2);
 }
