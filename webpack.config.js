@@ -27,6 +27,10 @@ function getPlugins() {
       from: path.join(distFolder, 'popup'),
       to: path.join(releaseFolder('firefox'), 'popup'),
     },
+    {
+      from: path.join(distFolder, 'icons'),
+      to: path.join(releaseFolder('firefox'), 'icons'),
+    },
     // Chrome
     {
       from: path.join(distFolder, 'assets'),
@@ -35,6 +39,10 @@ function getPlugins() {
     {
       from: path.join(distFolder, 'popup'),
       to: path.join(releaseFolder('chrome'), 'popup'),
+    },
+    {
+      from: path.join(distFolder, 'icons'),
+      to: path.join(releaseFolder('chrome'), 'icons'),
     },
     {
       from: path.join(distFolder, 'manifest.json'),
