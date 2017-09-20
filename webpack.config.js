@@ -27,6 +27,10 @@ function getPlugins() {
       from: path.join(distFolder, 'popup'),
       to: path.join(releaseFolder('firefox'), 'popup'),
     },
+    {
+      from: path.join(distFolder, 'icons'),
+      to: path.join(releaseFolder('firefox'), 'icons'),
+    },
     // Chrome
     {
       from: path.join(distFolder, 'assets'),
@@ -35,6 +39,10 @@ function getPlugins() {
     {
       from: path.join(distFolder, 'popup'),
       to: path.join(releaseFolder('chrome'), 'popup'),
+    },
+    {
+      from: path.join(distFolder, 'icons'),
+      to: path.join(releaseFolder('chrome'), 'icons'),
     },
     {
       from: path.join(distFolder, 'manifest.json'),
@@ -64,16 +72,11 @@ function transformToChromeManifest(content) {
   *    -- applications
   */
   const manifest = JSON.parse(content);
+  manifest.icons = manifest.icon;
   delete manifest.icon;
   delete manifest.applications;
 
-  manifest.browser_action.default_icon = 'assets/search64.png';
-  // New keys we need to set
-  manifest.icons = {
-    32: 'assets/search32.png',
-    64: 'assets/search64.png',
-    128: 'assets/search128.png',
-  };
+  manifest.browser_action.default_icon = 'icons/logo-48.png';
   manifest.minimum_chrome_version = '59.0.3071';
   return JSON.stringify(manifest, null, 2);
 }

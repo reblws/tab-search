@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "TabSearch",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Easy tab search & switching",
   "applications": {
     "gecko": {
@@ -13,12 +13,12 @@
     "activeTab"
   ],
   "icon": {
-    "32": "assets/search.svg",
-    "48": "assets/search.svg"
+    "48": "icons/logo-48.png",
+    "96": "icons/logo-96.png"
   },
   "browser_action": {
-    "default_icon": "assets/search.svg",
-    "default_title": "SearchTab",
+    "default_icon": "icons/logo-48.png",
+    "default_title": "TabSearch",
     "default_popup": "popup/index.html"
   },
   "commands": {
