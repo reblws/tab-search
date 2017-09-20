@@ -37,6 +37,7 @@ Step 2:Navigate to the root of the directory you cloned and run:
 ### 0.2.1
 
 - New icon! Now visible in dark browser themes.
+- Fixed wrong title for extension when hovering over the icon
 - Fixed issue where tab-titles with urls and spaces caused the tabs to not load
 
 ### 0.2.0
