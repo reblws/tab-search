@@ -105,7 +105,7 @@ function createTabObject({
   tabInfoNode.setAttribute('class', 'tab-info');
 
   //      <strong>${title}</strong>
-  const titleNode = document.createElement('strong');
+  const titleNode = document.createElement('div');
   titleNode.classList.add('tab-title');
   titleNode.appendChild(document.createTextNode(tabTitle));
 
