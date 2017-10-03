@@ -1,6 +1,11 @@
+/* @import url('https://rsms.me/inter/inter-ui.css');
+ */
+/* Encode the font as data: URI since there's no good way to load custom fonts */
+
+
 body {
   background-color: rgb(238, 238, 238);
-  font-family: sans-serif;
+  font-family: 'Inter UI', sans-serif;
 }
 
 strong {
@@ -25,7 +30,7 @@ header {
 }
 
 .tab-list {
-	font-size: 12px;
+  font-size: 12px;
 	display: flex;
 	flex-direction: column;
 	overflow-y: scroll;
@@ -69,7 +74,7 @@ header {
 }
 
 .tab-object {
-	display: flex;
+  display: flex;
 	align-items: center;
 	justify-content: center;
 	width: 20rem;
@@ -102,7 +107,7 @@ header {
 }
 
 .no-result {
-	display: flex;
+  display: flex;
 	flex-direction: column;
 	align-items: center;
   height: 300px;
@@ -118,12 +123,11 @@ header {
 }
 
 .tab-title {
-  font-weight: bold;
   font-size: 1.1em;
+  font-weight: 500;
 }
 
 .tab-info {
-  font-family: sans-serif;
   font-size: 0.7rem;
 }
 
@@ -144,7 +148,7 @@ p {
 }
 
 .delete-circle {
-	position: absolute;
+  position: absolute;
 	max-width: 16px;
 	top: 14px;
 	right: 31px;
@@ -154,3 +158,4 @@ p {
 .hidden {
   visibility: hidden;
 }
+
