@@ -9,7 +9,7 @@ body {
 }
 
 strong {
-  font-weight: bold;
+  font-weight: 500;
 }
 
 input[type="search"] {
@@ -110,13 +110,23 @@ header {
 .no-result {
   display: flex;
 	flex-direction: column;
-	align-items: center;
+  align-items: center;
+  justify-content: center;
   height: 300px;
   width: 20rem;
 	padding-top: 1em;
 	padding-bottom: 1em;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+}
+
+.no-result__circle {
+  height: 50px;
+  margin-bottom: 0.8rem;
+}
+
+.no-result__msg {
+  font-size: 1rem;
 }
 
 .tab-object > .tab-info {

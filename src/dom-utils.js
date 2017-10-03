@@ -150,10 +150,12 @@ export function createNoResult() {
   noResultNode.classList.add('no-result');
 
   const alertCircleNode = document.createElement('object');
+  alertCircleNode.classList.add('no-result__circle');
   alertCircleNode.setAttribute('type', 'image/svg+xml');
   alertCircleNode.setAttribute('data', alertCircle);
 
   const strongMsgNode = document.createElement('strong');
+  strongMsgNode.classList.add('no-result__msg');
   strongMsgNode.appendChild(document.createTextNode('No tabs found'));
 
   noResultNode.appendChild(alertCircleNode);
