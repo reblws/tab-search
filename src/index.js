@@ -41,12 +41,15 @@ function handleKeyDown(event) {
       break;
     case 'Enter':
       event.preventDefault();
+
+      // If we're pressing enter from the searchbar
       if (
         !document.activeElement.className.includes('tab-object')
         && !document.activeElement.className.includes('no-result')
       ) {
-        tabList.childNodes[0].focus();
-        setTimeout(() => switchActiveTab(document.activeElement.dataset.id), 150);
+        if (tabList.childNodes[0].dataset) {
+          switchActiveTab(tabList.childNodes[0].dataset.id);
+        }
       } else {
         switchActiveTab(document.activeElement.dataset.id);
       }

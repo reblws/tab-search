@@ -1,10 +1,15 @@
+/* @import url('https://rsms.me/inter/inter-ui.css');
+ */
+/* Encode the font as data: URI since there's no good way to load custom fonts */
+
+
 body {
   background-color: rgb(238, 238, 238);
-  font-family: sans-serif;
+  font-family: 'Inter UI', sans-serif;
 }
 
 strong {
-  font-weight: bold;
+  font-weight: 500;
 }
 
 input[type="search"] {
@@ -25,7 +30,7 @@ header {
 }
 
 .tab-list {
-	font-size: 12px;
+  font-size: 12px;
 	display: flex;
 	flex-direction: column;
 	overflow-y: scroll;
@@ -57,6 +62,7 @@ header {
   border-radius: 5px;
   transition: all 0.15s ease-in-out;
   outline: none;
+  font-family: "Inter UI";
 }
 
 .search:focus {
@@ -69,7 +75,7 @@ header {
 }
 
 .tab-object {
-	display: flex;
+  display: flex;
 	align-items: center;
 	justify-content: center;
 	width: 20rem;
@@ -102,9 +108,10 @@ header {
 }
 
 .no-result {
-	display: flex;
+  display: flex;
 	flex-direction: column;
-	align-items: center;
+  align-items: center;
+  justify-content: center;
   height: 300px;
   width: 20rem;
 	padding-top: 1em;
@@ -113,23 +120,32 @@ header {
   padding-right: 0.5rem;
 }
 
+.no-result__circle {
+  height: 50px;
+  margin-bottom: 0.8rem;
+}
+
+.no-result__msg {
+  font-size: 1rem;
+}
+
 .tab-object > .tab-info {
   flex: 1;
 }
 
 .tab-title {
-  font-weight: bold;
+  line-height: 1.2;
+  margin-bottom: 0.25em;
   font-size: 1.1em;
+  font-weight: 500;
 }
 
 .tab-info {
-  font-family: sans-serif;
   font-size: 0.7rem;
 }
 
 .tab-info > p {
   width: 225px;
-  font-size: 0.8em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -144,7 +160,7 @@ p {
 }
 
 .delete-circle {
-	position: absolute;
+  position: absolute;
 	max-width: 16px;
 	top: 14px;
 	right: 31px;
@@ -154,3 +170,4 @@ p {
 .hidden {
   visibility: hidden;
 }
+

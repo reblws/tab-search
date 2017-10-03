@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "TabSearch",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Easy tab search & switching",
   "applications": {
     "gecko": {
@@ -12,7 +12,7 @@
     "tabs",
     "activeTab"
   ],
-  "icon": {
+  "icons": {
     "48": "icons/logo-48.png",
     "96": "icons/logo-96.png"
   },

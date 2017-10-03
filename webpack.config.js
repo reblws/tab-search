@@ -63,8 +63,6 @@ function getPlugins() {
 function transformToChromeManifest(content) {
   /*
   * Keys to modify:
-  *    -- icon->icons
-  *        -- .svg -> .png
   *    -- browser_action.default_icon: "assets/search64.png"
   * Keys to add:
   *    -- minimum_chrome_version: "59.0.3071"
@@ -72,8 +70,6 @@ function transformToChromeManifest(content) {
   *    -- applications
   */
   const manifest = JSON.parse(content);
-  manifest.icons = manifest.icon;
-  delete manifest.icon;
   delete manifest.applications;
 
   manifest.browser_action.default_icon = 'icons/logo-48.png';
