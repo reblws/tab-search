@@ -34,6 +34,12 @@ Step 2:Navigate to the root of the directory you cloned and run:
 
 ## Changelog
 
+### 0.2.2
+- Fixed issue where two enter-key presses were required to navigate to the first search result
+- Changed main font to Inter UI
+- Numerous tweaks to typesetting
+- Vertically centered no-result message
+
 ### 0.2.1
 
 - New icon! Now visible in dark browser themes.
