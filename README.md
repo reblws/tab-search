@@ -34,6 +34,9 @@ Step 2:Navigate to the root of the directory you cloned and run:
 
 ## Changelog
 
+### 0.2.3
+- No `unsafe-eval` in content security policy
+
 ### 0.2.2
 - Fixed issue where two enter-key presses were required to navigate to the first search result
 - Changed main font to Inter UI
