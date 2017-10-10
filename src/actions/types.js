@@ -1,0 +1,8 @@
+export const INITIALIZE_TABS = 'INITIALIZE_TABS';
+export const SWITCH_TAB = 'SWITCH_TAB';
+
+export const RECEIVE_TABS = 'RECEIVE_TABS';
+export const DELETE_TAB = 'DELETE_TAB';
+export const UPDATE_ACTIVE_TAB = 'UPDATE_ACTIVE_TAB';
+
+export const UPDATE_SETTING = 'UPDATE_SETTING';
