@@ -1,6 +1,9 @@
 {
   "dependencies": {
-    "fuse.js": "^3.0.5"
+    "fuse.js": "^3.0.5",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0",
+    "redux-webext": "^1.1.2"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",

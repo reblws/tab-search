@@ -21,6 +21,9 @@
     "default_title": "TabSearch",
     "default_popup": "popup/index.html"
   },
+  "background": {
+    "scripts": ["background.js"]
+  },
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {
