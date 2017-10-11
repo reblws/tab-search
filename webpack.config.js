@@ -77,31 +77,48 @@ function transformToChromeManifest(content) {
   return JSON.stringify(manifest, null, 2);
 }
 
-function getOutput() {
+function getOutput(filename) {
   const output = {};
   if (isProduction) {
     output.path = path.join(__dirname, 'releases', 'firefox', 'popup');
-    output.filename = 'bundle.js';
+    output.filename = filename;
   } else {
     output.path = path.join(__dirname, 'dist', 'popup');
-    output.filename = 'bundle.js';
+    output.filename = filename;
   }
   return output;
 }
 
-module.exports = {
-  entry: path.join(__dirname, 'src', 'index.js'),
-  module: {
-    loaders: [
-      {
-        test: /\.js$/i,
-        loader: 'babel-loader',
-        query: {
-          plugins: ['transform-es2015-modules-commonjs'],
-        },
+function getLoaders() {
+  return [
+    {
+      test: /\.js$/i,
+      loader: 'babel-loader',
+      query: {
+        plugins: ['transform-es2015-modules-commonjs'],
       },
-    ],
+    },
+  ];
+}
+
+module.exports = [
+  {
+    entry: path.join(__dirname, 'src', 'pages', 'popup', 'index.js'),
+    module: {
+      loaders: getLoaders(),
+    },
+    plugins: getPlugins(),
+    output: getOutput('bundle.js'),
   },
-  plugins: getPlugins(),
-  output: getOutput(),
-};
+  {
+    entry: path.join(__dirname, 'src', 'pages', 'background', 'index.js'),
+    module: {
+      loaders: getLoaders(),
+    },
+    plugins: getPlugins(),
+    output: {
+      path: path.join(__dirname, 'dist'),
+      filename: 'background.js',
+    },
+  },
+];

@@ -6,29 +6,23 @@ export function initializeTabs() {
   return (dispatch) => {
     // Query for all window-tabs, it's up to each individual window's popup
     // script to filter the results
-    browser.tabs.query()
+    browser.tabs.query({})
       .then(tabs => dispatch(receiveTabs(tabs)))
       .catch(() => {
         throw new Error('Ran into a problem loading browser\'s tabs.');
       });
-    browser.tabs.getCurrent()
-      .then(currentTab => dispatch(updateActiveTab(currentTab)));
   };
 }
 
 export function deleteTab(tabId) {
-  return dispatch => 'foo';
-}
-
-export function switchTab(tabId) {
   return (dispatch) => {
-    browser.tabs.update(tabId, { active: true })
-      .then(updatedTab => dispatch(updateActiveTab(updatedTab)))
-      .catch((err) => {
-        throw new Error(`Ran into an error switching the active tab. ${err}`);
+    browser.tabs.remove(tabId)
+      .catch(() => {
+        throw new Error('Ran into a problem deleting tabs.');
       });
   };
 }
+
 
 /* Pure actions */
 // Reducer for updating the user's settings
@@ -50,9 +44,13 @@ export function receiveTabs(tabs) {
 }
 
 // Accepts a Tab object and passes the id
-export function updateActiveTab({ id }) {
+export function updateActiveTab(tab) {
   return {
     type: types.UPDATE_ACTIVE_TAB,
-    payload: id,
+    payload: tab.id,
   };
+}
+
+export function switchTabs(tabId) {
+  browser.tabs.update(tabId, { active: true });
 }

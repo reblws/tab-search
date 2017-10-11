@@ -10,13 +10,7 @@ function badFavIconCache() {
   return () => badIconCache;
 }
 
-function initializeTabs() {
-  const tabs = browser.tabs.query({ currentWindow: true });
-  return () => tabs;
-}
-
 const badFavIcons = badFavIconCache();
-export const getAllTabs = initializeTabs();
 
 function clearChildren(node) {
   while (node.firstChild) {
@@ -50,14 +44,6 @@ function switchTabs() {
   // this: should be the tab-object node
   const tabId = this.dataset.id;
   switchActiveTab(tabId);
-}
-
-export function clearInput(node) {
-  node.value = '';
-}
-
-export function populateTabList() {
-  getAllTabs().then(injectTabsInList);
 }
 
 export function tabToTag({ favIconUrl, title, id, url }) {
@@ -237,3 +223,11 @@ export function navigateResults(direction) {
   }
 }
 
+// Function for initializing the lists
+// Later when we add recently-closed tabs and history, this is where we
+// interpret the currently configured settings
+export function populateTabList(store) {
+  const { getState } = store;
+  injectTabsInList(getState().tabs.loadedTabs);
+  return store;
+}
