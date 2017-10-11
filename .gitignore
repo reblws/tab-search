@@ -3,4 +3,5 @@ build_chrome
 .vscode/
 node_modules/
 dist/popup/bundle.js
+dist/background.js
 releases/
