@@ -4,6 +4,7 @@ import {
   navigateResults,
   injectTabsInList,
   deleteTab,
+  switchTabs,
 } from './dom-utils';
 import {
   deleteButton,
@@ -86,5 +87,14 @@ export function handleKeyDown(event) {
     default:
       searchInput.focus();
       break;
+  }
+}
+
+export function handleTabClick(event) {
+  const tabId = parseInt(event.currentTarget.dataset.id, 10);
+  if (event.ctrlKey) {
+    deleteTab(tabId, true);
+  } else {
+    switchActiveTab(tabId);
   }
 }

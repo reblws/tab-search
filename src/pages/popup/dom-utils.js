@@ -35,12 +35,6 @@ export function switchActiveTab(id) {
   window.close();
 }
 
-export function switchTabs() {
-  // this: should be the tab-object node
-  const tabId = this.dataset.id;
-  switchActiveTab(tabId);
-}
-
 export function tabToTag({ favIconUrl, title, id, url }) {
   const isValidFavIconUrl = favIconUrl
     && !isChromeLink(favIconUrl)
@@ -146,8 +140,7 @@ export function createNoResult() {
 }
 
 export function injectTabsInList(tabArray) {
-  const wasNoResult = tabList.querySelectorAll('.tab-object').length ===
-0;
+  const wasNoResult = tabList.querySelectorAll('.tab-object').length === 0;
   const showNoResult = tabArray.length === 0;
   // Don't update dom if we're going to show no results again
   if (wasNoResult && showNoResult) return;
@@ -232,7 +225,7 @@ export function populateTabList(store) {
   return store;
 }
 
-export function deleteTab(tabId) {
+export function deleteTab(tabId, wasClicked = false) {
   // Save the next element to save
   const elementToRemove = [...tabList.childNodes].find(
     // eslint-disable-next-line eqeqeq
@@ -246,5 +239,7 @@ export function deleteTab(tabId) {
   // isn't updated with the latest tabs after tab deletion`
   deletedTabsCache().push(tabId);
   tabList.removeChild(elementToRemove);
-  setTimeout(() => nextElementToFocus.focus(), 150);
+  if (!wasClicked) {
+    nextElementToFocus.focus();
+  }
 }
