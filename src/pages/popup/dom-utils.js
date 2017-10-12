@@ -238,10 +238,13 @@ export function deleteTab(tabId) {
     // eslint-disable-next-line eqeqeq
     ({ dataset }) => dataset.id == tabId,
   );
+  const nextElementToFocus = elementToRemove.nextSibling
+    ? elementToRemove.nextSibling
+    : elementToRemove.previousSibling;
   browser.tabs.remove(tabId);
   // Cache the deleted tabId since the current store passed into configureSearch
   // isn't updated with the latest tabs after tab deletion`
   deletedTabsCache().push(tabId);
   tabList.removeChild(elementToRemove);
-  setTimeout(() => searchInput.focus(), 150);
+  setTimeout(() => nextElementToFocus.focus(), 150);
 }
