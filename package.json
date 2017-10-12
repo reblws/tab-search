@@ -25,6 +25,7 @@
   },
   "scripts": {
     "start": "webpack --progress --colors --watch",
-    "build": "webpack && NODE_ENV=production webpack"
+    "build": "webpack && NODE_ENV=production webpack",
+    "web-ext": "web-ext run -s dist/"
   }
 }
