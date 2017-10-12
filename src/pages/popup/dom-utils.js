@@ -4,14 +4,8 @@ import {
   tabList,
   searchInput,
 } from './constants';
+import { badFavIconCache, deletedTabsCache } from './caches';
 // Store all the bad favIcons so we don't get loading jank if a favIcon !exist
-function badFavIconCache() {
-  const badIconCache = [];
-  return () => badIconCache;
-}
-
-const badFavIcons = badFavIconCache();
-
 function clearChildren(node) {
   while (node.firstChild) {
     node.removeChild(node.firstChild);
@@ -49,7 +43,7 @@ function switchTabs() {
 export function tabToTag({ favIconUrl, title, id, url }) {
   const isValidFavIconUrl = favIconUrl
     && !isChromeLink(favIconUrl)
-    && !badFavIcons().includes(favIconUrl);
+    && !badFavIconCache().includes(favIconUrl);
   const favIconLink = isValidFavIconUrl
     ? favIconUrl
     : favIconFallback;
@@ -110,20 +104,21 @@ function createTabObject({
 }
 
 function handleBadSvg() {
-  badFavIcons().push(this.src);
+  badFavIconCache().push(this.src);
   this.src = favIconFallback;
 }
 
 // Get focused node's position relative to the current scrolled view
 export function getNodePositions(parentNode, selectedNode) {
+  const parentHeight = parentNode.offsetHeight;
+  const selectedTop = (
+    selectedNode.offsetTop - parentNode.offsetTop
+  ) - parentNode.scrollTop;
+  const selectedBottom = selectedNode.offsetHeight + selectedTop;
   return {
-    parentHeight: parentNode.offsetHeight,
-    selectedBottom: selectedNode.offsetHeight + (
-      selectedNode.offsetTop - parentNode.offsetTop
-    ) - parentNode.scrollTop,
-    selectedTop: (
-      selectedNode.offsetTop - parentNode.offsetTop
-    ) - parentNode.scrollTop,
+    parentHeight,
+    selectedBottom,
+    selectedTop,
   };
 }
 
@@ -227,7 +222,26 @@ export function navigateResults(direction) {
 // Later when we add recently-closed tabs and history, this is where we
 // interpret the currently configured settings
 export function populateTabList(store) {
-  const { getState } = store;
-  injectTabsInList(getState().tabs.loadedTabs);
+  const { getState, currentWindowId } = store;
+  const { searchAllWindows } = getState().settings;
+  const { loadedTabs } = getState().tabs;
+  const tabs = searchAllWindows
+    ? loadedTabs
+    : loadedTabs.filter(({ windowId }) => windowId === currentWindowId);
+  injectTabsInList(tabs);
   return store;
+}
+
+export function deleteTab(tabId) {
+  // Save the next element to save
+  const elementToRemove = [...tabList.childNodes].find(
+    // eslint-disable-next-line eqeqeq
+    ({ dataset }) => dataset.id == tabId,
+  );
+  browser.tabs.remove(tabId);
+  // Cache the deleted tabId since the current store passed into configureSearch
+  // isn't updated with the latest tabs after tab deletion`
+  deletedTabsCache().push(tabId);
+  tabList.removeChild(elementToRemove);
+  setTimeout(() => searchInput.focus(), 150);
 }

@@ -3,6 +3,7 @@ import {
   switchActiveTab,
   navigateResults,
   injectTabsInList,
+  deleteTab,
 } from './dom-utils';
 import {
   deleteButton,
@@ -10,9 +11,10 @@ import {
   tabList,
 } from './constants';
 import filterResults from './search';
+import { deletedTabsCache } from './caches';
 
 export function configureSearch({ getState }) {
-  const { settings } = getState();
+  const { fuzzySearch } = getState().settings;
   const { loadedTabs } = getState().tabs;
   return function updateSearchResults(event) {
     const isSearchEmpty = searchInput.value.length === 0;
@@ -26,7 +28,9 @@ export function configureSearch({ getState }) {
     const getSearchResults = isSearchEmpty
       ? x => x
       : filterResults(query);
-    return Promise.resolve(loadedTabs)
+    return Promise.resolve(
+      loadedTabs.filter(({ id }) => !deletedTabsCache().includes(id)),
+    )
       .then(getSearchResults)
       .then(injectTabsInList);
   };
@@ -39,6 +43,15 @@ export function clearInput(event) {
 
 export function handleKeyDown(event) {
   switch (event.key) {
+    case 'Control':
+      break;
+    case 'Delete':
+    case 'Backspace':
+      if (event.ctrlKey && document.activeElement !== searchInput) {
+        const tabId = parseInt(document.activeElement.dataset.id, 10);
+        deleteTab(tabId);
+      }
+      break;
     case 'Tab':
     case 'ArrowDown':
     case 'ArrowUp':
