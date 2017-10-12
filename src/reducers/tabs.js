@@ -1,4 +1,4 @@
-import { RECEIVE_TABS, UPDATE_ACTIVE_TAB } from '../actions/types';
+import { RECEIVE_TABS } from '../actions/types';
 
 const initialState = {
   loadedTabs: [],
