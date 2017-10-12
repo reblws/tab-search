@@ -1,3 +1,4 @@
+import { addTabListeners } from './event-listeners';
 import {
   favIconFallback,
   alertCircle,
@@ -34,7 +35,7 @@ export function switchActiveTab(id) {
   window.close();
 }
 
-function switchTabs() {
+export function switchTabs() {
   // this: should be the tab-object node
   const tabId = this.dataset.id;
   switchActiveTab(tabId);
@@ -158,14 +159,13 @@ export function injectTabsInList(tabArray) {
     tabList.appendChild(createNoResult());
   } else {
     tabArray.map(tabToTag).forEach((tabNode) => {
-      tabNode.addEventListener('click', switchTabs, true);
-      tabNode.addEventListener('focus', scrollIfNeeded);
+      addTabListeners(tabNode);
       tabList.appendChild(tabNode);
     });
   }
 }
 
-function scrollIfNeeded(event) {
+export function scrollIfNeeded(event) {
   // If the selected tab isn't completely visible in the scrolled view,
   // force scroll
   const {

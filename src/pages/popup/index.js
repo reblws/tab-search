@@ -1,6 +1,6 @@
 /* Popup initialization */
 import { createUIStore } from 'redux-webext';
-import addEventListeners from './event-listeners';
+import { addEventListeners } from './event-listeners';
 import { populateTabList } from './dom-utils';
 
 
