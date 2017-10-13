@@ -18,7 +18,7 @@
     "default_popup": "popup/index.html"
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["background_bundle.js"]
   },
   "options_ui": {
     "page": "popup/settings/index.html"
