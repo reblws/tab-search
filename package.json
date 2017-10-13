@@ -20,12 +20,14 @@
     "eslint-config": "^0.3.0",
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-plugin-import": "^2.7.0",
+    "fs-extra": "^4.0.2",
     "web-ext": "^1.10.1",
-    "webpack": "^3.3.0"
+    "webpack": "^3.3.0",
+    "webpack-shell-plugin": "^0.5.0"
   },
   "scripts": {
     "start": "webpack --progress --colors --watch",
     "build": "webpack && NODE_ENV=production webpack",
-    "web-ext": "web-ext run -s dist/"
+    "lint": "eslint ."
   }
 }

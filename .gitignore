@@ -4,4 +4,6 @@ build_chrome
 node_modules/
 dist/popup/bundle.js
 dist/background.js
+dist/manifest.json
+dist/assets/js/*
 releases/
