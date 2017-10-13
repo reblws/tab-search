@@ -1,10 +1,5 @@
 import { UPDATE_SETTING } from '../actions/types';
-
-const initialState = {
-  showTabCount: false,
-  searchAllWindows: false,
-  fuzzySearch: true,
-};
+import initialState from './initial-settings';
 
 export default function settings(state = initialState, action) {
   if (action.type !== UPDATE_SETTING) {
