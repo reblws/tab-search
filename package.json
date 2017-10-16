@@ -3,7 +3,7 @@
     "fuse.js": "^3.0.5",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
-    "redux-persist": "rt2zz/redux-persist#v5",
+    "redux-persist": "reblws/redux-persist#v5",
     "redux-thunk": "^2.2.0",
     "redux-webext": "^1.1.2"
   },
@@ -13,6 +13,7 @@
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
+    "babel-preset-flow": "^6.23.0",
     "babel-preset-stage-2": "^6.24.1",
     "clean-webpack-plugin": "^0.1.16",
     "copy-webpack-plugin": "^4.0.1",
@@ -27,7 +28,9 @@
   },
   "scripts": {
     "start": "webpack --progress --colors --watch",
-    "build": "webpack && NODE_ENV=production webpack",
-    "lint": "eslint ."
+    "build:firefox": "webpack --env.targetBrowser=firefox",
+    "build:chrome": "webpack --env.targetBrowser=chrome",
+    "lint": "eslint .",
+    "zip:firefox": "npm run build:firefox && web-ext build -s ./dist"
   }
 }

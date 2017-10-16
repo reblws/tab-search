@@ -2,8 +2,9 @@ webext
 build_chrome
 .vscode/
 node_modules/
-dist/popup/bundle.js
-dist/background.js
+dist/popup_bundle.js
+dist/background_bundle.js
+dist/settings_bundle.js
 dist/manifest.json
 dist/assets/js/*
 releases/
