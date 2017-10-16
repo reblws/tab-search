@@ -1,6 +1,6 @@
 import backgroundStore from './store';
 import addBackgroundListeners from './event-listeners';
-import { initializeTabs } from '../../actions';
+import { initializeTabs } from '../../actions/tabs';
 
 const { dispatch } = backgroundStore;
 
