@@ -1,10 +1,10 @@
-import { RECEIVE_TABS } from '../actions/types';
+import { RECEIVE_TABS } from '../../actions/types';
 
 const initialState = {
   loadedTabs: [],
 };
 
-export default function tabs(state = initialState, action) {
+export default function tabsReducer(state = initialState, action) {
   const { payload } = action;
   switch (action.type) {
     case RECEIVE_TABS:
