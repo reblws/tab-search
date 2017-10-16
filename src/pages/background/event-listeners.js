@@ -1,4 +1,4 @@
-import { initializeTabs } from '../../actions';
+import { initializeTabs } from '../../actions/tabs';
 
 export default function addBackgroundListeners(dispatch) {
   const updateTabs = () => {
