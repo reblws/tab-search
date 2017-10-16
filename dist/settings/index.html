@@ -2,17 +2,19 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="index.css"/>
+    <link href="https://unpkg.com/basscss@7.1.1/css/basscss.min.css" rel="stylesheet">
     <style>
+      fieldset {
+        border: none;
+        padding: 0;
+      }
+      legend {
+        margin-bottom: 0.2rem;
+      }
       .container {
-        width: 80%;
+        width: 100%;
         margin-left: auto;
         margin-right: auto;
-      }
-      .horizontal-flexbox {
-        display: flex;
-        flex-basis: 100%;
-        justify-content: space-between;
       }
       .fixed {
         width: 5px;
@@ -21,13 +23,97 @@
         display: flex;
         align-items: center;
       }
+      .defaults {
+        max-height: 10px;
+      }
+      /* Basscss Input Range */
+
+.input-range {
+  vertical-align: middle;
+  background-color: transparent;
+  padding-top: var(--form-field-padding-y);
+  padding-bottom: var(--form-field-padding-y);
+  color: inherit;
+  background-color: transparent;
+  -webkit-appearance: none;
+}
+
+.input-range::-webkit-slider-thumb {
+  position: relative;
+  width: var(--range-thumb-width);
+  height: var(--range-thumb-height);
+  cursor: pointer;
+  margin-top: var(--range-thumb-offset);
+  border-radius: var(--border-radius);
+  background-color: currentcolor;
+  -webkit-appearance: none;
+}
+
+/* Touch screen friendly pseudo element */
+.input-range::-webkit-slider-thumb:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: calc( -.5 * var(--range-thumb-pseudo-size) + (.5 * var(--range-thumb-height)) );
+  left: calc( (-.5 * var(--range-thumb-pseudo-size)) + (.5 * var(--range-thumb-width)) );
+  width: var(--range-thumb-pseudo-size);
+  height: var(--range-thumb-pseudo-size);
+  opacity: 0;
+}
+
+.input-range::-moz-range-thumb {
+  width: var(--range-thumb-width);
+  height: var(--range-thumb-height);
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  border-color: transparent;
+  border-width: 0;
+  background-color: currentcolor;
+}
+
+.input-range::-webkit-slider-runnable-track {
+  height: var(--range-track-height);
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  background-color: var(--darken-3);
+}
+
+.input-range::-moz-range-track {
+  height: var(--range-track-height);
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  background-color: var(--darken-3);
+}
+
+.input-range:focus {
+  outline: none;
+}
+
+:root {
+  --form-field-padding-x: .5rem;
+  --form-field-padding-y: .5rem;
+  --form-field-height: 2.25rem;
+  --border-radius: 3px;
+  --darken-3: rgba(0, 0, 0, .25);
+
+  --range-thumb-width: var(--form-field-padding-x);
+  --range-thumb-height: calc( var(--form-field-height) - (var(--form-field-padding-y) * 2) );
+  --range-track-height: calc( var(--form-field-padding-y) / 2 );
+  --range-thumb-offset: calc( var(--range-thumb-height) / -2 + (var(--range-track-height) / 2) );
+  --range-thumb-pseudo-size: var(--form-field-height);
+}
+
+
+
     </style>
   </head>
   <body>
     <main class="container">
-      <header class="horizontal-flexbox">
+      <header class="flex flex-justify content-start">
         <h1>TabSearch Settings</h1>
-        <button>Reset to defaults</button>
+        <div class="flex flex-none">
+          <button class="btn btn-primary flex-none">Reset to defaults</button>
+        </div>
       </header>
       <p class="subheader">
         Settings are saved after ever change
@@ -37,6 +123,7 @@
           <legend><h2>Appearance</h2></legend>
           <p class="inputs">
             <input
+              class="field"
               type="checkbox"
               name="showTabCountBadgeText"
               id="showTabCountBadgeText"
@@ -45,6 +132,7 @@
           </p>
           <p class="inputs">
             <input
+              class="field"
               type="checkbox"
               name="enableOverlay"
               id="enableOverlay"
@@ -65,60 +153,71 @@
           <p class="inputs">
               <input
                 type="checkbox"
-                name="showBookmarks"
-                id="showBookmarks"
+                name="showRecentlyClosed"
+                id="showRecentlyClosed"
               >
-              <label for="showBookmarks">Show recently closed tabs</label>
+              <label for="showRecentlyClosed">Show recently closed tabs</label>
           </p>
           <p class="inputs">
               <input
                 type="checkbox"
-                name="showBookmarks"
-                id="showBookmarks"
+                name="enableOverlay"
+                id="enableOverlay"
               >
-              <label for="showBookmarks">Visually centered search results (disables popup)</label>
+              <label for="enableOverlay">Visually centered search results (disables popup)</label>
           </p>
         </fieldset>
         <fieldset>
           <legend><h2>Search Settings</h2></legend>
           <p class="inputs">
-              <input
-                type="checkbox"
-                name="enableFuzzySearch"
-                id="enableFuzzySearch"
-              >
-              <label for="enableFuzzySearch">Show bookmarks</label>
-            </p>
-            <p class="inputs">
-              <input
-                type="checkbox"
-                name="showBookmarks"
-                id="showBookmarks"
-              >
-              <label for="showBookmarks">Show recently closed tabs</label>
-            </p>
-            <p class="inputs">
-              <label class="fixed-width" for="threshold">Fuzzy search similarity threshold: </label>
-              <input
-                type="range"
-                min="0"
-                max="10"
-                name="Fuzzy search similarity threshold"
-                name="threshold"
-                id="threshold"
-              >
-            </p>
-            <p class="inputs">
-              <input
-                type="checkbox"
-                name="showUrls"
-                id="showUrls"
-              >
-              <label for="showUrls">Search by url</label>
-            </p>
+            <input
+              type="checkbox"
+              name="enableFuzzySearch"
+              id="enableFuzzySearch"
+            >
+            <label for="enableFuzzySearch">Enable fuzzy search</label>
+          </p>
+          <p class="inputs">
+            <input
+              type="checkbox"
+              name="showBookmarks"
+              id="showBookmarks"
+            >
+            <label for="showRecentlyClosed">Show recently closed tabs</label>
+          </p>
+          <p class="inputs">
+            <input
+              type="checkbox"
+              name="sortResults"
+              id="sortResults"
+            >
+            <label for="sortResults">Sort results by how close they match the search query</label>
+          </p>
+
+          <p class="inputs">
+            <label class="fixed-width" for="threshold">Fuzzy search similarity threshold: </label>
+            <input
+              class="input-range"
+              type="range"
+              min="0"
+              max="10"
+              name="Fuzzy search similarity threshold"
+              name="threshold"
+              id="threshold"
+            >
+          </p>
+          <p class="inputs">
+            <input
+              type="checkbox"
+              name="showUrls"
+              id="showUrls"
+            >
+            <label for="showUrls">Search by url</label>
+          </p>
         </fieldset>
       </form>
     </main>
+    <script src="../settings_bundle.js"></script>
   </body>
 </html>
 
