@@ -3,7 +3,6 @@ const { join } = require('path');
 
 const srcPath = join(__dirname, 'src');
 const distPath = join(__dirname, 'dist');
-const distAssetsJsPath = join(distPath, 'assets', 'js');
 const pagesPath = join(srcPath, 'pages');
 
 module.exports = ({ targetBrowser }) => ({
@@ -13,7 +12,7 @@ module.exports = ({ targetBrowser }) => ({
     settings: join(pagesPath, 'settings', 'index.js'),
   },
   output: {
-    path: distAssetsJsPath,
+    path: distPath,
     filename: '[name]_bundle.js',
   },
   module: {
