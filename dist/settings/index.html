@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <title>TabSearch Settings</title>
     <link href="https://unpkg.com/basscss@7.1.1/css/basscss.min.css" rel="stylesheet">
     <style>
       fieldset {
@@ -189,7 +190,7 @@
             <input
               type="checkbox"
               name="sortResults"
-              id="sortResults"
+              id="shouldSort"
             >
             <label for="sortResults">Sort results by how close they match the search query</label>
           </p>
@@ -201,7 +202,6 @@
               type="range"
               min="0"
               max="10"
-              name="Fuzzy search similarity threshold"
               name="threshold"
               id="threshold"
             >
