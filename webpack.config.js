@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 const { join } = require('path');
 
@@ -5,7 +6,7 @@ const srcPath = join(__dirname, 'src');
 const distPath = join(__dirname, 'dist');
 const pagesPath = join(srcPath, 'pages');
 
-module.exports = ({ targetBrowser }) => ({
+module.exports = ({ targetBrowser, nodeEnv }) => ({
   entry: {
     popup: join(pagesPath, 'popup', 'index.js'),
     background: join(pagesPath, 'background', 'index.js'),
@@ -31,6 +32,11 @@ module.exports = ({ targetBrowser }) => ({
       onBuildEnd: [
         `node ./scripts/build-manifest.js ${targetBrowser} ${distPath}`,
       ],
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify(nodeEnv),
+      },
     }),
   ],
 });
