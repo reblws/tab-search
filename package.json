@@ -27,9 +27,9 @@
     "webpack-shell-plugin": "^0.5.0"
   },
   "scripts": {
-    "start": "webpack --env.targetBrowser=firefox --progress --colors --watch && npm run watch:firefox",
-    "build:firefox": "webpack --env.targetBrowser=firefox",
-    "build:chrome": "webpack --env.targetBrowser=chrome",
+    "start": "webpack --env.targetBrowser=firefox --env.nodeEnv=development --progress --colors --watch && npm run watch:firefox",
+    "build:firefox": "webpack --env.targetBrowser=firefox --env.nodeEnv=production",
+    "build:chrome": "webpack --env.targetBrowser=chrome --env.nodeEnv=production",
     "lint": "eslint .",
     "zip:firefox": "npm run build:firefox && web-ext build -s ./dist",
     "watch:firefox": "web-ext run -s dist/"
