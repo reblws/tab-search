@@ -21,7 +21,8 @@
     "scripts": ["background_bundle.js"]
   },
   "options_ui": {
-    "page": "popup/settings/index.html"
+    "page": "settings/index.html",
+    "open_in_tab": true
   },
   "commands": {
     "_execute_browser_action": {
