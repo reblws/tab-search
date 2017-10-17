@@ -1,8 +1,8 @@
-export const INITIALIZE_TABS = 'INITIALIZE_TABS';
-export const SWITCH_TAB = 'SWITCH_TAB';
+export const TABS_INITIALIZE = 'TABS_INITIALIZE';
+export const TAB_SWITCH = 'TAB_SWITCH';
 
-export const RECEIVE_TABS = 'RECEIVE_TABS';
-export const DELETE_TAB = 'DELETE_TAB';
-export const UPDATE_ACTIVE_TAB = 'UPDATE_ACTIVE_TAB';
+export const TABS_RECEIVE = 'TABS_RECEIVE';
+export const TAB_DELETE = 'TAB_DELETE';
+export const ACTIVE_TAB_UPDATE = 'UPDATE_ACTIVE_TAB';
 
-export const UPDATE_SETTING = 'UPDATE_SETTING';
+export const SETTING_UPDATE = 'SETTING_UPDATE';
