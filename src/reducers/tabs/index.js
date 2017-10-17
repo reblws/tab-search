@@ -1,4 +1,4 @@
-import { RECEIVE_TABS } from '../../actions/types';
+import { TABS_RECEIVE } from '../../actions/types';
 
 const initialState = {
   loadedTabs: [],
@@ -7,7 +7,7 @@ const initialState = {
 export default function tabsReducer(state = initialState, action) {
   const { payload } = action;
   switch (action.type) {
-    case RECEIVE_TABS:
+    case TABS_RECEIVE:
       return Object.assign({}, state, { loadedTabs: payload });
     // case UPDATE_ACTIVE_TAB:
     //   return Object.assign({}, state, { activeTab: payload });
