@@ -1,4 +1,4 @@
-import { CHECKBOX_UPDATE, RANGE_UPDATE } from '../../actions/types';
+import { CHECKBOX_UPDATE, RANGE_UPDATE, SEARCH_KEY_UPDATE } from '../../actions/types';
 import initialRootState from './initial-settings';
 
 const initialState = initialRootState.fuzzySearch;
@@ -10,11 +10,13 @@ export default function fuzzyReducer(state = initialState, action) {
     return Object.assign({}, state, { [key]: value });
   }
   switch (type) {
+    case SEARCH_KEY_UPDATE:
     case RANGE_UPDATE:
     case CHECKBOX_UPDATE: {
       const options = Object.assign({}, state.options, { [key]: value });
       return Object.assign({}, state, { options });
-    } default:
+    }
+    default:
       return state;
   }
 }
