@@ -1,9 +1,15 @@
+// Tabs
 export const TABS_INITIALIZE = 'TABS_INITIALIZE';
 
-export const TABS_RECEIVE = 'TABS_RECEIVE';
+export const WINDOW_CLOSE = 'WINDOW_CLOSE';
+export const WINDOW_CREATE = 'WINDOW_CREATE';
+
+export const WINDOW_TABS_RECEIVE = 'WINDOW_TABS_RECEIVE';
+export const TAB_CREATE = 'TAB_CREATE';
 export const TAB_DELETE = 'TAB_DELETE';
 export const ACTIVE_TAB_UPDATE = 'UPDATE_ACTIVE_TAB';
 
+// Settings
 export const FUZZY = 'FUZZY/';
 export const CHECKBOX_UPDATE = 'CHECKBOX_UPDATE';
 export const RANGE_UPDATE = 'RANGE_UPDATE';
