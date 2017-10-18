@@ -162,10 +162,10 @@
           <p class="inputs">
               <input
                 type="checkbox"
-                name="enableOverlay"
-                id="enableOverlay"
+                name="searchAllWindows"
+                id="searchAllWindows"
               >
-              <label for="enableOverlay">Visually centered search results (disables popup)</label>
+              <label for="searchAllWindows">Display tabs from all windows</label>
           </p>
         </fieldset>
         <fieldset>
@@ -181,20 +181,19 @@
           <p class="inputs">
             <input
               type="checkbox"
-              name="showBookmarks"
-              id="showBookmarks"
+              name="shouldSort"
+              id="shouldSort"
             >
-            <label for="showRecentlyClosed">Show recently closed tabs</label>
+            <label for="shouldSort">Sort results by how close they match the search query</label>
           </p>
           <p class="inputs">
             <input
               type="checkbox"
-              name="sortResults"
-              id="shouldSort"
+              name="showUrls"
+              id="showUrls"
             >
-            <label for="sortResults">Sort results by how close they match the search query</label>
+            <label for="showUrls">Search by url</label>
           </p>
-
           <p class="inputs">
             <label class="fixed-width" for="threshold">Fuzzy search similarity threshold: </label>
             <input
@@ -205,14 +204,6 @@
               name="threshold"
               id="threshold"
             >
-          </p>
-          <p class="inputs">
-            <input
-              type="checkbox"
-              name="showUrls"
-              id="showUrls"
-            >
-            <label for="showUrls">Search by url</label>
           </p>
         </fieldset>
       </form>
