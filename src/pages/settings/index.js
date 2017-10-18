@@ -3,10 +3,8 @@ import inputMap from './inputs-to-reducer';
 import * as actions from './actions';
 
 // Object containing input ids and their corresponding nodes
-const inputs = [...document.querySelector('form')]
-  .filter(({ nodeName }) => nodeName === 'INPUT')
-  .reduce((acc, node) => Object.assign({}, acc, { [node.id]: node }));
-
+const inputs = [...document.querySelectorAll('input')]
+  .reduce((acc, node) => Object.assign({}, acc, { [node.id]: node }), {});
 // Given the setting object and the location we want to search, return the
 // current setting value
 // e.g. 'fuzzySearch.enableFuzzySearch' -> settings.fuzzySearch.enableFuzzySearch
@@ -14,11 +12,8 @@ function findSetting(settings, location) {
   const locationSplit = location.split('.');
   const hasDepth = locationSplit.length > 1;
   if (hasDepth) {
-    let setting = settings;
-    for (const key of locationSplit) {
-      setting = setting[key];
-    }
-    return setting;
+    const walkObject = (acc, key) => acc[key];
+    return locationSplit.reduce(walkObject, settings);
   }
   return settings[location];
 }
@@ -31,7 +26,7 @@ function getDefaultSettings(settings) {
       case 'checkbox':
         if (typeof stateSettingValue === 'boolean') {
           node.checked = stateSettingValue;
-        } else {
+        } else if (Array.isArray(stateSettingValue)) {
           // If here this is the showUrls options, the state only stores an
           // an array of keys we're allowed to search in. The only thing
           // we can change is whether the 'url' value is present in the array
@@ -65,9 +60,10 @@ function configureEventListeners(dispatch) {
       // Get the location of the key in our state
       const settingsLocation = inputMap[id].split('.');
       const settingKey = settingsLocation[settingsLocation.length - 1];
-      if (settingsLocation[0] === 'fuzzySearch') {
-        console.log(actions.updateFuzzyCheckbox(settingKey, checked));
+      if (settingsLocation[0] === 'fuzzySearch' && settingKey !== 'keys') {
         dispatch(actions.updateFuzzyCheckbox(settingKey, checked));
+      } else if (settingKey === 'keys') {
+        dispatch(actions.updateFuzzySearchKeys(checked));
       } else {
         dispatch(actions.updateCheckbox(settingKey, checked));
       }
@@ -75,7 +71,6 @@ function configureEventListeners(dispatch) {
   };
 }
 
-// First go in and fill the values from our current state
 createUIStore().then((store) => {
   const { dispatch } = store;
   const { settings } = store.getState();
