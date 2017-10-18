@@ -7,7 +7,10 @@ export default function settingsReducer(state = initialState, action) {
   const isFuzzy = action.type.split('/')[0] === 'FUZZY';
 
   if (isFuzzy) {
-    return Object.assign({}, state, { fuzzySearch: fuzzyReducer(action) });
+    return Object.assign({}, state, { fuzzySearch: fuzzyReducer(
+      state.fuzzySearch,
+      action,
+    ) });
   }
 
   if (action.type !== CHECKBOX_UPDATE) {
