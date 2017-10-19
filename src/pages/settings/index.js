@@ -60,7 +60,7 @@ function configureEventListeners(dispatch) {
       // Get the location of the key in our state
       const settingsLocation = inputMap[id].split('.');
       const settingKey = settingsLocation[settingsLocation.length - 1];
-      if (settingsLocation[0] === 'fuzzySearch' && settingKey !== 'keys') {
+      if (settingsLocation[0] === 'fuzzy' && settingKey !== 'keys') {
         dispatch(actions.updateFuzzyCheckbox(settingKey, checked));
       } else if (settingKey === 'keys') {
         dispatch(actions.updateFuzzySearchKeys(checked));
@@ -73,7 +73,7 @@ function configureEventListeners(dispatch) {
 
 createUIStore().then((store) => {
   const { dispatch } = store;
-  const { settings } = store.getState();
+  const settings = store.getState();
   const fillDefaultSettings = getDefaultSettings(settings);
   Object.values(inputs).forEach(fillDefaultSettings);
   Object.values(inputs).forEach(configureEventListeners(dispatch));

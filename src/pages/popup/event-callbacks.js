@@ -4,7 +4,6 @@ import {
   navigateResults,
   injectTabsInList,
   deleteTab,
-  switchTabs,
 } from './dom-utils';
 import {
   deleteButton,
@@ -14,8 +13,19 @@ import {
 import filterResults from './search';
 import { deletedTabsCache } from './caches';
 
+const reduceKeysToObj = obj => (acc, key) => Object.assign({}, acc, {
+  [key]: obj[key],
+});
+const filterEnableKey = key => key !== 'enableFuzzySearch';
 export function configureSearch({ getState, loadedTabs }) {
-  const { fuzzySearch } = getState().settings;
+  const { fuzzy } = getState();
+  const { enableFuzzySearch } = fuzzy;
+  const fuzzySettings = Object.keys(fuzzy)
+    .filter(filterEnableKey)
+    .reduce(reduceKeysToObj(fuzzy), {});
+  const actualSearchSettings = enableFuzzySearch
+    ? fuzzySettings
+    : Object.assign({}, fuzzySettings, { threshold: 0 });
   return function updateSearchResults(event) {
     const isSearchEmpty = searchInput.value.length === 0;
     // If input is empty hide the button
@@ -27,7 +37,7 @@ export function configureSearch({ getState, loadedTabs }) {
     const query = event.target.value.trim().toLowerCase();
     const getSearchResults = isSearchEmpty
       ? x => x
-      : filterResults(query);
+      : filterResults(query, actualSearchSettings);
     return Promise.resolve(
       loadedTabs.filter(({ id }) => !deletedTabsCache().includes(id)),
     )
@@ -64,13 +74,9 @@ export function handleKeyDown(event) {
       event.preventDefault();
 
       // If we're pressing enter from the searchbar
-      if (
-        !document.activeElement.className.includes('tab-object')
-        && !document.activeElement.className.includes('no-result')
-      ) {
-        if (tabList.childNodes[0].dataset) {
-          switchActiveTab(tabList.childNodes[0].dataset.id);
-        }
+      if (document.activeElement !== searchInput
+        && 'id' in tabList.childNodes[0].dataset) {
+        switchActiveTab(tabList.childNodes[0].dataset.id);
       } else {
         switchActiveTab(document.activeElement.dataset.id);
       }

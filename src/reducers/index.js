@@ -1,8 +1,18 @@
 import { combineReducers } from 'redux';
-import tabs from './tabs';
-import settings from './settings';
+import { persistReducer } from 'redux-persist';
+import fuzzySettingsReducer from './fuzzy-settings';
+import generalSettingsReducer from './settings';
+import storage from '../store/storage-adapter';
 
-export default combineReducers({
-  tabs,
-  settings,
+const persistConfig = {
+  key: 'root',
+  storage,
+};
+
+
+const rootReducer = combineReducers({
+  fuzzy: fuzzySettingsReducer,
+  general: generalSettingsReducer,
 });
+
+export default persistReducer(persistConfig, rootReducer);

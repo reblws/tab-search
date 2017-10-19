@@ -11,15 +11,15 @@ import {
   updateFuzzyCheckbox,
   updateFuzzyRange,
   updateFuzzySearchKeys,
-} from '../../actions/settings';
+} from '../../actions';
 
 export default createBackgroundStore({
   store,
   actions: {
     [FUZZY + CHECKBOX_UPDATE]: updateFuzzyCheckbox,
     [FUZZY + RANGE_UPDATE]: updateFuzzyRange,
-    [CHECKBOX_UPDATE]: updateCheckbox,
     [FUZZY + SEARCH_KEY_UPDATE]: updateFuzzySearchKeys,
+    [CHECKBOX_UPDATE]: updateCheckbox,
   },
 });
 
