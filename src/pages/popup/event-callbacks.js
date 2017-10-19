@@ -14,9 +14,8 @@ import {
 import filterResults from './search';
 import { deletedTabsCache } from './caches';
 
-export function configureSearch({ getState }) {
+export function configureSearch({ getState, loadedTabs }) {
   const { fuzzySearch } = getState().settings;
-  const { loadedTabs } = getState().tabs;
   return function updateSearchResults(event) {
     const isSearchEmpty = searchInput.value.length === 0;
     // If input is empty hide the button
