@@ -18,8 +18,8 @@ function findSetting(settings, location) {
   return settings[location];
 }
 
-function getDefaultSettings(settings) {
-  return function fillDefaultSettings(node) {
+function getStateSettings(settings) {
+  return function fillStateSettings(node) {
     const { id, type } = node;
     const stateSettingValue = findSetting(settings, inputMap[id]);
     switch (type) {
@@ -74,11 +74,14 @@ function configureEventListeners(dispatch) {
 createUIStore().then((store) => {
   const { dispatch } = store;
   const settings = store.getState();
-  const fillDefaultSettings = getDefaultSettings(settings);
-  Object.values(inputs).forEach(fillDefaultSettings);
+  const fillStateSettings = getStateSettings(settings);
+  Object.values(inputs).forEach(fillStateSettings);
   Object.values(inputs).forEach(configureEventListeners(dispatch));
+  document.getElementById('reset-defaults').addEventListener('click', () => {
+    dispatch(actions.resetSettings());
+    location.reload(true);
+  });
   return store;
 }).catch((e) => {
   throw e;
 });
-

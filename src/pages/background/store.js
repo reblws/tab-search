@@ -5,12 +5,14 @@ import {
   RANGE_UPDATE,
   SEARCH_KEY_UPDATE,
   FUZZY,
+  SETTINGS_RESET,
 } from '../../actions/types';
 import {
   updateCheckbox,
   updateFuzzyCheckbox,
   updateFuzzyRange,
   updateFuzzySearchKeys,
+  resetSettings,
 } from '../../actions';
 
 export default createBackgroundStore({
@@ -20,6 +22,7 @@ export default createBackgroundStore({
     [FUZZY + RANGE_UPDATE]: updateFuzzyRange,
     [FUZZY + SEARCH_KEY_UPDATE]: updateFuzzySearchKeys,
     [CHECKBOX_UPDATE]: updateCheckbox,
+    [SETTINGS_RESET]: resetSettings,
   },
 });
 
