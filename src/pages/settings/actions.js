@@ -3,6 +3,7 @@ import {
   RANGE_UPDATE,
   FUZZY,
   SEARCH_KEY_UPDATE,
+  SETTINGS_RESET,
 } from '../../actions/types';
 
 export function updateCheckbox(key, value) {
@@ -42,5 +43,11 @@ export function updateFuzzySearchKeys(value) {
       key: 'keys',
       value,
     },
+  };
+}
+
+export function resetSettings() {
+  return {
+    type: SETTINGS_RESET,
   };
 }
