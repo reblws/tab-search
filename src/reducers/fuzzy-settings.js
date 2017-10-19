@@ -3,16 +3,11 @@ import {
   RANGE_UPDATE,
   SEARCH_KEY_UPDATE,
   FUZZY,
+  SETTINGS_RESET,
 } from '../actions/types';
+import { initialFuzzySettings } from './defaults';
 
-export default function fuzzySettingsReducer(state = {
-  enableFuzzySearch: true,
-  shouldSort: true,
-  threshold: 0.5,
-  maxPattenLength: 32,
-  minMatchCharLength: 1,
-  keys: ['title', 'url'],
-}, action) {
+export default function fuzzySettingsReducer(state = initialFuzzySettings, action) {
   const { type } = action;
   switch (type) {
     case FUZZY + SEARCH_KEY_UPDATE: {
@@ -30,6 +25,9 @@ export default function fuzzySettingsReducer(state = {
       const { key, value } = action.payload;
       const newSetting = { [key]: value };
       return Object.assign({}, state, newSetting);
+    }
+    case SETTINGS_RESET: {
+      return initialFuzzySettings;
     }
     default:
       return state;
