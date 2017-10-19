@@ -212,16 +212,9 @@ export function navigateResults(direction) {
 }
 
 // Function for initializing the lists
-// Later when we add recently-closed tabs and history, this is where we
-// interpret the currently configured settings
 export function populateTabList(store) {
-  const { getState, currentWindowId } = store;
-  const { searchAllWindows } = getState().settings;
-  const { loadedTabs } = getState().tabs;
-  const tabs = searchAllWindows
-    ? loadedTabs
-    : loadedTabs.filter(({ windowId }) => windowId === currentWindowId);
-  injectTabsInList(tabs);
+  const { loadedTabs } = store;
+  injectTabsInList(loadedTabs);
   return store;
 }
 
