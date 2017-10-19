@@ -6,7 +6,11 @@ import { populateTabList } from './dom-utils';
 function addTabsToPromiseChain(store) {
   const { getState } = store;
   const { searchAllWindows } = getState().general;
-  return browser.tabs.query({ currentWindow: !searchAllWindows })
+  const tabQueryOptions = {};
+  if (!searchAllWindows) {
+    tabQueryOptions.currentWindow = true;
+  }
+  return browser.tabs.query(tabQueryOptions)
     .then(tabs => Object.assign({}, store, { loadedTabs: tabs }))
     .catch((e) => {
       throw new Error(`Problem loading tabs during popup initialization: ${e}`);
