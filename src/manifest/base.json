@@ -6,7 +6,8 @@
   "permissions": [
     "tabs",
     "activeTab",
-    "storage"
+    "storage",
+    "sessions"
   ],
   "icons": {
     "48": "icons/logo-48.png",
