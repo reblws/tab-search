@@ -6,6 +6,9 @@ import {
   searchInput,
 } from './constants';
 import { badFavIconCache, deletedTabsCache } from './caches';
+
+const d = document;
+
 // Store all the bad favIcons so we don't get loading jank if a favIcon !exist
 function clearChildren(node) {
   while (node.firstChild) {
@@ -35,7 +38,7 @@ export function switchActiveTab(id) {
   window.close();
 }
 
-export function tabToTag({ favIconUrl, title, id, url }) {
+export function tabToTag({ favIconUrl, title, id, url, type, sessionId }) {
   const isValidFavIconUrl = favIconUrl
     && !isChromeLink(favIconUrl)
     && !badFavIconCache().includes(favIconUrl);
@@ -52,41 +55,52 @@ export function tabToTag({ favIconUrl, title, id, url }) {
     url,
     tabTitle,
     favIconLink,
+    type,
+    sessionId,
   });
 }
 
 function createTabObject({
   id,
+  sessionId,
+  type,
   url,
   tabTitle,
   favIconLink,
 }) {
+  const dataId = type === 'session' ? sessionId : id;
+
   // Create the parent div
   // <div class="tab-object" data-id="${id}" tabIndex="0">
-  const tabObjectNode = document.createElement('div');
-  tabObjectNode.setAttribute('data-id', id);
+  const tabObjectNode = d.createElement('div');
   tabObjectNode.setAttribute('tabindex', '0');
   tabObjectNode.classList.add('tab-object');
+  if (type === 'session') {
+    tabObjectNode.classList.add('recently-closed-tab');
+  }
+  // Declare id used for switching
+  tabObjectNode.setAttribute('data-id', dataId);
+  // Declare data type
+  tabObjectNode.setAttribute('data-type', type);
 
-  // favicon
   // <img src="${favIconLink}">
-  const favIconNode = document.createElement('img');
+  const favIconNode = d.createElement('img');
   favIconNode.setAttribute('src', favIconLink);
   favIconNode.onerror = handleBadSvg;
 
   // tab-info
   //    <div class="tab-info">
-  const tabInfoNode = document.createElement('div');
+  const tabInfoNode = d.createElement('div');
   tabInfoNode.setAttribute('class', 'tab-info');
 
   //      <strong>${title}</strong>
-  const titleNode = document.createElement('div');
+  const titleNode = d.createElement('div');
   titleNode.classList.add('tab-title');
-  titleNode.appendChild(document.createTextNode(tabTitle));
+  titleNode.appendChild(d.createTextNode(tabTitle));
 
   //      <p>${url}</p>
-  const urlNode = document.createElement('p');
-  urlNode.appendChild(document.createTextNode(url));
+  const urlNode = d.createElement('p');
+  urlNode.appendChild(d.createTextNode(url));
 
   // Append all block elements
   tabInfoNode.appendChild(titleNode);
@@ -122,17 +136,17 @@ export function createNoResult() {
   //   <object type="image/svg+xml" data="/assets/alert-circle.svg"></object>
   //   <strong>No tabs found</strong>
   // </div>
-  const noResultNode = document.createElement('div');
+  const noResultNode = d.createElement('div');
   noResultNode.classList.add('no-result');
 
-  const alertCircleNode = document.createElement('object');
+  const alertCircleNode = d.createElement('object');
   alertCircleNode.classList.add('no-result__circle');
   alertCircleNode.setAttribute('type', 'image/svg+xml');
   alertCircleNode.setAttribute('data', alertCircle);
 
-  const strongMsgNode = document.createElement('strong');
+  const strongMsgNode = d.createElement('strong');
   strongMsgNode.classList.add('no-result__msg');
-  strongMsgNode.appendChild(document.createTextNode('No tabs found'));
+  strongMsgNode.appendChild(d.createTextNode('No tabs found'));
 
   noResultNode.appendChild(alertCircleNode);
   noResultNode.appendChild(strongMsgNode);
@@ -179,8 +193,8 @@ export function scrollIfNeeded(event) {
 }
 
 export function navigateResults(direction) {
-  if (document.activeElement.nodeName === 'INPUT') {
-    document.querySelector('.tab-object').focus();
+  if (d.activeElement.nodeName === 'INPUT') {
+    d.querySelector('.tab-object').focus();
     return;
   }
 
@@ -188,7 +202,7 @@ export function navigateResults(direction) {
     case 'Tab':
     case 'ArrowRight':
     case 'ArrowDown': {
-      const nextSibling = document.activeElement.nextElementSibling;
+      const nextSibling = d.activeElement.nextElementSibling;
       if (nextSibling) {
         nextSibling.focus();
       } else {
@@ -199,7 +213,7 @@ export function navigateResults(direction) {
     }
     case 'ArrowLeft':
     case 'ArrowUp': {
-      const prevSibling = document.activeElement.previousElementSibling;
+      const prevSibling = d.activeElement.previousElementSibling;
       if (prevSibling) {
         prevSibling.focus();
       } else {
