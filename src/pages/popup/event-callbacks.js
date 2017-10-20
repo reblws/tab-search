@@ -4,21 +4,21 @@ import {
   navigateResults,
   injectTabsInList,
   deleteTab,
-} from './dom-utils';
+} from './utils/dom';
 import {
   deleteButton,
   searchInput,
   tabList,
 } from './constants';
 import filterResults from './search';
-import { deletedTabsCache } from './caches';
 
 const reduceKeysToObj = obj => (acc, key) => Object.assign({}, acc, {
   [key]: obj[key],
 });
 const filterEnableKey = key => key !== 'enableFuzzySearch';
+
 export function configureSearch({ getState, loadedTabs }) {
-  const { fuzzy } = getState();
+  const { fuzzy, general } = getState();
   const { enableFuzzySearch } = fuzzy;
   const fuzzySettings = Object.keys(fuzzy)
     .filter(filterEnableKey)
@@ -26,22 +26,17 @@ export function configureSearch({ getState, loadedTabs }) {
   const actualSearchSettings = enableFuzzySearch
     ? fuzzySettings
     : Object.assign({}, fuzzySettings, { threshold: 0 });
-  return function updateSearchResults(event) {
-    const isSearchEmpty = searchInput.value.length === 0;
+  return function updateSearchResults(event = { currentTarget: { value: '' } }) {
+    const isSearchEmpty = event.currentTarget.value.length === 0;
     // If input is empty hide the button
     if (isSearchEmpty) {
       deleteButton.classList.add('hidden');
     } else {
       deleteButton.classList.remove('hidden');
     }
-    const query = event.target.value.trim().toLowerCase();
-    const getSearchResults = isSearchEmpty
-      ? x => x
-      : filterResults(query, actualSearchSettings);
-    return Promise.resolve(
-      loadedTabs.filter(({ id }) => !deletedTabsCache().includes(id)),
-    )
-      .then(getSearchResults)
+    const query = event.currentTarget.value.trim().toLowerCase();
+    return Promise.resolve(loadedTabs)
+      .then(filterResults(query, actualSearchSettings, general))
       .then(injectTabsInList);
   };
 }
@@ -96,6 +91,7 @@ export function handleKeyDown(event) {
 }
 
 export function handleTabClick(event) {
+  const { id, type } = event.currentTarget.dataset;
   const tabId = parseInt(event.currentTarget.dataset.id, 10);
   if (event.ctrlKey) {
     deleteTab(tabId, true);
