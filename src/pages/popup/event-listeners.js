@@ -4,7 +4,8 @@ import {
 } from './constants';
 import {
   scrollIfNeeded,
-} from './dom-utils';
+  populateTabList,
+} from './utils/dom';
 import {
   handleKeyDown,
   configureSearch,
@@ -13,11 +14,9 @@ import {
 } from './event-callbacks';
 
 export function addEventListeners(store) {
+  // Populate the here and now
   const updateSearchResults = configureSearch(store);
-  // setTimeout(() => searchInput.focus(), 150);
-  // FF57: No longer need the timeout since the new UIStore initializing logic
-  //       takes enough time
-  searchInput.focus();
+  populateTabList(updateSearchResults()).then(() => searchInput.focus());
   window.addEventListener('keydown', handleKeyDown);
   deleteButton.addEventListener('click', clearInput);
   searchInput.addEventListener('change', updateSearchResults);
