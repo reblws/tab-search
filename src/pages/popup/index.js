@@ -1,7 +1,6 @@
 /* Popup initialization */
 import { createUIStore } from 'redux-webext';
 import { addEventListeners } from './event-listeners';
-import { populateTabList } from './dom-utils';
 
 function addTabsToPromiseChain(store) {
   const { getState } = store;
@@ -13,13 +12,14 @@ function addTabsToPromiseChain(store) {
   return browser.tabs.query(tabQueryOptions)
     .then(tabs => Object.assign({}, store, { loadedTabs: tabs }))
     .catch((e) => {
-      throw new Error(`Problem loading tabs during popup initialization: ${e}`);
+      throw new Error(`
+        Problem adding tabs to promise chain during popup initialization: ${e}
+      `);
     });
 }
 
 createUIStore()
   .then(addTabsToPromiseChain)
-  .then(populateTabList)
   .then(addEventListeners)
   .catch((e) => {
     if (process.env.NODE_ENV !== 'production') {
