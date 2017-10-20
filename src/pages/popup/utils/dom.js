@@ -1,11 +1,14 @@
-import { addTabListeners } from './event-listeners';
+import { addTabListeners } from '../event-listeners';
 import {
   favIconFallback,
   alertCircle,
   tabList,
   searchInput,
-} from './constants';
-import { badFavIconCache, deletedTabsCache } from './caches';
+  TAB_TYPE,
+  OTHER_WINDOW_TAB_TYPE,
+  SESSION_TYPE,
+} from '../constants';
+import { badFavIconCache, deletedTabsCache } from '../caches';
 
 const d = document;
 
@@ -68,15 +71,22 @@ function createTabObject({
   tabTitle,
   favIconLink,
 }) {
-  const dataId = type === 'session' ? sessionId : id;
-
+  const dataId = sessionId || id;
   // Create the parent div
   // <div class="tab-object" data-id="${id}" tabIndex="0">
   const tabObjectNode = d.createElement('div');
   tabObjectNode.setAttribute('tabindex', '0');
   tabObjectNode.classList.add('tab-object');
-  if (type === 'session') {
-    tabObjectNode.classList.add('recently-closed-tab');
+  switch (type) {
+    case SESSION_TYPE:
+      tabObjectNode.classList.add(SESSION_TYPE);
+      break;
+    case OTHER_WINDOW_TAB_TYPE:
+      tabObjectNode.classList.add(OTHER_WINDOW_TAB_TYPE);
+      break;
+    default:
+      tabObjectNode.classList.add(TAB_TYPE);
+      break;
   }
   // Declare id used for switching
   tabObjectNode.setAttribute('data-id', dataId);
@@ -170,6 +180,7 @@ export function injectTabsInList(tabArray) {
       tabList.appendChild(tabNode);
     });
   }
+  return tabArray;
 }
 
 export function scrollIfNeeded(event) {
@@ -226,10 +237,8 @@ export function navigateResults(direction) {
 }
 
 // Function for initializing the lists
-export function populateTabList(store) {
-  const { loadedTabs } = store;
-  injectTabsInList(loadedTabs);
-  return store;
+export function populateTabList(search) {
+  return Promise.resolve(search).then(injectTabsInList);
 }
 
 export function deleteTab(tabId, wasClicked = false) {
