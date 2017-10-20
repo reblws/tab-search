@@ -1,8 +1,3 @@
-/* @import url('https://rsms.me/inter/inter-ui.css');
- */
-/* Encode the font as data: URI since there's no good way to load custom fonts */
-
-
 body {
   background-color: rgb(238, 238, 238);
   font-family: 'Inter UI', sans-serif;
@@ -171,3 +166,14 @@ p {
   visibility: hidden;
 }
 
+.tab {
+  border-left: 5px #3498db   solid;
+}
+
+.session {
+  border-left: 5px #cd6155  solid;
+}
+
+.other-window-tab {
+  border-left: 5px #f4d03f    solid;
+}
