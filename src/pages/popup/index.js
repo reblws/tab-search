@@ -1,22 +1,7 @@
 /* Popup initialization */
 import { createUIStore } from 'redux-webext';
 import { addEventListeners } from './event-listeners';
-
-function addTabsToPromiseChain(store) {
-  const { getState } = store;
-  const { searchAllWindows } = getState().general;
-  const tabQueryOptions = {};
-  if (!searchAllWindows) {
-    tabQueryOptions.currentWindow = true;
-  }
-  return browser.tabs.query(tabQueryOptions)
-    .then(tabs => Object.assign({}, store, { loadedTabs: tabs }))
-    .catch((e) => {
-      throw new Error(`
-        Problem adding tabs to promise chain during popup initialization: ${e}
-      `);
-    });
-}
+import { addTabsToPromiseChain } from './utils/browser';
 
 createUIStore()
   .then(addTabsToPromiseChain)

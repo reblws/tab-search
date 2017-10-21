@@ -8,7 +8,7 @@ import {
   OTHER_WINDOW_TAB_TYPE,
   SESSION_TYPE,
 } from '../constants';
-import { badFavIconCache, deletedTabsCache } from '../caches';
+import { badFavIconCache } from '../caches';
 
 const d = document;
 
@@ -236,26 +236,18 @@ export function navigateResults(direction) {
   }
 }
 
+export function removeElementFromTabList(element, wasClicked) {
+  const nextElementToFocus = element.nextSibling
+    ? element.nextSibling
+    : element.previousSibling;
+  tabList.removeChild(element);
+  if (!wasClicked) {
+    nextElementToFocus.focus();
+  }
+}
+
 // Function for initializing the lists
 export function populateTabList(search) {
   return Promise.resolve(search).then(injectTabsInList);
 }
 
-export function deleteTab(tabId, wasClicked = false) {
-  // Save the next element to save
-  const elementToRemove = [...tabList.childNodes].find(
-    // eslint-disable-next-line eqeqeq
-    ({ dataset }) => dataset.id == tabId,
-  );
-  const nextElementToFocus = elementToRemove.nextSibling
-    ? elementToRemove.nextSibling
-    : elementToRemove.previousSibling;
-  browser.tabs.remove(tabId);
-  // Cache the deleted tabId since the current store passed into configureSearch
-  // isn't updated with the latest tabs after tab deletion`
-  deletedTabsCache().push(tabId);
-  tabList.removeChild(elementToRemove);
-  if (!wasClicked) {
-    nextElementToFocus.focus();
-  }
-}
