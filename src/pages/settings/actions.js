@@ -4,7 +4,18 @@ import {
   FUZZY,
   SEARCH_KEY_UPDATE,
   SETTINGS_RESET,
+  NUMBER_UPDATE,
 } from '../../actions/types';
+
+export function updateNumber(key, value) {
+  return {
+    type: NUMBER_UPDATE,
+    payload: {
+      key,
+      value,
+    },
+  };
+}
 
 export function updateCheckbox(key, value) {
   return {
