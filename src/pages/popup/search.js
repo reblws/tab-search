@@ -9,7 +9,7 @@ import {
   identity,
   isOfWindow,
   isOfType,
-  annotateTypeCondtionally,
+  annotateTypeConditionally,
   annotateType,
   doubleFilterAndMerge,
 } from './utils/array';
@@ -30,13 +30,14 @@ export default function filterResult(
       ? identity
       : ({ id }) => !deletedTabsCache().includes(id);
     // First filter any unwanted results
-    const annotatedTabs = loadedTabs.filter(tabFilter)
-      .map(
-        annotateTypeCondtionally(
-          isOfWindow(3),
-          [TAB_TYPE, OTHER_WINDOW_TAB_TYPE],
-        ),
-      );
+    // TODO: when we move all this to browser utils get the proper windowId
+    const annotatedTabs = loadedTabs.filter(tabFilter).map(
+      annotateTypeConditionally(
+        isOfWindow(3),
+        TAB_TYPE,
+        OTHER_WINDOW_TAB_TYPE,
+      ),
+    );
     // If we want to move the closed tabs to the botttom filter it
     const shouldMoveClosedToBottom = showRecentlyClosed
       && alwaysShowRecentlyClosedAtTheBottom;
