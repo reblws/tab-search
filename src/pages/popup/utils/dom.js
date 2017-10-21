@@ -163,24 +163,26 @@ export function createNoResult() {
   return noResultNode;
 }
 
-export function injectTabsInList(tabArray) {
-  const wasNoResult = tabList.querySelectorAll('.tab-object').length === 0;
-  const showNoResult = tabArray.length === 0;
-  // Don't update dom if we're going to show no results again
-  if (wasNoResult && showNoResult) return;
+export function injectTabsInList(getState) {
+  return function doInjectTabsInList(tabArray) {
+    const wasNoResult = tabList.querySelectorAll('.tab-object').length === 0;
+    const showNoResult = tabArray.length === 0;
+    // Don't update dom if we're going to show no results again
+    if (wasNoResult && showNoResult) return tabArray;
 
-  clearChildren(tabList);
+    clearChildren(tabList);
 
-  // Add nodes to tabList & attach event listeners
-  if (showNoResult) {
-    tabList.appendChild(createNoResult());
-  } else {
-    tabArray.map(tabToTag).forEach((tabNode) => {
-      addTabListeners(tabNode);
-      tabList.appendChild(tabNode);
-    });
-  }
-  return tabArray;
+    // Add nodes to tabList & attach event listeners
+    if (showNoResult) {
+      tabList.appendChild(createNoResult());
+    } else {
+      tabArray.map(tabToTag).forEach((tabNode) => {
+        addTabListeners(getState)(tabNode);
+        tabList.appendChild(tabNode);
+      });
+    }
+    return tabArray;
+  };
 }
 
 export function scrollIfNeeded(event) {
@@ -244,6 +246,12 @@ export function removeElementFromTabList(element, wasClicked) {
   if (!wasClicked) {
     nextElementToFocus.focus();
   }
+}
+
+export function repaintElementWithType(element, type) {
+  element.classList.remove(TAB_TYPE);
+  element.classList.add(type);
+  element.dataset.type = type;
 }
 
 // Function for initializing the lists

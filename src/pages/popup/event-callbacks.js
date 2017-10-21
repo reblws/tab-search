@@ -37,7 +37,7 @@ export function configureSearch({ getState, loadedTabs }) {
     const query = event.currentTarget.value.trim().toLowerCase();
     return Promise.resolve(loadedTabs)
       .then(filterResults(query, fuzzySettings, general))
-      .then(injectTabsInList);
+      .then(injectTabsInList(getState));
   };
 }
 
@@ -90,22 +90,25 @@ export function handleKeyDown(event) {
   }
 }
 
-export function handleTabClick(event) {
-  const showRecentlyClosed = false;
-  const { currentTarget, ctrlKey } = event;
-  const { id, type } = currentTarget.dataset;
-  switch (type) {
-    case SESSION_TYPE: {
-      if (ctrlKey) break;
-      restoreClosedTab(id);
-      break;
-    }
-    default: {
-      if (ctrlKey) {
-        deleteTab(currentTarget, true);
-      } else {
-        switchActiveTab(id);
+export function handleTabClick(getState) {
+  return function doHandleTabClick(event) {
+    // TODO: get settings here
+    const { showRecentlyClosed } = getState().general;
+    const { currentTarget, ctrlKey } = event;
+    const { id, type } = currentTarget.dataset;
+    switch (type) {
+      case SESSION_TYPE: {
+        if (ctrlKey) break;
+        restoreClosedTab(id);
+        break;
+      }
+      default: {
+        if (ctrlKey) {
+          deleteTab(currentTarget, showRecentlyClosed, true);
+        } else {
+          switchActiveTab(id);
+        }
       }
     }
-  }
+  };
 }

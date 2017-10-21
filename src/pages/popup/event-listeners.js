@@ -24,7 +24,7 @@ export function addEventListeners(store) {
   return store;
 }
 
-export function addTabListeners(tabNode) {
-  tabNode.addEventListener('click', handleTabClick, true);
+export const addTabListeners = getState => function doAddTabListeners(tabNode) {
+  tabNode.addEventListener('click', handleTabClick(getState), true);
   tabNode.addEventListener('focus', scrollIfNeeded);
 }
