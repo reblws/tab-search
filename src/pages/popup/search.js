@@ -22,6 +22,7 @@ export default function filterResult(
     recentlyClosedLimit,
     alwaysShowRecentlyClosedAtTheBottom: recentAtBottom,
   },
+  currentWindowId,
 ) {
   return function promiseSearchResults(loadedTabs) {
     const isQueryEmpty = query.length === 0;
@@ -30,7 +31,7 @@ export default function filterResult(
     // First filter any unwanted results
     const annotatedTabs = loadedTabs.filter(tabFilter).map(
       annotateTypeConditionally(
-        isOfWindow(3),
+        isOfWindow(currentWindowId),
         TAB_TYPE,
         OTHER_WINDOW_TAB_TYPE,
       ),

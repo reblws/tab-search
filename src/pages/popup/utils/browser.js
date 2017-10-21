@@ -13,12 +13,12 @@ export function addTabsToPromiseChain(store) {
     tabQueryOptions.currentWindow = true;
   }
   return browser.tabs.query(tabQueryOptions)
-    .then(tabs => Object.assign({}, store, { loadedTabs: tabs }))
-    .catch((e) => {
-      throw new Error(`
-        Problem adding tabs to promise chain during popup initialization: ${e}
-      `);
-    });
+    .then(tabs => Object.assign({}, store, { loadedTabs: tabs }));
+}
+
+export function addCurrentWindowIdToPromiseChain(store) {
+  return browser.windows.getCurrent()
+    .then(({ id: currentWindowId }) => Object.assign({}, store, { currentWindowId }));
 }
 
 export function restoreClosedTab(id) {
