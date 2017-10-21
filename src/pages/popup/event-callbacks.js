@@ -16,16 +16,8 @@ import {
 } from './constants';
 import filterResults from './search';
 
-const reduceKeysToObj = obj => (acc, key) => Object.assign({}, acc, {
-  [key]: obj[key],
-});
-const filterEnableKey = key => key !== 'enableFuzzySearch';
-
 export function configureSearch({ getState, loadedTabs, currentWindowId }) {
   const { fuzzy, general } = getState();
-  const fuzzySettings = Object.keys(fuzzy)
-    .filter(filterEnableKey)
-    .reduce(reduceKeysToObj(fuzzy), {});
   return function updateSearchResults(event = { currentTarget: { value: '' } }) {
     const isSearchEmpty = event.currentTarget.value.length === 0;
     // If input is empty hide the button
@@ -36,7 +28,7 @@ export function configureSearch({ getState, loadedTabs, currentWindowId }) {
     }
     const query = event.currentTarget.value.trim().toLowerCase();
     return Promise.resolve(loadedTabs)
-      .then(filterResults(query, fuzzySettings, general, currentWindowId))
+      .then(filterResults(query, fuzzy, general, currentWindowId))
       .then(injectTabsInList(getState));
   };
 }
