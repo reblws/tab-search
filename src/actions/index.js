@@ -4,6 +4,7 @@ import {
   FUZZY,
   SEARCH_KEY_UPDATE,
   SETTINGS_RESET,
+  NUMBER_UPDATE,
 } from './types';
 
 // When action is passed in from ui store the background passes the entire
@@ -49,6 +50,13 @@ export function updateFuzzySearchKeys({ payload }) {
       key: 'keys',
       value,
     },
+  };
+}
+
+export function updateNumber({ payload: { key, value } }) {
+  return {
+    type: NUMBER_UPDATE,
+    payload: { key, value },
   };
 }
 

@@ -6,12 +6,14 @@ import {
   SEARCH_KEY_UPDATE,
   FUZZY,
   SETTINGS_RESET,
+  NUMBER_UPDATE,
 } from '../../actions/types';
 import {
   updateCheckbox,
   updateFuzzyCheckbox,
   updateFuzzyRange,
   updateFuzzySearchKeys,
+  updateNumber,
   resetSettings,
 } from '../../actions';
 
@@ -23,6 +25,7 @@ export default createBackgroundStore({
     [FUZZY + SEARCH_KEY_UPDATE]: updateFuzzySearchKeys,
     [CHECKBOX_UPDATE]: updateCheckbox,
     [SETTINGS_RESET]: resetSettings,
+    [NUMBER_UPDATE]: updateNumber,
   },
 });
 
