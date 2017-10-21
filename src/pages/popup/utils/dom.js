@@ -248,10 +248,11 @@ export function removeElementFromTabList(element, wasClicked) {
   }
 }
 
-export function repaintElementWithType(element, type) {
-  element.classList.remove(TAB_TYPE);
-  element.classList.add(type);
-  element.dataset.type = type;
+export function repaintElementWithType(element, typeToAdd) {
+  const { type: typeToRemove } = element.dataset;
+  element.classList.remove(typeToRemove);
+  element.classList.add(typeToAdd);
+  element.dataset.type = typeToAdd;
 }
 
 // Function for initializing the lists
