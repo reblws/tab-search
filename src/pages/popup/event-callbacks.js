@@ -3,12 +3,16 @@ import {
   switchActiveTab,
   navigateResults,
   injectTabsInList,
-  deleteTab,
 } from './utils/dom';
+import {
+  restoreClosedTab,
+  deleteTab,
+} from './utils/browser';
 import {
   deleteButton,
   searchInput,
   tabList,
+  SESSION_TYPE,
 } from './constants';
 import filterResults from './search';
 
@@ -19,13 +23,9 @@ const filterEnableKey = key => key !== 'enableFuzzySearch';
 
 export function configureSearch({ getState, loadedTabs }) {
   const { fuzzy, general } = getState();
-  const { enableFuzzySearch } = fuzzy;
   const fuzzySettings = Object.keys(fuzzy)
     .filter(filterEnableKey)
     .reduce(reduceKeysToObj(fuzzy), {});
-  const actualSearchSettings = enableFuzzySearch
-    ? fuzzySettings
-    : Object.assign({}, fuzzySettings, { threshold: 0 });
   return function updateSearchResults(event = { currentTarget: { value: '' } }) {
     const isSearchEmpty = event.currentTarget.value.length === 0;
     // If input is empty hide the button
@@ -36,7 +36,7 @@ export function configureSearch({ getState, loadedTabs }) {
     }
     const query = event.currentTarget.value.trim().toLowerCase();
     return Promise.resolve(loadedTabs)
-      .then(filterResults(query, actualSearchSettings, general))
+      .then(filterResults(query, fuzzySettings, general))
       .then(injectTabsInList);
   };
 }
@@ -91,11 +91,21 @@ export function handleKeyDown(event) {
 }
 
 export function handleTabClick(event) {
-  const { id, type } = event.currentTarget.dataset;
-  const tabId = parseInt(event.currentTarget.dataset.id, 10);
-  if (event.ctrlKey) {
-    deleteTab(tabId, true);
-  } else {
-    switchActiveTab(tabId);
+  const showRecentlyClosed = false;
+  const { currentTarget, ctrlKey } = event;
+  const { id, type } = currentTarget.dataset;
+  switch (type) {
+    case SESSION_TYPE: {
+      if (ctrlKey) break;
+      restoreClosedTab(id);
+      break;
+    }
+    default: {
+      if (ctrlKey) {
+        deleteTab(currentTarget, true);
+      } else {
+        switchActiveTab(id);
+      }
+    }
   }
 }
