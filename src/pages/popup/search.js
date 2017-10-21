@@ -24,6 +24,7 @@ export default function filterResult(
   },
   currentWindowId,
 ) {
+  const { enableFuzzySearch, keys } = options;
   return function promiseSearchResults(loadedTabs) {
     const isQueryEmpty = query.length === 0;
     const isTabType = isOfType(TAB_TYPE);
@@ -48,9 +49,16 @@ export default function filterResult(
     const doFinalOperation = shouldMoveClosedToBottom
       ? doubleFilterAndMerge(isTabType)
       : identity;
-    const search = isQueryEmpty
-      ? identity
-      : arr => new Fuse(arr, options).search(query);
+    let search;
+    if (isQueryEmpty) {
+      search = identity;
+    } else if (enableFuzzySearch) {
+      search = arr => new Fuse(arr, options).search(query);
+    } else {
+      search = arr => arr.filter(tab =>
+        keys.reduce((acc, key) => tab[key].includes(query)),
+      );
+    }
     return arrayToSearch
       .then(search)
       .then(doFinalOperation);
@@ -59,8 +67,13 @@ export default function filterResult(
 
 function getRecentlyClosed(maxResults) {
   const tab = ({ tab: _tab }) => _tab;
-  const getTabsAndAnnotate = objects =>
-    objects.filter(tab).map(tab).map(annotateType(SESSION_TYPE));
+  // Don't want to show new tab pages
+  const isNewTabPage = ({ url }) => url !== 'about:newtab';
+  const getTabsAndAnnotate = objects => objects
+    .filter(tab)
+    .map(tab)
+    .filter(isNewTabPage)
+    .map(annotateType(SESSION_TYPE));
   return browser.sessions.getRecentlyClosed({ maxResults })
     .then(getTabsAndAnnotate);
 }
