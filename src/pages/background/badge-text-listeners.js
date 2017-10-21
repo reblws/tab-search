@@ -5,6 +5,7 @@ const windowOptions = {
 
 export function startCountingBadgeTextAndAddListeners() {
   setBadgeTextInAllWindows();
+  // TODO: debounce onCreated and onRemoved funcs
   browser.tabs.onCreated.addListener(handleOnCreatedTab);
   browser.tabs.onRemoved.addListener(handleOnRemovedTab);
   browser.tabs.onDetached.addListener(handleOnDetachedTab);
@@ -54,6 +55,7 @@ const promiseBadgeTextWindowUpdate = windowId =>
   browser.windows.get(windowId, windowOptions).then(updateWindowBadgeText);
 
 function handleOnCreatedTab({ windowId }) {
+  // TODO: debounce
   promiseBadgeTextWindowUpdate(windowId).catch((e) => {
     throw new Error(`
       Ran into problem handling created tab when watching for badge text updates: ${e}
@@ -84,6 +86,7 @@ function handleOnDetachedTab(tabId, detachInfo) {
   browser.tabs.get(tabId)
     .then((detachedTabDetails) => {
       const { windowId } = detachedTabDetails;
+      // TODO: debounce
       return promiseBadgeTextWindowUpdate(windowId);
     })
     .catch((e) => {
