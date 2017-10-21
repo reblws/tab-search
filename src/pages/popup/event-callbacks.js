@@ -21,7 +21,7 @@ const reduceKeysToObj = obj => (acc, key) => Object.assign({}, acc, {
 });
 const filterEnableKey = key => key !== 'enableFuzzySearch';
 
-export function configureSearch({ getState, loadedTabs }) {
+export function configureSearch({ getState, loadedTabs, currentWindowId }) {
   const { fuzzy, general } = getState();
   const fuzzySettings = Object.keys(fuzzy)
     .filter(filterEnableKey)
@@ -36,7 +36,7 @@ export function configureSearch({ getState, loadedTabs }) {
     }
     const query = event.currentTarget.value.trim().toLowerCase();
     return Promise.resolve(loadedTabs)
-      .then(filterResults(query, fuzzySettings, general))
+      .then(filterResults(query, fuzzySettings, general, currentWindowId))
       .then(injectTabsInList(getState));
   };
 }
