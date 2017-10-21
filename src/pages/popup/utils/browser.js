@@ -1,5 +1,9 @@
 import { deletedTabsCache } from '../caches';
-import { removeElementFromTabList } from './dom';
+import { SESSION_TYPE } from '../constants';
+import {
+  removeElementFromTabList,
+  repaintElementWithType,
+} from './dom';
 
 export function addTabsToPromiseChain(store) {
   const { getState } = store;
@@ -22,12 +26,22 @@ export function restoreClosedTab(id) {
   window.close();
 }
 
-export function deleteTab(elementToRemove, wasClicked = false) {
+export function deleteTab(
+  elementToRemove,
+  showRecentlyClosed,
+  wasClicked = false,
+) {
   const { id } = elementToRemove.dataset;
   // Cache the deleted tabId since the current store passed into configureSearch
   // isn't updated with the latest tabs after tab deletion`
   const tabId = parseInt(id, 10);
-  removeElementFromTabList(elementToRemove, wasClicked);
+  if (!showRecentlyClosed) {
+    removeElementFromTabList(elementToRemove, wasClicked);
+  } else {
+    // Paint it with our indicator instead of removing it from the dom
+    // if we want to show recently closed tabs
+    repaintElementWithType(elementToRemove, SESSION_TYPE);
+  }
   deletedTabsCache().push(tabId);
   browser.tabs.remove(tabId);
 }
