@@ -20,17 +20,14 @@ export default function filterResult(
   {
     showRecentlyClosed,
     recentlyClosedLimit,
-    alwaysShowRecentlyClosedAtTheBottom,
+    alwaysShowRecentlyClosedAtTheBottom: recentAtBottom,
   },
 ) {
   return function promiseSearchResults(loadedTabs) {
     const isQueryEmpty = query.length === 0;
     const isTabType = isOfType(TAB_TYPE);
-    const tabFilter = showRecentlyClosed
-      ? identity
-      : ({ id }) => !deletedTabsCache().includes(id);
+    const tabFilter = ({ id }) => !deletedTabsCache().includes(id);
     // First filter any unwanted results
-    // TODO: when we move all this to browser utils get the proper windowId
     const annotatedTabs = loadedTabs.filter(tabFilter).map(
       annotateTypeConditionally(
         isOfWindow(3),
@@ -38,9 +35,9 @@ export default function filterResult(
         OTHER_WINDOW_TAB_TYPE,
       ),
     );
+
     // If we want to move the closed tabs to the botttom filter it
-    const shouldMoveClosedToBottom = showRecentlyClosed
-      && alwaysShowRecentlyClosedAtTheBottom;
+    const shouldMoveClosedToBottom = showRecentlyClosed && recentAtBottom;
     const arrayToSearch = showRecentlyClosed
       ? Promise.all([
         annotatedTabs,
