@@ -1,5 +1,5 @@
 import { createUIStore } from 'redux-webext';
-import inputMap from './inputs-to-reducer';
+import reducerMap from './inputs-to-reducer';
 import * as actions from './actions';
 
 // Object containing input ids and their corresponding nodes
@@ -21,7 +21,7 @@ function findSetting(settings, location) {
 function getStateSettings(settings) {
   return function fillStateSettings(node) {
     const { id, type } = node;
-    const stateSettingValue = findSetting(settings, inputMap[id]);
+    const stateSettingValue = findSetting(settings, reducerMap[id]);
     switch (type) {
       case 'checkbox':
         if (typeof stateSettingValue === 'boolean') {
@@ -58,7 +58,7 @@ function configureEventListeners(dispatch) {
       }
       // Should be boolean if here
       // Get the location of the key in our state
-      const settingsLocation = inputMap[id].split('.');
+      const settingsLocation = reducerMap[id].split('.');
       const settingKey = settingsLocation[settingsLocation.length - 1];
       if (settingsLocation[0] === 'fuzzy' && settingKey !== 'keys') {
         dispatch(actions.updateFuzzyCheckbox(settingKey, checked));
@@ -79,6 +79,7 @@ createUIStore().then((store) => {
   Object.values(inputs).forEach(configureEventListeners(dispatch));
   document.getElementById('reset-defaults').addEventListener('click', () => {
     dispatch(actions.resetSettings());
+    console.log(location);
     location.reload(true);
   });
   return store;
