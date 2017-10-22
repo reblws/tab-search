@@ -19,6 +19,7 @@ export function startCountingBadgeTextAndAddListeners() {
 
 export function stopCountingBadgeTextAndRemoveListeners() {
   // clear
+  browser.browserAction.setBadgeText({ text: '' });
   browser.tabs.query({}).then((tabs) => {
     tabs.forEach(({ id }) => {
       browser.browserAction.setBadgeText({
