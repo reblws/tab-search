@@ -1,7 +1,8 @@
 {
   "scripts": {
-    "start": "yarn start:firefox",
+    "start": "npm run start:firefox",
     "start:firefox": "webpack --env.targetBrowser=firefox --env.nodeEnv=development --progress --colors --watch",
+    "start:chrome": "webpack --env.targetBrowser=chrome --env.nodeEnv=development --progress --colors --watch",
     "build:firefox": "webpack --env.targetBrowser=firefox --env.nodeEnv=production",
     "build:chrome": "webpack --env.targetBrowser=chrome --env.nodeEnv=production",
     "lint": "eslint .",
