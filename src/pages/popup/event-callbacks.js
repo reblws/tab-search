@@ -61,11 +61,12 @@ export function handleKeyDown(event) {
       event.preventDefault();
 
       // If we're pressing enter from the searchbar
-      if (document.activeElement !== searchInput
-        && 'id' in tabList.childNodes[0].dataset) {
-        switchActiveTab(tabList.childNodes[0].dataset.id);
+      const firstChildNode = tabList.childNodes[0];
+      if (document.activeElement === searchInput
+        && 'id' in firstChildNode.dataset) {
+        firstChildNode.click();
       } else {
-        switchActiveTab(document.activeElement.dataset.id);
+        document.activeElement.click();
       }
       break;
     case 'Escape':
