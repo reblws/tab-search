@@ -1,13 +1,19 @@
+import { debounce } from 'lodash.debounce';
+
 const windowOptions = {
   populate: true,
   windowTypes: ['normal'],
 };
 
+// Save the debounced funcs here so we can remove it with the exact same handler
+let debounceHandleOnCreatedTab;
+let debounceHandleOnRemovedTab;
 export function startCountingBadgeTextAndAddListeners() {
   setBadgeTextInAllWindows();
-  // TODO: debounce onCreated and onRemoved funcs
-  browser.tabs.onCreated.addListener(handleOnCreatedTab);
-  browser.tabs.onRemoved.addListener(handleOnRemovedTab);
+  debounceHandleOnCreatedTab = debounce(handleOnCreatedTab);
+  debounceHandleOnRemovedTab = debounce(handleOnRemovedTab);
+  browser.tabs.onCreated.addListener(debounceHandleOnCreatedTab);
+  browser.tabs.onRemoved.addListener(debounceHandleOnRemovedTab);
   browser.tabs.onDetached.addListener(handleOnDetachedTab);
 }
 
@@ -22,9 +28,9 @@ export function stopCountingBadgeTextAndRemoveListeners() {
     });
   });
   // Remove tab listeners
-  browser.tabs.onCreated.removeListener(handleOnCreatedTab);
+  browser.tabs.onCreated.removeListener(debounceHandleOnCreatedTab);
   browser.tabs.onRemoved.removeListener(handleOnRemovedTab);
-  browser.tabs.onDetached.removeListener(handleOnDetachedTab);
+  browser.tabs.onDetached.removeListener(debounceHandleOnRemovedTab);
 }
 
 function updateWindowBadgeText(browserWindow) {
@@ -96,3 +102,4 @@ function handleOnDetachedTab(tabId, detachInfo) {
       `);
     });
 }
+
