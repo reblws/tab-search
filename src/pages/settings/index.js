@@ -1,9 +1,11 @@
 import { createUIStore } from 'redux-webext';
 import reducerMap from './inputs-to-reducer';
 import * as actions from './actions';
+import addInputBindings from './input-bindings';
 
 // Object containing input ids and their corresponding nodes
 const inputs = [...document.querySelectorAll('input')]
+  .filter(({ id }) => reducerMap[id]) // Filter out all inputs who arent in charge of a setting
   .reduce((acc, node) => Object.assign({}, acc, { [node.id]: node }), {});
 // Given the setting object and the location we want to search, return the
 // current setting value
@@ -32,6 +34,9 @@ function getStateSettings(settings) {
           // we can change is whether the 'url' value is present in the array
           node.checked = stateSettingValue.includes('url');
         }
+        break;
+      case 'number':
+        node.value = stateSettingValue;
         break;
       case 'range':
         node.value = stateSettingValue * 10;
@@ -64,22 +69,29 @@ function configureEventListeners(dispatch) {
         dispatch(actions.updateFuzzyCheckbox(settingKey, checked));
       } else if (settingKey === 'keys') {
         dispatch(actions.updateFuzzySearchKeys(checked));
-      } else {
+      } else if (type === 'checkbox') {
         dispatch(actions.updateCheckbox(settingKey, checked));
+      } else if (type === 'number') {
+        // TODO: change 25 to a constant
+        if (parseInt(value, 10) <= 25) {
+          dispatch(actions.updateNumber(settingKey, value));
+        }
       }
     });
   };
 }
 
+addInputBindings();
+
 createUIStore().then((store) => {
   const { dispatch } = store;
   const settings = store.getState();
   const fillStateSettings = getStateSettings(settings);
+  const attachEventListeners = configureEventListeners(dispatch)
   Object.values(inputs).forEach(fillStateSettings);
-  Object.values(inputs).forEach(configureEventListeners(dispatch));
+  Object.values(inputs).forEach(attachEventListeners);
   document.getElementById('reset-defaults').addEventListener('click', () => {
     dispatch(actions.resetSettings());
-    console.log(location);
     location.reload(true);
   });
   return store;
