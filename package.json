@@ -1,6 +1,16 @@
 {
+  "scripts": {
+    "start": "yarn start:firefox",
+    "start:firefox": "webpack --env.targetBrowser=firefox --env.nodeEnv=development --progress --colors --watch",
+    "build:firefox": "webpack --env.targetBrowser=firefox --env.nodeEnv=production",
+    "build:chrome": "webpack --env.targetBrowser=chrome --env.nodeEnv=production",
+    "lint": "eslint .",
+    "zip:firefox": "npm run build:firefox && web-ext build -s ./dist",
+    "watch:firefox": "web-ext run -s dist/"
+  },
   "dependencies": {
     "fuse.js": "^3.0.5",
+    "lodash.debounce": "^4.0.8",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "redux-persist": "^5.0.0-rc.6",
@@ -25,13 +35,5 @@
     "web-ext": "^1.10.1",
     "webpack": "^3.3.0",
     "webpack-shell-plugin": "^0.5.0"
-  },
-  "scripts": {
-    "start": "webpack --env.targetBrowser=firefox --env.nodeEnv=development --progress --colors --watch && npm run watch:firefox",
-    "build:firefox": "webpack --env.targetBrowser=firefox --env.nodeEnv=production",
-    "build:chrome": "webpack --env.targetBrowser=chrome --env.nodeEnv=production",
-    "lint": "eslint .",
-    "zip:firefox": "npm run build:firefox && web-ext build -s ./dist",
-    "watch:firefox": "web-ext run -s dist/"
   }
 }
