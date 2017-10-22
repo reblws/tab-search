@@ -124,6 +124,10 @@
   border: 1px solid black;
 }
 
+.range-clarification {
+  font-size: 0.9em;
+}
+
     </style>
   </head>
   <body>
@@ -217,9 +221,9 @@
           </p>
           <p class="inputs">
             <input
-            type="checkbox"
-            name="enableFuzzySearch"
-            id="enableFuzzySearch"
+              type="checkbox"
+              name="enableFuzzySearch"
+              id="enableFuzzySearch"
             >
             <label for="enableFuzzySearch">Enable fuzzy search</label>
           </p>
@@ -233,14 +237,31 @@
           </p>
           <p class="inputs">
             <label class="fixed-width" for="threshold">Fuzzy search similarity threshold: </label>
+            <label class="center range-clarification"  for="thresholdDisplay">
+              <strong>1</strong> <br> Strict search
+            </label>
             <input
               class="input-range"
               type="range"
-              min="0"
-              max="10"
+              min="1"
+              max="9"
               name="threshold"
               id="threshold"
             >
+            <label class="center range-clarification" for="thresholdDisplay">
+              <strong>9</strong> <br> Loose search
+            </label>
+            <input
+              type="number"
+              class="number-input"
+              min="1"
+              max="9"
+              name="thresholdDisplay"
+              id="thresholdDisplay"
+            >
+
+
+
           </p>
         </fieldset>
       </form>
