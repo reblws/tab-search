@@ -7,6 +7,7 @@ export default {
   showRecentlyClosed: 'general.showRecentlyClosed',
   searchAllWindows: 'general.searchAllWindows',
   alwaysShowRecentlyClosedAtTheBottom: 'general.alwaysShowRecentlyClosedAtTheBottom',
+  recentlyClosedLimit: 'general.recentlyClosedLimit',
   enableOverlay: 'general.enableOverlay',
   enableFuzzySearch: 'fuzzy.enableFuzzySearch',
   shouldSort: 'fuzzy.shouldSort',
