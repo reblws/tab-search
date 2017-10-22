@@ -1,7 +1,8 @@
 /*
 Key mappings from input id names to corresponding reducer state
 */
-
+// TODO: there's probably a way to do this programmatically instead of relying
+//       on literals. Need to import '/reducers/defaults'
 export default {
   showTabCountBadgeText: 'general.showTabCountBadgeText',
   showRecentlyClosed: 'general.showRecentlyClosed',
