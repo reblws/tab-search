@@ -55,9 +55,8 @@ export default function filterResult(
     } else if (enableFuzzySearch) {
       search = arr => new Fuse(arr, options).search(query);
     } else {
-      search = arr => arr.filter(tab =>
-        keys.reduce((acc, key) => tab[key].includes(query)),
-      );
+      // If enableFuzzySearch is off
+      search = arr => arr.filter(tab => keys.some(key => tab[key].includes(query)));
     }
     return arrayToSearch
       .then(search)
