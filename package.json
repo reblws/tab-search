@@ -3,9 +3,10 @@
     "start": "npm run start:firefox",
     "start:firefox": "webpack --env.targetBrowser=firefox --env.nodeEnv=development --progress --colors --watch",
     "start:chrome": "webpack --env.targetBrowser=chrome --env.nodeEnv=development --progress --colors --watch",
-    "build:firefox": "webpack --env.targetBrowser=firefox --env.nodeEnv=production && web-ext lint dist/",
-    "build:chrome": "webpack --env.targetBrowser=chrome --env.nodeEnv=production && web-ext lint dist/",
-    "eslint": "eslint 'src/**'",
+    "build:firefox": "webpack --env.targetBrowser=firefox --env.nodeEnv=production && npm run lint:web-ext",
+    "build:chrome": "webpack --env.targetBrowser=chrome --env.nodeEnv=production && npm run lint:web-ext",
+    "lint:web-ext": "web-ext lint -s dist/",
+    "lint:eslint": "eslint 'src/**'",
     "zip:firefox": "npm run build:firefox && web-ext build -s ./dist --overwrite-dest",
     "watch:firefox": "webpack --env.targetBrowser=firefox --env.nodeEnv=production"
   },
