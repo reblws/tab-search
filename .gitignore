@@ -7,3 +7,4 @@ dist/*.js.map
 dist/manifest.json
 dist/assets/js/*
 releases/
+web-ext-artifacts/
