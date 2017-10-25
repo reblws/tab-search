@@ -62,8 +62,7 @@ export function handleKeyDown(event) {
 
       // If we're pressing enter from the searchbar
       const firstChildNode = tabList.childNodes[0];
-      if (document.activeElement === searchInput
-        && 'id' in firstChildNode.dataset) {
+      if (document.activeElement === searchInput) {
         firstChildNode.click();
       } else {
         document.activeElement.click();
