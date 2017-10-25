@@ -3,15 +3,16 @@
     "start": "npm run start:firefox",
     "start:firefox": "webpack --env.targetBrowser=firefox --env.nodeEnv=development --progress --colors --watch",
     "start:chrome": "webpack --env.targetBrowser=chrome --env.nodeEnv=development --progress --colors --watch",
-    "build:firefox": "webpack --env.targetBrowser=firefox --env.nodeEnv=production",
-    "build:chrome": "webpack --env.targetBrowser=chrome --env.nodeEnv=production",
-    "lint": "eslint .",
-    "zip:firefox": "npm run build:firefox && web-ext build -s ./dist",
-    "watch:firefox": "web-ext run -s dist/"
+    "build:firefox": "webpack --env.targetBrowser=firefox --env.nodeEnv=production && npm run lint:web-ext",
+    "build:chrome": "webpack --env.targetBrowser=chrome --env.nodeEnv=production && npm run lint:web-ext",
+    "lint:web-ext": "web-ext lint -s dist/",
+    "lint:eslint": "eslint 'src/**'",
+    "zip:firefox": "npm run build:firefox && web-ext build -s ./dist --overwrite-dest",
+    "watch:firefox": "webpack --env.targetBrowser=firefox --env.nodeEnv=production"
   },
   "dependencies": {
+    "debounce": "^1.0.2",
     "fuse.js": "^3.0.5",
-    "lodash.debounce": "^4.0.8",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "redux-persist": "^5.0.0-rc.6",
@@ -33,8 +34,10 @@
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-plugin-import": "^2.7.0",
     "fs-extra": "^4.0.2",
+    "uglifyjs-webpack-plugin": "^1.0.0-rc.0",
     "web-ext": "^1.10.1",
     "webpack": "^3.3.0",
+    "webpack-bundle-analyzer": "^2.9.0",
     "webpack-shell-plugin": "^0.5.0"
   }
 }
