@@ -29,9 +29,13 @@ export function stopCountingBadgeTextAndRemoveListeners() {
     });
   });
   // Remove tab listeners
-  browser.tabs.onCreated.removeListener(debounceHandleOnCreatedTab);
+  if (debounceHandleOnCreatedTab || debounceHandleOnRemovedTab) {
+    browser.tabs.onDetached.removeListener(debounceHandleOnRemovedTab);
+    browser.tabs.onCreated.removeListener(debounceHandleOnCreatedTab);
+    debounceHandleOnCreatedTab = undefined;
+    debounceHandleOnRemovedTab = undefined;
+  }
   browser.tabs.onRemoved.removeListener(handleOnRemovedTab);
-  browser.tabs.onDetached.removeListener(debounceHandleOnRemovedTab);
 }
 
 function updateWindowBadgeText(browserWindow) {
