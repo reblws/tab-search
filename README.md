@@ -60,6 +60,9 @@ If you want to build or watch for Chrome just use `start:chrome` or `build:chrom
 
 ## Changelog
 
+### 0.3.2
+- Fixed issue where popup badge was showing badge text on browser-startup even when the setting was disabled
+
 ### 0.3.1
 - Fixed settings not saving locally
 - Remove incognito closed tabs from popup result
