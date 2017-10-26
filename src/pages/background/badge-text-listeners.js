@@ -1,4 +1,4 @@
-import debounce from 'debounce';
+import debounce from 'lodash.debounce';
 
 const windowOptions = {
   populate: true,
@@ -10,8 +10,8 @@ let debounceHandleOnCreatedTab;
 let debounceHandleOnRemovedTab;
 export function startCountingBadgeTextAndAddListeners() {
   setBadgeTextInAllWindows();
-  debounceHandleOnCreatedTab = debounce(handleOnCreatedTab);
-  debounceHandleOnRemovedTab = debounce(handleOnRemovedTab);
+  debounceHandleOnCreatedTab = debounce(handleOnCreatedTab, 50);
+  debounceHandleOnRemovedTab = debounce(handleOnRemovedTab, 50);
   browser.tabs.onCreated.addListener(debounceHandleOnCreatedTab);
   browser.tabs.onRemoved.addListener(debounceHandleOnRemovedTab);
   browser.tabs.onDetached.addListener(handleOnDetachedTab);
