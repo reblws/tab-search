@@ -59,11 +59,6 @@ module.exports = ({ targetBrowser, nodeEnv }) => {
       path: DIST_PATH,
       filename: '[name]_bundle.js',
     },
-    module: {
-      rules: [
-        { test: /\.js$/, loaders: ['babel-loader'], exclude: /node_modules/ },
-      ],
-    },
     target: 'web',
     plugins,
   };
