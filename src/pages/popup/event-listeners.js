@@ -7,7 +7,7 @@ import {
   populateTabList,
 } from './utils/dom';
 import {
-  handleKeyDown,
+  keydownHandler,
   configureSearch,
   clearInput,
   handleTabClick,
@@ -16,8 +16,9 @@ import {
 export function addEventListeners(store) {
   // Populate the here and now
   const updateSearchResults = configureSearch(store);
+  const handleKeydown = keydownHandler(store);
   populateTabList(updateSearchResults()).then(() => searchInput.focus());
-  window.addEventListener('keydown', handleKeyDown);
+  window.addEventListener('keydown', handleKeydown);
   deleteButton.addEventListener('click', clearInput);
   searchInput.addEventListener('change', updateSearchResults);
   searchInput.addEventListener('keyup', updateSearchResults);
