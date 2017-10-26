@@ -38,49 +38,51 @@ export function clearInput(event) {
   tabList.childNodes[0].focus();
 }
 
-export function handleKeyDown(event) {
-  switch (event.key) {
-    case 'Control':
-      break;
-    case 'Delete':
-    case 'Backspace':
-      if (event.ctrlKey && document.activeElement !== searchInput) {
-        const tabId = parseInt(document.activeElement.dataset.id, 10);
-        deleteTab(tabId);
-      }
-      break;
-    case 'Tab':
-    case 'ArrowDown':
-    case 'ArrowUp':
-      event.preventDefault();
-    case 'ArrowRight':
-    case 'ArrowLeft':
-      navigateResults(event.key);
-      break;
-    case 'Enter':
-      event.preventDefault();
+export function keydownHandler(store) {
+  const { showRecentlyClosed } = store.getState().general;
+  return function handleKeyDown(event) {
+    switch (event.key) {
+      case 'Control':
+        break;
+      case 'Delete':
+      case 'Backspace':
+        if (event.ctrlKey && document.activeElement !== searchInput) {
+          deleteTab(document.activeElement, showRecentlyClosed);
+        }
+        break;
+      case 'Tab':
+      case 'ArrowDown':
+      case 'ArrowUp':
+        event.preventDefault();
+      case 'ArrowRight':
+      case 'ArrowLeft':
+        navigateResults(event.key);
+        break;
+      case 'Enter': {
+        event.preventDefault();
 
-      // If we're pressing enter from the searchbar
-      const firstChildNode = tabList.childNodes[0];
-      if (document.activeElement === searchInput
-        && 'id' in firstChildNode.dataset) {
-        firstChildNode.click();
-      } else {
-        document.activeElement.click();
+        // If we're pressing enter from the searchbar
+        const firstChildNode = tabList.childNodes[0];
+        if (document.activeElement === searchInput) {
+          firstChildNode.click();
+        } else {
+          document.activeElement.click();
+        }
+        break;
       }
-      break;
-    case 'Escape':
-      // This only works in chrome, in firefox it always closes the window
-      if (searchInput.value.length === 0) {
-        window.close();
-      } else {
-        clearInput(searchInput);
-      }
-      break;
-    default:
-      searchInput.focus();
-      break;
-  }
+      case 'Escape':
+        // This only works in chrome, in firefox it always closes the window
+        if (searchInput.value.length === 0) {
+          window.close();
+        } else {
+          clearInput(searchInput);
+        }
+        break;
+      default:
+        searchInput.focus();
+        break;
+    }
+  };
 }
 
 export function handleTabClick(getState) {

@@ -23,7 +23,7 @@ Easy tab search & switching. This WebExtension provides a keyboard-accessible se
 
 ## Usage
 
-TabSearch requires [node.js](https://nodejs.org/).
+TabSearch requires [node.js](https://nodejs.org/). Note that the `dist/` folder only contains static assets. To get the javascript and manifest.json in there compile the source first.
 
 Step 0: If you plan on sending pull-request, you should fork the repository.
 
@@ -59,6 +59,16 @@ If you want to build or watch for Chrome just use `start:chrome` or `build:chrom
 
 
 ## Changelog
+
+### 0.3.2
+- Fixed issue where popup badge was showing badge text on browser-startup even when the setting was disabled
+
+### 0.3.1
+- Fixed settings not saving locally
+- Remove incognito closed tabs from popup result
+- Fixed Ctrl+Backspace not deleting tabs
+- Fixed settings page not disabling inputs properly when filling initial values
+- Minor text tweaks to the settings page
 
 ### 0.3.0
 - Added settings page! From the Addons-Manager (about:addons), you can now customize the following options:

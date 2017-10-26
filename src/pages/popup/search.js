@@ -66,12 +66,14 @@ export default function filterResult(
 
 function getRecentlyClosed(maxResults) {
   const tab = ({ tab: _tab }) => _tab;
+  // No incognito please
+  const filterIncognito = ({ incognito }) => !incognito;
   // Don't want to show new tab pages
   const isNewTabPage = ({ url }) => url !== 'about:newtab';
   const getTabsAndAnnotate = objects => objects
     .filter(tab)
     .map(tab)
-    .filter(isNewTabPage)
+    .filter(isNewTabPage).filter(filterIncognito)
     .map(annotateType(SESSION_TYPE));
   return browser.sessions.getRecentlyClosed({ maxResults })
     .then(getTabsAndAnnotate);

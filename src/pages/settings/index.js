@@ -5,7 +5,7 @@ import addInputBindings from './input-bindings';
 
 // Object containing input ids and their corresponding nodes
 const inputs = [...document.querySelectorAll('input')]
-  .filter(({ id }) => reducerMap[id]) // Filter out all inputs who arent in charge of a setting
+  .filter(({ id }) => Object.keys(reducerMap).includes(id)) // Filter out all inputs who arent in charge of a setting
   .reduce((acc, node) => Object.assign({}, acc, { [node.id]: node }), {});
 // Given the setting object and the location we want to search, return the
 // current setting value
@@ -43,6 +43,7 @@ function getStateSettings(settings) {
         break;
       default: break;
     }
+    node.dispatchEvent(new Event('change'));
   };
 }
 
@@ -87,7 +88,7 @@ createUIStore().then((store) => {
   const { dispatch } = store;
   const settings = store.getState();
   const fillStateSettings = getStateSettings(settings);
-  const attachEventListeners = configureEventListeners(dispatch)
+  const attachEventListeners = configureEventListeners(dispatch);
   Object.values(inputs).forEach(fillStateSettings);
   Object.values(inputs).forEach(attachEventListeners);
   document.getElementById('reset-defaults').addEventListener('click', () => {

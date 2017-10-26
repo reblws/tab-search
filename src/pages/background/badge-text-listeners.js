@@ -10,8 +10,8 @@ let debounceHandleOnCreatedTab;
 let debounceHandleOnRemovedTab;
 export function startCountingBadgeTextAndAddListeners() {
   setBadgeTextInAllWindows();
-  debounceHandleOnCreatedTab = debounce(handleOnCreatedTab);
-  debounceHandleOnRemovedTab = debounce(handleOnRemovedTab);
+  debounceHandleOnCreatedTab = debounce(handleOnCreatedTab, 50);
+  debounceHandleOnRemovedTab = debounce(handleOnRemovedTab, 50);
   browser.tabs.onCreated.addListener(debounceHandleOnCreatedTab);
   browser.tabs.onRemoved.addListener(debounceHandleOnRemovedTab);
   browser.tabs.onDetached.addListener(handleOnDetachedTab);
@@ -29,9 +29,13 @@ export function stopCountingBadgeTextAndRemoveListeners() {
     });
   });
   // Remove tab listeners
-  browser.tabs.onCreated.removeListener(debounceHandleOnCreatedTab);
+  if (debounceHandleOnCreatedTab || debounceHandleOnRemovedTab) {
+    browser.tabs.onDetached.removeListener(debounceHandleOnRemovedTab);
+    browser.tabs.onCreated.removeListener(debounceHandleOnCreatedTab);
+    debounceHandleOnCreatedTab = undefined;
+    debounceHandleOnRemovedTab = undefined;
+  }
   browser.tabs.onRemoved.removeListener(handleOnRemovedTab);
-  browser.tabs.onDetached.removeListener(debounceHandleOnRemovedTab);
 }
 
 function updateWindowBadgeText(browserWindow) {
