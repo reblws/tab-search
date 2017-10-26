@@ -1572,7 +1572,7 @@ dateformat@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-2.0.0.tgz#2743e3abb5c3fc2462e527dca445e04e9f4dee17"
 
-debounce@1.0.2, debounce@^1.0.2:
+debounce@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/debounce/-/debounce-1.0.2.tgz#503cc674d8d7f737099664fb75ddbd36b9626dc6"
 
@@ -4374,9 +4374,9 @@ redux-logger@^3.0.6:
   dependencies:
     deep-diff "^0.3.5"
 
-redux-persist@^5.0.0-rc.6:
-  version "5.0.0-rc.6"
-  resolved "https://registry.yarnpkg.com/redux-persist/-/redux-persist-5.0.0-rc.6.tgz#1207c707fa2d32d18f8e22c1845ba1aeb1d719f9"
+redux-persist@^5.0.0:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/redux-persist/-/redux-persist-5.0.1.tgz#452e75f51632218574ea994064ba4b26c7380f88"
 
 redux-thunk@^2.2.0:
   version "2.2.0"
@@ -5449,7 +5449,7 @@ webpack-bundle-analyzer@^2.9.0:
     mkdirp "^0.5.1"
     opener "^1.4.3"
     ws "^2.3.1"
-    
+
 webpack-shell-plugin@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/webpack-shell-plugin/-/webpack-shell-plugin-0.5.0.tgz#29b8a1d80ddeae0ddb10e729667f728653c2c742"
