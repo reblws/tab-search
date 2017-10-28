@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>TabSearch Settings</title>
+    <link href="https://unpkg.com/basscss@7.1.1/css/basscss.min.css" rel="stylesheet">
+    <style>
+      fieldset {
+        border: none;
+        padding: 0;
+      }
+      legend {
+        margin-bottom: 0.2rem;
+      }
+      .container {
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .fixed {
+        width: 5px;
+      }
+      .inputs {
+        display: flex;
+        align-items: center;
+      }
+      .defaults {
+        max-height: 10px;
+      }
+      /* Basscss Input Range */
+
+.input-range {
+  vertical-align: middle;
+  background-color: transparent;
+  padding-top: var(--form-field-padding-y);
+  padding-bottom: var(--form-field-padding-y);
+  color: inherit;
+  background-color: transparent;
+  -webkit-appearance: none;
+}
+
+.input-range::-webkit-slider-thumb {
+  position: relative;
+  width: var(--range-thumb-width);
+  height: var(--range-thumb-height);
+  cursor: pointer;
+  margin-top: var(--range-thumb-offset);
+  border-radius: var(--border-radius);
+  background-color: currentcolor;
+  -webkit-appearance: none;
+}
+
+/* Touch screen friendly pseudo element */
+.input-range::-webkit-slider-thumb:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: calc( -.5 * var(--range-thumb-pseudo-size) + (.5 * var(--range-thumb-height)) );
+  left: calc( (-.5 * var(--range-thumb-pseudo-size)) + (.5 * var(--range-thumb-width)) );
+  width: var(--range-thumb-pseudo-size);
+  height: var(--range-thumb-pseudo-size);
+  opacity: 0;
+}
+
+.input-range::-moz-range-thumb {
+  width: var(--range-thumb-width);
+  height: var(--range-thumb-height);
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  border-color: transparent;
+  border-width: 0;
+  background-color: currentcolor;
+}
+
+.input-range::-webkit-slider-runnable-track {
+  height: var(--range-track-height);
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  background-color: var(--darken-3);
+}
+
+.input-range::-moz-range-track {
+  height: var(--range-track-height);
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  background-color: var(--darken-3);
+}
+
+.input-range:focus {
+  outline: none;
+}
+
+:root {
+  --form-field-padding-x: .5rem;
+  --form-field-padding-y: .5rem;
+  --form-field-height: 2.25rem;
+  --border-radius: 3px;
+  --darken-3: rgba(0, 0, 0, .25);
+
+  --range-thumb-width: var(--form-field-padding-x);
+  --range-thumb-height: calc( var(--form-field-height) - (var(--form-field-padding-y) * 2) );
+  --range-track-height: calc( var(--form-field-padding-y) / 2 );
+  --range-thumb-offset: calc( var(--range-thumb-height) / -2 + (var(--range-track-height) / 2) );
+  --range-thumb-pseudo-size: var(--form-field-height);
+}
+
+.disabled-label {
+  color: grey;
+}
+
+.strikethrough {
+  text-decoration: strikethrough;
+}
+
+.number-input:valid {
+  border: 1px solid green;
+}
+
+.number-input:invalid {
+  border: 1px solid red;
+}
+
+.number-input:focus {
+  border: 1px solid black;
+}
+
+.range-clarification {
+  font-size: 0.9em;
+}
+
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <header class="flex flex-justify content-start">
+        <h1>TabSearch Settings</h1>
+        <div class="flex flex-none">
+          <button id="reset-defaults" class="btn btn-primary flex-none">Reset to defaults</button>
+        </div>
+      </header>
+      <p class="subheader">
+        Settings are saved after every change
+      </p>
+      <form>
+        <fieldset>
+          <legend><h2>Appearance</h2></legend>
+          <p class="inputs">
+            <input
+              class="field"
+              type="checkbox"
+              name="showTabCountBadgeText"
+              id="showTabCountBadgeText"
+            >
+            <label for="showTabCountBadgeText">Display total number of tabs above the popup icon</label>
+          </p>
+          <p class="inputs">
+            <input
+              class="field"
+              type="checkbox"
+              name="enableOverlay"
+              id="enableOverlay"
+              disabled
+            >
+            <label class="disabled-label" for="enableOverlay">
+              Visually centered search results (coming in next release)
+            </label>
+          </p>
+        </fieldset>
+        <fieldset>
+          <legend><h2>Search Results</h2></legend>
+            <div class="flex flex-justify justify-between flex-center">
+              <p class="inputs">
+                <input
+                  type="checkbox"
+                  name="showRecentlyClosed"
+                  id="showRecentlyClosed"
+                >
+                <label for="showRecentlyClosed">Show recently closed tabs</label>
+              </p>
+              <p class="inputs">
+                <label for="recentlyClosedLimit">Limit (max. 25): &nbsp;</label>
+                <input
+                  class="number-input"
+                  type="number"
+                  name="recentlyClosedLimit"
+                  id="recentlyClosedLimit"
+                  min="0"
+                  max="25"
+                >
+              </p>
+            </div>
+          </p>
+          <p class="inputs">
+            <input
+              type="checkbox"
+              name="alwaysShowRecentlyClosedAtTheBottom"
+              id="alwaysShowRecentlyClosedAtTheBottom"
+            >
+            <label for="alwaysShowRecentlyClosedAtTheBottom">
+              Always show recently closed tabs at the bottom of the search list
+            </label>
+          </p>
+          <p class="inputs">
+              <input
+                type="checkbox"
+                name="searchAllWindows"
+                id="searchAllWindows"
+              >
+              <label for="searchAllWindows">Display tabs from all windows</label>
+          </p>
+        </fieldset>
+        <fieldset>
+          <legend><h2>Search Settings</h2></legend>
+          <p class="inputs">
+            <input
+              type="checkbox"
+              name="showUrls"
+              id="showUrls"
+            >
+            <label for="showUrls">Search by url</label>
+          </p>
+          <p class="inputs">
+            <input
+              type="checkbox"
+              name="enableFuzzySearch"
+              id="enableFuzzySearch"
+            >
+            <label for="enableFuzzySearch">Enable fuzzy search</label>
+          </p>
+          <p class="inputs">
+            <input
+              type="checkbox"
+              name="shouldSort"
+              id="shouldSort"
+            >
+            <label for="shouldSort">Sort results by how close they match the search query</label>
+          </p>
+          <p class="inputs">
+            <label class="fixed-width" for="threshold">Fuzzy search similarity threshold: </label>
+            <label class="center range-clarification"  for="thresholdDisplay">
+              <strong>1</strong> <br> (Strict search)
+            </label>
+            <input
+              class="input-range"
+              type="range"
+              min="1"
+              max="9"
+              name="threshold"
+              id="threshold"
+            >
+            <label class="center range-clarification" for="thresholdDisplay">
+              <strong>9</strong> <br> (Loose search)
+            </label>
+            &emsp;
+            <input
+              type="number"
+              class="number-input"
+              min="1"
+              max="9"
+              name="thresholdDisplay"
+              id="thresholdDisplay"
+            >
+
+
+
+          </p>
+        </fieldset>
+      </form>
+    </main>
+    <script src="../settings_bundle.js"></script>
+  </body>
+</html>
+
+
+<!--
+const initialState = {
+  showTabCountBadgeText: false,
+  showBookmarks: false,
+  showRecentlyClosed: false,
+  searchAllWindows: false,
+  enableOverlay: false,
+  fuzzySearch: {
+    enableFuzzySearch: true,
+    options: {
+      shouldSort: true,
+      threshold: 0.5,
+      maxPattenLength: 32,
+      minMatchCharLength: 1,
+      keys: ['title', 'url'],
+    },
+  },
+};
+-->
