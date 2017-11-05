@@ -12,7 +12,7 @@ Easy tab search & switching. This WebExtension provides a keyboard-accessible se
 
 | Shortcut | Description |
 | --- | --- |
-| <kbd>Ctrl/Cmd</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> | Toggle extension |
+| <kbd>Ctrl/Cmd</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> | Toggle extension |
 | <kbd>Ctrl/Cmd</kbd> + <kbd>Backspace</kbd> | Delete a tab |
 | <kbd>Ctrl/Cmd</kbd> + Click |
 | <kbd>Enter</kbd> | Open selected tab or first in list if not selected |
