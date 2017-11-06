@@ -260,3 +260,13 @@ export function populateTabList(search) {
   return Promise.resolve(search).then(injectTabsInList);
 }
 
+export function overrideFontStylesWithSansSerif() {
+  const elementStylesToOverride = [
+    d.body,
+    d.querySelector('.search'),
+  ];
+  elementStylesToOverride.forEach((element) => {
+    element.style = 'font-family: sans-serif;';
+  });
+}
+

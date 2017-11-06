@@ -14,4 +14,5 @@ export const initialGeneralSettings = {
   showRecentlyClosed: true,
   alwaysShowRecentlyClosedAtTheBottom: true,
   recentlyClosedLimit: 5,
+  useFallbackFont: false,
 };
