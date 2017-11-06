@@ -6,7 +6,11 @@ import {
   scrollIfNeeded,
   populateTabList,
   overrideFontStylesWithSansSerif,
+  appendSearchInputPlaceholderText,
 } from './utils/dom';
+import {
+  getOsShortcut,
+} from './utils/browser';
 import {
   keydownHandler,
   configureSearch,
@@ -40,15 +44,29 @@ export function addTabListeners(getState) {
 export function doFinalSideEffects(store) {
   const { updateSearchResults } = store;
   const { useFallbackFont } = store.getState().general;
+
+  // Give a shortcut hint
+  updatePlaceholderTextWithShortcutHint();
   // Populate the initial tab list here.
-  // Set a timeout so the input actually focuses
   // TODO: Add option for showing last query on popup
   populateTabList(updateSearchResults())
-    .then(() => setTimeout(() => searchInput.focus(), 150));
+    .then(() => setTimeout(() => searchInput.focus(), 150))
+    .catch((err) => {
+      throw new Error(`Can't update search input placeholder text! ${err}`);
+    });
 
   if (useFallbackFont) {
     // Lazy for now: Just override the css styles specifying a font-family
     overrideFontStylesWithSansSerif();
   }
+
   return store;
+}
+
+
+function updatePlaceholderTextWithShortcutHint() {
+  const hintText = shortcut => `(${shortcut} opens this)`;
+  return getOsShortcut()
+    .then(hintText)
+    .then(appendSearchInputPlaceholderText);
 }

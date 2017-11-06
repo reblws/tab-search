@@ -45,3 +45,32 @@ export function deleteTab(
   deletedTabsCache().push(tabId);
   browser.tabs.remove(tabId);
 }
+
+function getUserOs() {
+  return browser.runtime.getPlatformInfo().then(({ os }) => os);
+}
+
+function getManifest() {
+  return browser.runtime.getManifest();
+}
+
+// Returns the user's shortcut for the extension
+// () -> Promise< shortcut: String >
+export function getOsShortcut() {
+  const isMac = os => os === 'mac';
+  const replaceCtrlWithCmd = shortcut => shortcut.replace(/ctrl/i, 'Cmd');
+  const getManifestSuggestedKey = manifest =>
+  // eslint-disable-next-line no-underscore-dangle
+    manifest.commands._execute_browser_action.suggested_key;
+  const getShortcut = ([os, suggestedKey]) => (
+    isMac(os)
+      ? replaceCtrlWithCmd(suggestedKey[os])
+      : suggestedKey.default
+  );
+  // ---> [ os, manifest ]
+  return Promise.all([
+    getUserOs(),
+    getManifestSuggestedKey(getManifest()),
+  ])
+    .then(getShortcut);
+}
