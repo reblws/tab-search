@@ -1,6 +1,9 @@
 /* Popup initialization */
 import { createUIStore } from 'redux-webext';
-import { addEventListeners } from './event-listeners';
+import {
+  addEventListeners,
+  doFinalSideEffects,
+} from './side-effects';
 import {
   addTabsToPromiseChain,
   addCurrentWindowIdToPromiseChain,
@@ -10,6 +13,7 @@ createUIStore()
   .then(addTabsToPromiseChain)
   .then(addCurrentWindowIdToPromiseChain)
   .then(addEventListeners)
+  .then(doFinalSideEffects)
   .catch((e) => {
     if (process.env.NODE_ENV !== 'production') {
       console.error(e);

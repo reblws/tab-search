@@ -1,23 +1,21 @@
 const webpack = require('webpack');
 const WebpackShellPlugin = require('webpack-shell-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { join } = require('path');
 
 const SRC_PATH = join(__dirname, 'src');
 const DIST_PATH = join(__dirname, 'dist');
-const PAGES_PATH = join(SRC_PATH, 'pages');
+const PAGES_PATH = join(SRC_PATH, 'core', 'pages');
 
 // https://github.com/reactjs/react-redux/pull/680/files#diff-11e9f7f953edc64ba14b0cc350ae7b9dR20
-// Replace webpack/global.js definition with an IFFE returning the global object
-// Avoids eval statement
+// Replace webpack/global.js definition with window
 function applyGlobalVar(compiler) {
   compiler.plugin('compilation', (compilation, params) => {
     params.normalModuleFactory.plugin('parser', function(parser) {
       parser.plugin('expression global', function expressionGlobalPlugin() {
-        this.state.module.addVariable(
-          'global',
-          '(function() { return this; }())',
-        );
+        this.state.module.addVariable('global', 'window');
         return false;
       });
     });
@@ -26,6 +24,8 @@ function applyGlobalVar(compiler) {
 
 module.exports = ({ targetBrowser, nodeEnv }) => {
   const plugins = [
+    new CleanWebpackPlugin(DIST_PATH),
+    new CopyWebpackPlugin([{ from: join(SRC_PATH, 'static'), to: DIST_PATH }]),
     new WebpackShellPlugin({
       onBuildEnd: [
         `node ./scripts/build-manifest.js ${targetBrowser} ${DIST_PATH}`,

@@ -2,9 +2,7 @@ webext
 build_chrome
 .vscode/
 node_modules/
-dist/*.js
-dist/*.js.map
-dist/manifest.json
-dist/assets/js/*
+dist/
 releases/
 web-ext-artifacts/
+.envrc

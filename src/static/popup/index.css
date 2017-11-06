@@ -3,9 +3,6 @@ body {
   font-family: 'Inter UI', sans-serif;
 }
 
-strong {
-  font-weight: 500;
-}
 
 input[type="search"] {
   line-height: 2em;
@@ -74,10 +71,7 @@ header {
 	align-items: center;
 	justify-content: center;
 	width: 20rem;
-	padding-top: 1rem;
-	padding-bottom: 1rem;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+	padding: 1rem 0.5rem;
   cursor: pointer;
   /* For chrome to prevent box shrinking */
   flex-shrink: 0;
@@ -109,10 +103,7 @@ header {
   justify-content: center;
   height: 300px;
   width: 20rem;
-	padding-top: 1em;
-	padding-bottom: 1em;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+	padding: 1rem 0.5rem;
 }
 
 .no-result__circle {

@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "TabSearch",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Easy tab search & switching",
   "permissions": [
     "tabs",
@@ -28,7 +28,7 @@
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {
-        "default": "Ctrl+Shift+L"
+        "default": "Ctrl+Shift+F"
       },
       "description": "Execute this browser action"
     }

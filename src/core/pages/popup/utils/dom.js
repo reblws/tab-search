@@ -1,4 +1,4 @@
-import { addTabListeners } from '../event-listeners';
+import { addTabListeners } from '../side-effects';
 import {
   favIconFallback,
   alertCircle,
@@ -258,5 +258,15 @@ export function repaintElementWithType(element, typeToAdd) {
 // Function for initializing the lists
 export function populateTabList(search) {
   return Promise.resolve(search).then(injectTabsInList);
+}
+
+export function overrideFontStylesWithSansSerif() {
+  const elementStylesToOverride = [
+    d.body,
+    d.querySelector('.search'),
+  ];
+  elementStylesToOverride.forEach((element) => {
+    element.style = 'font-family: sans-serif;';
+  });
 }
 

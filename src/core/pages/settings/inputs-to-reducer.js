@@ -10,6 +10,7 @@ export default {
   alwaysShowRecentlyClosedAtTheBottom: 'general.alwaysShowRecentlyClosedAtTheBottom',
   recentlyClosedLimit: 'general.recentlyClosedLimit',
   enableOverlay: 'general.enableOverlay',
+  useFallbackFont: 'general.useFallbackFont',
   enableFuzzySearch: 'fuzzy.enableFuzzySearch',
   shouldSort: 'fuzzy.shouldSort',
   threshold: 'fuzzy.threshold',

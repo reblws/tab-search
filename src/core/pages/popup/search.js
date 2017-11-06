@@ -24,7 +24,7 @@ export default function filterResult(
   },
   currentWindowId,
 ) {
-  const { enableFuzzySearch, keys } = options;
+  const { enableFuzzySearch, keys: searchKeys } = options;
   return function promiseSearchResults(loadedTabs) {
     const isQueryEmpty = query.length === 0;
     const isTabType = isOfType(TAB_TYPE);
@@ -56,7 +56,10 @@ export default function filterResult(
       search = arr => new Fuse(arr, options).search(query);
     } else {
       // If enableFuzzySearch is off
-      search = arr => arr.filter(tab => keys.some(key => tab[key].includes(query)));
+      const matchedTabs = tab => searchKeys.some(
+        key => tab[key].toLowerCase().includes(query.toLowerCase())
+      );
+      search = arr => arr.filter(matchedTabs);
     }
     return arrayToSearch
       .then(search)

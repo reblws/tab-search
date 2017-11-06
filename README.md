@@ -12,7 +12,7 @@ Easy tab search & switching. This WebExtension provides a keyboard-accessible se
 
 | Shortcut | Description |
 | --- | --- |
-| <kbd>Ctrl/Cmd</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> | Toggle extension |
+| <kbd>Ctrl/Cmd</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> | Toggle extension |
 | <kbd>Ctrl/Cmd</kbd> + <kbd>Backspace</kbd> | Delete a tab |
 | <kbd>Ctrl/Cmd</kbd> + Click |
 | <kbd>Enter</kbd> | Open selected tab or first in list if not selected |
@@ -59,6 +59,14 @@ If you want to build or watch for Chrome just use `start:chrome` or `build:chrom
 
 
 ## Changelog
+
+### 0.3.3
+- New shortcut! Ctrl+Shift+F now opens the popup window.
+  + Note: Custom shortcuts aren't possible in Firefox yet, need to wait for Firefox devs to implement custom shortcuts for browser extensions.
+- Fixed issue where non-fuzzy search was case-sensitive
+- Fixed input not focusing when using extension shortcut for certain users
+- Update Inter UI font version to 2.2
+- Added option to use the browser's default sans-serif font
 
 ### 0.3.2
 - Fixed issue where popup badge was showing badge text on browser-startup even when the setting was disabled
