@@ -1,4 +1,4 @@
-import { addTabListeners } from '../event-listeners';
+import { addTabListeners } from '../side-effects';
 import {
   favIconFallback,
   alertCircle,
