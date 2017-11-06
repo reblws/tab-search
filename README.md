@@ -10,20 +10,19 @@ Easy tab search & switching. This WebExtension provides a keyboard-accessible se
 
 ## Shortcuts
 
-| Shortcut | Description |
-| --- | --- |
-| <kbd>Ctrl/Cmd</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> | Toggle extension |
-| <kbd>Ctrl/Cmd</kbd> + <kbd>Backspace</kbd> | Delete a tab |
-| <kbd>Ctrl/Cmd</kbd> + Click |
-| <kbd>Enter</kbd> | Open selected tab or first in list if not selected |
-| <kbd>Up</kbd> / <kbd>Left</kbd> | Select next tab |
-| <kbd>Down</kbd> / <kbd>Right</kbd> | Select previous tab |
-
-<kbd>Ctrl/Cmd</kbd> + Click deletes a tab as well.
+| Windows/Linux | macOS | Description |
+| --- | --- | --- |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> | <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> | Toggle extension |
+| <kbd>Ctrl</kbd> + <kbd>Backspace</kbd>/Click | <kbd>Cmd</kbd> + <kbd>Backspace</kbd>/Click | Delete a tab |
+| <kbd>Enter</kbd> | <kbd>Enter</kbd> | Open selected tab or first in list if not selected |
+| <kbd>Up</kbd> / <kbd>Left</kbd> | <kbd>Up</kbd> / <kbd>Left</kbd> | Select next tab |
+| <kbd>Down</kbd> / <kbd>Right</kbd> | <kbd>Down</kbd> / <kbd>Right</kbd> | Select previous tab |
 
 ## Usage
 
-TabSearch requires [node.js](https://nodejs.org/). Note that the `dist/` folder only contains static assets. To get the javascript and manifest.json in there compile the source first.
+These instructions should get you up to compiling with and/or developing with the source. If you just want to use the extension and are on Firefox, you should get the extension from [AMO](https://addons.mozilla.org/en-US/firefox/addon/tab_search/).
+
+Compiling the source requires [node.js](https://nodejs.org/).
 
 Step 0: If you plan on sending pull-request, you should fork the repository.
 
@@ -60,8 +59,12 @@ If you want to build or watch for Chrome just use `start:chrome` or `build:chrom
 
 ## Changelog
 
+### 0.3.4
+- Changed the macOS shortcut back to Cmd+Shift+L due to conflicting OS shortcut (thanks hiasl360)
+- Added platform specific shortcut hint
+
 ### 0.3.3
-- New shortcut! Ctrl+Shift+F now opens the popup window.
+- Changed the extension's shortcut to Ctrl+Shift+F
   + Note: Custom shortcuts aren't possible in Firefox yet, need to wait for Firefox devs to implement custom shortcuts for browser extensions.
 - Fixed issue where non-fuzzy search was case-sensitive
 - Fixed input not focusing when using extension shortcut for certain users

@@ -270,3 +270,7 @@ export function overrideFontStylesWithSansSerif() {
   });
 }
 
+export function appendSearchInputPlaceholderText(newText) {
+  // eslint-disable-next-line prefer-template
+  searchInput.placeholder += ' ' + newText;
+}
