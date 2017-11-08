@@ -1,5 +1,8 @@
 import { deletedTabsCache } from '../caches';
-import { SESSION_TYPE } from '../constants';
+import {
+  SESSION_TYPE,
+  OTHER_WINDOW_TAB_TYPE,
+} from '../constants';
 import {
   removeElementFromTabList,
   repaintElementWithType,
@@ -19,11 +22,6 @@ export function addTabsToPromiseChain(store) {
 export function addCurrentWindowIdToPromiseChain(store) {
   return browser.windows.getCurrent()
     .then(({ id: currentWindowId }) => Object.assign({}, store, { currentWindowId }));
-}
-
-export function restoreClosedTab(id) {
-  browser.sessions.restore(id);
-  window.close();
 }
 
 export function deleteTab(
@@ -73,4 +71,41 @@ export function getOsShortcut() {
     getManifestSuggestedKey(getManifest()),
   ])
     .then(getShortcut);
+}
+
+export function switchActiveTab(tabDataset) {
+  const {
+    window: windowId,
+    id,
+    type,
+  } = tabDataset;
+  const numId = parseInt(id, 10);
+  browser.tabs.update(numId, { active: true });
+  if (type === OTHER_WINDOW_TAB_TYPE) {
+    focusWindow(windowId);
+  }
+  window.close();
+}
+
+export function restoreClosedTab(tabDataset) {
+  const {
+    window: windowId,
+    id,
+    type,
+  } = tabDataset;
+  browser.sessions.restore(id);
+  if (type === OTHER_WINDOW_TAB_TYPE) {
+    focusWindow(windowId);
+  }
+  window.close();
+}
+
+function focusWindow(windowId) {
+  return browser.windows.update(
+    parseInt(windowId, 10),
+    {
+      drawAttention: true,
+      focused: true,
+    },
+  );
 }
