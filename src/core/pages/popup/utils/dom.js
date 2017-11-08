@@ -34,14 +34,16 @@ function getBasePath(src) {
   return origin;
 }
 
-
-export function switchActiveTab(id) {
-  const numId = parseInt(id, 10);
-  browser.tabs.update(numId, { active: true });
-  window.close();
-}
-
-export function tabToTag({ favIconUrl, title, id, url, type, sessionId }) {
+export function tabToTag(tab) {
+  const {
+    favIconUrl,
+    title,
+    id,
+    url,
+    type,
+    sessionId,
+    windowId,
+  } = tab;
   const isValidFavIconUrl = favIconUrl
     && !isChromeLink(favIconUrl)
     && !badFavIconCache().includes(favIconUrl);
@@ -60,6 +62,7 @@ export function tabToTag({ favIconUrl, title, id, url, type, sessionId }) {
     favIconLink,
     type,
     sessionId,
+    windowId,
   });
 }
 
@@ -70,10 +73,11 @@ function createTabObject({
   url,
   tabTitle,
   favIconLink,
+  windowId,
 }) {
   const dataId = sessionId || id;
   // Create the parent div
-  // <div class="tab-object" data-id="${id}" tabIndex="0">
+  // <div class="tab-object" data-id="${id}" tabIndex="0" data-type="tab" data-window="1">
   const tabObjectNode = d.createElement('div');
   tabObjectNode.setAttribute('tabindex', '0');
   tabObjectNode.classList.add('tab-object');
@@ -92,6 +96,8 @@ function createTabObject({
   tabObjectNode.setAttribute('data-id', dataId);
   // Declare data type
   tabObjectNode.setAttribute('data-type', type);
+  // Add window id
+  tabObjectNode.setAttribute('data-window', windowId);
 
   // <img src="${favIconLink}">
   const favIconNode = d.createElement('img');
