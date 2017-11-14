@@ -9,7 +9,7 @@ export const initialFuzzySettings = {
 
 export const initialGeneralSettings = {
   showTabCountBadgeText: true,
-  searchAllWindows: false,
+  searchAllWindows: true,
   enableOverlay: false,
   showRecentlyClosed: true,
   alwaysShowRecentlyClosedAtTheBottom: true,

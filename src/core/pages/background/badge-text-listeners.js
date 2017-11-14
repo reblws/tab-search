@@ -1,9 +1,17 @@
 import debounce from 'debounce';
 
-const windowOptions = {
+const WINDOW_OPTIONS = {
   populate: true,
   windowTypes: ['normal'],
 };
+
+const updateTabInWindow = windowId => tabId =>
+  browser.windows.get(windowId, WINDOW_OPTIONS)
+    .then(({ tabs }) => String(tabs.length))
+    .then(text => browser.browserAction.setBadgeText({
+      text,
+      tabId,
+    }));
 
 // Save the debounced funcs here so we can remove it with the exact same handler
 let debounceHandleOnCreatedTab;
@@ -15,6 +23,8 @@ export function startCountingBadgeTextAndAddListeners() {
   browser.tabs.onCreated.addListener(debounceHandleOnCreatedTab);
   browser.tabs.onRemoved.addListener(debounceHandleOnRemovedTab);
   browser.tabs.onDetached.addListener(handleOnDetachedTab);
+  // browser.tabs.onActivated.addListener(handleOnActivatedTab);
+  browser.tabs.onUpdated.addListener(handleOnUpdatedTab);
 }
 
 export function stopCountingBadgeTextAndRemoveListeners() {
@@ -36,6 +46,7 @@ export function stopCountingBadgeTextAndRemoveListeners() {
     debounceHandleOnRemovedTab = undefined;
   }
   browser.tabs.onRemoved.removeListener(handleOnRemovedTab);
+  browser.tabs.onUpdated.removeListener(handleOnUpdatedTab);
 }
 
 function updateWindowBadgeText(browserWindow) {
@@ -50,7 +61,7 @@ function updateWindowBadgeText(browserWindow) {
 }
 
 function setBadgeTextInAllWindows() {
-  browser.windows.getAll(windowOptions)
+  browser.windows.getAll(WINDOW_OPTIONS)
     .then((windows) => {
       windows.forEach(updateWindowBadgeText);
       return windows;
@@ -63,7 +74,7 @@ function setBadgeTextInAllWindows() {
 }
 
 const promiseBadgeTextWindowUpdate = windowId =>
-  browser.windows.get(windowId, windowOptions).then(updateWindowBadgeText);
+  browser.windows.get(windowId, WINDOW_OPTIONS).then(updateWindowBadgeText);
 
 function handleOnCreatedTab({ windowId }) {
   // TODO: debounce
@@ -97,7 +108,6 @@ function handleOnDetachedTab(tabId, detachInfo) {
   browser.tabs.get(tabId)
     .then((detachedTabDetails) => {
       const { windowId } = detachedTabDetails;
-      // TODO: debounce
       return promiseBadgeTextWindowUpdate(windowId);
     })
     .catch((e) => {
@@ -106,5 +116,17 @@ function handleOnDetachedTab(tabId, detachInfo) {
         updates: ${e}
       `);
     });
+}
+
+// Badge text gets reset when navigating to a new tab
+function handleOnUpdatedTab(_, __, tab) {
+  const {
+    windowId,
+    id,
+    status,
+  } = tab;
+  // Wait for completion before updating the text
+  if (status !== 'complete') return;
+  return updateTabInWindow(windowId)(id);
 }
 

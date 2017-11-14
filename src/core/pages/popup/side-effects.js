@@ -50,7 +50,7 @@ export function doFinalSideEffects(store) {
   // Populate the initial tab list here.
   // TODO: Add option for showing last query on popup
   populateTabList(updateSearchResults())
-    .then(() => setTimeout(() => searchInput.focus(), 150))
+    .then(() => setTimeout(() => searchInput.focus(), 100))
     .catch((err) => {
       throw new Error(`Can't update search input placeholder text! ${err}`);
     });

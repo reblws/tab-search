@@ -1,10 +1,10 @@
 /* Main DOM event-handlers */
 import {
-  switchActiveTab,
   navigateResults,
   injectTabsInList,
 } from './utils/dom';
 import {
+  switchActiveTab,
   restoreClosedTab,
   deleteTab,
 } from './utils/browser';
@@ -87,23 +87,18 @@ export function keydownHandler(store) {
 
 export function handleTabClick(getState) {
   return function doHandleTabClick(event) {
-    // TODO: get settings here
-    const { showRecentlyClosed } = getState().general;
+    const {
+      showRecentlyClosed,
+    } = getState().general;
     const { currentTarget, ctrlKey } = event;
-    const { id, type } = currentTarget.dataset;
-    switch (type) {
-      case SESSION_TYPE: {
-        if (ctrlKey) break;
-        restoreClosedTab(id);
-        break;
-      }
-      default: {
-        if (ctrlKey) {
-          deleteTab(currentTarget, showRecentlyClosed, true);
-        } else {
-          switchActiveTab(id);
-        }
-      }
+    const { type } = currentTarget.dataset;
+    if (type === SESSION_TYPE) {
+      if (ctrlKey) return;
+      restoreClosedTab(currentTarget.dataset);
+    } else if (ctrlKey) {
+      deleteTab(currentTarget, showRecentlyClosed, true);
+    } else {
+      switchActiveTab(currentTarget.dataset);
     }
   };
 }
