@@ -7,6 +7,7 @@
 
 - Fixed badge text not updating when switching URL in Firefox 58
 - Changed tab switching so that focusing on a tab from another window focuses that window as well
+- Changed options to search all windows by default
 
 ## 0.3.4 (2017-11-06)
 
