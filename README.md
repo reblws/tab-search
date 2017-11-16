@@ -59,7 +59,7 @@ If you want to build or watch for Chrome just use `start:chrome` or `build:chrom
 
 ## Changelog
 
-See (CHANGELOG.md)[CHANGELOG.md].
+See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 MIT
