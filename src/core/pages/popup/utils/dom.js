@@ -19,10 +19,6 @@ function clearChildren(node) {
   }
 }
 
-function isChromeLink(src) {
-  return /chrome:\/\//.test(src);
-}
-
 function isURL(src) {
   const urlPattern = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
   const spacePattern = /\s+/g;
@@ -45,7 +41,6 @@ export function tabToTag(tab) {
     windowId,
   } = tab;
   const isValidFavIconUrl = favIconUrl
-    && !isChromeLink(favIconUrl)
     && !badFavIconCache().includes(favIconUrl);
   const favIconLink = isValidFavIconUrl
     ? favIconUrl
@@ -94,7 +89,7 @@ function createTabObject({
   }
   // Declare id used for switching
   tabObjectNode.setAttribute('data-id', dataId);
-  // Declare data type
+  // Declare data type to know what to paint
   tabObjectNode.setAttribute('data-type', type);
   // Add window id
   tabObjectNode.setAttribute('data-window', windowId);
