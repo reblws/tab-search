@@ -1,7 +1,15 @@
 # Changelog
 
 ## Unreleased
-- Added vertically centered overlay
+- Vertically centered overlay
+- Focus active tab in list on popup initialization
+- History
+- Bookmarks
+- Custom shortcuts (NOT the main popup shortcut)
+
+## 0.3.6 (2017-11-16)
+- Fixed text overflow issue (thanks blakebutcher)
+- Fixed badge text setting not being disabled properly (on startup and mid browser-session)
 
 ## 0.3.5 (2017-11-14)
 
