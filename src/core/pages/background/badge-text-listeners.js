@@ -1,5 +1,40 @@
 import debounce from 'debounce';
 
+// Shorthand
+// t -> browser.tabs
+// setBadgeText -> browser.browserAction.setBadgeText
+const { tabs: t } = browser;
+const { setBadgeText } = browser.browserAction;
+
+const ADD_LISTENER = 'addListener';
+const REMOVE_LISTENER = 'removeListener';
+
+const LOADING_TEXT = '...';
+
+// Save the debounced funcs here so we can remove it with the exact same handler
+const debounceHandleOnCreatedTab = debounce(handleOnCreatedTab, 50);
+const debounceHandleOnRemovedTab = debounce(handleOnRemovedTab, 50);
+
+// Mapping from tab events to their handlers
+// { [<event>]: <handler> }
+const eventListenerMap = {
+  onCreated: debounceHandleOnCreatedTab,
+  onRemoved: debounceHandleOnRemovedTab,
+  onUpdated: handleOnUpdatedTab,
+  onDetached: handleOnDetachedTab,
+};
+
+const doListeners = browserTabObject => method => (listenerMap) => {
+  Object.keys(listenerMap).forEach((eventKey) => {
+    const handler = listenerMap[eventKey];
+    browserTabObject[eventKey][method](handler);
+  });
+};
+
+// listenerMap -> null: applys allevent listeners specified in the listenerMap
+const addBadgeTextListeners = doListeners(t)(ADD_LISTENER);
+const removeBadgeTextListeners = doListeners(t)(REMOVE_LISTENER);
+
 const WINDOW_OPTIONS = {
   populate: true,
   windowTypes: ['normal'],
@@ -8,59 +43,20 @@ const WINDOW_OPTIONS = {
 const updateTabInWindow = windowId => tabId =>
   browser.windows.get(windowId, WINDOW_OPTIONS)
     .then(({ tabs }) => String(tabs.length))
-    .then(text => browser.browserAction.setBadgeText({
-      text,
-      tabId,
-    }));
+    .then(text => setBadgeText({ text, tabId }));
 
-// Save the debounced funcs here so we can remove it with the exact same handler
-let debounceHandleOnCreatedTab;
-let debounceHandleOnRemovedTab;
 export function startCountingBadgeTextAndAddListeners() {
-  setBadgeTextInAllWindows();
-  debounceHandleOnCreatedTab = debounce(handleOnCreatedTab, 50);
-  debounceHandleOnRemovedTab = debounce(handleOnRemovedTab, 50);
-  browser.tabs.onCreated.addListener(debounceHandleOnCreatedTab);
-  browser.tabs.onRemoved.addListener(debounceHandleOnRemovedTab);
-  browser.tabs.onDetached.addListener(handleOnDetachedTab);
-  // browser.tabs.onActivated.addListener(handleOnActivatedTab);
-  browser.tabs.onUpdated.addListener(handleOnUpdatedTab);
+  setInitialBadgeTextInAllWindows();
+  addBadgeTextListeners(eventListenerMap);
 }
 
 export function stopCountingBadgeTextAndRemoveListeners() {
-  // clear
-  browser.browserAction.setBadgeText({ text: '' });
-  browser.tabs.query({}).then((tabs) => {
-    tabs.forEach(({ id }) => {
-      browser.browserAction.setBadgeText({
-        text: '',
-        tabId: id,
-      });
-    });
-  });
-  // Remove tab listeners
-  if (debounceHandleOnCreatedTab || debounceHandleOnRemovedTab) {
-    browser.tabs.onDetached.removeListener(debounceHandleOnRemovedTab);
-    browser.tabs.onCreated.removeListener(debounceHandleOnCreatedTab);
-    debounceHandleOnCreatedTab = undefined;
-    debounceHandleOnRemovedTab = undefined;
-  }
-  browser.tabs.onRemoved.removeListener(handleOnRemovedTab);
-  browser.tabs.onUpdated.removeListener(handleOnUpdatedTab);
+  clearAllBadgeText();
+  removeBadgeTextListeners(eventListenerMap);
 }
 
-function updateWindowBadgeText(browserWindow) {
-  const { tabs } = browserWindow;
-  const windowTabCount = String(tabs.length);
-  tabs.forEach(({ id }) => {
-    browser.browserAction.setBadgeText({
-      text: windowTabCount,
-      tabId: id,
-    });
-  });
-}
-
-function setBadgeTextInAllWindows() {
+function setInitialBadgeTextInAllWindows() {
+  setBadgeText({ text: LOADING_TEXT });
   browser.windows.getAll(WINDOW_OPTIONS)
     .then((windows) => {
       windows.forEach(updateWindowBadgeText);
@@ -71,6 +67,25 @@ function setBadgeTextInAllWindows() {
         Ran into trouble initializing badge texts in each window: ${e}
       `);
     });
+}
+
+
+function updateWindowBadgeText(browserWindow) {
+  const { tabs } = browserWindow;
+  const text = String(tabs.length);
+  tabs.forEach(({ id: tabId }) => setBadgeText({ text, tabId }));
+}
+
+function clearAllBadgeText() {
+  setBadgeText({ text: '' });
+  t.query({}).then((tabs) => {
+    tabs.forEach(({ id: tabId }) => {
+      setBadgeText({
+        text: '',
+        tabId,
+      });
+    });
+  });
 }
 
 const promiseBadgeTextWindowUpdate = windowId =>
@@ -105,7 +120,7 @@ function handleOnRemovedTab(_, removeInfo) {
 function handleOnDetachedTab(tabId, detachInfo) {
   const { oldWindowId } = detachInfo;
   promiseBadgeTextWindowUpdate(oldWindowId);
-  browser.tabs.get(tabId)
+  t.get(tabId)
     .then((detachedTabDetails) => {
       const { windowId } = detachedTabDetails;
       return promiseBadgeTextWindowUpdate(windowId);

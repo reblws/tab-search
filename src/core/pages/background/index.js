@@ -10,28 +10,16 @@ import {
 backgroundStore.subscribe(subscribeToBadgeTextState(backgroundStore));
 
 function subscribeToBadgeTextState(store) {
-  let prevValue = store.getState().general.showTabCountBadgeText;
-  const LOADING_TEXT = '...';
-  if (prevValue) {
-    // Show loading indicator
-    browser.browserAction.setBadgeText({
-      text: LOADING_TEXT,
-    });
-    setTimeout(() => startCountingBadgeTextAndAddListeners(), 1000);
-  }
+  // Don't need to set anything initially, a REHYDRATE action will be dispatched
+  // initially to grab the saved setting, which means the initial adding of
+  // listeners will be handled by the func below anyway
   return () => {
-    const nextValue = store.getState().general.showTabCountBadgeText;
-    // These should only run if the setting actually changed
-    // If the initial prevValue is already true we dont need to add these
-    // listeners
-    if (nextValue && !prevValue) {
-      browser.browserAction.setBadgeText({ text: LOADING_TEXT });
+    const { showTabCountBadgeText } = store.getState().general;
+    if (showTabCountBadgeText) {
       startCountingBadgeTextAndAddListeners();
-    } else if (!nextValue && prevValue) {
-      browser.browserAction.setBadgeText({ text: '' });
+    } else {
       stopCountingBadgeTextAndRemoveListeners();
     }
-    prevValue = nextValue;
   };
 }
 
