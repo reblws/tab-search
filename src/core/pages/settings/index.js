@@ -49,6 +49,7 @@ function getStateSettings(settings) {
 }
 
 
+// Decides which action to dispatch based on the input that changed
 function configureEventListeners(dispatch) {
   return function attachEventListeners(node) {
     node.addEventListener('change', (event) => {
@@ -59,37 +60,41 @@ function configureEventListeners(dispatch) {
         value,
         checked,
       } = event.currentTarget;
-      if (type === 'range') {
-        dispatch(actions.updateFuzzyThresholdRange(parseInt(value, 10)));
-        return;
-      }
-      // Should be boolean if here
-      // Get the location of the key in our state
       const settingsLocation = reducerMap[id].split('.');
       const settingKey = settingsLocation[settingsLocation.length - 1];
-      if (settingsLocation[0] === 'fuzzy' && settingKey !== 'keys') {
-        dispatch(actions.updateFuzzyCheckbox(settingKey, checked));
-      } else if (settingKey === 'keys') {
-        dispatch(actions.updateFuzzySearchKeys(checked));
-      } else if (type === 'checkbox') {
-        if (settingKey === 'showBookmarks') {
-          browser.permissions.request({ permissions: ['bookmarks'] })
-            .then((granted) => {
-              // If user declines reset the checkbox to unchecked
-              if (granted) {
-                dispatch(actions.updateCheckbox(settingKey, checked));
-              } else {
-                document.querySelector('#showBookmarks').checked = false;
-              }
-            });
-        } else {
-          dispatch(actions.updateCheckbox(settingKey, checked));
+      switch (type) {
+        case 'range': {
+          dispatch(actions.updateFuzzyThresholdRange(parseInt(value, 10)));
+          break;
         }
-      } else if (type === 'number') {
-        // TODO: change 25 to a constant
-        if (parseInt(value, 10) <= 25) {
-          dispatch(actions.updateNumber(settingKey, value));
+        case 'checkbox': {
+          if (settingKey === 'showBookmarks') {
+            browser.permissions.request({ permissions: ['bookmarks'] })
+              .then((granted) => {
+                // If user declines reset the checkbox to unchecked
+                if (granted) {
+                  dispatch(actions.updateCheckbox(settingKey, checked));
+                } else {
+                  document.querySelector('#showBookmarks').checked = false;
+                }
+              });
+          } else if (settingsLocation[0] === 'fuzzy' && settingKey !== 'keys') {
+            dispatch(actions.updateFuzzyCheckbox(settingKey));
+          } else if (settingKey === 'keys') {
+            dispatch(actions.updateFuzzySearchKeys(checked));
+          } else {
+            dispatch(actions.updateCheckbox(settingKey, checked));
+          }
+          break;
         }
+        case 'number': {
+          const valueNum = parseInt(value, 10);
+          if (valueNum <= 25 && valueNum >= 0) {
+            dispatch(actions.updateNumber(settingKey, value))
+          }
+          break;
+        }
+        default: break;
       }
     });
   };
