@@ -7,6 +7,7 @@ import {
   FUZZY,
   SETTINGS_RESET,
   NUMBER_UPDATE,
+  LAST_QUERY_UPDATE,
 } from '../../actions/types';
 import {
   updateCheckbox,
@@ -15,6 +16,7 @@ import {
   updateFuzzySearchKeys,
   updateNumber,
   resetSettings,
+  updateLastQuery,
 } from '../../actions';
 
 export default createBackgroundStore({
@@ -26,7 +28,6 @@ export default createBackgroundStore({
     [CHECKBOX_UPDATE]: updateCheckbox,
     [SETTINGS_RESET]: resetSettings,
     [NUMBER_UPDATE]: updateNumber,
+    [LAST_QUERY_UPDATE]: updateLastQuery,
   },
 });
-
-// actions: { [uiActionType]: [backgroundAction]  }

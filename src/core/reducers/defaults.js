@@ -15,4 +15,9 @@ export const initialGeneralSettings = {
   alwaysShowRecentlyClosedAtTheBottom: true,
   recentlyClosedLimit: 5,
   useFallbackFont: false,
+  showLastQueryOnPopup: false,
+};
+
+export const initialState = {
+  lastQuery: '',
 };
