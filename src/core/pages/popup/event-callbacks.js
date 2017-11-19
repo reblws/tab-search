@@ -52,9 +52,9 @@ export function keydownHandler(store) {
         }
         break;
       case 'Tab':
+        event.preventDefault();
       case 'ArrowDown':
       case 'ArrowUp':
-        event.preventDefault();
       case 'ArrowRight':
       case 'ArrowLeft':
         navigateResults(event.key);
