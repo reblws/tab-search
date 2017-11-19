@@ -14,6 +14,7 @@ import {
   tabList,
   SESSION_TYPE,
 } from './constants';
+import { updateLastQuery } from './actions';
 import filterResults from './search';
 
 export function configureSearch({ getState, loadedTabs, currentWindowId }) {
@@ -100,5 +101,13 @@ export function handleTabClick(getState) {
     } else {
       switchActiveTab(currentTarget.dataset);
     }
+  };
+}
+
+export function updateLastQueryOnKeydown(store) {
+  const { dispatch } = store;
+  return (event) => {
+    const { value } = event.currentTarget;
+    return dispatch(updateLastQuery(value.trim()));
   };
 }
