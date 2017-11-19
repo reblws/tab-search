@@ -61,5 +61,11 @@ module.exports = ({ targetBrowser, nodeEnv }) => {
     },
     target: 'web',
     plugins,
+    resolve: {
+      modules: [
+        join(__dirname, 'src'),
+        'node_modules',
+      ],
+    },
   };
 };
