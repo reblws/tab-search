@@ -1,6 +1,7 @@
 import {
   searchInput,
   deleteButton,
+  d,
 } from './constants';
 import {
   scrollIfNeeded,
@@ -63,7 +64,7 @@ export function doFinalSideEffects(store) {
   // Populate the initial tab list here.
   // TODO: Add option for showing last query on popup
   populateTabList(updateSearchResults())
-    .then(() => setTimeout(() => searchInput.focus(), 100))
+    // .then(() => searchInput.focus())
     .catch((err) => {
       throw new Error(`Can't update search input placeholder text! ${err}`);
     });
@@ -74,6 +75,17 @@ export function doFinalSideEffects(store) {
   }
 
   return store;
+}
+
+// Possible input focus workaround
+// https://bugzilla.mozilla.org/show_bug.cgi?id=1324255#c14
+export function focusSearchInputWorkaround() {
+  window.addEventListener('load', () => {
+    setTimeout(() => searchInput.focus(), 100);
+  });
+  d.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => searchInput.focus(), 150);
+  });
 }
 
 

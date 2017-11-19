@@ -8,3 +8,5 @@ export const tabList = document.querySelector('.tab-list');
 export const TAB_TYPE = 'tab';
 export const SESSION_TYPE = 'session';
 export const OTHER_WINDOW_TAB_TYPE = 'other-window-tab';
+
+export const d = document;

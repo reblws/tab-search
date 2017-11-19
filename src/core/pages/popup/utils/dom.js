@@ -7,10 +7,9 @@ import {
   TAB_TYPE,
   OTHER_WINDOW_TAB_TYPE,
   SESSION_TYPE,
+  d,
 } from '../constants';
 import { badFavIconCache } from '../caches';
-
-const d = document;
 
 // Store all the bad favIcons so we don't get loading jank if a favIcon !exist
 function clearChildren(node) {
