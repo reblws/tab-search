@@ -9,6 +9,9 @@
     "storage",
     "sessions"
   ],
+  "optional_permissions": [
+    "bookmarks"
+  ],
   "icons": {
     "48": "icons/logo-48.png",
     "96": "icons/logo-96.png"
