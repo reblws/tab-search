@@ -21,6 +21,8 @@ export const initialGeneralSettings = {
   showLastQueryOnPopup: false,
   shouldSortByMostRecentlyUsedOnPopup: false,
   shouldSortByMostRecentlyUsedAll: false,
+  tabUrlSize: 11,
+  tabTitleSize: 13,
 };
 
 export const initialState = {
