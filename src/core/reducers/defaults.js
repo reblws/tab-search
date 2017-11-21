@@ -10,6 +10,7 @@ export const initialFuzzySettings = {
 };
 
 export const initialGeneralSettings = {
+  showBookmarks: false,
   showTabCountBadgeText: true,
   searchAllWindows: true,
   enableOverlay: false,
