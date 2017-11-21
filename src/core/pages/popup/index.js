@@ -3,11 +3,14 @@ import { createUIStore } from 'redux-webext';
 import {
   addEventListeners,
   doFinalSideEffects,
+  focusSearchInputWorkaround,
 } from './side-effects';
 import {
   addTabsToPromiseChain,
   addCurrentWindowIdToPromiseChain,
 } from './utils/browser';
+
+focusSearchInputWorkaround();
 
 createUIStore()
   .then(addTabsToPromiseChain)

@@ -5,6 +5,7 @@ import {
   SEARCH_KEY_UPDATE,
   SETTINGS_RESET,
   NUMBER_UPDATE,
+  LAST_QUERY_UPDATE,
 } from './types';
 
 // When action is passed in from ui store the background passes the entire
@@ -63,5 +64,12 @@ export function updateNumber({ payload: { key, value } }) {
 export function resetSettings() {
   return {
     type: SETTINGS_RESET,
+  };
+}
+
+export function updateLastQuery({ payload }) {
+  return {
+    type: LAST_QUERY_UPDATE,
+    payload,
   };
 }
