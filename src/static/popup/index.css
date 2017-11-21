@@ -163,13 +163,17 @@ p {
 }
 
 .tab {
-  border-left: 5px #3498db   solid;
+  border-left: 5px #3498db solid;
 }
 
 .session {
-  border-left: 5px #cd6155  solid;
+  border-left: 5px #cd6155 solid;
 }
 
 .other-window-tab {
-  border-left: 5px #f4d03f    solid;
+  border-left: 5px #f4d03f solid;
+}
+
+.bookmark {
+  border-left: 5px #454de1 solid;
 }
