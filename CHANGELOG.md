@@ -7,6 +7,11 @@
 - Bookmarks
 - Custom shortcuts (NOT the main popup shortcut)
 
+## 0.3.7 (2017-11-20)
+- Added option to prefill search bar with the last query on popup
+- Fixed bug where extra "right" or "down" keystroke was needed to select tab list after filling search input with text
+- Input focus workaround (not guaranteed to work for most people)
+
 ## 0.3.6 (2017-11-16)
 - Fixed text overflow issue (thanks blakebutcher)
 - Fixed badge text setting not being disabled properly (on startup and mid browser-session)
