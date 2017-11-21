@@ -72,7 +72,19 @@ function configureEventListeners(dispatch) {
       } else if (settingKey === 'keys') {
         dispatch(actions.updateFuzzySearchKeys(checked));
       } else if (type === 'checkbox') {
-        dispatch(actions.updateCheckbox(settingKey, checked));
+        if (settingKey === 'showBookmarks') {
+          browser.permissions.request({ permissions: ['bookmarks'] })
+            .then((granted) => {
+              // If user declines reset the checkbox to unchecked
+              if (granted) {
+                dispatch(actions.updateCheckbox(settingKey, checked));
+              } else {
+                document.querySelector('#showBookmarks').checked = false;
+              }
+            });
+        } else {
+          dispatch(actions.updateCheckbox(settingKey, checked));
+        }
       } else if (type === 'number') {
         // TODO: change 25 to a constant
         if (parseInt(value, 10) <= 25) {
