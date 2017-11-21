@@ -1,3 +1,4 @@
+import { initialGeneralSettings } from 'core/reducers/defaults';
 import { addTabListeners } from '../side-effects';
 import {
   favIconFallback,
@@ -27,59 +28,71 @@ export function isTabListEmpty() {
   return !tabList.firstElementChild.classList.contains('tab-object');
 }
 
+// Save the default values for font sizes so we know when to inline the font
+// sizes when we append tab nodes
+const {
+  tabUrlSize: defaultTabUrlSize,
+  tabTitleSize: defaultTabTitleSize,
+} = initialGeneralSettings;
+
+// Store all the bad favIcons so we don't get loading jank if a favIcon !exist
 function clearChildren(node) {
   while (node.firstChild) {
     node.removeChild(node.firstChild);
   }
 }
 
-export function tabToTag(tab) {
-  const {
-    favIconUrl,
-    title,
-    id,
-    url,
-    type,
-    sessionId,
-    windowId,
-    lastAccessed,
-  } = tab;
-  const isValidFavIconUrl = favIconUrl
-    && !badFavIconCache().includes(favIconUrl);
-
-  // Since favicon url of bookmarks isn't readily available,
-  // check the type and assign all bookmarks to the static svg
-  // for now.
-  let favIconLink;
-  if (type !== BOOKMARK_TYPE) {
-    favIconLink = isValidFavIconUrl
-      ? favIconUrl
-      : favIconFallback;
-  } else {
-    favIconLink = BOOKMARKS_SVG_PATH;
-  }
-
-  return createTabObject({
-    id,
-    url,
-    title,
-    favIconLink,
-    type,
-    sessionId,
-    windowId,
-    lastAccessed,
-  }, shouldWordBreak(title));
-}
-
 // Given a string, return true if one string is too long and should apply
 function shouldWordBreak(str) {
   const MAX_LENGTH = 40;
   // eslint-disable-next-line arrow-body-style
-  const longestWordLength = (acc, s) => {
-    return (s.length > acc) ? s.length : acc;
-  };
+  const longestWordLength = (acc, s) => s.length > acc
+    ? s.length
+    : acc;
   const longest = str.split(/\s/).reduce(longestWordLength, 0);
   return longest > MAX_LENGTH;
+}
+
+export function tabToTag(getState) {
+  const {
+    tabUrlSize,
+    tabTitleSize,
+  } = getState().general;
+  return function doCreateTabObject(tab) {
+    const {
+      favIconUrl,
+      title,
+      id,
+      url,
+      type,
+      sessionId,
+      windowId,
+    } = tab;
+    const isValidFavIconUrl = favIconUrl
+      && !badFavIconCache().includes(favIconUrl);
+    // Since favicon url of bookmarks isn't readily available,
+    // check the type and assign all bookmarks to the static svg
+    // for now.
+    let favIconLink;
+    if (type !== BOOKMARK_TYPE) {
+      favIconLink = isValidFavIconUrl
+        ? favIconUrl
+        : favIconFallback;
+    } else {
+      favIconLink = BOOKMARKS_SVG_PATH;
+    }
+    return createTabObject({
+      id,
+      url,
+      title,
+      favIconLink,
+      type,
+      sessionId,
+      windowId,
+      tabUrlSize,
+      tabTitleSize,
+    }, shouldWordBreak(title));
+  };
 }
 
 function createTabObject({
@@ -91,6 +104,8 @@ function createTabObject({
   favIconLink,
   windowId,
   lastAccessed,
+  tabUrlSize,
+  tabTitleSize,
 }, wordBreak) {
   const dataId = sessionId || id;
   // Create the parent div
@@ -121,21 +136,33 @@ function createTabObject({
   tabInfoNode.setAttribute('class', 'tab-info');
 
   //      <strong>${title}</strong>
+  // INLINE tabTitleSize HERE
   const titleNode = d.createElement('div');
   titleNode.classList.add('tab-title');
   if (wordBreak) {
     titleNode.classList.add(WORDBREAK_ALL_CLASSNAME);
   }
   titleNode.appendChild(d.createTextNode(title));
+  if (tabTitleSize !== defaultTabTitleSize) {
+    titleNode.style = `font-size: ${tabTitleSize}px`;
+  }
 
   //      <p>${url}</p>
+  // INLINE tabUrlSize HERE
   const urlNode = d.createElement('p');
   urlNode.classList.add('tab-url');
   urlNode.appendChild(d.createTextNode(url));
+  if (tabUrlSize !== defaultTabUrlSize) {
+    urlNode.style = `font-size: ${tabUrlSize}px`;
+  }
 
   // Append all block elementshttps://cloud.githubusercontent.com/assets/689327/26164874/6c2b8920-3b04-11e7-8d4e-f1db027cb4a2.jpg
   tabInfoNode.appendChild(titleNode);
-  tabInfoNode.appendChild(urlNode);
+  // Don't show the url if user specifies 0 as the url font size
+  if (tabUrlSize > 0) {
+    tabInfoNode.appendChild(urlNode);
+  }
+
   tabObjectNode.appendChild(favIconNode);
   tabObjectNode.appendChild(tabInfoNode);
 
@@ -196,7 +223,7 @@ export function injectTabsInList(getState) {
     if (showNoResult) {
       tabList.appendChild(createNoResult());
     } else {
-      tabArray.map(tabToTag).forEach((tabNode) => {
+      tabArray.map(tabToTag(getState)).forEach((tabNode) => {
         addTabListeners(getState)(tabNode);
         tabList.appendChild(tabNode);
       });
