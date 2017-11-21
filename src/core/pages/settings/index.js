@@ -59,6 +59,7 @@ function configureEventListeners(dispatch) {
         type,
         value,
         checked,
+        validity,
       } = event.currentTarget;
       const settingsLocation = reducerMap[id].split('.');
       const settingKey = settingsLocation[settingsLocation.length - 1];
@@ -88,9 +89,12 @@ function configureEventListeners(dispatch) {
           break;
         }
         case 'number': {
-          const valueNum = parseInt(value, 10);
-          if (valueNum <= 25 && valueNum >= 0) {
-            dispatch(actions.updateNumber(settingKey, value))
+          const {
+            rangeUnderflow,
+            rangeOverflow,
+          } = validity;
+          if (!rangeUnderflow && !rangeOverflow) {
+            dispatch(actions.updateNumber(settingKey, value));
           }
           break;
         }
