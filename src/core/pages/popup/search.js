@@ -20,6 +20,7 @@ export default function filterResult(
   query,
   options,
   {
+    showBookmarks,
     showRecentlyClosed,
     recentlyClosedLimit,
     alwaysShowRecentlyClosedAtTheBottom: recentAtBottom,
@@ -43,15 +44,18 @@ export default function filterResult(
       ),
     );
 
-    // Determine array to search over
-    const arrayToSearch = showRecentlyClosed
-      ? Promise.all([
-        annotatedTabs,
-        getRecentlyClosed(recentlyClosedLimit),
-      ]).then(([tabs, sessions]) => [...tabs, ...sessions])
-      : Promise.resolve(annotatedTabs);
-
-    // Determine search function
+    // Initialize the search array
+    // If we want to move the closed tabs to the botttom filter it
+    const shouldMoveClosedToBottom = showRecentlyClosed && recentAtBottom;
+    // Here ask for showBookmarks
+    const arrayToSearchP = [annotatedTabs];
+    if (showRecentlyClosed) {
+      arrayToSearchP.push(getRecentlyClosed(recentlyClosedLimit));
+    }
+    if (showBookmarks) {
+      arrayToSearchP.push(queryBookmarks(query));
+    }
+    const arrayToSearch = Promise.all(arrayToSearchP).then(xs => xs.reduce(concat));
     let search;
     if (isQueryEmpty) {
       search = identity;
@@ -71,7 +75,6 @@ export default function filterResult(
     }
 
     // Apply any extra transformations to results
-    const shouldMoveClosedToBottom = showRecentlyClosed && recentAtBottom;
     const shouldMruSort = (sortMruAll && sortMruPopup)
       ? sortMruAll
       : isQueryEmpty && sortMruPopup;
@@ -106,6 +109,12 @@ function mostRecentlyUsed(a, b) {
   return -(a.lastAccessed - b.lastAccessed);
 }
 
+// Each of these browser API getters should handle annotating the tabs with
+// their proper types
+
+// Should normalize results to match a tabs.Tab object as closely as possible
+// https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/Tab
+
 function getRecentlyClosed(maxResults) {
   const tab = ({ tab: _tab }) => _tab;
   // No incognito please
@@ -119,4 +128,28 @@ function getRecentlyClosed(maxResults) {
     .map(annotateType(SESSION_TYPE));
   return browser.sessions.getRecentlyClosed({ maxResults })
     .then(getTabsAndAnnotate);
+}
+
+function queryBookmarks(query) {
+  // Use `browser.bookmarks.search` to query the bookmarks api, note:
+  // "This function throws an exception if any of the input parameters are
+  // invalid or are not of an appropriate type; look in the console for the
+  // error message. The exceptions don't have error IDs, and the messages
+  // themselves may change, so don't write code that tries to interpret them."
+
+  // We'll use the query input as a string to search against.
+
+  // "If query is a string, it consists of zero or more search terms. Search
+  // terms are space-delimited and may be enclosed in quotes to allow
+  // multiple-word phrases to be searched against. Each search term matches if
+  // it matches any substring in the bookmark's URL or title. Matching is
+  // case-insensitive. For a bookmark to match the query, all the query's search
+  //  terms must match."
+
+  // bookmarks.search returns a bookmarkTreeNode with no children property
+  //
+
+  // Since we don't have access to the favicons immediately, we should
+  // just insert the bookmark svg
+  return;
 }
