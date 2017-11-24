@@ -4,12 +4,11 @@ import {
   alertCircle,
   tabList,
   searchInput,
-  TAB_TYPE,
-  OTHER_WINDOW_TAB_TYPE,
-  SESSION_TYPE,
   d,
   WORDBREAK_ALL_CLASSNAME,
   SELECTED_TAB_CLASSNAME,
+  BOOKMARKS_SVG_PATH,
+  BOOKMARK_TYPE,
 } from '../constants';
 import { badFavIconCache } from '../caches';
 
@@ -47,9 +46,18 @@ export function tabToTag(tab) {
   } = tab;
   const isValidFavIconUrl = favIconUrl
     && !badFavIconCache().includes(favIconUrl);
-  const favIconLink = isValidFavIconUrl
-    ? favIconUrl
-    : favIconFallback;
+
+  // Since favicon url of bookmarks isn't readily available,
+  // check the type and assign all bookmarks to the static svg
+  // for now.
+  let favIconLink;
+  if (type !== BOOKMARK_TYPE) {
+    favIconLink = isValidFavIconUrl
+      ? favIconUrl
+      : favIconFallback;
+  } else {
+    favIconLink = BOOKMARKS_SVG_PATH;
+  }
 
   return createTabObject({
     id,
@@ -90,17 +98,7 @@ function createTabObject({
   const tabObjectNode = d.createElement('div');
   tabObjectNode.setAttribute('tabindex', '0');
   tabObjectNode.classList.add('tab-object');
-  switch (type) {
-    case SESSION_TYPE:
-      tabObjectNode.classList.add(SESSION_TYPE);
-      break;
-    case OTHER_WINDOW_TAB_TYPE:
-      tabObjectNode.classList.add(OTHER_WINDOW_TAB_TYPE);
-      break;
-    default:
-      tabObjectNode.classList.add(TAB_TYPE);
-      break;
-  }
+  tabObjectNode.classList.add(type);
   // Declare id used for switching
   tabObjectNode.setAttribute('data-id', dataId);
   // Declare data type to know what to paint
