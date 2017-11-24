@@ -7,6 +7,7 @@ import {
   removeElementFromTabList,
   repaintElementWithType,
 } from './dom';
+import { decodeUrl } from './url';
 
 export function addTabsToPromiseChain(store) {
   const { getState } = store;
@@ -141,11 +142,27 @@ function queryTabs(queryOptions) {
   return promiseApi(browser.tabs, 'query', queryOptions);
 }
 
+function createTab(createOptions) {
+  return promiseApi(browser.tabs, 'create', createOptions);
+}
+
 export function searchBookmarks(query) {
   return promiseApi(browser.bookmarks, 'search', query);
+}
+
+export function openBookmark(dataset) {
+  const { id } = dataset;
+  return createTab({
+    active: true,
+    url: decodeUrl(id),
+  })
+    .then(() => {
+      window.close();
+    });
 }
 
 // recentlyclosed func
 export function getRecentlyClosed(maxResults) {
   return promiseApi(browser.sessions, 'getRecentlyClosed', { maxResults });
 }
+

@@ -13,12 +13,16 @@ import {
   switchActiveTab,
   restoreClosedTab,
   deleteTab,
+  openBookmark,
 } from './utils/browser';
 import {
   deleteButton,
   searchInput,
   tabList,
   SESSION_TYPE,
+  // OTHER_WINDOW_TAB_TYPE,
+  BOOKMARK_TYPE,
+  TAB_TYPE,
 } from './constants';
 import { updateLastQuery } from './actions';
 import filterResults from './search';
@@ -116,20 +120,35 @@ export function keydownHandler(store) {
   };
 }
 
+function noop() {}
+
 export function handleTabClick(getState) {
   return function doHandleTabClick(event) {
     const {
       showRecentlyClosed,
     } = getState().general;
     const { currentTarget, ctrlKey } = event;
-    const { type } = currentTarget.dataset;
-    if (type === SESSION_TYPE) {
-      if (ctrlKey) return;
-      restoreClosedTab(currentTarget.dataset);
-    } else if (ctrlKey) {
-      deleteTab(currentTarget, showRecentlyClosed, true);
-    } else {
-      switchActiveTab(currentTarget.dataset);
+    const { dataset } = currentTarget;
+    const { type } = dataset;
+    // Decide what to do depending if ctrl is held
+    switch (type) {
+      case TAB_TYPE: {
+        if (ctrlKey) {
+          return deleteTab(currentTarget, showRecentlyClosed, true);
+        }
+        return switchActiveTab(dataset);
+      } case SESSION_TYPE: {
+        if (ctrlKey) {
+          return noop();
+        }
+        return restoreClosedTab(dataset);
+      } case BOOKMARK_TYPE: {
+        if (ctrlKey) {
+          return noop();
+        }
+        return openBookmark(dataset);
+      }
+      default: return noop();
     }
   };
 }
