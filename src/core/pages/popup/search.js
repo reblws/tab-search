@@ -7,6 +7,10 @@ import {
   BOOKMARK_TYPE,
 } from './constants';
 import {
+  encodeUrl,
+  parseUrl,
+} from './utils/url';
+import {
   isActive,
   identity,
   isOfUrl,
@@ -118,8 +122,12 @@ function mostRecentlyUsed(a, b) {
 
 // Each of these browser API getters should handle annotating the tabs with
 // their proper types
-// Dom specific aspects of the object like faviconurl should be handled
+// Dom specific aspects of the object like favicon url should be handled
 // by dom.tabToTag
+
+// At minimum, each normalized object should have the following fields:
+//        type: the typestring specified in constants
+//        id: retrieving this specific object should depend on this value
 
 // Should normalize results to match a tabs.Tab object as closely as possible
 // https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/Tab
@@ -135,16 +143,20 @@ function normalizeRecentlyClosedTabs(maxResults) {
     filterNewTab,
     filterIncognito,
   );
-  const getTabsAndAnnotate = sessionTabs =>
+  const normalize = sessionTabs =>
     sessionTabs
       .map(tab)
       .filter(filters)
       .map(annotateType(SESSION_TYPE));
-  return getRecentlyClosed(maxResults).then(getTabsAndAnnotate);
+  return getRecentlyClosed(maxResults).then(normalize);
 }
 
 function normalizeBookmarks(query) {
   const MIN_QUERY_LENGTH = 3;
+  // TODO: should we dedup the bookmarks? if they're already in the search list
+  //                This would require appending the bookmarks after the initial
+  //                search
+
   // Bookmarks API throws an error if the query is falsey
   // Return an empty array if the query is empty
 
@@ -154,9 +166,21 @@ function normalizeBookmarks(query) {
     return Promise.resolve([]);
   }
 
+  // If a url is undefined or contains no valid hostname, that means
+  // its probably a folder or bookmark we don't care about.
+  const filterFolders = ({ url }) => !!url && !!parseUrl(url).hostname;
+
+  // We can't open bookmarks by ID, instead we need to pass the url to
+  // browser.tabs.create . Override the id property with the value of the url
+  const urlAsId = tab => Object.assign({}, tab, { id: encodeUrl(tab.url) });
+
   // Type property is only available from bookmarks from FF57+, annotate the
   // bookmarks type for backward compatbility
-  const annotateBookmarks = bookmarks =>
-    bookmarks.map(annotateType(BOOKMARK_TYPE));
-  return searchBookmarks(query).then(annotateBookmarks);
+  const normalize = bookmarks =>
+    bookmarks
+      .filter(filterFolders)
+      .map(annotateType(BOOKMARK_TYPE))
+      .map(urlAsId);
+
+  return searchBookmarks(query).then(normalize);
 }
