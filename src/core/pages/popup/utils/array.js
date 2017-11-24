@@ -5,6 +5,7 @@ const isOfProperty =
 export const isOfType = isOfProperty('type');
 export const isOfWindow = isOfProperty('windowId');
 export const isActive = isOfProperty('active')(true);
+export const isOfUrl = isOfProperty('url');
 
 export const annotateType = type => obj => Object.assign({}, obj, { type });
 // Given a variable number of predicates, returns an array of arrays length
@@ -48,3 +49,11 @@ export const annotateTypeConditionally = (
   obj,
 )(obj);
 
+const and = (f, g) => x => f(x) && g(x);
+const or = (f, g) => x => f(x) || g(x);
+// ((func, func) -> 'x -> bool) -> (...('x -> bool)) -> ('x -> bool)
+const composeFilter = binaryOperator => (...predicates) =>
+  predicates.reduce((acc, predicate) => binaryOperator(acc, predicate));
+
+export const composeFilterAnd = composeFilter(and);
+export const composeFilterOr = composeFilter(or);
