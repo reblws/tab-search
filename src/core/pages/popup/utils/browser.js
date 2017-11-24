@@ -15,7 +15,7 @@ export function addTabsToPromiseChain(store) {
   if (!searchAllWindows) {
     tabQueryOptions.currentWindow = true;
   }
-  return browser.tabs.query(tabQueryOptions)
+  return queryTabs(tabQueryOptions)
     .then(tabs => Object.assign({}, store, { loadedTabs: tabs }));
 }
 
@@ -111,26 +111,41 @@ function focusWindow(windowId) {
 }
 
 export function queryTab(id) {
-  return browser.tabs.get(parseInt(id, 10));
+  return promiseApi(browser.tabs, 'get', parseInt(id, 10));
 }
 
 export function reloadTab(id) {
-  // TODO: update tab cache
-  return browser.tabs.reload(parseInt(id, 10));
+  return promiseApi(browser.tabs, 'reload', parseInt(id, 10));
 }
 
 export function pinTab(id, pinned) {
-  // TODO: We should store if a tab is pinned in the dataset so we
-  // can toggle it
-  return browser.tabs.update(
-    parseInt(id, 10),
-    { pinned },
-  );
+  return promiseApi(browser.tabs, 'update', parseInt(id, 10), { pinned });
 }
 
 export function muteTab(id, muted) {
-  return browser.tabs.update(
-    parseInt(id, 10),
-    { muted },
-  );
+  return promiseApi(browser.tabs, 'update', parseInt(id, 10), { muted });
+}
+
+// Promise that sends a rejection error if an API is undefined
+function promiseApi(api, method, ...args) {
+  return new Promise((resolve, reject) => {
+    if (api) {
+      resolve(api[method](...args));
+    } else {
+      reject(new Error(`${api} API not available!`));
+    }
+  });
+}
+
+function queryTabs(queryOptions) {
+  return promiseApi(browser.tabs, 'query', queryOptions);
+}
+
+export function searchBookmarks(query) {
+  return promiseApi(browser.bookmarks, 'search', query);
+}
+
+// recentlyclosed func
+export function getRecentlyClosed(maxResults) {
+  return promiseApi(browser.sessions, 'getRecentlyClosed', { maxResults });
 }
