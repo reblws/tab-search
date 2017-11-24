@@ -1,4 +1,6 @@
 export const identity = x => x;
+// ('x -> bool) -> 'x -> bool
+export const not = pred => x => !pred(x);
 
 const isOfProperty =
   propKey => desiredProp => ({ [propKey]: prop }) => prop === desiredProp;
