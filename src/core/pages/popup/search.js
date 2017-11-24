@@ -4,17 +4,24 @@ import {
   TAB_TYPE,
   OTHER_WINDOW_TAB_TYPE,
   SESSION_TYPE,
+  BOOKMARK_TYPE,
 } from './constants';
 import {
   isActive,
   identity,
+  isOfUrl,
   isOfWindow,
   isOfType,
   annotateTypeConditionally,
   annotateType,
   partition,
   concat,
+  composeFilterOr,
 } from './utils/array';
+import {
+  getRecentlyClosed,
+  searchBookmarks,
+} from './utils/browser';
 
 export default function filterResult(
   query,
@@ -50,10 +57,10 @@ export default function filterResult(
     // Here ask for showBookmarks
     const arrayToSearchP = [annotatedTabs];
     if (showRecentlyClosed) {
-      arrayToSearchP.push(getRecentlyClosed(recentlyClosedLimit));
+      arrayToSearchP.push(normalizeRecentlyClosedTabs(recentlyClosedLimit));
     }
     if (showBookmarks) {
-      arrayToSearchP.push(queryBookmarks(query));
+      arrayToSearchP.push(normalizeBookmarks(query));
     }
     const arrayToSearch = Promise.all(arrayToSearchP).then(xs => xs.reduce(concat));
     let search;
@@ -111,45 +118,45 @@ function mostRecentlyUsed(a, b) {
 
 // Each of these browser API getters should handle annotating the tabs with
 // their proper types
+// Dom specific aspects of the object like faviconurl should be handled
+// by dom.tabToTag
 
 // Should normalize results to match a tabs.Tab object as closely as possible
 // https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/Tab
 
-function getRecentlyClosed(maxResults) {
+function normalizeRecentlyClosedTabs(maxResults) {
   const tab = ({ tab: _tab }) => _tab;
   // No incognito please
   const filterIncognito = ({ incognito }) => !incognito;
   // Don't want to show new tab pages
-  const isNewTabPage = ({ url }) => url !== 'about:newtab';
-  const getTabsAndAnnotate = objects => objects
-    .filter(tab)
-    .map(tab)
-    .filter(isNewTabPage).filter(filterIncognito)
-    .map(annotateType(SESSION_TYPE));
-  return browser.sessions.getRecentlyClosed({ maxResults })
-    .then(getTabsAndAnnotate);
+  const filterNewTab = !isOfUrl('about:newtab');
+  const filters = composeFilterOr(
+    tab,
+    filterNewTab,
+    filterIncognito,
+  );
+  const getTabsAndAnnotate = sessionTabs =>
+    sessionTabs
+      .map(tab)
+      .filter(filters)
+      .map(annotateType(SESSION_TYPE));
+  return getRecentlyClosed(maxResults).then(getTabsAndAnnotate);
 }
 
-function queryBookmarks(query) {
-  // Use `browser.bookmarks.search` to query the bookmarks api, note:
-  // "This function throws an exception if any of the input parameters are
-  // invalid or are not of an appropriate type; look in the console for the
-  // error message. The exceptions don't have error IDs, and the messages
-  // themselves may change, so don't write code that tries to interpret them."
+function normalizeBookmarks(query) {
+  const MIN_QUERY_LENGTH = 3;
+  // Bookmarks API throws an error if the query is falsey
+  // Return an empty array if the query is empty
 
-  // We'll use the query input as a string to search against.
+  // Since single character matches will probably overload the result list,
+  // for now lets just set a minimum at least 2 chars in a trimmed query
+  if (!query || query.trim().length < MIN_QUERY_LENGTH) {
+    return Promise.resolve([]);
+  }
 
-  // "If query is a string, it consists of zero or more search terms. Search
-  // terms are space-delimited and may be enclosed in quotes to allow
-  // multiple-word phrases to be searched against. Each search term matches if
-  // it matches any substring in the bookmark's URL or title. Matching is
-  // case-insensitive. For a bookmark to match the query, all the query's search
-  //  terms must match."
-
-  // bookmarks.search returns a bookmarkTreeNode with no children property
-  //
-
-  // Since we don't have access to the favicons immediately, we should
-  // just insert the bookmark svg
-  return;
+  // Type property is only available from bookmarks from FF57+, annotate the
+  // bookmarks type for backward compatbility
+  const annotateBookmarks = bookmarks =>
+    bookmarks.map(annotateType(BOOKMARK_TYPE));
+  return searchBookmarks(query).then(annotateBookmarks);
 }
