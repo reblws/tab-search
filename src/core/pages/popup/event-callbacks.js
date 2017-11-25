@@ -52,9 +52,9 @@ export function keydownHandler(store) {
         }
         break;
       case 'Tab':
-        event.preventDefault();
       case 'ArrowDown':
       case 'ArrowUp':
+        event.preventDefault();
       case 'ArrowRight':
       case 'ArrowLeft':
         navigateResults(event.key);
@@ -63,7 +63,7 @@ export function keydownHandler(store) {
         event.preventDefault();
 
         // If we're pressing enter from the searchbar
-        const firstChildNode = tabList.childNodes[0];
+        const firstChildNode = tabList.firstElementChild;
         if (document.activeElement === searchInput) {
           firstChildNode.click();
         } else {
