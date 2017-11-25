@@ -206,21 +206,16 @@ export function scrollIfNeeded(event) {
 }
 
 export function navigateResults(direction) {
-  if (d.activeElement.nodeName === 'INPUT') {
-    d.querySelector('.tab-object').focus();
-    return;
-  }
-
   switch (direction) {
     case 'Tab':
     case 'ArrowRight':
     case 'ArrowDown': {
       const nextSibling = d.activeElement.nextElementSibling;
-      if (nextSibling) {
+      if (nextSibling && d.activeElement !== searchInput) {
         nextSibling.focus();
       } else {
         // Return to top if next !exist
-        tabList.querySelector('.tab-object').focus();
+        tabList.firstElementChild.focus();
       }
       break;
     }
