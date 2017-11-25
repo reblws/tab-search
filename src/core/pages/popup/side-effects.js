@@ -26,11 +26,10 @@ export function addEventListeners(store) {
   const handleKeydown = keydownHandler(store);
   window.addEventListener('keydown', handleKeydown);
   deleteButton.addEventListener('click', clearInput);
-  searchInput.addEventListener('change', updateSearchResults);
-  searchInput.addEventListener('keyup', updateSearchResults);
+  searchInput.addEventListener('input', updateSearchResults);
 
   if (showLastQueryOnPopup) {
-    searchInput.addEventListener('keydown', updateLastQueryOnKeydown(store));
+    searchInput.addEventListener('input', updateLastQueryOnKeydown(store));
   }
 
   // Populate store with current search fn
@@ -38,7 +37,7 @@ export function addEventListeners(store) {
     {},
     store,
     { updateSearchResults },
-);
+  );
 }
 
 export function addTabListeners(getState) {
