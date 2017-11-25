@@ -122,9 +122,12 @@ header {
 .tab-title {
   line-height: 1.2;
   margin-bottom: 0.25em;
-  word-break: break-all;
   font-size: 1.1em;
   font-weight: 500;
+}
+
+.wordbreak-all {
+  word-break: break-all;
 }
 
 .tab-info {
