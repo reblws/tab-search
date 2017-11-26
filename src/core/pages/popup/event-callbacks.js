@@ -40,6 +40,8 @@ export function configureSearch({ getState, loadedTabs, currentWindowId }) {
         // pressing <Enter> from the search input activates this tab
         if (results.length > 0 && !isSearchEmpty) {
           addHeadTabListNodeSelectedStyle();
+          // Scroll to the top
+          tabList.firstElementChild.scrollIntoView(true);
         }
         return results;
       });
