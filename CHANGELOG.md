@@ -9,6 +9,7 @@
 
 # 0.3.8 (2016-11-25)
 - Changed tab-list to highlight the first tab when making a search query (suggests the idea you can press "Enter" from the input and activate the highlighted tab)
+- Changed tab-list to scroll to the very top when updating the search query
 - Smoothed scrolling when pressing "ArrowUp" or "ArrowDown"
 - Changed word-break rules for tab titles: words shouldn't break and enter a newline unless a single word is too long
 
