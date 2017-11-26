@@ -9,4 +9,7 @@ export const TAB_TYPE = 'tab';
 export const SESSION_TYPE = 'session';
 export const OTHER_WINDOW_TAB_TYPE = 'other-window-tab';
 
+// css classnames
+export const WORDBREAK_ALL_CLASSNAME = 'wordbreak-all';
+export const SELECTED_TAB_CLASSNAME = 'tab-object--selected';
 export const d = document;

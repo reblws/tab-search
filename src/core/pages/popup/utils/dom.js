@@ -8,25 +8,30 @@ import {
   OTHER_WINDOW_TAB_TYPE,
   SESSION_TYPE,
   d,
+  WORDBREAK_ALL_CLASSNAME,
+  SELECTED_TAB_CLASSNAME,
 } from '../constants';
 import { badFavIconCache } from '../caches';
 
-// Store all the bad favIcons so we don't get loading jank if a favIcon !exist
+const changeHeadTabListNodeSelectedStyle = method => () => {
+  tabList.firstElementChild.classList[method](SELECTED_TAB_CLASSNAME);
+};
+
+export const removeHeadTabListNodeSelectedStyle =
+  changeHeadTabListNodeSelectedStyle('remove');
+
+export const addHeadTabListNodeSelectedStyle =
+  changeHeadTabListNodeSelectedStyle('add');
+
+
+export function isTabListEmpty() {
+  return !tabList.firstElementChild.classList.contains('tab-object');
+}
+
 function clearChildren(node) {
   while (node.firstChild) {
     node.removeChild(node.firstChild);
   }
-}
-
-function isURL(src) {
-  const urlPattern = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
-  const spacePattern = /\s+/g;
-  return urlPattern.test(src) && !spacePattern.test(src);
-}
-
-function getBasePath(src) {
-  const { origin } = new URL(src);
-  return origin;
 }
 
 export function tabToTag(tab) {
@@ -44,20 +49,27 @@ export function tabToTag(tab) {
   const favIconLink = isValidFavIconUrl
     ? favIconUrl
     : favIconFallback;
-  // Just check if it's a url for now so we can shorten it
-  const tabTitle = isURL(title)
-    ? getBasePath(title)
-    : title;
 
   return createTabObject({
     id,
     url,
-    tabTitle,
+    title,
     favIconLink,
     type,
     sessionId,
     windowId,
-  });
+  }, shouldWordBreak(title));
+}
+
+// Given a string, return true if one string is too long and should apply
+function shouldWordBreak(str) {
+  const MAX_LENGTH = 40;
+  // eslint-disable-next-line arrow-body-style
+  const longestWordLength = (acc, s) => {
+    return (s.length > acc) ? s.length : acc;
+  };
+  const longest = str.split(/\s/).reduce(longestWordLength, 0);
+  return longest > MAX_LENGTH;
 }
 
 function createTabObject({
@@ -65,10 +77,10 @@ function createTabObject({
   sessionId,
   type,
   url,
-  tabTitle,
+  title,
   favIconLink,
   windowId,
-}) {
+}, wordBreak) {
   const dataId = sessionId || id;
   // Create the parent div
   // <div class="tab-object" data-id="${id}" tabIndex="0" data-type="tab" data-window="1">
@@ -106,16 +118,18 @@ function createTabObject({
   //      <strong>${title}</strong>
   const titleNode = d.createElement('div');
   titleNode.classList.add('tab-title');
-  titleNode.appendChild(d.createTextNode(tabTitle));
+  if (wordBreak) {
+    titleNode.classList.add(WORDBREAK_ALL_CLASSNAME);
+  }
+  titleNode.appendChild(d.createTextNode(title));
 
   //      <p>${url}</p>
   const urlNode = d.createElement('p');
   urlNode.appendChild(d.createTextNode(url));
 
-  // Append all block elements
+  // Append all block elementshttps://cloud.githubusercontent.com/assets/689327/26164874/6c2b8920-3b04-11e7-8d4e-f1db027cb4a2.jpg
   tabInfoNode.appendChild(titleNode);
   tabInfoNode.appendChild(urlNode);
-
   tabObjectNode.appendChild(favIconNode);
   tabObjectNode.appendChild(tabInfoNode);
 
@@ -206,21 +220,16 @@ export function scrollIfNeeded(event) {
 }
 
 export function navigateResults(direction) {
-  if (d.activeElement.nodeName === 'INPUT') {
-    d.querySelector('.tab-object').focus();
-    return;
-  }
-
   switch (direction) {
     case 'Tab':
     case 'ArrowRight':
     case 'ArrowDown': {
       const nextSibling = d.activeElement.nextElementSibling;
-      if (nextSibling) {
+      if (nextSibling && d.activeElement !== searchInput) {
         nextSibling.focus();
       } else {
         // Return to top if next !exist
-        tabList.querySelector('.tab-object').focus();
+        tabList.firstElementChild.focus();
       }
       break;
     }

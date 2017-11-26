@@ -2,6 +2,8 @@
 import {
   navigateResults,
   injectTabsInList,
+  addHeadTabListNodeSelectedStyle,
+  removeHeadTabListNodeSelectedStyle,
 } from './utils/dom';
 import {
   switchActiveTab,
@@ -27,10 +29,22 @@ export function configureSearch({ getState, loadedTabs, currentWindowId }) {
     } else {
       deleteButton.classList.remove('hidden');
     }
+    // isSearchEmpty isn't based on this var so we can show delete button with
+    // just spaces
     const query = event.currentTarget.value.trim().toLowerCase();
     return Promise.resolve(loadedTabs)
       .then(filterResults(query, fuzzy, general, currentWindowId))
-      .then(injectTabsInList(getState));
+      .then(injectTabsInList(getState))
+      .then((results) => {
+        // Apply the selected style to the head of the tabList to suggest
+        // pressing <Enter> from the search input activates this tab
+        if (results.length > 0 && !isSearchEmpty) {
+          addHeadTabListNodeSelectedStyle();
+          // Scroll to the top
+          tabList.firstElementChild.scrollIntoView(true);
+        }
+        return results;
+      });
   };
 }
 
@@ -52,18 +66,20 @@ export function keydownHandler(store) {
         }
         break;
       case 'Tab':
-        event.preventDefault();
       case 'ArrowDown':
       case 'ArrowUp':
+        event.preventDefault();
       case 'ArrowRight':
       case 'ArrowLeft':
+        // When navigating remove the applied style
+        removeHeadTabListNodeSelectedStyle();
         navigateResults(event.key);
         break;
       case 'Enter': {
         event.preventDefault();
 
         // If we're pressing enter from the searchbar
-        const firstChildNode = tabList.childNodes[0];
+        const firstChildNode = tabList.firstElementChild;
         if (document.activeElement === searchInput) {
           firstChildNode.click();
         } else {
