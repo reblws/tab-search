@@ -64,6 +64,7 @@ export function tabToTag(tab) {
 // Given a string, return true if one string is too long and should apply
 function shouldWordBreak(str) {
   const MAX_LENGTH = 40;
+  // eslint-disable-next-line arrow-body-style
   const longestWordLength = (acc, s) => {
     return (s.length > acc) ? s.length : acc;
   };
