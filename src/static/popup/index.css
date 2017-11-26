@@ -81,6 +81,7 @@ header {
   outline: 1px dotted black;
 }
 
+.tab-object--selected,
 .tab-object:hover,
 .tab-object:focus {
   /*box-sizing: border-box;*/
