@@ -2,6 +2,7 @@
 import {
   navigateResults,
   injectTabsInList,
+  addHeadTabListNodeSelectedStyle,
 } from './utils/dom';
 import {
   switchActiveTab,
@@ -30,7 +31,13 @@ export function configureSearch({ getState, loadedTabs, currentWindowId }) {
     const query = event.currentTarget.value.trim().toLowerCase();
     return Promise.resolve(loadedTabs)
       .then(filterResults(query, fuzzy, general, currentWindowId))
-      .then(injectTabsInList(getState));
+      .then(injectTabsInList(getState))
+      .then((results) => {
+        if (results.length > 0 && !isSearchEmpty) {
+          addHeadTabListNodeSelectedStyle();
+        }
+        return results;
+      });
   };
 }
 
