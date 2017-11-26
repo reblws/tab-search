@@ -7,6 +7,11 @@
 - Bookmarks
 - Custom shortcuts (NOT the main popup shortcut)
 
+# 0.3.8 (2016-11-25)
+- Changed tab-list to highlight the first tab when making a search query (suggests the idea you can press "Enter" from the input and activate the highlighted tab)
+- Smoothed scrolling when pressing "ArrowUp" or "ArrowDown"
+- Changed word-break rules for tab titles: words shouldn't break and enter a newline unless a single word is too long
+
 ## 0.3.7 (2017-11-20)
 - Added option to prefill search bar with the last query on popup
 - Fixed bug where extra "right" or "down" keystroke was needed to select tab list after filling search input with text
