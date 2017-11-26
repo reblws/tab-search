@@ -8,10 +8,26 @@ import {
   OTHER_WINDOW_TAB_TYPE,
   SESSION_TYPE,
   d,
+  WORDBREAK_ALL_CLASSNAME,
+  SELECTED_TAB_CLASSNAME,
 } from '../constants';
 import { badFavIconCache } from '../caches';
 
-// Store all the bad favIcons so we don't get loading jank if a favIcon !exist
+const changeHeadTabListNodeSelectedStyle = method => () => {
+  tabList.firstElementChild.classList[method](SELECTED_TAB_CLASSNAME);
+};
+
+export const removeHeadTabListNodeSelectedStyle =
+  changeHeadTabListNodeSelectedStyle('remove');
+
+export const addHeadTabListNodeSelectedStyle =
+  changeHeadTabListNodeSelectedStyle('add');
+
+
+export function isTabListEmpty() {
+  return !tabList.firstElementChild.classList.contains('tab-object');
+}
+
 function clearChildren(node) {
   while (node.firstChild) {
     node.removeChild(node.firstChild);
@@ -102,7 +118,7 @@ function createTabObject({
   const titleNode = d.createElement('div');
   titleNode.classList.add('tab-title');
   if (wordBreak) {
-    titleNode.classList.add('wordbreak-all');
+    titleNode.classList.add(WORDBREAK_ALL_CLASSNAME);
   }
   titleNode.appendChild(d.createTextNode(title));
 
