@@ -1,42 +1,8 @@
-/* Regex patterns for command strings
-Valid strings:
-  - Ctrl + S
-  - Ctrl + M
-  - Ctrl + Z
-  - Alt + Z
-  - Z
-  - [
-  - ]
-  - \
-  - ;
-  - '
-  - ,
-  - .
-  - /
-  - `
-  - Alt+U
-  - Ctrl+Shift+M
-  - Alt+Shift+A
-  - Shift+Alt+C
-  - Meta+S
-  - Shift+C
-  - Alt+;
-
-Invalid strings:
- - Ctrl+
- - Crtl+Z
- - Zaz
- - Wack
- - Shift+Keyboard
- - Ctrl+Shift
-*/
-// Keys that can operate on their own without a modifier
-
-
+/* Regex patterns for interpreting commands as strings */
 // Keys that can operate on their own without a modifier
 const validSingleKeys = [
   // eslint-disable-next-line no-useless-escape
-  "[[\]\\\]\-=`;',./]", // punc keys
+  "[[\]\-=`;',\.\/\\]", // punc keys
   'ArrowDown',
   'ArrowUp',
   'ArrowRight',
@@ -60,4 +26,5 @@ const comboFinalKeys = [
 const modifiers = '((?:Ctrl|Alt|Shift|Meta)\+)+';
 export const kbdStringComboRe =
   new RegExp(`^${modifiers}(?:${comboFinalKeys.join('|')})$`);
-export const kbdStringSingleRe = new RegExp(`^(?:${validSingleKeys.join('|')})$`);
+export const kbdStringSingleRe =
+  new RegExp(`^(?:${validSingleKeys.join('|')})$`);
