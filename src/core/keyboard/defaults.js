@@ -1,6 +1,8 @@
 import * as c from './constants';
 export default {
-  [c.TAB_DELETE]:
+  [c.TAB_DELETE]: {
+
+  },
   [c.TAB_OPEN]:
   [c.TAB_NEXT]:
   [c.TAB_PREV]:
