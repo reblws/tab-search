@@ -1,4 +1,4 @@
-// String
+// Actions
 export const TAB_DELETE = 'TAB_DELETE';
 export const TAB_OPEN = 'TAB_OPEN';
 export const TAB_NEXT = 'TAB_NEXT';
@@ -10,3 +10,9 @@ export const URL_COPY = 'URL_COPY';
 export const TAB_BOOKMARK = 'TAB_BOOKMARK';
 export const DUPLICATE_TAB_DELETE = 'DUPLICATE_TAB_DELETE';
 export const MUTE_TOGGLE = 'MUTE_TOGGLE';
+
+// Modifier constants
+export const CTRL = 'Ctrl';
+export const ALT = 'Alt';
+export const SHIFT = 'Shift';
+export const META = 'Meta';
