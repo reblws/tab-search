@@ -18,14 +18,7 @@ const modifierPropsMap = {
   [META]: 'ctrlKey', // Point meta key to ctrl key
 };
 
-const modifiersArray = Object.keys(modifierPropsMap);
-
-const kbdCommandProps = [
-  'key',
-  'ctrlKey',
-  'altKey',
-  'shiftKey',
-];
+// const modifiersArray = Object.keys(modifierPropsMap);
 
 const protoKbdCommand = {
   key: null,
@@ -33,6 +26,7 @@ const protoKbdCommand = {
   altKey: false,
   shiftKey: false,
 };
+const kbdCommandProps = Object.keys(protoKbdCommand);
 
 // Accepts a valid command string or
 export function kbdCommand(input) {
@@ -64,18 +58,28 @@ function kbdCommandString(inputString) {
 }
 
 function kbdCommandEvent(event) {
-  if (!kbdCommandProps.all(k => !!event[k])) {
-    throw new Error('Command input does not contain the required props!');
+  const command = makeKbdCommandFromEvent(event);
+  const isSingleKey = c => !c.ctrlKey && !c.shiftKey && !c.altKey;
+  if (isSingleKey(command) && !kbdStringSingleRe.test(command.key)) {
+    throw new Error(`${command.key} isn't a valid single key!`);
   }
-  return kbdCommandProps.reduce((acc, k) =>
-    Object.assign(
-      {},
-      acc,
-      { [k === 'metaKey' ? 'ctrlKey' : k]: event[k] },
-    ),
-  protoKbdCommand);
+  return command;
 }
 
+function makeKbdCommandFromEvent({
+  key,
+  ctrlKey,
+  metaKey,
+  altKey,
+  shiftKey,
+}) {
+  return {
+    key: key.toUpperCase(),
+    ctrlKey: ctrlKey || metaKey,
+    altKey,
+    shiftKey,
+  };
+}
 
 export function compareKbdCommand(c1, c2) {
   return false;

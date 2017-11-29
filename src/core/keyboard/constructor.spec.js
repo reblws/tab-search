@@ -4,8 +4,8 @@ import {
 } from './__test__/keys';
 import {
   kbdCommand,
-  compareKbdCommand,
 } from './constructor';
+import * as e from './__test__/events';
 
 const singleKey = key =>
   ({ key, ctrlKey: false, altKey: false, shiftKey: false });
@@ -64,7 +64,7 @@ describe('keyboard.constructor', function () {
       it('should interpret meta keys as a ctrl', function () {
         expect(kbdCommand('Meta+Z')).to.deep.equal(kbdCommand('Ctrl+Z'));
         expect(
-          kbdCommand('Meta+Ctrl+Z')
+          kbdCommand('Meta+Ctrl+Z'),
         ).to.deep.equal(kbdCommand('Ctrl+Z'));
       });
       it('should handle all the default keybindings without throwing', function () {
@@ -92,7 +92,44 @@ describe('keyboard.constructor', function () {
       });
     });
     describe('event inputs', function () {
-      // TODO: gather event objects
+      it('should handle a Ctrl+Shift+F event', function () {
+        expect(kbdCommand(e.eventCtrlShiftF)).to.deep.equal({
+          key: 'F',
+          ctrlKey: true,
+          shiftKey: true,
+          altKey: false,
+        });
+      });
+      it('should handle Ctrl+`', function () {
+        expect(kbdCommand(e.eventCtrlBacktick)).to.deep.equal({
+          key: '`',
+          ctrlKey: true,
+          shiftKey: false,
+          altKey: false,
+        });
+      });
+      it('should treat meta the same as Ctrl', function () {
+        expect(kbdCommand(e.eventMeta1)).to.deep.equal({
+          key: '1',
+          ctrlKey: true,
+          shiftKey: false,
+          altKey: false,
+        });
+        expect(kbdCommand(e.eventCtrl1)).to.deep.equal(kbdCommand(e.eventMeta1));
+      });
+      it('should allow a valid single key', function () {
+        expect(function () { kbdCommand(e.eventBracketLeft); }).to.not.throw();
+        expect(kbdCommand(e.eventBracketLeft)).to.deep.equal({
+          key: '[',
+          ctrlKey: false,
+          shiftKey: false,
+          altKey: false,
+        });
+      });
+      it('should throw on an invalid single key', function () {
+        expect(function () { kbdCommand(e.eventG); }).to.throw();
+      });
     });
   });
 });
+
