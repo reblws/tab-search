@@ -1,7 +1,7 @@
 import * as c from './constants';
 import { kbdCommand } from './constructor';
 
-export default {
+export const defaultCommands = {
   [c.TAB_DELETE]: kbdCommand('Ctrl+Backspace'),
   [c.TAB_OPEN]: kbdCommand('Enter'),
   [c.TAB_NEXT]: kbdCommand('ArrowDown'),

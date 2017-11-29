@@ -6,6 +6,7 @@ import {
   SETTINGS_RESET,
   NUMBER_UPDATE,
   LAST_QUERY_UPDATE,
+  KEYBINDING_UPDATE,
 } from './types';
 
 // When action is passed in from ui store the background passes the entire
@@ -70,6 +71,14 @@ export function resetSettings() {
 export function updateLastQuery({ payload }) {
   return {
     type: LAST_QUERY_UPDATE,
+    payload,
+  };
+}
+
+export function updateKeybinding({ payload }) {
+  const { command, keybinding } = payload
+  return {
+    type: KEYBINDING_UPDATE,
     payload,
   };
 }

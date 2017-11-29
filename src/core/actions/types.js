@@ -8,3 +8,6 @@ export const NUMBER_UPDATE = 'NUMBER_UPDATE';
 
 // State
 export const LAST_QUERY_UPDATE = 'LAST_QUERY_UPDATE';
+
+// Keyboard
+export const KEYBINDING_UPDATE = 'KEYBINDING_UPDATE';
