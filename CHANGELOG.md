@@ -7,7 +7,11 @@
 - Bookmarks
 - Custom shortcuts (NOT the main popup shortcut)
 
-# 0.3.8 (2016-11-25)
+## 0.3.9 (2017-12-02)
+- Added most recently used tab-sorting as a setting (thanks sinewave)
+- Settings css packaged locally in extension
+
+## 0.3.8 (2017-11-25)
 - Changed tab-list to highlight the first tab when making a search query (suggests the idea you can press "Enter" from the input and activate the highlighted tab)
 - Changed tab-list to scroll to the very top when updating the search query
 - Smoothed scrolling when pressing "ArrowUp" or "ArrowDown"
