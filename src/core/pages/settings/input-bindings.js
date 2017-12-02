@@ -13,6 +13,7 @@ const d = document;
 const disableBindings = {
   showRecentlyClosed: ['recentlyClosedLimit', 'alwaysShowRecentlyClosedAtTheBottom'],
   enableFuzzySearch: ['threshold', 'shouldSort'],
+  shouldSortByMostRecentlyUsedOnPopup: ['shouldSortByMostRecentlyUsedAll'],
 };
 const mirrorBindings = {
   threshold: 'thresholdDisplay',
@@ -31,11 +32,11 @@ export default function addInputBindings() {
       const dependents = disableBindings[masterId];
       dependents.forEach((dependentId) => {
         const dependent = d.getElementById(dependentId);
-        // Don't need strict compare
-        // eslint-disable-next-line eqeqeq
         dependent.disabled = !checked;
         const label = d.querySelector(`label[for=${dependentId}]`);
         if (!checked) {
+          dependent.checked = false;
+          dependent.dispatchEvent(new Event('change'));
           label.classList.add('disabled-label');
         } else {
           label.classList.remove('disabled-label');

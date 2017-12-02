@@ -12,5 +12,8 @@ module.exports = {
         "no-fallthrough": 0,
         "no-param-reassign": 0,
         "import/prefer-default-export": 0,
+        "no-underscore-dangle": 0,
+        "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "ignoreRestSiblings": 0
     }
 };

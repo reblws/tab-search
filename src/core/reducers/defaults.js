@@ -16,6 +16,8 @@ export const initialGeneralSettings = {
   recentlyClosedLimit: 5,
   useFallbackFont: false,
   showLastQueryOnPopup: false,
+  shouldSortByMostRecentlyUsedOnPopup: false,
+  shouldSortByMostRecentlyUsedAll: false,
 };
 
 export const initialState = {
