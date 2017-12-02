@@ -6,12 +6,14 @@ import {
   SESSION_TYPE,
 } from './constants';
 import {
+  isActive,
   identity,
   isOfWindow,
   isOfType,
   annotateTypeConditionally,
   annotateType,
-  doubleFilterAndMerge,
+  partition,
+  concat,
 } from './utils/array';
 
 export default function filterResult(
@@ -21,13 +23,16 @@ export default function filterResult(
     showRecentlyClosed,
     recentlyClosedLimit,
     alwaysShowRecentlyClosedAtTheBottom: recentAtBottom,
+    shouldSortByMostRecentlyUsedAll: sortMruAll,
+    shouldSortByMostRecentlyUsedOnPopup: sortMruPopup,
   },
   currentWindowId,
 ) {
   const { enableFuzzySearch, keys: searchKeys } = options;
   return function promiseSearchResults(loadedTabs) {
     const isQueryEmpty = query.length === 0;
-    const isTabType = isOfType(TAB_TYPE);
+    // const isTabType = isOfType(TAB_TYPE);
+    const isSessionType = isOfType(SESSION_TYPE);
     const tabFilter = ({ id }) => !deletedTabsCache().includes(id);
     // First filter any unwanted results
     const annotatedTabs = loadedTabs.filter(tabFilter).map(
@@ -38,33 +43,67 @@ export default function filterResult(
       ),
     );
 
-    // If we want to move the closed tabs to the botttom filter it
-    const shouldMoveClosedToBottom = showRecentlyClosed && recentAtBottom;
+    // Determine array to search over
     const arrayToSearch = showRecentlyClosed
       ? Promise.all([
         annotatedTabs,
         getRecentlyClosed(recentlyClosedLimit),
       ]).then(([tabs, sessions]) => [...tabs, ...sessions])
       : Promise.resolve(annotatedTabs);
-    const doFinalOperation = shouldMoveClosedToBottom
-      ? doubleFilterAndMerge(isTabType)
-      : identity;
+
+    // Determine search function
     let search;
     if (isQueryEmpty) {
       search = identity;
     } else if (enableFuzzySearch) {
-      search = arr => new Fuse(arr, options).search(query);
+      let fuseOptions = options;
+      // Don't bother fuse sorting if we want to sort by most recently used
+      if (sortMruAll) {
+        fuseOptions = Object.assign({}, options, { shouldSort: false });
+      }
+      search = arr => new Fuse(arr, fuseOptions).search(query);
     } else {
       // If enableFuzzySearch is off
       const matchedTabs = tab => searchKeys.some(
-        key => tab[key].toLowerCase().includes(query.toLowerCase())
+        key => tab[key].toLowerCase().includes(query.toLowerCase()),
       );
       search = arr => arr.filter(matchedTabs);
     }
+
+    // Apply any extra transformations to results
+    const shouldMoveClosedToBottom = showRecentlyClosed && recentAtBottom;
+    const shouldMruSort = (sortMruAll && sortMruPopup)
+      ? sortMruAll
+      : isQueryEmpty && sortMruPopup;
     return arrayToSearch
       .then(search)
-      .then(doFinalOperation);
+      .then((searchResults) => {
+        // Sort it by how closely
+        // Array is partitioned right-to-left
+        const predicates = [];
+        if (shouldMoveClosedToBottom) {
+          predicates.push(isSessionType);
+        }
+        if (shouldMruSort) {
+          // Whatever the active tabs are will always be the most recently used.
+          // Push them to the bottom if need to sort by most recently used
+          predicates.push(isActive);
+        }
+        if (predicates.length === 0) {
+          return searchResults;
+        }
+        const partitionResults = partition(...predicates);
+        let results = partitionResults(searchResults);
+        if (shouldMruSort) {
+          results = results.map(p => p.sort(mostRecentlyUsed));
+        }
+        return results.reduceRight(concat);
+      });
   };
+}
+
+function mostRecentlyUsed(a, b) {
+  return -(a.lastAccessed - b.lastAccessed);
 }
 
 function getRecentlyClosed(maxResults) {
