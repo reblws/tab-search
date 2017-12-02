@@ -7,7 +7,7 @@
 - Bookmarks
 - Custom shortcuts (NOT the main popup shortcut)
 
-## 0.3.9 (2017-12-02)
+## 0.3.10 (2017-12-02)
 - Added most recently used tab-sorting as a setting (thanks sinewave)
 - Settings css packaged locally in extension
 
