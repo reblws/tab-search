@@ -219,33 +219,7 @@ export function scrollIfNeeded(event) {
   }
 }
 
-export function navigateResults(direction) {
-  switch (direction) {
-    case 'Tab':
-    case 'ArrowRight':
-    case 'ArrowDown': {
-      const nextSibling = d.activeElement.nextElementSibling;
-      if (nextSibling && d.activeElement !== searchInput) {
-        nextSibling.focus();
-      } else {
-        // Return to top if next !exist
-        tabList.firstElementChild.focus();
-      }
-      break;
-    }
-    case 'ArrowLeft':
-    case 'ArrowUp': {
-      const prevSibling = d.activeElement.previousElementSibling;
-      if (prevSibling) {
-        prevSibling.focus();
-      } else {
-        searchInput.focus();
-      }
-      break;
-    }
-    default: break;
-  }
-}
+
 
 export function removeElementFromTabList(element, wasClicked) {
   const nextElementToFocus = element.nextSibling
