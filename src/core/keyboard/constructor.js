@@ -26,7 +26,16 @@ const protoKbdCommand = {
   altKey: false,
   shiftKey: false,
 };
-const kbdCommandProps = Object.keys(protoKbdCommand);
+
+// Returns a bool indicating whether this input is valid
+export function isValidKbdCommand(input) {
+  try {
+    kbdCommand(input);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
 
 // Accepts a valid command string or
 export function kbdCommand(input) {
@@ -74,14 +83,14 @@ function makeKbdCommandFromEvent({
   shiftKey,
 }) {
   return {
-    key: key.toUpperCase(),
+    key: capitalizeFirstLetter(key),
     ctrlKey: ctrlKey || metaKey,
     altKey,
     shiftKey,
   };
 }
 
-export function compareKbdCommand(c1, c2) {
-  return false;
-  // return Object.keys(c1).reduce(compareCommands, {})
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
+

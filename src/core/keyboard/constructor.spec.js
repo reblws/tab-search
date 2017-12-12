@@ -1,10 +1,15 @@
 import {
   alphanumerics,
   BACKSPACE,
+  modifiers,
 } from './__test__/keys';
 import {
   kbdCommand,
+  isValidKbdCommand,
 } from './constructor';
+import {
+  defaultCommands,
+} from './defaults';
 import * as e from './__test__/events';
 
 const singleKey = key =>
@@ -117,7 +122,7 @@ describe('keyboard.constructor', function () {
         });
         expect(kbdCommand(e.eventCtrl1)).to.deep.equal(kbdCommand(e.eventMeta1));
       });
-      it('should allow a valid single key', function () {
+      it('should allow a valid single key <[>', function () {
         expect(function () { kbdCommand(e.eventBracketLeft); }).to.not.throw();
         expect(kbdCommand(e.eventBracketLeft)).to.deep.equal({
           key: '[',
@@ -126,8 +131,38 @@ describe('keyboard.constructor', function () {
           altKey: false,
         });
       });
+      it('should allow a valid single key <Enter>', function () {
+        expect(function () {
+          kbdCommand(e.eventEnter);
+        }).to.not.throw;
+        expect(kbdCommand(e.eventEnter)).to.deep.equal(singleKey('Enter'));
+      })
       it('should throw on an invalid single key', function () {
         expect(function () { kbdCommand(e.eventG); }).to.throw();
+      });
+    });
+  });
+  describe('isValidKbdCommand', function () {
+    describe('defaults', function () {
+      it('should return true for all default commands', function () {
+        const commands = Object.values(defaultCommands);
+        for (const command of commands) {
+          expect(isValidKbdCommand(command)).to.be.true;
+        }
+      });
+    });
+    describe('modifiers', function () {
+      it('should return false for all single modifier keys', function () {
+        for (const m of modifiers) {
+          expect(function () {
+            isValidKbdCommand({
+              key: m,
+              ctrlKey: false,
+              shiftKey: false,
+              altKey: false,
+            });
+          }).to.throw;
+        }
       });
     });
   });
