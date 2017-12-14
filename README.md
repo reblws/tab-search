@@ -1,6 +1,6 @@
 ![logo-96](https://user-images.githubusercontent.com/9971847/31857881-e872b1e2-b6b6-11e7-9886-494e8a338a25.png)
 
-# tab-search
+# TabSearch
 
 Easy tab search & switching. This WebExtension provides a keyboard-accessible search interface for managing your open tabs.
 
