@@ -16,6 +16,7 @@ import {
   deleteTab,
   reloadTab,
   pinTab,
+  queryTab,
 } from './browser';
 import {
   removeHeadTabListNodeSelectedStyle,
@@ -26,7 +27,8 @@ import {
   searchInput,
 } from '../constants';
 
-
+// The main keydown handler calls this if one of the above commands
+// are pressed
 export function navigateResults(kbdCmd, controlMap, showRecentlyClosed) {
   // Should make sure no errors if tablist is empty
   const key = [...controlMap.keys()].find(x => compareKbdCommand(x, kbdCmd));
@@ -55,7 +57,6 @@ export function navigateResults(kbdCmd, controlMap, showRecentlyClosed) {
       break;
     }
     case TAB_DELETE: {
-      // TODO
       if (isSearchActive) {
         break;
       }
@@ -73,13 +74,10 @@ export function navigateResults(kbdCmd, controlMap, showRecentlyClosed) {
       break;
     }
     case TAB_PIN: {
-      // TODO: visual indicator
-      // ISSUE: Can't toggle it
-      // we can grab the staate of the selected node by querying b.tabs
-      // Pin it in the .then() callback based on the state
-      // grabbed from browser.query
+      // TODO: visual pinning indicator
       const { id } = selectedTab.dataset;
-      pinTab(id)
+      queryTab(id).then(({ pinned }) => pinTab(id, !pinned));
+      break;
     }
     // browser.tabs.update({ id, pinned = !pinned })
     case URL_COPY: {
@@ -88,17 +86,23 @@ export function navigateResults(kbdCmd, controlMap, showRecentlyClosed) {
       range.selectNode(copyText);
       window.getSelection().addRange(range);
       d.execCommand('copy');
+      break;
     }
     case TAB_BOOKMARK: {
       // This requires bookmarks permission
       // browser.bookmarks.create()
-      // TODO: when we merge in the bookmarks branch
+      // TODO: Add this when the bookmarks branch is merged
+      break;
     }
     case DUPLICATE_TAB_DELETE: {
       // search dom for tabs with duplicate urls?
       // delete all
+      break;
     }
-    case MUTE_TOGGLE:
+    case MUTE_TOGGLE: {
+
+      break;
+    }
     // browser.tabs.update({ id, muted })
     case TAB_MOVE:
     // later
