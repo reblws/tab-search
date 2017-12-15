@@ -9,7 +9,7 @@ export const defaultCommands = {
   // [c.TAB_MOVE]: kbdCommand('')
   [c.TAB_REFRESH]: kbdCommand('Alt+R'),
   [c.TAB_PIN]: kbdCommand('Alt+P'),
-  [c.URL_COPY]: kbdCommand('Alt+C'),
+  [c.URL_COPY]: kbdCommand('Ctrl+C'),
   [c.TAB_BOOKMARK]: kbdCommand('Alt+B'),
   [c.DUPLICATE_TAB_DELETE]: kbdCommand('Alt+Shift+D'),
   [c.MUTE_TOGGLE]: kbdCommand('Alt+M'),
