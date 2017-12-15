@@ -21,6 +21,7 @@ import {
 } from './browser';
 import {
   removeHeadTabListNodeSelectedStyle,
+  selectNodeText,
 } from './dom';
 import {
   d,
@@ -61,7 +62,7 @@ export function navigateResults(kbdCmd, controlMap, showRecentlyClosed) {
       if (isSearchActive) {
         break;
       }
-      deleteTab(d.activeElement, showRecentlyClosed);
+      deleteTab(selectedTab, showRecentlyClosed);
       break;
     }
     case TAB_OPEN: {
@@ -83,10 +84,8 @@ export function navigateResults(kbdCmd, controlMap, showRecentlyClosed) {
     }
     // browser.tabs.update({ id, pinned = !pinned })
     case URL_COPY: {
-      const copyText = selectedTab.querySelector('.tab-url');
-      const range = d.createRange();
-      range.selectNode(copyText);
-      window.getSelection().addRange(range);
+      const copyNode = selectedTab.querySelector('.tab-url');
+      selectNodeText(copyNode);
       d.execCommand('copy');
       break;
     }
@@ -97,6 +96,7 @@ export function navigateResults(kbdCmd, controlMap, showRecentlyClosed) {
       break;
     }
     case DUPLICATE_TAB_DELETE: {
+      // Only delete duplicate tabs
       break;
     }
     case MUTE_TOGGLE: {

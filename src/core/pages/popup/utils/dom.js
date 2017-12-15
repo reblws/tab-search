@@ -258,3 +258,9 @@ export function appendSearchInputPlaceholderText(newText) {
   // eslint-disable-next-line prefer-template
   searchInput.placeholder += ' ' + newText;
 }
+
+export function selectNodeText(nodeToCopy) {
+  const range = d.createRange()
+  range.selectNode(nodeToCopy);
+  window.getSelection().addRange(range);
+}
