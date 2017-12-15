@@ -125,6 +125,7 @@ function createTabObject({
 
   //      <p>${url}</p>
   const urlNode = d.createElement('p');
+  urlNode.classList.add('tab-url');
   urlNode.appendChild(d.createTextNode(url));
 
   // Append all block elementshttps://cloud.githubusercontent.com/assets/689327/26164874/6c2b8920-3b04-11e7-8d4e-f1db027cb4a2.jpg

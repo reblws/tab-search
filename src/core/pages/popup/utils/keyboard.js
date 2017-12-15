@@ -14,6 +14,8 @@ import {
 import { compareKbdCommand } from 'core/keyboard/compare';
 import {
   deleteTab,
+  reloadTab,
+  pinTab,
 } from './browser';
 import {
   removeHeadTabListNodeSelectedStyle,
@@ -26,22 +28,25 @@ import {
 
 
 export function navigateResults(kbdCmd, controlMap, showRecentlyClosed) {
-  // Get keys from map with [Map].keys() then convert
-  // to array so we have our favorite array funcs
+  // Should make sure no errors if tablist is empty
   const key = [...controlMap.keys()].find(x => compareKbdCommand(x, kbdCmd));
+  const isSearchActive = d.activeElement === searchInput;
+  const selectedTab = !isSearchActive
+    ? d.activeElement
+    : tabList.firstElementChild;
   switch (controlMap.get(key)) {
     case TAB_NEXT: {
       removeHeadTabListNodeSelectedStyle();
-      if (d.activeElement !== searchInput) {
-        d.activeElement.nextElementSibling.focus();
+      if (isSearchActive) {
+        selectedTab.focus();
       } else {
-        tabList.firstElementChild.focus();
+        selectedTab.nextElementSibling.focus();
       }
       break;
     }
     case TAB_PREV: {
       removeHeadTabListNodeSelectedStyle();
-      const prevSibling = d.activeElement.previousElementSibling;
+      const prevSibling = selectedTab.previousElementSibling;
       if (prevSibling) {
         prevSibling.focus();
       } else {
@@ -51,54 +56,53 @@ export function navigateResults(kbdCmd, controlMap, showRecentlyClosed) {
     }
     case TAB_DELETE: {
       // TODO
-      deleteTab(d.activeElement, showRecentlyClosed);
-    }
-    case TAB_OPEN: {
-      if (d.activeElement === searchInput) {
-        tabList.firstElementChild.click();
-      } else {
-        d.activeElement.click();
+      if (isSearchActive) {
+        break;
       }
+      deleteTab(d.activeElement, showRecentlyClosed);
       break;
     }
-    case TAB_REFRESH:
-    case TAB_PIN:
-    case URL_COPY:
-    case TAB_BOOKMARK:
-    case DUPLICATE_TAB_DELETE:
+    case TAB_OPEN: {
+      selectedTab.click();
+      break;
+    }
+    case TAB_REFRESH: {
+      // TODO: visual indicator
+      const { id } = selectedTab.dataset;
+      reloadTab(id);
+      break;
+    }
+    case TAB_PIN: {
+      // TODO: visual indicator
+      // ISSUE: Can't toggle it
+      // we can grab the staate of the selected node by querying b.tabs
+      // Pin it in the .then() callback based on the state
+      // grabbed from browser.query
+      const { id } = selectedTab.dataset;
+      pinTab(id)
+    }
+    // browser.tabs.update({ id, pinned = !pinned })
+    case URL_COPY: {
+      const copyText = selectedTab.querySelector('.tab-url');
+      const range = d.createRange();
+      range.selectNode(copyText);
+      window.getSelection().addRange(range);
+      d.execCommand('copy');
+    }
+    case TAB_BOOKMARK: {
+      // This requires bookmarks permission
+      // browser.bookmarks.create()
+      // TODO: when we merge in the bookmarks branch
+    }
+    case DUPLICATE_TAB_DELETE: {
+      // search dom for tabs with duplicate urls?
+      // delete all
+    }
     case MUTE_TOGGLE:
+    // browser.tabs.update({ id, muted })
     case TAB_MOVE:
+    // later
     default:
       break;
   }
 }
-
-/*
-export function navigateResults(direction) {
-  switch (direction) {
-    case 'Tab':
-    case 'ArrowRight':
-    case 'ArrowDown': {
-      const nextSibling = d.activeElement.nextElementSibling;
-      if (nextSibling && d.activeElement !== searchInput) {
-        nextSibling.focus();
-      } else {
-        // Return to top if next !exist
-        tabList.firstElementChild.focus();
-      }
-      break;
-    }
-    case 'ArrowLeft':
-    case 'ArrowUp': {
-      const prevSibling = d.activeElement.previousElementSibling;
-      if (prevSibling) {
-        prevSibling.focus();
-      } else {
-        searchInput.focus();
-      }
-      break;
-    }
-    default: break;
-  }
-}
-*/

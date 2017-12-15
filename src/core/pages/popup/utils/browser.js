@@ -109,3 +109,17 @@ function focusWindow(windowId) {
     },
   );
 }
+
+export function reloadTab(id) {
+  // TODO: update tab cache
+  return browser.tabs.reload(parseInt(id, 10));
+}
+
+export function pinTab(id) {
+  // TODO: We should store if a tab is pinned in the dataset so we
+  // can toggle it
+  return browser.tabs.update(
+    parseInt(id, 10),
+    { pinned: true },
+  )
+}
