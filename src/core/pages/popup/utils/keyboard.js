@@ -17,6 +17,7 @@ import {
   reloadTab,
   pinTab,
   queryTab,
+  muteTab,
 } from './browser';
 import {
   removeHeadTabListNodeSelectedStyle,
@@ -76,7 +77,8 @@ export function navigateResults(kbdCmd, controlMap, showRecentlyClosed) {
     case TAB_PIN: {
       // TODO: visual pinning indicator
       const { id } = selectedTab.dataset;
-      queryTab(id).then(({ pinned }) => pinTab(id, !pinned));
+      const togglePinStatus = ({ pinned }) => pinTab(id, !pinned);
+      queryTab(id).then(togglePinStatus);
       break;
     }
     // browser.tabs.update({ id, pinned = !pinned })
@@ -95,12 +97,15 @@ export function navigateResults(kbdCmd, controlMap, showRecentlyClosed) {
       break;
     }
     case DUPLICATE_TAB_DELETE: {
-      // search dom for tabs with duplicate urls?
-      // delete all
       break;
     }
     case MUTE_TOGGLE: {
-
+      // Issue: Successive mutes only works up till it's
+      //        pressed twice. After that it doesn't
+      //        toggle anymore.
+      const { id } = selectedTab.dataset;
+      const toggleMuteStatus = ({ audible }) => muteTab(id, audible);
+      queryTab(id).then(toggleMuteStatus);
       break;
     }
     // browser.tabs.update({ id, muted })

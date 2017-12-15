@@ -125,5 +125,12 @@ export function pinTab(id, pinned) {
   return browser.tabs.update(
     parseInt(id, 10),
     { pinned },
-  )
+  );
+}
+
+export function muteTab(id, muted) {
+  return browser.tabs.update(
+    parseInt(id, 10),
+    { muted },
+  );
 }
