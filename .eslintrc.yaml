@@ -6,14 +6,16 @@ env:
     webextensions: true
 settings:
     import/resolver:
-        webpack:
-            config: webpack.config.js
+        node:
+            paths:
+                - src
+                - node_modules
     import/no-extraneous-dependencies:
         - error
         - devDependencies: false
-        optionalDependencies: false
-        peerDependencies: false
-        packageDir: "./"
+          optionalDependencies: false
+          peerDependencies: false
+          packageDir: "./"
 rules:
     no-use-before-define: 0
     no-fallthrough: 0
