@@ -27,18 +27,27 @@ import {
   d,
   tabList,
   searchInput,
+  NO_RESULT_CLASSNAME,
+  TAB_URL_CLASSNAME,
+  SESSION_TYPE,
 } from '../constants';
 
 // The main keydown handler calls this if one of the above commands
 // are pressed
-export function navigateResults(kbdCmd, controlMap, showRecentlyClosed) {
+export function navigateResults(
+  kbdCmd,
+  controlMap,
+  showRecentlyClosed,
+) {
   // Should make sure no errors if tablist is empty
-  const key = [...controlMap.keys()].find(x => compareKbdCommand(x, kbdCmd));
+  // Should probably find the key in the parent function
+  const controlKey = [...controlMap.keys()].find(x => compareKbdCommand(x, kbdCmd));
+  const isNoResult = tabList.children[0].classList.contains(NO_RESULT_CLASSNAME);
   const isSearchActive = d.activeElement === searchInput;
   const selectedTab = !isSearchActive
     ? d.activeElement
     : tabList.firstElementChild;
-  switch (controlMap.get(key)) {
+  switch (controlMap.get(controlKey)) {
     case TAB_NEXT: {
       removeHeadTabListNodeSelectedStyle();
       if (isSearchActive) {
@@ -84,7 +93,7 @@ export function navigateResults(kbdCmd, controlMap, showRecentlyClosed) {
     }
     // browser.tabs.update({ id, pinned = !pinned })
     case URL_COPY: {
-      const copyNode = selectedTab.querySelector('.tab-url');
+      const copyNode = selectedTab.querySelector(`.${TAB_URL_CLASSNAME}`);
       selectNodeText(copyNode);
       d.execCommand('copy');
       break;
@@ -96,7 +105,47 @@ export function navigateResults(kbdCmd, controlMap, showRecentlyClosed) {
       break;
     }
     case DUPLICATE_TAB_DELETE: {
-      // Only delete duplicate tabs
+      // Delete all duplicate tabs
+      // Gather all datasets and hash each url
+      // and each id that contains such url
+      // Only deletes tabs that are inside the classlist
+      if (isNoResult) {
+        break;
+      }
+
+      // Filter the array of tab list's children down
+      // to the ones with duplicate tabs
+      const urlToIdObj = [...tabList.children]
+        .reduce((acc, node) => {
+          const { url, type } = node.dataset;
+          if (type === SESSION_TYPE) {
+            return acc;
+          }
+          const hasUrl = !!acc[url];
+          return hasUrl
+            ? Object.assign({}, acc, { [url]: [...acc[url], node] })
+            : Object.assign({ [url]: [node] }, acc);
+        }, {});
+      const sortLastAccessed = (a, b) => a.lastAccessed - b.lastAccessed;
+      // Want to sort by last accessed. The most recently used one should be the tab to keep
+      const duplicateTabs = Object.keys(urlToIdObj)
+        .filter(k => urlToIdObj[k].length > 1)
+        .reduce(
+          (acc, k) => Object.assign(
+            {},
+            acc,
+            { [k]: urlToIdObj[k].sort(sortLastAccessed) }, // Sort it by lastAccessed here
+          ),
+          {},
+        );
+      Object.keys(duplicateTabs).forEach((key) => {
+        const domNodes = duplicateTabs[key];
+        domNodes.forEach((domNode, index) => {
+          if (index !== 0) {
+            deleteTab(domNode, showRecentlyClosed);
+          }
+        });
+      });
       break;
     }
     case MUTE_TOGGLE: {
@@ -108,8 +157,8 @@ export function navigateResults(kbdCmd, controlMap, showRecentlyClosed) {
       queryTab(id).then(toggleMuteStatus);
       break;
     }
-    // browser.tabs.update({ id, muted })
     case TAB_MOVE:
+      break;
     // later
     default:
       break;

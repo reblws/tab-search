@@ -12,4 +12,6 @@ export const OTHER_WINDOW_TAB_TYPE = 'other-window-tab';
 // css classnames
 export const WORDBREAK_ALL_CLASSNAME = 'wordbreak-all';
 export const SELECTED_TAB_CLASSNAME = 'tab-object--selected';
+export const NO_RESULT_CLASSNAME = 'no-result';
+export const TAB_URL_CLASSNAME = 'tab-url';
 export const d = document;
