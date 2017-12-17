@@ -43,6 +43,7 @@ export function tabToTag(tab) {
     type,
     sessionId,
     windowId,
+    lastAccessed,
   } = tab;
   const isValidFavIconUrl = favIconUrl
     && !badFavIconCache().includes(favIconUrl);
@@ -58,6 +59,7 @@ export function tabToTag(tab) {
     type,
     sessionId,
     windowId,
+    lastAccessed,
   }, shouldWordBreak(title));
 }
 
@@ -80,6 +82,7 @@ function createTabObject({
   title,
   favIconLink,
   windowId,
+  lastAccessed,
 }, wordBreak) {
   const dataId = sessionId || id;
   // Create the parent div
@@ -104,6 +107,10 @@ function createTabObject({
   tabObjectNode.setAttribute('data-type', type);
   // Add window id
   tabObjectNode.setAttribute('data-window', windowId);
+  // Add url
+  tabObjectNode.setAttribute('data-url', url);
+  // Add lastaccessed
+  tabObjectNode.setAttribute('data-last-accessed', lastAccessed);
 
   // <img src="${favIconLink}">
   const favIconNode = d.createElement('img');
@@ -260,7 +267,7 @@ export function appendSearchInputPlaceholderText(newText) {
 }
 
 export function selectNodeText(nodeToCopy) {
-  const range = d.createRange()
+  const range = d.createRange();
   range.selectNode(nodeToCopy);
   window.getSelection().addRange(range);
 }
