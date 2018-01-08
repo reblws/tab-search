@@ -1,3 +1,4 @@
+import { isValidKbdCommand } from 'core/keyboard/constructor';
 import { kbdCommandToString } from 'core/keyboard/to-string';
 import {
   SHORTCUT_TABLE_NAME,
@@ -31,6 +32,10 @@ function commandToTableRow({ key, name, command, description }) {
   inputShortcutNode.setAttribute('type', 'text');
   inputShortcutNode.classList.add(SHORTCUT_TABLE_INPUT);
   inputShortcutNode.value = kbdCommandToString(command);
+  inputShortcutNode.defaultValue = kbdCommandToString(command);
+  inputShortcutNode.addEventListener('blur', onInputBlur);
+  inputShortcutNode.addEventListener('focus', onInputFocus);
+
   // Input goes inside shortcut td node
   tdShortcutNode.appendChild(inputShortcutNode);
 
@@ -44,4 +49,35 @@ function commandToTableRow({ key, name, command, description }) {
     trNode.appendChild(child);
   }
   return trNode;
+}
+
+// TODO: ADD TESTCASE FOR JUST PRESSING 'CTRL' IT SHOULD NOT OUTPUT
+//      'CTRL+Control' OR EVEN PASS CONSTRUCTOR WITHOUT THROWING.
+//      MODIFIERS IN GENERAL SHOULD NOT COUNT AS SINGLE KEYS
+//      PROBABLY HAPPENS BECAUSE IF ctrlKey PROPERTY IS PRESENT
+//      CONSTRUCTOR THINKS THIS IS A MULTI-KEY PRESS
+function onInputFocus(event) {
+  event.currentTarget.value = 'Enter your shortcut...';
+  event.currentTarget.addEventListener('keydown', onInputKeydown);
+  return event;
+}
+
+// On blur we'll probably flash the last error message if it wasn't a valid key
+function onInputBlur(event) {
+  event.currentTarget.value = event.currentTarget.defaultValue;
+  event.currentTarget.removeEventListener('keydown', onInputKeydown);
+  return event;
+}
+
+function onInputKeydown(event) {
+  event.preventDefault();
+  if (isValidKbdCommand(event)) {
+    event.currentTarget.defaultValue = kbdCommandToString(event);
+    event.currentTarget.blur();
+  } else {
+    // Here should output different messages depending on the error
+    // thrown. Or, we can replace this if-else block with try-catch
+    // and output the error msg given to us via the constructor
+    event.currentTarget.value = 'Valid key please!';
+  }
 }
