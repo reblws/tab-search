@@ -2,6 +2,8 @@ import { createUIStore } from 'redux-webext';
 import reducerMap from './inputs-to-reducer';
 import * as actions from './actions';
 import addInputBindings from './input-bindings';
+import { stateToTableRows } from './dom';
+import { SHORTCUT_TABLE_BODY } from './constants';
 
 // Object containing input ids and their corresponding nodes
 const inputs = [...document.querySelectorAll('input')]
@@ -87,10 +89,23 @@ addInputBindings();
 createUIStore().then((store) => {
   const { dispatch } = store;
   const settings = store.getState();
+  const { keyboard: keyboardSettings } = store.getState();
   const fillStateSettings = getStateSettings(settings);
   const attachEventListeners = configureEventListeners(dispatch);
   Object.values(inputs).forEach(fillStateSettings);
   Object.values(inputs).forEach(attachEventListeners);
+
+  // Fill in current keyboard setting in table
+  // Find the table body in the dom
+  const stTableBody = document.getElementById(SHORTCUT_TABLE_BODY);
+  // Clear the body of any rows left over
+  while (stTableBody.firstChild) {
+    stTableBody.removeChild(stTableBody.firstChild);
+  }
+  stateToTableRows(keyboardSettings).forEach((trRow) => {
+    stTableBody.appendChild(trRow);
+  });
+
   document.getElementById('reset-defaults').addEventListener('click', () => {
     dispatch(actions.resetSettings());
     location.reload(true);

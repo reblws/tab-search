@@ -164,12 +164,32 @@
           </label>
           &emsp;
           <input type="number" class="number-input" min="1" max="9" name="thresholdDisplay" id="thresholdDisplay">
-
-
-
         </p>
       </fieldset>
     </form>
+    <h2>Keyboard Shortcuts</h2>
+    <!-- TODO: Add a box for flashing error/warning messages -->
+    <p>Here is a list of shortcuts you can customize. Click the input in the left and press your desired key-combination.</p>
+    <p><strong>If your shortcut overlaps with a browser or system shortcut it will not work.</strong></p>
+    <table id="shortcut-table" class="shortcut-table">
+      <thead class="shortcut-table__header">
+        <tr>
+          <th>Shortcut</th>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody id="shortcut-table__body" class=" shortcut-table__body ">
+        <!-- filled in with JS -->
+        <tr>
+          <td class="shortcut-table__shortcut">
+            <input type="text" class="shortcut-table__shortcut--input">
+          </td>
+          <td class="shortcut-table__name">Some stuff</td>
+          <td class="shortcut-table__description">Some stuff</td>
+        </tr>
+      </tbody>
+    </table>
   </main>
   <script src="../settings_bundle.js"></script>
 </body>
