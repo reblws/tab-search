@@ -76,7 +76,6 @@ export function updateLastQuery({ payload }) {
 }
 
 export function updateKeybinding({ payload }) {
-  const { command, keybinding } = payload
   return {
     type: KEYBINDING_UPDATE,
     payload,
