@@ -44,23 +44,23 @@ export const defaultCommands = {
     command: kbdCommand('Ctrl+C'),
     description: "Copies the selected tab's URL to your clipboard.",
   },
-  [c.TAB_BOOKMARK]: {
-    key: c.TAB_BOOKMARK,
-    name: 'Bookmark Tab',
-    command: kbdCommand('Alt+B'),
-    description: 'Bookmakrs the selected tab.',
-  },
+  // [c.TAB_BOOKMARK]: {
+  //   key: c.TAB_BOOKMARK,
+  //   name: 'Bookmark Tab',
+  //   command: kbdCommand('Alt+B'),
+  //   description: 'Bookmakrs the selected tab.',
+  // },
   [c.DUPLICATE_TAB_DELETE]: {
     key: c.DUPLICATE_TAB_DELETE,
     name: 'Delete Duplicate Tabs',
     command: kbdCommand('Alt+Shift+D'),
-    description: 'Deletes all duplicate tabs in the current window',
+    description: 'Deletes all duplicate tabs in the current window.',
   },
   [c.MUTE_TOGGLE]: {
     key: c.MUTE_TOGGLE,
     name: 'Toggle Mute',
     command: kbdCommand('Alt+M'),
-    description: 'Mutes the selected tab',
+    description: 'Mutes the selected tab.',
   },
   // [c.TAB_MOVE]: kbdCommand('')
 };
