@@ -12,7 +12,13 @@ export const DUPLICATE_TAB_DELETE = 'DUPLICATE_TAB_DELETE';
 export const MUTE_TOGGLE = 'MUTE_TOGGLE';
 
 // Modifier constants
+export const CONTROL = 'Control';
 export const CTRL = 'Ctrl';
 export const ALT = 'Alt';
 export const SHIFT = 'Shift';
 export const META = 'Meta';
+
+// Error messages
+export const ERROR_MSG_NOT_VALID_SINGLE_KEY = 'Not a valid single key.';
+export const ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY = 'Not a valid final key for combination shortcut.';
+export const ERROR_MSG_FINAL_KEY_IS_MODIFIER = 'Final key is a modifier!';

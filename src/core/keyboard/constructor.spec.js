@@ -88,8 +88,8 @@ describe('keyboard.constructor', function () {
           'Alt+Shift+D',
         ];
         for (const binding of defaultBindings) {
-          it(`should handle ${binding} without throwing`, function () {
-            expect(kbdCommand(binding)).to.not.throw;
+          it(`should have no errors on ${binding}`, function () {
+            expect(kbdCommand(binding).error).to.be.undefined;
           });
         }
       });
@@ -122,7 +122,7 @@ describe('keyboard.constructor', function () {
         expect(kbdCommand(e.eventCtrl1)).to.deep.equal(kbdCommand(e.eventMeta1));
       });
       it('should allow a valid single key <[>', function () {
-        expect(function () { kbdCommand(e.eventBracketLeft); }).to.not.throw();
+        expect(kbdCommand(e.eventBracketLeft).error).be.undefined;
         expect(kbdCommand(e.eventBracketLeft)).to.deep.equal({
           key: '[',
           ctrlKey: false,
@@ -131,11 +131,11 @@ describe('keyboard.constructor', function () {
         });
       });
       it('should allow a valid single key <Enter>', function () {
-        expect(function () { kbdCommand(e.eventEnter) }).to.not.throw;
+        expect(kbdCommand(e.eventEnter).error).to.be.undefined;
         expect(kbdCommand(e.eventEnter)).to.deep.equal(singleKey('Enter'));
       });
-      it('should throw on an invalid single key', function () {
-        expect(function () { kbdCommand(e.eventG); }).to.throw();
+      it('should have an error key on an invalid single key', function () {
+        expect(kbdCommand(e.eventG).error).to.not.be.undefined;
       });
     });
   });
