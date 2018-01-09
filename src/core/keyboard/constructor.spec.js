@@ -149,14 +149,19 @@ describe('keyboard.constructor', function () {
       }
     });
     describe('modifiers', function () {
-      it('should return false for all single modifier keys', function () {
+      describe('handling all single modifier keys', function () {
         for (const m of modifiers) {
-          expect(isValidKbdCommand({
-            key: m,
-            ctrlKey: false,
-            shiftKey: false,
-            altKey: false,
-          })).to.be.false;
+          const ctrlKey = /ctrl/i.test(m);
+          const shiftKey = /shift/i.test(m);
+          const altKey = /alt/i.test(m);
+          it(`should return false for ${m}`, function () {
+            expect(isValidKbdCommand({
+              key: m,
+              ctrlKey,
+              shiftKey,
+              altKey,
+            })).to.be.false;
+          });
         }
       });
     });
