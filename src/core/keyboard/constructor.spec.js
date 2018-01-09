@@ -10,6 +10,7 @@ import {
 import {
   defaultCommands,
 } from './defaults';
+import * as constants from './constants';
 import * as e from './__test__/events';
 
 const singleKey = key =>
@@ -93,9 +94,12 @@ describe('keyboard.constructor', function () {
           });
         }
       });
-
     });
     describe('event inputs', function () {
+      it('should return with an error key on an invalid final key <F1>', function () {
+        expect(kbdCommand({ key: 'F1' })).to.have.property('error', constants.ERROR_MSG_NOT_VALID_SINGLE_KEY);
+        expect(kbdCommand({ ctrlKey: true, key: 'F1' })).to.have.property('error', constants.ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY);
+      });
       it('should handle a Ctrl+Shift+F event', function () {
         expect(kbdCommand(e.eventCtrlShiftF)).to.deep.equal({
           key: 'F',
