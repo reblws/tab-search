@@ -72,8 +72,8 @@ describe('keyboard.constructor', function () {
           kbdCommand('Meta+Ctrl+Z'),
         ).to.deep.equal(kbdCommand('Ctrl+Z'));
       });
-      it('should handle all the default keybindings without throwing', function () {
-        // Most likely candidates for default bindings
+
+      describe('default keybindings', function () {
         const defaultBindings = [
           'Ctrl+Backspace',
           'Enter',
@@ -87,14 +87,13 @@ describe('keyboard.constructor', function () {
           'Alt+B',
           'Alt+Shift+D',
         ];
-        let i;
-        for (i = 0; i < defaultBindings.length; i++) {
-          const binding = defaultBindings[i];
-          expect(function () {
-            kbdCommand(binding);
-          }).to.not.throw();
+        for (const binding of defaultBindings) {
+          it(`should handle ${binding} without throwing`, function () {
+            expect(kbdCommand(binding)).to.not.throw;
+          });
         }
       });
+
     });
     describe('event inputs', function () {
       it('should handle a Ctrl+Shift+F event', function () {
@@ -132,11 +131,9 @@ describe('keyboard.constructor', function () {
         });
       });
       it('should allow a valid single key <Enter>', function () {
-        expect(function () {
-          kbdCommand(e.eventEnter);
-        }).to.not.throw;
+        expect(function () { kbdCommand(e.eventEnter) }).to.not.throw;
         expect(kbdCommand(e.eventEnter)).to.deep.equal(singleKey('Enter'));
-      })
+      });
       it('should throw on an invalid single key', function () {
         expect(function () { kbdCommand(e.eventG); }).to.throw();
       });
@@ -144,24 +141,22 @@ describe('keyboard.constructor', function () {
   });
   describe('isValidKbdCommand', function () {
     describe('defaults', function () {
-      it('should return true for all default commands', function () {
-        const commands = Object.values(defaultCommands);
-        for (const command of commands) {
-          expect(isValidKbdCommand(command)).to.be.true;
-        }
-      });
+      const commands = Object.values(defaultCommands);
+      for (const command of commands) {
+        it(`should return true for ${command.key}`, function () {
+          expect(isValidKbdCommand(command.command)).to.be.true;
+        });
+      }
     });
     describe('modifiers', function () {
       it('should return false for all single modifier keys', function () {
         for (const m of modifiers) {
-          expect(function () {
-            isValidKbdCommand({
-              key: m,
-              ctrlKey: false,
-              shiftKey: false,
-              altKey: false,
-            });
-          }).to.throw;
+          expect(isValidKbdCommand({
+            key: m,
+            ctrlKey: false,
+            shiftKey: false,
+            altKey: false,
+          })).to.be.false;
         }
       });
     });
