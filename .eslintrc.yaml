@@ -35,3 +35,4 @@ overrides:
         func-names: 0
         prefer-template: 0
         no-plusplus: 0
+        no-unused-expressions: 0
