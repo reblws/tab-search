@@ -37,3 +37,5 @@ export const kbdStringComboRe =
   new RegExp(`^${modifiers}(?:${comboFinalKeys.join('|')})$`);
 export const kbdStringSingleRe =
   new RegExp(`^(?:${validSingleKeys.join('|')})$`);
+export const kbdValidFinalComboKeyRe =
+  new RegExp(`^^(?:${comboFinalKeys.join('|')})$`);
