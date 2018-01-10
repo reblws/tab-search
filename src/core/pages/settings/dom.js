@@ -1,5 +1,9 @@
-import { isValidKbdCommand } from 'core/keyboard/constructor';
+import {
+  isValidKbdCommand,
+  kbdCommand,
+} from 'core/keyboard/constructor';
 import { kbdCommandToString } from 'core/keyboard/to-string';
+import * as Flash from './flash';
 import {
   SHORTCUT_TABLE_NAME,
   SHORTCUT_TABLE_SHORTCUT,
@@ -51,11 +55,6 @@ function commandToTableRow({ key, name, command, description }) {
   return trNode;
 }
 
-// TODO: ADD TESTCASE FOR JUST PRESSING 'CTRL' IT SHOULD NOT OUTPUT
-//      'CTRL+Control' OR EVEN PASS CONSTRUCTOR WITHOUT THROWING.
-//      MODIFIERS IN GENERAL SHOULD NOT COUNT AS SINGLE KEYS
-//      PROBABLY HAPPENS BECAUSE IF ctrlKey PROPERTY IS PRESENT
-//      CONSTRUCTOR THINKS THIS IS A MULTI-KEY PRESS
 function onInputFocus(event) {
   event.currentTarget.value = 'Enter your shortcut...';
   event.currentTarget.addEventListener('keydown', onInputKeydown);
@@ -66,18 +65,25 @@ function onInputFocus(event) {
 function onInputBlur(event) {
   event.currentTarget.value = event.currentTarget.defaultValue;
   event.currentTarget.removeEventListener('keydown', onInputKeydown);
+  Flash.close();
   return event;
 }
 
 function onInputKeydown(event) {
   event.preventDefault();
   if (isValidKbdCommand(event)) {
+    // TODO: update reducer state here
+    Flash.close();
     event.currentTarget.defaultValue = kbdCommandToString(event);
     event.currentTarget.blur();
   } else {
-    // Here should output different messages depending on the error
-    // thrown. Or, we can replace this if-else block with try-catch
-    // and output the error msg given to us via the constructor
-    event.currentTarget.value = 'Valid key please!';
+    // This could be handled better
+    // TODO: Place specific warning messages in the error section
+    //       then show the string version of the key pressed so far
+    //       here.
+    const command = kbdCommand(event);
+    Flash.message(
+      command.key + ' is ' + (command.error.charAt(0).toLowerCase() + command.error.slice(1))
+    );
   }
 }
