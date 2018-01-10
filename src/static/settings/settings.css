@@ -1,3 +1,7 @@
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
 fieldset {
   border: none;
   padding: 0;
@@ -48,4 +52,12 @@ legend {
 
 .range-clarification {
   font-size: 0.9em;
+}
+
+.shortcut-flash {
+  display: none;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding-top: 2em;
+  padding-bottom: 2em;
 }
