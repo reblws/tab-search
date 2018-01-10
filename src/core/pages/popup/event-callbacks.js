@@ -58,9 +58,9 @@ export function clearInput(event) {
 }
 
 // Given an object returns a Map with the keys and values swapped
-function swapKeyValueMap(obj) {
+function swapKeyValueMap(obj, func = x => x) {
   return Object.keys(obj).reduce((acc, key) => {
-    return acc.set(obj[key], key);
+    return acc.set(func(obj[key]), key);
   }, new Map());
 }
 
@@ -70,7 +70,7 @@ export function keydownHandler(store) {
   // The keyboard object is an object with the mapping { [ACTION]: kbdcommand }
   // Mirror the keys and values so we have a Map:
   // {[kbdCommand]: ACTION}
-  const kbdControlMap = swapKeyValueMap(keyboardControls);
+  const kbdControlMap = swapKeyValueMap(keyboardControls, x => x.command);
   return function handleKeyDown(event) {
     // Handle preventing default
     // Delete, Backspace, Tab, ArrowUp, Arrowdown, Enter
