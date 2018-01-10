@@ -1,18 +1,23 @@
-import { KEYBINDING_UPDATE } from 'core/actions/types';
+import { KEYBINDING_UPDATE, KEYBINDING_DEFAULT_RESET } from 'core/actions/types';
 import { defaultCommands } from './defaults';
 
 export default function keyboardConfigReducer(
   state = defaultCommands,
   action,
 ) {
-  if (action.type !== KEYBINDING_UPDATE || !(command in state)) {
-    return state;
+  const { type } = action;
+  switch (type) {
+    case KEYBINDING_UPDATE: {
+      const { command, keyBinding } = action.payload;
+      return Object.assign(
+        {},
+        state,
+        { [command]: Object.assign({}, state[command], { command: keyBinding }) },
+      );
+    }
+    case KEYBINDING_DEFAULT_RESET:
+      return defaultCommands;
+    default:
+      return state;
   }
-  const { command, keyBinding } = action.payload;
-  const newCommand = Object.assign({}, state[command], { command: keyBinding });
-  return Object.assign(
-    {},
-    state,
-    { [command]: newCommand },
-  );
 }
