@@ -87,9 +87,9 @@ function configureEventListeners(dispatch) {
 addInputBindings();
 
 createUIStore().then((store) => {
-  const { dispatch } = store;
-  const settings = store.getState();
-  const { keyboard: keyboardSettings } = store.getState();
+  const { dispatch, getState } = store;
+  const settings = getState();
+  const { keyboard: keyboardSettings } = settings;
   const fillStateSettings = getStateSettings(settings);
   const attachEventListeners = configureEventListeners(dispatch);
   Object.values(inputs).forEach(fillStateSettings);
@@ -105,7 +105,10 @@ createUIStore().then((store) => {
   stateToTableRows(keyboardSettings).forEach((trRow) => {
     stTableBody.appendChild(trRow);
   });
-
+  // document.getElementById(SHORTCUT_RESET_BUTTON_ID).addEventListener('click', () => {
+  //   dispatch(actions.resetShortcutSettings());
+  //   location.reload(true);
+  // });
   document.getElementById('reset-defaults').addEventListener('click', () => {
     dispatch(actions.resetSettings());
     location.reload(true);
