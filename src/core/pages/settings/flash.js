@@ -1,3 +1,4 @@
+import { clearChildNodes } from './dom';
 import { SHORTCUT_FLASH_AREA_ID } from './constants';
 
 export const WARNING = 'warning';
@@ -21,27 +22,24 @@ const styles = {
 
 const d = document;
 const flashNode = d.getElementById(SHORTCUT_FLASH_AREA_ID);
-const head = arr => arr[0];
-
-function clear(node) {
-  while (node.childNodes.length !== 0) {
-    node.removeChild(head(node.childNodes));
-  }
-}
 
 export function close() {
-  clear(flashNode);
+  clearChildNodes(flashNode);
   flashNode.style.display = 'none';
 }
 
-export function message(msg, type = OK) {
+export function message(msg, type = OK, shouldClear = true) {
   if (!(type in styles)) {
-    throw new TypeError("Wasn't supplied a correct type! Type must be one of: Flash.WARNING, Flash.WARNING, Flash.ERROR");
+    throw new TypeError("Wasn't supplied a correct type! Type must be one of: Flash.OK, Flash.WARNING, Flash.ERROR");
   }
-  clear(flashNode);
+  if (shouldClear) {
+    clearChildNodes(flashNode);
+  }
   updateStyle(type, flashNode);
   flashNode.style.display = 'block';
-  flashNode.appendChild(d.createTextNode(msg));
+  const p = d.createElement('p');
+  p.appendChild(d.createTextNode(msg));
+  flashNode.appendChild(p);
 }
 
 // Given a style, removes all classes not equal to that style in the
