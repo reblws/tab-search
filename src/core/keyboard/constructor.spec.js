@@ -2,6 +2,7 @@ import {
   alphanumerics,
   BACKSPACE,
   modifiers,
+  shiftedValues,
 } from './__test__/keys';
 import {
   kbdCommand,
@@ -141,6 +142,27 @@ describe('keyboard.constructor', function () {
       it('should have an error key on an invalid single key', function () {
         expect(kbdCommand(e.eventG).error).to.not.be.undefined;
       });
+    });
+    describe('interpreting shifted values', function () {
+      const shiftedValueKeys = Object.keys(shiftedValues);
+      it('should treu', function () {
+        expect(true).to.be.true;
+      });
+      for (let i = 0; i < shiftedValueKeys; i++) {
+        const shiftedValue = shiftedValueKeys[i];
+        const {
+          code,
+          string: unshiftedValue,
+        } = shiftedValues[shiftedValue];
+        const shiftPlus = key => ({
+          key,
+          code,
+          shiftKey: true,
+        });
+        it(`should show ${unshiftedValue} when event.code = ${code}`, function () {
+          expect(kbdCommand(shiftPlus(shiftedValue))).to.have.property('key', 'a');
+        });
+      }
     });
   });
   describe('isValidKbdCommand', function () {
