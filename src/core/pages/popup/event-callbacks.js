@@ -3,7 +3,7 @@
 import {
   isValidKbdCommand,
   kbdCommand,
-} from 'core/keyboard/constructor';
+} from 'core/keyboard';
 import {
   injectTabsInList,
   addHeadTabListNodeSelectedStyle,

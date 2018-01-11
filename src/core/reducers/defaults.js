@@ -1,4 +1,4 @@
-export { defaultCommands } from 'core/keyboard/defaults';
+export { defaultCommands } from 'core/keyboard';
 
 export const initialFuzzySettings = {
   enableFuzzySearch: true,
