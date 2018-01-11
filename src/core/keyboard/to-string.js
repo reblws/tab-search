@@ -14,5 +14,5 @@ export function kbdCommandToString({ key, ctrlKey, altKey, shiftKey }) {
     stringParts.push('Alt');
   }
   stringParts.push(key.length === 1 ? key.toUpperCase() : key);
-  return stringParts.join('+');
+  return stringParts.join(' + ');
 }
