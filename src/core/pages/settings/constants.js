@@ -9,3 +9,9 @@ export const SHORTCUT_TABLE_NAME = 'shortcut-table__name';
 
 export const SHORTCUT_RESET_BUTTON_ID = 'shortcut-reset';
 export const SHORTCUT_FLASH_AREA_ID = 'shortcut-flash';
+
+export {
+  ERROR_MSG_NOT_VALID_SINGLE_KEY,
+  ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY,
+  ERROR_MSG_FINAL_KEY_IS_MODIFIER,
+} from 'core/keyboard';
