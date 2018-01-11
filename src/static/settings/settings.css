@@ -61,3 +61,7 @@ legend {
   padding-top: 2em;
   padding-bottom: 2em;
 }
+
+.shortcut-flash p:last-child {
+  margin: 0;
+}
