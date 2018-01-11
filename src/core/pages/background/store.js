@@ -8,6 +8,8 @@ import {
   SETTINGS_RESET,
   NUMBER_UPDATE,
   LAST_QUERY_UPDATE,
+  KEYBINDING_UPDATE,
+  KEYBINDING_DEFAULT_RESET,
 } from '../../actions/types';
 import {
   updateCheckbox,
@@ -17,6 +19,8 @@ import {
   updateNumber,
   resetSettings,
   updateLastQuery,
+  updateKeybinding,
+  resetDefaultKeybindings,
 } from '../../actions';
 
 export default createBackgroundStore({
@@ -29,5 +33,7 @@ export default createBackgroundStore({
     [SETTINGS_RESET]: resetSettings,
     [NUMBER_UPDATE]: updateNumber,
     [LAST_QUERY_UPDATE]: updateLastQuery,
+    [KEYBINDING_UPDATE]: updateKeybinding,
+    [KEYBINDING_DEFAULT_RESET]: resetDefaultKeybindings,
   },
 });

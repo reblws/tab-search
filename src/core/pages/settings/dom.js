@@ -2,9 +2,12 @@ import {
   isValidKbdCommand,
   kbdCommand,
   kbdCommandToString,
+  compareKbdCommand,
 } from 'core/keyboard';
+import { updateKeybinding, resetKeyboardToDefaults } from './actions';
 import * as Flash from './flash';
 import {
+  SHORTCUT_TABLE_BODY,
   SHORTCUT_TABLE_NAME,
   SHORTCUT_TABLE_SHORTCUT,
   SHORTCUT_TABLE_DESCRIPTION,
@@ -12,19 +15,94 @@ import {
   ERROR_MSG_NOT_VALID_SINGLE_KEY,
   ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY,
   ERROR_MSG_FINAL_KEY_IS_MODIFIER,
+  SHORTCUT_RESET_BUTTON_ID,
 } from './constants';
 
 const d = document;
 
-// Given the entire keyboard-shortcut state, return an array of <tr> nodes
-export function stateToTableRows(keyboardState) {
-  return Object.keys(keyboardState)
-    .map(key => commandToTableRow(keyboardState[key]));
+export function clearChildNodes(node) {
+  while (node.firstChild) {
+    node.removeChild(node.firstChild);
+  }
+  return node;
 }
 
+// Fills in the keyboard area of the settings page with state from current setting
+export function initKeybindingTable(store) {
+  const compareCommands = (x, y) => compareKbdCommand(x.command, y.command);
+  const stTableBody = d.getElementById(SHORTCUT_TABLE_BODY);
+  // Connect to bg-store
+  const { subscribe, dispatch, getState } = store;
+  const kbHandlers = keybindInputHandlers(dispatch);
+  const { keyboard: keyboardState } = getState();
+  subscribe(keyBindingSubscription);
+
+  // Prepare the table
+  clearChildNodes(stTableBody);
+  stateToTableRows(keyboardState, kbHandlers).forEach((trRow) => {
+    stTableBody.appendChild(trRow);
+  });
+
+  // Prepare the reset button
+  const resetDefaultsButton = d.getElementById(SHORTCUT_RESET_BUTTON_ID);
+  resetDefaultsButton.addEventListener('click', () => {
+    dispatch(resetKeyboardToDefaults());
+  });
+
+  let prevState = keyboardState;
+  function keyBindingSubscription() {
+    // TODO: handle duplicates
+    const selectKbd = state => state().keyboard;
+    const newState = selectKbd(getState);
+    diffState(prevState, newState, compareCommands)
+      .forEach((key) => {
+        const { command: oldCommand } = prevState[key];
+        const { name, command: newCommand } = newState[key];
+        const msg = `
+          Updated shortcut for ${name}: <${kbdCommandToString(oldCommand)}> changed to <${kbdCommandToString(newCommand)}>
+        `;
+        updateTableRow(key, kbdCommandToString(newCommand));
+        Flash.message(msg, Flash.OK, false);
+      });
+    prevState = newState;
+  }
+}
+
+// Returns an array of keys showing which keys differed
+function diffState(obj1, obj2, compare) {
+  return Object.keys(obj2).filter(key => !compare(obj1[key], obj2[key]));
+}
+
+// Given the entire keyboard-shortcut state, return an array of <tr> nodes
+function stateToTableRows(keyboardState, handlers) {
+  return Object.keys(keyboardState)
+    .map(key => commandToTableRow(keyboardState[key], handlers));
+}
+
+// Given a row id and the table node, update that row's input node to
+// display the given value
+function updateTableRow(id, value) {
+  const input = d.getElementById(id).firstElementChild.firstElementChild;
+  input.defaultValue = value;
+  input.value = value;
+}
+
+/* Output:
+<tr id={KEY}>
+  <td>
+    {NAME}
+  </td>
+  <td>
+    <input type="text" value={string(command)}>
+  </td>
+  <td>
+    {description}
+  </td>
+</tr>
+*/
 // Given an object from the keyboard reducer, output a table row
 // for insertion into the settings page
-function commandToTableRow({ key, name, command, description }) {
+function commandToTableRow({ key, name, command, description }, handlers) {
   const trNode = d.createElement('tr');
   trNode.setAttribute('id', key);
 
@@ -40,8 +118,10 @@ function commandToTableRow({ key, name, command, description }) {
   inputShortcutNode.classList.add(SHORTCUT_TABLE_INPUT);
   inputShortcutNode.value = kbdCommandToString(command);
   inputShortcutNode.defaultValue = kbdCommandToString(command);
-  inputShortcutNode.addEventListener('blur', onInputBlur);
-  inputShortcutNode.addEventListener('focus', onInputFocus);
+
+  // Attach event listeners
+  inputShortcutNode.addEventListener('blur', handlers.onInputBlur);
+  inputShortcutNode.addEventListener('focus', handlers.onInputFocus);
 
   // Input goes inside shortcut td node
   tdShortcutNode.appendChild(inputShortcutNode);
@@ -58,49 +138,54 @@ function commandToTableRow({ key, name, command, description }) {
   return trNode;
 }
 
-function onInputFocus(event) {
-  event.currentTarget.value = 'Enter your shortcut...';
-  event.currentTarget.addEventListener('keydown', onInputKeydown);
-  return event;
+function keybindInputHandlers(dispatch) {
+  return {
+    onInputFocus,
+    onInputBlur,
+    onInputKeydown,
+  };
+
+  function onInputFocus(event) {
+    event.currentTarget.value = 'Enter your shortcut...';
+    event.currentTarget.addEventListener('keydown', onInputKeydown);
+    return event;
+  }
+
+  // On blur we'll probably flash the last error message if it wasn't a valid key
+  function onInputBlur(event) {
+    event.currentTarget.removeEventListener('keydown', onInputKeydown);
+    event.currentTarget.value = event.currentTarget.defaultValue;
+  }
+  // Handles incoming new commands
+  function onInputKeydown(event) {
+    event.preventDefault();
+    if (isValidKbdCommand(event)) {
+      // Stop input reset race
+      event.currentTarget.removeEventListener('blur', onInputBlur);
+      event.currentTarget.blur();
+      const { id: parentId } = event.currentTarget.parentElement.parentElement;
+      Flash.close();
+      dispatch(updateKeybinding(parentId, kbdCommand(event)));
+    } else {
+      const command = kbdCommand(event);
+      let flashMsg;
+      switch (command.error) {
+        // Warning
+        case ERROR_MSG_FINAL_KEY_IS_MODIFIER:
+          flashMsg = x => Flash.message(x, Flash.WARNING);
+          break;
+        // Error
+        case ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY:
+        case ERROR_MSG_NOT_VALID_SINGLE_KEY:
+        default:
+          flashMsg = x => Flash.message(x, Flash.ERROR);
+          break;
+      }
+      flashMsg(`${command.key} is ${lowerCaseSentence(command.error)}`);
+    }
+  }
 }
 
-// On blur we'll probably flash the last error message if it wasn't a valid key
-function onInputBlur(event) {
-  event.currentTarget.value = event.currentTarget.defaultValue;
-  event.currentTarget.removeEventListener('keydown', onInputKeydown);
-  return event;
-}
-
-// Handles incoming new commands
-function onInputKeydown(event) {
-  event.preventDefault();
-  if (isValidKbdCommand(event)) {
-    const { id: parentId } = event.currentTarget.parentElement.parentElement;
-    const newCommand = kbdCommand(event);
-    event.currentTarget.defaultValue = kbdCommandToString(newCommand);
-    console.log(newCommand);
-    // TODO: update reducer state here
-    Flash.message(`Updated ${parentId} shortcut to ${kbdCommandToString(newCommand)}`, Flash.OK);
-    event.currentTarget.blur();
-    return;
-  }
-  const command = kbdCommand(event);
-  let flashMsg;
-  switch (command.error) {
-    // Warning
-    case ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY:
-    case ERROR_MSG_FINAL_KEY_IS_MODIFIER:
-      flashMsg = x => Flash.message(x, Flash.WARNING);
-      break;
-    // Error
-    case ERROR_MSG_NOT_VALID_SINGLE_KEY:
-      flashMsg = x => Flash.message(x, Flash.ERROR);
-      break;
-    default:
-      flashMsg = x => Flash.message(x, Flash.OK);
-      break;
-  }
-  flashMsg(
-    command.key + ' is ' + (command.error.charAt(0).toLowerCase() + command.error.slice(1))
-  );
+function lowerCaseSentence(s) {
+  return s.charAt(0).toLowerCase() + s.slice(1);
 }

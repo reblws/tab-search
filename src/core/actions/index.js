@@ -7,6 +7,7 @@ import {
   NUMBER_UPDATE,
   LAST_QUERY_UPDATE,
   KEYBINDING_UPDATE,
+  KEYBINDING_DEFAULT_RESET,
 } from './types';
 
 // When action is passed in from ui store the background passes the entire
@@ -80,4 +81,8 @@ export function updateKeybinding({ payload }) {
     type: KEYBINDING_UPDATE,
     payload,
   };
+}
+
+export function resetDefaultKeybindings() {
+  return { type: KEYBINDING_DEFAULT_RESET };
 }

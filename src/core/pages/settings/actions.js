@@ -5,6 +5,8 @@ import {
   SEARCH_KEY_UPDATE,
   SETTINGS_RESET,
   NUMBER_UPDATE,
+  KEYBINDING_UPDATE,
+  KEYBINDING_DEFAULT_RESET,
 } from '../../actions/types';
 
 export function updateNumber(key, value) {
@@ -61,4 +63,18 @@ export function resetSettings() {
   return {
     type: SETTINGS_RESET,
   };
+}
+
+export function updateKeybinding(key, command) {
+  return {
+    type: KEYBINDING_UPDATE,
+    payload: {
+      key,
+      command,
+    },
+  };
+}
+
+export function resetKeyboardToDefaults() {
+  return { type: KEYBINDING_DEFAULT_RESET };
 }
