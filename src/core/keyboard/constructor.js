@@ -13,6 +13,7 @@ import {
   kbdStringSingleRe,
   kbdValidFinalComboKeyRe,
 } from './regex';
+import puncCodeMap from './punc-code-map.json';
 
 // On macs the metaKey is triggered. We want them to be treated equivalently?
 // So the value of the ctrlKey property should be (ctrlKey || metaKey
@@ -77,6 +78,26 @@ function kbdCommandString(inputString) {
 }
 
 function kbdCommandEvent(event) {
+  // If shift is pressed then the value of event.key won't reflect
+  // the value of the actual key pressed.
+  // e.g. Pressing Shift+. causes event.key = '>'
+  //      the key value of kbdCommand should reflect the unshifted value, so
+  //      we want to show the '.' when printing the command in the above example
+  if (event.shiftKey && event.code in puncCodeMap) {
+    const {
+      ctrlKey,
+      metaKey,
+      altKey,
+      shiftKey,
+    } = event;
+    return makeKbdCommandFromEvent({
+      key: puncCodeMap[event.code],
+      ctrlKey,
+      metaKey,
+      altKey,
+      shiftKey,
+    });
+  }
   return makeKbdCommandFromEvent(event);
 }
 
@@ -102,10 +123,10 @@ function makeKbdCommandFromEvent({
   };
   if (isSingleKey(command) && !kbdStringSingleRe.test(command.key)) {
     command.error = ERROR_MSG_NOT_VALID_SINGLE_KEY;
-  } else if (!isSingleKey(command) && !kbdValidFinalComboKeyRe.test(command.key)) {
-    command.error = ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY;
-  } else if (isFinalKeyModifier(command)) {
+  } else if (!isSingleKey(command) && isFinalKeyModifier(command)) {
     command.error = ERROR_MSG_FINAL_KEY_IS_MODIFIER;
+  } else if (!kbdValidFinalComboKeyRe.test(command.key)) {
+    command.error = ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY;
   }
   return command;
 }
