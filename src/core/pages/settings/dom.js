@@ -1,14 +1,17 @@
 import {
   isValidKbdCommand,
   kbdCommand,
-} from 'core/keyboard/constructor';
-import { kbdCommandToString } from 'core/keyboard/to-string';
+  kbdCommandToString,
+} from 'core/keyboard';
 import * as Flash from './flash';
 import {
   SHORTCUT_TABLE_NAME,
   SHORTCUT_TABLE_SHORTCUT,
   SHORTCUT_TABLE_DESCRIPTION,
   SHORTCUT_TABLE_INPUT,
+  ERROR_MSG_NOT_VALID_SINGLE_KEY,
+  ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY,
+  ERROR_MSG_FINAL_KEY_IS_MODIFIER,
 } from './constants';
 
 const d = document;
@@ -65,25 +68,39 @@ function onInputFocus(event) {
 function onInputBlur(event) {
   event.currentTarget.value = event.currentTarget.defaultValue;
   event.currentTarget.removeEventListener('keydown', onInputKeydown);
-  Flash.close();
   return event;
 }
 
+// Handles incoming new commands
 function onInputKeydown(event) {
   event.preventDefault();
   if (isValidKbdCommand(event)) {
+    const { id: parentId } = event.currentTarget.parentElement.parentElement;
+    const newCommand = kbdCommand(event);
+    event.currentTarget.defaultValue = kbdCommandToString(newCommand);
+    console.log(newCommand);
     // TODO: update reducer state here
-    Flash.close();
-    event.currentTarget.defaultValue = kbdCommandToString(event);
+    Flash.message(`Updated ${parentId} shortcut to ${kbdCommandToString(newCommand)}`, Flash.OK);
     event.currentTarget.blur();
-  } else {
-    // This could be handled better
-    // TODO: Place specific warning messages in the error section
-    //       then show the string version of the key pressed so far
-    //       here.
-    const command = kbdCommand(event);
-    Flash.message(
-      command.key + ' is ' + (command.error.charAt(0).toLowerCase() + command.error.slice(1))
-    );
+    return;
   }
+  const command = kbdCommand(event);
+  let flashMsg;
+  switch (command.error) {
+    // Warning
+    case ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY:
+    case ERROR_MSG_FINAL_KEY_IS_MODIFIER:
+      flashMsg = x => Flash.message(x, Flash.WARNING);
+      break;
+    // Error
+    case ERROR_MSG_NOT_VALID_SINGLE_KEY:
+      flashMsg = x => Flash.message(x, Flash.ERROR);
+      break;
+    default:
+      flashMsg = x => Flash.message(x, Flash.OK);
+      break;
+  }
+  flashMsg(
+    command.key + ' is ' + (command.error.charAt(0).toLowerCase() + command.error.slice(1))
+  );
 }
