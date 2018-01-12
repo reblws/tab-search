@@ -142,7 +142,6 @@ function keybindInputHandlers(store) {
   return {
     onInputFocus,
     onInputBlur,
-    onInputKeydown,
   };
 
   function onInputFocus(event) {
@@ -156,23 +155,42 @@ function keybindInputHandlers(store) {
     event.currentTarget.removeEventListener('keydown', onInputKeydown);
     event.currentTarget.value = event.currentTarget.defaultValue;
   }
+
+  function isDuplicateCommand(state, command) {
+    const key = Object.values(state)
+      .find(k => compareKbdCommand(k.command, command));
+    return {
+      key: key.key,
+      isDuplicate: !!key,
+    };
+  }
+
   // Handles incoming new commands
   function onInputKeydown(event) {
     event.preventDefault();
-    if (isDuplicate(store.getState().keyboard, kbdCommand(event))) {
-      Flash.message(`
-        <${kbdCommandToString(kbdCommand(event))}> is a duplicate key!
-      `, Flash.ERROR);
-    } else if (isValidKbdCommand(event)) {
-      // Stop input reset race
-      event.currentTarget.removeEventListener('blur', onInputBlur);
-      event.currentTarget.removeEventListener('keydown', onInputKeydown);
-      event.currentTarget.blur();
-      const { id: parentId } = event.currentTarget.parentElement.parentElement;
-      Flash.close();
-      store.dispatch(updateKeybinding(parentId, kbdCommand(event)));
+
+    const { id: parentId } = event.currentTarget.parentElement.parentElement;
+    const command = kbdCommand(event);
+    const isValid = isValidKbdCommand(command);
+    const { name } = store.getState().keyboard[parentId];
+
+    if (isValid) {
+      const { isDuplicate, key: duplicateKey } =
+        isDuplicateCommand(store.getState().keyboard, command);
+      if (isDuplicate && duplicateKey === parentId) {
+        Flash.message(`<${kbdCommandToString(command)}> is already ${name}'s shortcut.`, Flash.WARNING);
+        event.currentTarget.blur();
+      } else if (isDuplicate) {
+        Flash.message(`Duplicate key! <${kbdCommandToString(command)}> is ${name}'s shortcut.`, Flash.ERROR);
+      } else {
+        // Stop input reset race
+        event.currentTarget.removeEventListener('blur', onInputBlur);
+        event.currentTarget.blur();
+        Flash.close();
+        store.dispatch(updateKeybinding(parentId, command));
+      }
     } else {
-      const command = kbdCommand(event);
+      // Then it's an error
       let flashMsg;
       switch (command.error) {
         // Warning
@@ -186,16 +204,9 @@ function keybindInputHandlers(store) {
           flashMsg = x => Flash.message(x, Flash.ERROR);
           break;
       }
-      flashMsg(`${command.key} is ${lowerCaseSentence(command.error)}`);
+      flashMsg(`${command.command} is ${lowerCaseSentence(command.error)}`);
     }
   }
-}
-
-// Returns a bool indicating whether this is a
-function isDuplicate(state, command) {
-  return !!Object.values(state)
-    .map(x => x.command)
-    .find(c => compareKbdCommand(c, command));
 }
 
 function lowerCaseSentence(s) {
