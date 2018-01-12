@@ -78,6 +78,9 @@ function kbdCommandString(inputString) {
 }
 
 function kbdCommandEvent(event) {
+  if (!event.key) {
+    throw new Error(`Received a falsey value for event.key! Expected a string, got ${event.key}`);
+  }
   // If shift is pressed then the value of event.key won't reflect
   // the value of the actual key pressed.
   // e.g. Pressing Shift+. causes event.key = '>'
