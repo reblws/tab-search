@@ -137,7 +137,7 @@ function normalizeRecentlyClosedTabs(maxResults) {
   // No incognito please
   const filterIncognito = ({ incognito }) => !incognito;
   // Don't want to show new tab pages
-  const filterNewTab = !isOfUrl('about:newtab');
+  const filterNewTab = x => !isOfUrl('about:newtab')(x);
   const filters = composeFilterOr(
     tab,
     filterNewTab,
@@ -181,6 +181,5 @@ function normalizeBookmarks(query) {
       .filter(filterFolders)
       .map(annotateType(BOOKMARK_TYPE))
       .map(urlAsId);
-
   return searchBookmarks(query).then(normalize);
 }
