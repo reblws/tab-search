@@ -204,7 +204,7 @@ function keybindInputHandlers(store) {
           flashMsg = x => Flash.message(x, Flash.ERROR);
           break;
       }
-      flashMsg(`${command.command} is ${lowerCaseSentence(command.error)}`);
+      flashMsg(`${kbdCommandToString(command)} is ${lowerCaseSentence(command.error)}`);
     }
   }
 }
