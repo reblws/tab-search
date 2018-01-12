@@ -33,7 +33,7 @@ export function initKeybindingTable(store) {
   const stTableBody = d.getElementById(SHORTCUT_TABLE_BODY);
   // Connect to bg-store
   const { subscribe, dispatch, getState } = store;
-  const kbHandlers = keybindInputHandlers(dispatch);
+  const kbHandlers = keybindInputHandlers(store);
   const { keyboard: keyboardState } = getState();
   subscribe(keyBindingSubscription);
 
@@ -138,7 +138,7 @@ function commandToTableRow({ key, name, command, description }, handlers) {
   return trNode;
 }
 
-function keybindInputHandlers(dispatch) {
+function keybindInputHandlers(store) {
   return {
     onInputFocus,
     onInputBlur,
@@ -159,13 +159,18 @@ function keybindInputHandlers(dispatch) {
   // Handles incoming new commands
   function onInputKeydown(event) {
     event.preventDefault();
-    if (isValidKbdCommand(event)) {
+    if (isDuplicate(store.getState().keyboard, kbdCommand(event))) {
+      Flash.message(`
+        <${kbdCommandToString(kbdCommand(event))}> is a duplicate key!
+      `, Flash.ERROR);
+    } else if (isValidKbdCommand(event)) {
       // Stop input reset race
       event.currentTarget.removeEventListener('blur', onInputBlur);
+      event.currentTarget.removeEventListener('keydown', onInputKeydown);
       event.currentTarget.blur();
       const { id: parentId } = event.currentTarget.parentElement.parentElement;
       Flash.close();
-      dispatch(updateKeybinding(parentId, kbdCommand(event)));
+      store.dispatch(updateKeybinding(parentId, kbdCommand(event)));
     } else {
       const command = kbdCommand(event);
       let flashMsg;
@@ -184,6 +189,13 @@ function keybindInputHandlers(dispatch) {
       flashMsg(`${command.key} is ${lowerCaseSentence(command.error)}`);
     }
   }
+}
+
+// Returns a bool indicating whether this is a
+function isDuplicate(state, command) {
+  return !!Object.values(state)
+    .map(x => x.command)
+    .find(c => compareKbdCommand(c, command));
 }
 
 function lowerCaseSentence(s) {
