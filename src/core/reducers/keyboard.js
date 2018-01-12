@@ -8,11 +8,12 @@ export default function keyboardConfigReducer(
   const { type } = action;
   switch (type) {
     case KEYBINDING_UPDATE: {
-      const { key, command } = action.payload;
+      const { key, value } = action.payload;
+      console.log('BG REDUCER DE BUG TRACE', action.payload);
       return Object.assign(
         {},
         state,
-        { [key]: Object.assign({}, state[key], { command }) },
+        { [key]: Object.assign({}, state[key], { command: value }) },
       );
     }
     case KEYBINDING_DEFAULT_RESET:

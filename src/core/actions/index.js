@@ -9,80 +9,42 @@ import {
   KEYBINDING_UPDATE,
   KEYBINDING_DEFAULT_RESET,
 } from './types';
+import { action } from './action';
 
 // When action is passed in from ui store the background passes the entire
 // action as an input
-export function updateCheckbox({ payload }) {
-  const { key, value } = payload;
-  return {
-    type: CHECKBOX_UPDATE,
-    payload: {
-      key,
-      value,
-    },
-  };
+export function updateCheckbox({ payload: { key, value } }) {
+  return action(CHECKBOX_UPDATE, key, value);
 }
 
-export function updateFuzzyCheckbox({ payload }) {
-  const { key, value } = payload;
-  return {
-    type: FUZZY + CHECKBOX_UPDATE,
-    payload: {
-      key,
-      value,
-    },
-  };
+export function updateFuzzyCheckbox({ payload: { key, value } }) {
+  return action(FUZZY + CHECKBOX_UPDATE, key, value);
 }
 
-export function updateFuzzyRange({ payload }) {
-  const { key, value } = payload;
-  return {
-    type: FUZZY + RANGE_UPDATE,
-    payload: {
-      key,
-      value,
-    },
-  };
+export function updateFuzzyRange({ payload: { key, value } }) {
+  return action(FUZZY + RANGE_UPDATE, key, value);
 }
 
-export function updateFuzzySearchKeys({ payload }) {
-  const { value } = payload;
-  return {
-    type: FUZZY + SEARCH_KEY_UPDATE,
-    payload: {
-      key: 'keys',
-      value,
-    },
-  };
+export function updateFuzzySearchKeys({ payload: { value } }) {
+  return action(FUZZY + SEARCH_KEY_UPDATE, 'keys', value);
 }
 
 export function updateNumber({ payload: { key, value } }) {
-  return {
-    type: NUMBER_UPDATE,
-    payload: { key, value },
-  };
+  return action(NUMBER_UPDATE, key, value);
 }
 
 export function resetSettings() {
-  return {
-    type: SETTINGS_RESET,
-  };
+  return action(SETTINGS_RESET);
 }
 
-export function updateLastQuery({ payload }) {
-  return {
-    type: LAST_QUERY_UPDATE,
-    payload,
-  };
+export function updateLastQuery({ payload: { key, value } }) {
+  return action(LAST_QUERY_UPDATE, key, value);
 }
 
-export function updateKeybinding({ payload }) {
-  return {
-    type: KEYBINDING_UPDATE,
-    payload,
-  };
+export function updateKeybinding({ payload: { key, value } }) {
+  return action(KEYBINDING_UPDATE, key, value);
 }
 
 export function resetDefaultKeybindings() {
-  return { type: KEYBINDING_DEFAULT_RESET };
+  return action(KEYBINDING_DEFAULT_RESET);
 }
