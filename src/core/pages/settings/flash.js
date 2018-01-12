@@ -28,18 +28,46 @@ export function close() {
   flashNode.style.display = 'none';
 }
 
-export function message(msg, type = OK, shouldClear = true) {
-  if (!(type in styles)) {
+export function append(msg) {
+  return message(msg, null, false, false);
+}
+
+export function message(msg, type = OK, shouldClear = true, shouldUpdateStyle = true) {
+  if (typeof msg === 'object' && !Array.isArray(msg)) {
+    console.error('Got a msg object but it wasn\'t an array! msg should be an string or an array.');
+    return;
+  }
+  if (!(type in styles) && type !== null) {
     throw new TypeError("Wasn't supplied a correct type! Type must be one of: Flash.OK, Flash.WARNING, Flash.ERROR");
   }
   if (shouldClear) {
     clearChildNodes(flashNode);
   }
-  updateStyle(type, flashNode);
+  if (shouldUpdateStyle) {
+    updateStyle(type, flashNode);
+  }
   flashNode.style.display = 'block';
-  const p = d.createElement('p');
-  p.appendChild(d.createTextNode(msg));
-  flashNode.appendChild(p);
+  switch (typeof msg) {
+    case 'object': {
+      const ul = d.createElement('ul');
+      ul.classList.add('center');
+      msg.map(s => d.createTextNode(s)).forEach((node) => {
+        const li = d.createElement('li');
+        li.appendChild(node);
+        ul.appendChild(li);
+      });
+      flashNode.appendChild(ul);
+      break;
+    }
+    case 'string':
+    default: {
+      const p = d.createElement('p');
+      p.classList.add('center');
+      p.appendChild(d.createTextNode(msg));
+      flashNode.appendChild(p);
+      break;
+    }
+  }
 }
 
 // Given a style, removes all classes not equal to that style in the
