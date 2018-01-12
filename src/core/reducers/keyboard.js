@@ -9,7 +9,6 @@ export default function keyboardConfigReducer(
   switch (type) {
     case KEYBINDING_UPDATE: {
       const { key, value } = action.payload;
-      console.log('BG REDUCER DE BUG TRACE', action.payload);
       return Object.assign(
         {},
         state,
