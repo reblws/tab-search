@@ -16,6 +16,10 @@ import {
   ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY,
   ERROR_MSG_FINAL_KEY_IS_MODIFIER,
   SHORTCUT_RESET_BUTTON_ID,
+  HINT_MSG_SHOULD_USE_MODIFIERS,
+  HINT_MSG_SINGLE_KEYS,
+  HINT_MSG_TRY_PUNCTUATION,
+  HINT_MSG_NEED_FINAL_KEY,
 } from './constants';
 
 const d = document;
@@ -35,6 +39,8 @@ export function initKeybindingTable(store) {
   const { subscribe, dispatch, getState } = store;
   const kbHandlers = keybindInputHandlers(store);
   const { keyboard: keyboardState } = getState();
+
+  // Handle dom updates on state-change
   subscribe(keyBindingSubscription);
 
   // Prepare the table
@@ -51,9 +57,9 @@ export function initKeybindingTable(store) {
 
   let prevState = keyboardState;
   function keyBindingSubscription() {
-    // TODO: handle duplicates
     const selectKbd = state => state().keyboard;
-    const newState = selectKbd(getState);
+    const newState = selectKbd(store.getState);
+
     diffState(prevState, newState, compareCommands)
       .forEach((key) => {
         const { command: oldCommand } = prevState[key];
@@ -159,10 +165,10 @@ function keybindInputHandlers(store) {
   function isDuplicateCommand(state, command) {
     const key = Object.values(state)
       .find(k => compareKbdCommand(k.command, command));
-    return {
-      key: key.key,
-      isDuplicate: !!key,
-    };
+    if (key) {
+      return { key, isDuplicate: true };
+    }
+    return { isDuplicate: false };
   }
 
   // Handles incoming new commands
@@ -173,7 +179,6 @@ function keybindInputHandlers(store) {
     const command = kbdCommand(event);
     const isValid = isValidKbdCommand(command);
     const { name } = store.getState().keyboard[parentId];
-
     if (isValid) {
       const { isDuplicate, key: duplicateKey } =
         isDuplicateCommand(store.getState().keyboard, command);
@@ -191,20 +196,31 @@ function keybindInputHandlers(store) {
       }
     } else {
       // Then it's an error
-      let flashMsg;
+      let flashType;
+      let appendMsg;
       switch (command.error) {
         // Warning
         case ERROR_MSG_FINAL_KEY_IS_MODIFIER:
-          flashMsg = x => Flash.message(x, Flash.WARNING);
+          flashType = Flash.WARNING;
+          appendMsg = [HINT_MSG_NEED_FINAL_KEY];
           break;
         // Error
         case ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY:
         case ERROR_MSG_NOT_VALID_SINGLE_KEY:
         default:
-          flashMsg = x => Flash.message(x, Flash.ERROR);
+          flashType = Flash.ERROR;
+          appendMsg = [
+            HINT_MSG_SINGLE_KEYS,
+            HINT_MSG_SHOULD_USE_MODIFIERS,
+            HINT_MSG_TRY_PUNCTUATION,
+          ];
           break;
       }
-      flashMsg(`${kbdCommandToString(command)} is ${lowerCaseSentence(command.error)}`);
+      Flash.message(
+        `${kbdCommandToString(command)} is ${lowerCaseSentence(command.error)}`,
+        flashType,
+      );
+      Flash.append(appendMsg);
     }
   }
 }
