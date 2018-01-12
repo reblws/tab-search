@@ -16,6 +16,7 @@ const validSingleKeys = [
   'ArrowRight',
   'ArrowLeft',
   'Enter',
+  'Delete',
 ];
 
 const requiresModifierKeys = [

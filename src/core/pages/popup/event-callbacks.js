@@ -64,6 +64,18 @@ function swapKeyValueMap(obj, func = x => x) {
   }, new Map());
 }
 
+function isModifierSingle(event) {
+  const modifiers = [
+    'Control',
+    'Ctrl',
+    'Alt',
+    'Shift',
+    'Meta',
+    'Shift',
+  ];
+  return modifiers.some(m => event.key === m);
+}
+
 export function keydownHandler(store) {
   const { showRecentlyClosed } = store.getState().general;
   const { keyboard: keyboardControls } = store.getState();
@@ -72,6 +84,9 @@ export function keydownHandler(store) {
   // {[kbdCommand]: ACTION}
   const kbdControlMap = swapKeyValueMap(keyboardControls, x => x.command);
   return function handleKeyDown(event) {
+    if (isModifierSingle(event)) {
+      event.preventDefault();
+    }
     // Handle preventing default
     // Delete, Backspace, Tab, ArrowUp, Arrowdown, Enter
     switch (event.key) {
@@ -82,10 +97,6 @@ export function keydownHandler(store) {
         break;
       default: break;
     }
-    // If it's a valid kbdCommand (i.e. does a configurable action),
-    // pass it to navigateResults whose only responsibility is performing
-    // a side effect based on a given kbdCommand and the kbdControlMap
-    // passed in from state.
     if (isValidKbdCommand(event)) {
       return navigateResults(
         // Find the right object key
@@ -95,11 +106,11 @@ export function keydownHandler(store) {
         store,
       );
     }
-    switch (event.key) {
-      case 'Backspace':
-      default: {
-        searchInput.focus();
-      }
+    const shouldJustFocusSearchBar = (event.key === 'Backspace' && !isModifierSingle(event))
+      || (/^([A-Za-z]|\d)$/.test(event.key) && !isModifierSingle(event));
+    if (shouldJustFocusSearchBar) {
+      searchInput.focus();
+      return;
     }
     return;
   };
