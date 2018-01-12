@@ -59,14 +59,17 @@ export function doFinalSideEffects(store) {
     searchInput.value = lastQuery;
   }
   // Give a shortcut hint
-  updatePlaceholderTextWithShortcutHint();
-  // Populate the initial tab list here.
-  // TODO: Add option for showing last query on popup
-  populateTabList(updateSearchResults())
-    // .then(() => searchInput.focus())
+  updatePlaceholderTextWithShortcutHint()
     .catch((err) => {
       throw new Error(`Can't update search input placeholder text! ${err}`);
     });
+  // Populate the initial tab list here.
+  // TODO: Add option for showing last query on popup
+  populateTabList(updateSearchResults())
+    .catch((err) => {
+      throw new Error(`Can't populate initial tabList. ${err}`);
+    });
+
 
   if (useFallbackFont) {
     // Lazy for now: Just override the css styles specifying a font-family
