@@ -112,42 +112,31 @@ function focusWindow(windowId) {
 }
 
 export function queryTab(id) {
-  return promiseApi(browser.tabs, 'get', parseInt(id, 10));
+  return apiP(browser.tabs, 'get', parseInt(id, 10));
 }
 
 export function reloadTab(id) {
-  return promiseApi(browser.tabs, 'reload', parseInt(id, 10));
+  return apiP(browser.tabs, 'reload', parseInt(id, 10));
 }
 
 export function pinTab(id, pinned) {
-  return promiseApi(browser.tabs, 'update', parseInt(id, 10), { pinned });
+  return apiP(browser.tabs, 'update', parseInt(id, 10), { pinned });
 }
 
 export function muteTab(id, muted) {
-  return promiseApi(browser.tabs, 'update', parseInt(id, 10), { muted });
-}
-
-// Promise that sends a rejection error if an API is undefined
-function promiseApi(api, method, ...args) {
-  return new Promise((resolve, reject) => {
-    if (api) {
-      resolve(api[method](...args));
-    } else {
-      reject(new Error(`${api} API not available!`));
-    }
-  });
+  return apiP(browser.tabs, 'update', parseInt(id, 10), { muted });
 }
 
 function queryTabs(queryOptions) {
-  return promiseApi(browser.tabs, 'query', queryOptions);
+  return apiP(browser.tabs, 'query', queryOptions);
 }
 
 function createTab(createOptions) {
-  return promiseApi(browser.tabs, 'create', createOptions);
+  return apiP(browser.tabs, 'create', createOptions);
 }
 
 export function searchBookmarks(query) {
-  return promiseApi(browser.bookmarks, 'search', query);
+  return apiP(browser.bookmarks, 'search', query);
 }
 
 export function openBookmark(dataset) {
@@ -163,6 +152,19 @@ export function openBookmark(dataset) {
 
 // recentlyclosed func
 export function getRecentlyClosed(maxResults) {
-  return promiseApi(browser.sessions, 'getRecentlyClosed', { maxResults });
+  return apiP(browser.sessions, 'getRecentlyClosed', { maxResults });
+}
+
+// Promise that sends a rejection error if an API is undefined
+function apiP(api, method, ...args) {
+  return new Promise((resolve, reject) => {
+    if (api) {
+      resolve(api[method](...args));
+    } else if (!api[method]) {
+      reject(new Error(`Method ${method} doesn't exist on ${api}!`));
+    } else {
+      reject(new Error(`${api} API not available!`));
+    }
+  });
 }
 
