@@ -10,8 +10,7 @@ import {
   TAB_BOOKMARK,
   DUPLICATE_TAB_DELETE,
   MUTE_TOGGLE,
-} from 'core/keyboard/constants';
-import { compareKbdCommand } from 'core/keyboard/compare';
+} from 'core/keyboard';
 import {
   deleteTab,
   reloadTab,
@@ -32,22 +31,13 @@ import {
   SESSION_TYPE,
 } from '../constants';
 
-// The main keydown handler calls this if one of the above commands
-// are pressed
-export function navigateResults(
-  kbdCmd,
-  controlMap,
-  showRecentlyClosed,
-) {
-  // Should make sure no errors if tablist is empty
-  // Should probably find the key in the parent function
-  const controlKey = [...controlMap.keys()].find(x => compareKbdCommand(x, kbdCmd));
+export function navigateResults(cmdKey, showRecentlyClosed) {
   const isNoResult = tabList.children[0].classList.contains(NO_RESULT_CLASSNAME);
   const isSearchActive = d.activeElement === searchInput;
   const selectedTab = !isSearchActive
     ? d.activeElement
     : tabList.firstElementChild;
-  switch (controlMap.get(controlKey)) {
+  switch (cmdKey) {
     case TAB_NEXT: {
       removeHeadTabListNodeSelectedStyle();
       if (isSearchActive) {
