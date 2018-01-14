@@ -1,9 +1,5 @@
 /* Main DOM event-handlers */
-// TODO: give each handler its own file
-import {
-  isValidKbdCommand,
-  kbdCommand,
-} from 'core/keyboard';
+import keyboard from 'core/keyboard';
 import {
   injectTabsInList,
   addHeadTabListNodeSelectedStyle,
@@ -63,9 +59,8 @@ export function clearInput(event) {
 
 // Given an object returns a Map with the keys and values swapped
 function swapKeyValueMap(obj, func = x => x) {
-  return Object.keys(obj).reduce((acc, key) => {
-    return acc.set(func(obj[key]), key);
-  }, new Map());
+  return Object.keys(obj)
+    .reduce((acc, key) => acc.set(func(obj[key]), key), new Map());
 }
 
 function isModifierSingle(event) {
@@ -101,22 +96,17 @@ export function keydownHandler(store) {
         break;
       default: break;
     }
-    if (isValidKbdCommand(event)) {
-      return navigateResults(
-        // Find the right object key
-        kbdCommand(event),
-        kbdControlMap,
-        showRecentlyClosed,
-        store,
-      );
+    if (keyboard.isValid(event)) {
+      const cmd = keyboard.command(event);
+      const key = [...kbdControlMap.keys()].find(x => keyboard.isEqual(x, cmd));
+      return navigateResults(kbdControlMap.get(key), showRecentlyClosed);
     }
     const shouldJustFocusSearchBar = (event.key === 'Backspace' && !isModifierSingle(event))
       || (/^([A-Za-z]|\d)$/.test(event.key) && !isModifierSingle(event));
     if (shouldJustFocusSearchBar) {
       searchInput.focus();
-      return;
     }
-    return;
+    return noop();
   };
 }
 
@@ -137,12 +127,14 @@ export function handleTabClick(getState) {
           return deleteTab(currentTarget, showRecentlyClosed, true);
         }
         return switchActiveTab(dataset);
-      } case SESSION_TYPE: {
+      }
+      case SESSION_TYPE: {
         if (ctrlKey) {
           return noop();
         }
         return restoreClosedTab(dataset);
-      } case BOOKMARK_TYPE: {
+      }
+      case BOOKMARK_TYPE: {
         if (ctrlKey) {
           return noop();
         }
