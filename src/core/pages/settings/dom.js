@@ -1,9 +1,4 @@
-import {
-  isValidKbdCommand,
-  kbdCommand,
-  kbdCommandToString,
-  compareKbdCommand,
-} from 'core/keyboard';
+import keyboard from 'core/keyboard';
 import { updateKeybinding, resetKeyboardToDefaults } from './actions';
 import * as Flash from './flash';
 import {
@@ -33,7 +28,6 @@ export function clearChildNodes(node) {
 
 // Fills in the keyboard area of the settings page with state from current setting
 export function initKeybindingTable(store) {
-  const compareCommands = (x, y) => compareKbdCommand(x.command, y.command);
   const stTableBody = d.getElementById(SHORTCUT_TABLE_BODY);
   // Connect to bg-store
   const { subscribe, dispatch, getState } = store;
@@ -57,17 +51,18 @@ export function initKeybindingTable(store) {
 
   let prevState = keyboardState;
   function keyBindingSubscription() {
+    const compareCommands = (x, y) => keyboard.isEqual(x.command, y.command);
     const selectKbd = state => state().keyboard;
     const newState = selectKbd(store.getState);
 
-    diffState(prevState, newState, compareCommands)
+    diffStateKeys(prevState, newState, compareCommands)
       .forEach((key) => {
         const { command: oldCommand } = prevState[key];
         const { name, command: newCommand } = newState[key];
         const msg = `
-          Updated shortcut for ${name}: <${kbdCommandToString(oldCommand)}> changed to <${kbdCommandToString(newCommand)}>
+          ${name} shortcut updated: <${keyboard.toString(oldCommand)}> changed to <${keyboard.toString(newCommand)}>
         `;
-        updateTableRow(key, kbdCommandToString(newCommand));
+        updateTableRow(key, keyboard.toString(newCommand));
         Flash.message(msg, Flash.OK, false);
       });
     prevState = newState;
@@ -75,7 +70,7 @@ export function initKeybindingTable(store) {
 }
 
 // Returns an array of keys showing which keys differed
-function diffState(obj1, obj2, compare) {
+function diffStateKeys(obj1, obj2, compare) {
   return Object.keys(obj2).filter(key => !compare(obj1[key], obj2[key]));
 }
 
@@ -122,8 +117,8 @@ function commandToTableRow({ key, name, command, description }, handlers) {
   const inputShortcutNode = d.createElement('input');
   inputShortcutNode.setAttribute('type', 'text');
   inputShortcutNode.classList.add(SHORTCUT_TABLE_INPUT);
-  inputShortcutNode.value = kbdCommandToString(command);
-  inputShortcutNode.defaultValue = kbdCommandToString(command);
+  inputShortcutNode.value = keyboard.toString(command);
+  inputShortcutNode.defaultValue = keyboard.toString(command);
 
   // Attach event listeners
   inputShortcutNode.addEventListener('blur', handlers.onInputBlur);
@@ -164,7 +159,7 @@ function keybindInputHandlers(store) {
 
   function isDuplicateCommand(state, command) {
     const key = Object.values(state)
-      .find(k => compareKbdCommand(k.command, command));
+      .find(k => keyboard.isEqual(k.command, command));
     if (key) {
       return { key, isDuplicate: true };
     }
@@ -176,20 +171,19 @@ function keybindInputHandlers(store) {
     event.preventDefault();
 
     const { id: parentId } = event.currentTarget.parentElement.parentElement;
-    const command = kbdCommand(event);
-    const isValid = isValidKbdCommand(command);
+    const command = keyboard.command(event);
+    const isValid = keyboard.isValid(command);
     const { name } = store.getState().keyboard[parentId];
     if (isValid) {
       const { isDuplicate, key: duplicateKey } =
         isDuplicateCommand(store.getState().keyboard, command);
       if (isDuplicate && duplicateKey === parentId) {
-        Flash.message(`<${kbdCommandToString(command)}> is already ${name}'s shortcut.`, Flash.WARNING);
+        Flash.message(`<${keyboard.toString(command)}> is already ${name}'s shortcut.`, Flash.WARNING);
         event.currentTarget.blur();
       } else if (isDuplicate) {
-        Flash.message(`Duplicate key! <${kbdCommandToString(command)}> is ${name}'s shortcut.`, Flash.ERROR);
+        Flash.message(`Duplicate key! <${keyboard.toString(command)}> is ${name}'s shortcut.`, Flash.ERROR);
       } else {
         // Stop input reset race
-        event.currentTarget.removeEventListener('blur', onInputBlur);
         event.currentTarget.blur();
         Flash.close();
         store.dispatch(updateKeybinding(parentId, command));
@@ -217,7 +211,7 @@ function keybindInputHandlers(store) {
           break;
       }
       Flash.message(
-        `${kbdCommandToString(command)} is ${lowerCaseSentence(command.error)}`,
+        `${keyboard.toString(command)} is ${lowerCaseSentence(command.error)}`,
         flashType,
       );
       Flash.append(appendMsg);
