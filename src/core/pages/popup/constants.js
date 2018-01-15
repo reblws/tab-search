@@ -10,6 +10,7 @@ export const TAB_TYPE = 'tab';
 export const SESSION_TYPE = 'session';
 export const OTHER_WINDOW_TAB_TYPE = 'other-window-tab';
 export const BOOKMARK_TYPE = 'bookmark';
+export const HISTORY_TYPE = 'history';
 
 // css classnames
 export const WORDBREAK_ALL_CLASSNAME = 'wordbreak-all';
