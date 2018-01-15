@@ -10,7 +10,8 @@
     "sessions"
   ],
   "optional_permissions": [
-    "bookmarks"
+    "bookmarks",
+    "history"
   ],
   "icons": {
     "48": "icons/logo-48.png",
