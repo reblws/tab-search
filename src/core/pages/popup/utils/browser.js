@@ -150,6 +150,12 @@ export function openBookmark(dataset) {
     });
 }
 
+export function openHistoryItem(dataset) {
+  const { url } = dataset;
+  return createTab({ active: true, url: decodeUrl(url) })
+    .then(() => window.close());
+}
+
 // recentlyclosed func
 export function getRecentlyClosed(maxResults) {
   return apiP(browser.sessions, 'getRecentlyClosed', { maxResults });

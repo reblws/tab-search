@@ -10,13 +10,14 @@ import {
   restoreClosedTab,
   deleteTab,
   openBookmark,
+  openHistoryItem,
 } from './utils/browser';
 import {
   deleteButton,
   searchInput,
   tabList,
   SESSION_TYPE,
-  // OTHER_WINDOW_TAB_TYPE,
+  HISTORY_TYPE,
   BOOKMARK_TYPE,
   TAB_TYPE,
 } from './constants';
@@ -139,6 +140,12 @@ export function handleTabClick(getState) {
           return noop();
         }
         return openBookmark(dataset);
+      }
+      case HISTORY_TYPE: {
+        if (ctrlKey) {
+          return noop();
+        }
+        return openHistoryItem(dataset);
       }
       default: return noop();
     }
