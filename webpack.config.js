@@ -41,6 +41,7 @@ if (process.env.NODE_ENV === 'development') {
     watchFileRegex: [
       join(SRC_PATH, 'static', '**/*.html'),
       join(SRC_PATH, 'static', '**/*.css'),
+      join(SRC_PATH, 'manifest', '*.json'),
     ],
   }));
 }
