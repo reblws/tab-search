@@ -37,6 +37,7 @@
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-import-resolver-webpack": "^0.8.3",
     "eslint-plugin-import": "^2.8.0",
+    "filewatcher-webpack-plugin": "^1.2.0",
     "fs-extra": "^4.0.2",
     "mocha": "^4.0.1",
     "uglifyjs-webpack-plugin": "^1.1.0",

@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const FileWatcherPlugin = require('filewatcher-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { join } = require('path');
@@ -35,6 +36,14 @@ const plugins = [
   }),
   { apply: applyGlobalVar },
 ];
+if (process.env.NODE_ENV === 'development') {
+  plugins.push(new FileWatcherPlugin({
+    watchFileRegex: [
+      join(SRC_PATH, 'static', '**/*.html'),
+      join(SRC_PATH, 'static', '**/*.css'),
+    ],
+  }));
+}
 if (process.env.NODE_ENV === 'production') {
   plugins.push(new UglifyJsPlugin({
     uglifyOptions: {
