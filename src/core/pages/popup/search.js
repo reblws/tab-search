@@ -5,10 +5,12 @@ import {
   OTHER_WINDOW_TAB_TYPE,
   SESSION_TYPE,
   BOOKMARK_TYPE,
+  HISTORY_TYPE,
 } from './constants';
 import {
   encodeUrl,
   parseUrl,
+  hasValidHostname,
 } from './utils/url';
 import {
   isActive,
@@ -25,12 +27,17 @@ import {
 import {
   getRecentlyClosed,
   searchBookmarks,
+  searchHistory,
 } from './utils/browser';
+
+// Minimum query length required to search extra browser apis (history and bookmarks)
+const MIN_QUERY_LENGTH = 3;
 
 export default function filterResult(
   query,
   options,
   {
+    showHistory,
     showBookmarks,
     showRecentlyClosed,
     recentlyClosedLimit,
@@ -54,17 +61,20 @@ export default function filterResult(
         OTHER_WINDOW_TAB_TYPE,
       ),
     );
-
+    const hasMinQueryLen = query.length > MIN_QUERY_LENGTH;
     // Initialize the search array
     // If we want to move the closed tabs to the botttom filter it
     const shouldMoveClosedToBottom = showRecentlyClosed && recentAtBottom;
     // Here ask for showBookmarks
     const arrayToSearchP = [annotatedTabs];
-    if (showRecentlyClosed) {
+    if (showHistory && hasMinQueryLen) {
+      arrayToSearchP.push(searchHistory(query).then(normalizeHistory));
+    }
+    if (showRecentlyClosed && hasMinQueryLen) {
       arrayToSearchP.push(normalizeRecentlyClosedTabs(recentlyClosedLimit));
     }
-    if (showBookmarks) {
-      arrayToSearchP.push(normalizeBookmarks(query));
+    if (showBookmarks && hasMinQueryLen) {
+      arrayToSearchP.push(searchBookmarks(query).then(normalizeBookmarks));
     }
     const arrayToSearch = Promise.all(arrayToSearchP).then(xs => xs.reduce(concat));
     let search;
@@ -143,32 +153,29 @@ function normalizeRecentlyClosedTabs(maxResults) {
     filterNewTab,
     filterIncognito,
   );
-  const normalize = sessionTabs =>
-    sessionTabs
-      .map(tab)
-      .filter(filters)
-      .map(annotateType(SESSION_TYPE));
+  const normalize = sessionTabs => sessionTabs
+    .map(tab)
+    .filter(filters)
+    .map(annotateType(SESSION_TYPE));
   return getRecentlyClosed(maxResults).then(normalize);
 }
 
-function normalizeBookmarks(query) {
-  const MIN_QUERY_LENGTH = 3;
+function normalizeBookmarks(bookmarks) {
   // TODO: should we dedup the bookmarks? if they're already in the search list
   //                This would require appending the bookmarks after the initial
   //                search
 
   // Bookmarks API throws an error if the query is falsey
   // Return an empty array if the query is empty
-
   // Since single character matches will probably overload the result list,
   // for now lets just set a minimum at least 2 chars in a trimmed query
-  if (!query || query.trim().length < MIN_QUERY_LENGTH) {
+  if (!bookmarks) {
     return Promise.resolve([]);
   }
 
   // If a url is undefined or contains no valid hostname, that means
   // its probably a folder or bookmark we don't care about.
-  const filterFolders = ({ url }) => !!url && !!parseUrl(url).hostname;
+  const filterFolders = ({ url }) => hasValidHostname(parseUrl(url));
 
   // We can't open bookmarks by ID, instead we need to pass the url to
   // browser.tabs.create . Override the id property with the value of the url
@@ -176,10 +183,16 @@ function normalizeBookmarks(query) {
 
   // Type property is only available from bookmarks from FF57+, annotate the
   // bookmarks type for backward compatbility
-  const normalize = bookmarks =>
-    bookmarks
-      .filter(filterFolders)
+  const normalize = bs =>
+    bs.filter(filterFolders)
       .map(annotateType(BOOKMARK_TYPE))
       .map(urlAsId);
-  return searchBookmarks(query).then(normalize);
+  return normalize(bookmarks);
+}
+
+function normalizeHistory(historicalRecords) {
+  if (!historicalRecords) {
+    return [];
+  }
+  return historicalRecords.map(annotateType(HISTORY_TYPE));
 }

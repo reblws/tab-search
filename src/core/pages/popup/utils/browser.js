@@ -81,7 +81,7 @@ export function switchActiveTab(tabDataset) {
     type,
   } = tabDataset;
   const numId = parseInt(id, 10);
-  browser.tabs.update(numId, { active: true });
+  apiP(browser.tabs, 'update', numId, { active: true });
   if (type === OTHER_WINDOW_TAB_TYPE) {
     focusWindow(windowId);
   }
@@ -153,6 +153,15 @@ export function openBookmark(dataset) {
 // recentlyclosed func
 export function getRecentlyClosed(maxResults) {
   return apiP(browser.sessions, 'getRecentlyClosed', { maxResults });
+}
+
+// TODO: HISTORY_LIMIT should be a pref
+const HISTORY_LIMIT = 25;
+export function searchHistory(query) {
+  return apiP(browser.history, 'search', {
+    text: query,
+    maxResults: HISTORY_LIMIT,
+  });
 }
 
 // Promise that sends a rejection error if an API is undefined

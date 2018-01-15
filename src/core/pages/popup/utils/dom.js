@@ -10,6 +10,7 @@ import {
   SELECTED_TAB_CLASSNAME,
   BOOKMARKS_SVG_PATH,
   BOOKMARK_TYPE,
+  HISTORY_TYPE,
 } from '../constants';
 import { badFavIconCache } from '../caches';
 
@@ -74,6 +75,15 @@ export function tabToTag(getState) {
     // check the type and assign all bookmarks to the static svg
     // for now.
     let favIconLink;
+    switch (type) {
+      case HISTORY_TYPE:
+        favIconLink = BOOKMARKS_SVG_PATH; // TODO: add a history svg
+      case BOOKMARK_TYPE:
+        favIconLink = BOOKMARKS_SVG_PATH;
+      default:
+        favIconLink = isValidFavIconUrl ? favIconUrl : favIconFallback;
+        break;
+    }
     if (type !== BOOKMARK_TYPE) {
       favIconLink = isValidFavIconUrl
         ? favIconUrl
