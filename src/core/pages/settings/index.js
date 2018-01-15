@@ -69,14 +69,15 @@ function configureEventListeners(dispatch) {
           break;
         }
         case 'checkbox': {
-          if (settingKey === 'showBookmarks') {
-            browser.permissions.request({ permissions: ['bookmarks'] })
+          if (settingKey === 'showBookmarks' || settingKey === 'showHistory') {
+            const permission = settingKey.slice('show'.length).toLowerCase();
+            browser.permissions.request({ permissions: [permission] })
               .then((granted) => {
                 // If user declines reset the checkbox to unchecked
                 if (granted) {
                   dispatch(actions.updateCheckbox(settingKey, checked));
                 } else {
-                  document.querySelector('#showBookmarks').checked = false;
+                  document.querySelector(`#show${permission.charAt(0).toUpperCase() + permission.slice(1)}`).checked = false;
                 }
               });
           } else if (settingsLocation[0] === 'fuzzy' && settingKey !== 'keys') {

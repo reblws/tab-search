@@ -1,5 +1,4 @@
 export { defaultCommands } from 'core/keyboard';
-
 export const initialFuzzySettings = {
   enableFuzzySearch: true,
   shouldSort: true,
@@ -10,6 +9,7 @@ export const initialFuzzySettings = {
 };
 
 export const initialGeneralSettings = {
+  showHistory: false,
   showBookmarks: false,
   showTabCountBadgeText: true,
   searchAllWindows: true,
