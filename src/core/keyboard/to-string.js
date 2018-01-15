@@ -1,7 +1,11 @@
 // Returns a string representation of a kbdCommand
 // TODO: Need to get user's OS. If they are on a mac, replace instances of
 //       ctrlKey with 'Cmd'.
-export function kbdCommandToString({ key, ctrlKey, altKey, shiftKey }) {
+export function kbdCommandToString(input) {
+  if (typeof input === 'string') {
+    return input;
+  }
+  const { key, ctrlKey, altKey, shiftKey } = input;
   const stringParts = [];
   if (ctrlKey) {
     // TODO: If user is on mac, change this to Cmd.
