@@ -1,18 +1,43 @@
+/* http://clrs.cc/ */
+:root {
+  --lightblue: #5294e2;
+  --whitesmokeBorder: #dcdfe3;
+  --whitesmoke: #f6f7f8;
+  --bgColor: var(--whitesmoke);
+  --searchBarFocusColor:  var(--lightblue);
+  --blue: #0074D9;
+  --tabFocusColor: var(--blue);
+  --red: #cd6155;
+  --navy: #001f3f;
+  --yellow: #f4d03f;
+  --purple: #B10DC9;
+}
+
 body {
-  background-color: rgb(238, 238, 238);
+  background-color: var(--whitesmoke);
   font-family: 'Inter UI', sans-serif;
+  width: 355px;
 }
 
 
 input[type="search"] {
   line-height: 2em;
+  width: 300px;
+  margin: auto;
 }
 
 header {
   padding: 0.5em;
+  width: 355px;
+  box-sizing: border-box;
+  border: 1px solid var(--whitesmokeBorder);
+}
+
+.search-form {
   width: 300px;
   margin-left: auto;
   margin-right: auto;
+  box-sizing: border-box;
 }
 
 .container {
@@ -22,6 +47,7 @@ header {
 }
 
 .tab-list {
+  box-sizing: border-box;
   font-size: 12px;
 	display: flex;
 	flex-direction: column;
@@ -29,7 +55,7 @@ header {
 	overflow-x: hidden;
 	height: 400px;
   background-color: #fff;
-  border-color: rgb(215, 215, 215);
+  border-color: var(--whitesmokeBorder);
   border-style: solid;
   border-bottom: 1px;
   border-right: 1px;
@@ -58,8 +84,8 @@ header {
 }
 
 .search:focus {
-  border-color: #399cfc;
-  box-shadow: 2px #399cfc;
+  border-color: var(--searchBarFocusColor);
+  box-shadow: 2px var(--searchBarFocusColor);
 }
 
 .tab-favicon {
@@ -85,7 +111,7 @@ header {
 .tab-object:hover,
 .tab-object:focus {
   /*box-sizing: border-box;*/
-  background-color: #086DD6;
+  background-color: var(--tabFocusColor);
   color: white;
 }
 
@@ -163,17 +189,21 @@ p {
 }
 
 .tab {
-  border-left: 5px #3498db solid;
+  border-left: 5px var(--blue) solid;
 }
 
 .session {
-  border-left: 5px #cd6155 solid;
+  border-left: 5px var(--red) solid;
 }
 
 .other-window-tab {
-  border-left: 5px #f4d03f solid;
+  border-left: 5px var(--yellow) solid;
 }
 
 .bookmark {
-  border-left: 5px #454de1 solid;
+  border-left: 5px var(--purple) solid;
+}
+
+.history {
+  border-left: 5px var(--navy) solid;
 }
