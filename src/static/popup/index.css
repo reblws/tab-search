@@ -8,12 +8,13 @@
   --blue: #0074D9;
   --tabFocusColor: var(--blue);
   --red: #cd6155;
-  --navy: #001f3f;
+  --navy: rgb(0,31,63);
   --yellow: #f4d03f;
-  --purple: #B10DC9;
+  --purple: rgb(177,13,201);
 }
 
 body {
+  border: 1px solid var(--whitesmokeBorder);
   background-color: var(--whitesmoke);
   font-family: 'Inter UI', sans-serif;
   width: 355px;
@@ -30,7 +31,6 @@ header {
   padding: 0.5em;
   width: 355px;
   box-sizing: border-box;
-  border: 1px solid var(--whitesmokeBorder);
 }
 
 .search-form {
@@ -58,10 +58,8 @@ header {
   border-color: var(--whitesmokeBorder);
   border-style: solid;
   border-bottom: 1px;
-  border-right: 1px;
   border-left: 1px;
   border-top: 1px;
-  border-top-color: rgb(51, 51, 51);
 }
 
 .search {
@@ -115,6 +113,7 @@ header {
   color: white;
 }
 
+.tab-object > object,
 .tab-object > img {
   height: 2rem;
   max-width: 100%;
@@ -201,9 +200,10 @@ p {
 }
 
 .bookmark {
-  border-left: 5px var(--purple) solid;
+  border-left: 5px var(--navy) solid;
 }
 
 .history {
-  border-left: 5px var(--navy) solid;
+  border-left: 5px var(--purple) solid;
 }
+
