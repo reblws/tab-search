@@ -59,6 +59,19 @@ if (process.env.NODE_ENV === 'production') {
   ));
 }
 module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.svg/,
+        use: {
+          loader: 'svg-url-loader',
+          options: {
+            noquotes: true,
+          },
+        },
+      },
+    ],
+  },
   entry: {
     popup: join(PAGES_PATH, 'popup', 'index.js'),
     background: join(PAGES_PATH, 'background', 'index.js'),

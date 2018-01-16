@@ -8,11 +8,14 @@ import {
   d,
   WORDBREAK_ALL_CLASSNAME,
   SELECTED_TAB_CLASSNAME,
-  BOOKMARKS_SVG_PATH,
   BOOKMARK_TYPE,
   HISTORY_TYPE,
 } from '../constants';
 import { badFavIconCache } from '../caches';
+import {
+  filledHistorySvg,
+  filledBookmarkSvg,
+} from '../assets';
 
 const changeHeadTabListNodeSelectedStyle = method => () => {
   tabList.firstElementChild.classList[method](SELECTED_TAB_CLASSNAME);
@@ -77,19 +80,14 @@ export function tabToTag(getState) {
     let favIconLink;
     switch (type) {
       case HISTORY_TYPE:
-        favIconLink = BOOKMARKS_SVG_PATH; // TODO: add a history svg
+        favIconLink = filledHistorySvg;
+        break;
       case BOOKMARK_TYPE:
-        favIconLink = BOOKMARKS_SVG_PATH;
+        favIconLink = filledBookmarkSvg;
+        break;
       default:
         favIconLink = isValidFavIconUrl ? favIconUrl : favIconFallback;
         break;
-    }
-    if (type !== BOOKMARK_TYPE) {
-      favIconLink = isValidFavIconUrl
-        ? favIconUrl
-        : favIconFallback;
-    } else {
-      favIconLink = BOOKMARKS_SVG_PATH;
     }
     return createTabObject({
       id,
@@ -166,7 +164,7 @@ function createTabObject({
     urlNode.style = `font-size: ${tabUrlSize}px`;
   }
 
-  // Append all block elementshttps://cloud.githubusercontent.com/assets/689327/26164874/6c2b8920-3b04-11e7-8d4e-f1db027cb4a2.jpg
+  // Append all block elements
   tabInfoNode.appendChild(titleNode);
   // Don't show the url if user specifies 0 as the url font size
   if (tabUrlSize > 0) {
@@ -261,8 +259,6 @@ export function scrollIfNeeded(event) {
     event.target.scrollIntoView(true);
   }
 }
-
-
 
 export function removeElementFromTabList(element, wasClicked) {
   const nextElementToFocus = element.nextSibling
