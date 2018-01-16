@@ -23,6 +23,7 @@ rules:
     import/prefer-default-export: 0
     no-underscore-dangle: 0
     ignore-rest-siblings: 0
+    prefer-arrow-callback: 0
 overrides:
     - files:
         - src/**/*.spec.js
