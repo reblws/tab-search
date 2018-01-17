@@ -18,4 +18,6 @@ export const WORDBREAK_ALL_CLASSNAME = 'wordbreak-all';
 export const SELECTED_TAB_CLASSNAME = 'tab-object--selected';
 export const NO_RESULT_CLASSNAME = 'no-result';
 export const TAB_URL_CLASSNAME = 'tab-url';
+export const TAB_PIN_CLASSNAME = 'pin';
+export const TAB_MUTED_CLASSNAME = 'mute';
 export const d = document;

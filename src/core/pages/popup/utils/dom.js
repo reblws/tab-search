@@ -10,6 +10,8 @@ import {
   SELECTED_TAB_CLASSNAME,
   BOOKMARK_TYPE,
   HISTORY_TYPE,
+  TAB_PIN_CLASSNAME,
+  TAB_MUTED_CLASSNAME,
 } from '../constants';
 import { badFavIconCache } from '../caches';
 import {
@@ -26,7 +28,6 @@ export const removeHeadTabListNodeSelectedStyle =
 
 export const addHeadTabListNodeSelectedStyle =
   changeHeadTabListNodeSelectedStyle('add');
-
 
 export function isTabListEmpty() {
   return !tabList.firstElementChild.classList.contains('tab-object');
@@ -71,6 +72,8 @@ export function tabToTag(getState) {
       type,
       sessionId,
       windowId,
+      mutedInfo,
+      pinned,
     } = tab;
     const isValidFavIconUrl = favIconUrl
       && !badFavIconCache().includes(favIconUrl);
@@ -99,6 +102,8 @@ export function tabToTag(getState) {
       windowId,
       tabUrlSize,
       tabTitleSize,
+      mutedInfo,
+      pinned,
     }, shouldWordBreak(title));
   };
 }
@@ -114,6 +119,8 @@ function createTabObject({
   lastAccessed,
   tabUrlSize,
   tabTitleSize,
+  mutedInfo,
+  pinned,
 }, wordBreak) {
   const dataId = sessionId || id;
   // Create the parent div
@@ -178,6 +185,13 @@ function createTabObject({
 
   tabObjectNode.appendChild(iconContainerNode);
   tabObjectNode.appendChild(tabInfoNode);
+
+  if (pinned) {
+    tabObjectNode.classList.add(TAB_PIN_CLASSNAME);
+  }
+  if (mutedInfo && mutedInfo.muted) {
+    tabObjectNode.classList.add(TAB_MUTED_CLASSNAME);
+  }
 
   return tabObjectNode;
 }

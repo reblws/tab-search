@@ -29,6 +29,10 @@ import {
   NO_RESULT_CLASSNAME,
   TAB_URL_CLASSNAME,
   SESSION_TYPE,
+  TAB_MUTED_CLASSNAME,
+  TAB_PIN_CLASSNAME,
+  TAB_TYPE,
+  OTHER_WINDOW_TAB_TYPE,
 } from '../constants';
 
 export function navigateResults(cmdKey, showRecentlyClosed) {
@@ -76,9 +80,20 @@ export function navigateResults(cmdKey, showRecentlyClosed) {
     }
     case TAB_PIN: {
       // TODO: visual pinning indicator
-      const { id } = selectedTab.dataset;
+      const { id, type } = selectedTab.dataset;
+      const isTab = type === OTHER_WINDOW_TAB_TYPE || type === TAB_TYPE;
+      if (!isTab) {
+        return;
+      }
       const togglePinStatus = ({ pinned }) => pinTab(id, !pinned);
-      queryTab(id).then(togglePinStatus);
+      queryTab(id).then(togglePinStatus)
+        .then(({ pinned }) => {
+          if (pinned) {
+            selectedTab.classList.add(TAB_PIN_CLASSNAME);
+          } else {
+            selectedTab.classList.remove(TAB_PIN_CLASSNAME);
+          }
+        });
       break;
     }
     // browser.tabs.update({ id, pinned = !pinned })
@@ -144,7 +159,13 @@ export function navigateResults(cmdKey, showRecentlyClosed) {
       //        toggle anymore.
       const { id } = selectedTab.dataset;
       const toggleMuteStatus = ({ audible }) => muteTab(id, audible);
-      queryTab(id).then(toggleMuteStatus);
+      queryTab(id).then(toggleMuteStatus).then(({ mutedInfo }) => {
+        if (mutedInfo.muted) {
+          selectedTab.classList.add(TAB_MUTED_CLASSNAME);
+        } else {
+          selectedTab.classList.remove(TAB_MUTED_CLASSNAME);
+        }
+      });
       break;
     }
     case TAB_MOVE:
