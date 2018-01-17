@@ -66,14 +66,12 @@ header {
 }
 
 .search {
-  /* box-sizing: border-box; */
   top: 10px;
   width: 300px;
   text-indent: 20px;
   font-size: 12px;
   background-image: url('/assets/search.svg');
   background-repeat: no-repeat;
-  /* background-position: left center; */
   background-position-x: 3px;
   background-position-y: center;
   background-size: 16px 16px;
@@ -114,14 +112,13 @@ header {
 .tab-object--selected,
 .tab-object:hover,
 .tab-object:focus {
-  /*box-sizing: border-box;*/
   background-color: var(--tabFocusColor);
   color: white;
 }
 
 .tab-img {
   height: 2rem;
-  width: calc(2 * 1.7rem);
+  width: 4rem;
 }
 
 .tab-img img {
@@ -130,15 +127,21 @@ header {
   margin-right: auto;
   height: 2rem;
   width: 2rem;
-  /* margin-left: auto; */
-  /* margin-right: auto; */
 }
 
 /* Positioning for tab status indicators */
 /*
-position: absolute with 0 on positional properties positions the element
-relatively without taking up space
+Negative margins set to the height/width of relative positioned element
+removes the extra space added by the pseudoelement
 */
+.tab-object.mute.pin > .tab-img:before {
+  background : url('../assets/pin.svg'), url('../assets/volume-x.svg');
+  background-position: top, bottom;
+  background-repeat: no-repeat, no-repeat;
+  height: 32px;
+  margin-top: -32px;
+  top: 24px;
+}
 
 .tab-object.mute > .tab-img:before {
   background: url('../assets/volume-x.svg');
@@ -150,12 +153,11 @@ relatively without taking up space
 }
 
 /* Shared tab status styling */
-/* DEBUG LINE REMOVE THIS .tab-object>.tab-img:before, */
 .tab-object.pin > .tab-img:before,
 .tab-object.mute > .tab-img:before {
   position: relative;
   top: 12px;
-  right: -36px;
+  left: 2.66rem;
   width: 16px;
   margin-right: -16px;
   height: 16px;
@@ -231,6 +233,7 @@ p {
   visibility: hidden;
 }
 
+/* tablist types */
 .tab {
   border-left: 5px var(--blue) solid;
 }
