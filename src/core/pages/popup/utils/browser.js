@@ -16,8 +16,8 @@ export function addTabsToPromiseChain(store) {
   if (!searchAllWindows) {
     tabQueryOptions.currentWindow = true;
   }
-  return queryTabs(tabQueryOptions)
-    .then(tabs => Object.assign({}, store, { loadedTabs: tabs }));
+  const tabQueryPromise = () => queryTabs(tabQueryOptions);
+  return Object.assign({}, store, { tabQueryPromise });
 }
 
 export function addCurrentWindowIdToPromiseChain(store) {

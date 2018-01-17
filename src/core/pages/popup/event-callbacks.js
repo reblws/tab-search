@@ -24,7 +24,8 @@ import {
 import { updateLastQuery } from './actions';
 import filterResults from './search';
 
-export function configureSearch({ getState, loadedTabs, currentWindowId }) {
+export function configureSearch(store) {
+  const { getState, tabQueryPromise, currentWindowId } = store;
   const { fuzzy, general } = getState();
   return function updateSearchResults(event = { currentTarget: { value: '' } }) {
     const isSearchEmpty = event.currentTarget.value.length === 0;
@@ -37,7 +38,7 @@ export function configureSearch({ getState, loadedTabs, currentWindowId }) {
     // isSearchEmpty isn't based on this var so we can show delete button with
     // just spaces
     const query = event.currentTarget.value.trim().toLowerCase();
-    return Promise.resolve(loadedTabs)
+    return Promise.resolve(tabQueryPromise())
       .then(filterResults(query, fuzzy, general, currentWindowId))
       .then(injectTabsInList(getState))
       .then((results) => {
