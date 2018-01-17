@@ -33,6 +33,7 @@ import {
   TAB_PIN_CLASSNAME,
   TAB_TYPE,
   OTHER_WINDOW_TAB_TYPE,
+  RELOAD_SVG_PATH,
 } from '../constants';
 
 export function navigateResults(cmdKey, showRecentlyClosed) {
@@ -79,7 +80,15 @@ export function navigateResults(cmdKey, showRecentlyClosed) {
       if (!isRegularTab(selectedTab.dataset)) {
         break;
       }
-      reloadTab(id);
+      const selectedTabImg = selectedTab.querySelector('img');
+      const originalFavIconSrc = selectedTabImg.src;
+      selectedTabImg.src = RELOAD_SVG_PATH;
+      reloadTab(id).then(() => {
+        setTimeout(
+          () => { selectedTabImg.src = originalFavIconSrc; },
+          500,
+        );
+      });
       break;
     }
     case TAB_PIN: {

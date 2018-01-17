@@ -2,6 +2,7 @@ export const favIconFallback = '/assets/file.svg';
 export const alertCircle = '/assets/alert-circle.svg';
 export const BOOKMARKS_SVG_PATH = '/assets/bookmark.svg';
 export const HISTORY_SVG_PATH = '/assets/book.svg';
+export const RELOAD_SVG_PATH = '/assets/reload.svg';
 export const deleteButton = document.querySelector('.delete-circle');
 export const searchInput = document.querySelector('.search');
 export const tabList = document.querySelector('.tab-list');
@@ -14,6 +15,7 @@ export const BOOKMARK_TYPE = 'bookmark';
 export const HISTORY_TYPE = 'history';
 
 // css classnames
+export const LOADER_CLASSNAME = 'loader';
 export const WORDBREAK_ALL_CLASSNAME = 'wordbreak-all';
 export const SELECTED_TAB_CLASSNAME = 'tab-object--selected';
 export const NO_RESULT_CLASSNAME = 'no-result';
