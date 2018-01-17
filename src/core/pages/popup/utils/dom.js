@@ -134,9 +134,14 @@ function createTabObject({
   tabObjectNode.setAttribute('data-last-accessed', lastAccessed);
 
   // <img src="${favIconLink}">
+  const iconContainerNode = d.createElement('div');
+  iconContainerNode.classList.add('tab-img');
+
   const favIconNode = d.createElement('img');
   favIconNode.setAttribute('src', favIconLink);
   favIconNode.onerror = handleBadSvg;
+
+  iconContainerNode.appendChild(favIconNode);
 
   // tab-info
   //    <div class="tab-info">
@@ -171,7 +176,7 @@ function createTabObject({
     tabInfoNode.appendChild(urlNode);
   }
 
-  tabObjectNode.appendChild(favIconNode);
+  tabObjectNode.appendChild(iconContainerNode);
   tabObjectNode.appendChild(tabInfoNode);
 
   return tabObjectNode;
