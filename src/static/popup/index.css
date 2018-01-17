@@ -99,7 +99,7 @@ header {
   padding-top: 1rem;
   padding-bottom: 1rem;
   padding-left: 0;
-  padding-right: 0.5rem;
+  padding-right: 3rem;
   cursor: pointer;
   /* For chrome to prevent box shrinking */
   flex-shrink: 0;
