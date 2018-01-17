@@ -65,12 +65,11 @@ export default function filterResult(
     // Initialize the search array
     // If we want to move the closed tabs to the botttom filter it
     const shouldMoveClosedToBottom = showRecentlyClosed && recentAtBottom;
-    // Here ask for showBookmarks
     const arrayToSearchP = [annotatedTabs];
     if (showHistory && hasMinQueryLen) {
       arrayToSearchP.push(searchHistory(query).then(normalizeHistory));
     }
-    if (showRecentlyClosed && hasMinQueryLen) {
+    if (showRecentlyClosed) {
       arrayToSearchP.push(normalizeRecentlyClosedTabs(recentlyClosedLimit));
     }
     if (showBookmarks && hasMinQueryLen) {
