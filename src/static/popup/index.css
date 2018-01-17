@@ -56,7 +56,7 @@ header {
 	flex-direction: column;
 	overflow-y: scroll;
 	overflow-x: hidden;
-	height: 400px;
+	height: 450px;
   background-color: #fff;
   border-color: var(--whitesmokeBorder);
   border-style: solid;
@@ -253,4 +253,3 @@ p {
 .history {
   border-left: 5px var(--purple) solid;
 }
-
