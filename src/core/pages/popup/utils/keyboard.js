@@ -41,6 +41,9 @@ export function navigateResults(cmdKey, showRecentlyClosed) {
   const selectedTab = !isSearchActive
     ? d.activeElement
     : tabList.firstElementChild;
+  const isRegularTab = ({ type }) =>
+    type === OTHER_WINDOW_TAB_TYPE || type === TAB_TYPE;
+  const { id } = selectedTab.dataset;
   switch (cmdKey) {
     case TAB_NEXT: {
       removeHeadTabListNodeSelectedStyle();
@@ -62,7 +65,7 @@ export function navigateResults(cmdKey, showRecentlyClosed) {
       break;
     }
     case TAB_DELETE: {
-      if (isSearchActive) {
+      if (!isRegularTab(selectedTab.dataset) || isSearchActive) {
         break;
       }
       deleteTab(selectedTab, showRecentlyClosed);
@@ -73,17 +76,15 @@ export function navigateResults(cmdKey, showRecentlyClosed) {
       break;
     }
     case TAB_REFRESH: {
-      // TODO: visual indicator
-      const { id } = selectedTab.dataset;
+      if (!isRegularTab(selectedTab.dataset)) {
+        break;
+      }
       reloadTab(id);
       break;
     }
     case TAB_PIN: {
-      // TODO: visual pinning indicator
-      const { id, type } = selectedTab.dataset;
-      const isTab = type === OTHER_WINDOW_TAB_TYPE || type === TAB_TYPE;
-      if (!isTab) {
-        return;
+      if (!isRegularTab(selectedTab.dataset)) {
+        break;
       }
       const togglePinStatus = ({ pinned }) => pinTab(id, !pinned);
       queryTab(id).then(togglePinStatus)
@@ -157,7 +158,9 @@ export function navigateResults(cmdKey, showRecentlyClosed) {
       // Issue: Successive mutes only works up till it's
       //        pressed twice. After that it doesn't
       //        toggle anymore.
-      const { id } = selectedTab.dataset;
+      if (!isRegularTab(selectedTab.dataset)) {
+        break;
+      }
       const toggleMuteStatus = ({ audible }) => muteTab(id, audible);
       queryTab(id).then(toggleMuteStatus).then(({ mutedInfo }) => {
         if (mutedInfo.muted) {
