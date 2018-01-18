@@ -4,54 +4,52 @@
 <head>
   <meta charset="utf-8">
   <title>TabSearch Settings</title>
-  <link href="basscss.min.css" rel="stylesheet">
   <link href="settings.css" rel="stylesheet">
 </head>
 <body>
   <main class="container">
-    <header class="flex flex-justify content-start">
+    <header>
       <h1>TabSearch Settings</h1>
-      <div class="flex flex-none">
-        <button id="reset-defaults" class="btn btn-primary flex-none">Reset to defaults</button>
-      </div>
     </header>
     <p class="subheader">
       Settings are saved after every change
     </p>
     <form>
       <fieldset>
-        <legend>
+        <header>
           <h2>Appearance</h2>
-        </legend>
-        <p class="inputs">
+          <button class="browser-style">Reset to Defaults</button>
+        </header>
+        <p class="inputs browser-style">
           <input class="field" type="checkbox" name="useFallbackFont" id="useFallbackFont">
           <label for="useFallbackFont">Use browser's default font (sans-serif)</label>
         </p>
 
-        <p class="inputs">
+        <p class="inputs browser-style">
           <input class="field" type="checkbox" name="showTabCountBadgeText" id="showTabCountBadgeText">
           <label for="showTabCountBadgeText">Display total number of tabs above the popup icon</label>
         </p>
-        <p class="inputs">
+        <p class="inputs browser-style">
           <input class="field" type="checkbox" name="enableOverlay" id="enableOverlay" disabled>
           <label class="disabled-label" for="enableOverlay">
             Visually centered search results (coming in next release)
           </label>
         </p>
-        <p class="inputs">
+        <p class="inputs browser-style">
           <label for="tabTitleSize">Tab title font size (px):&emsp;</label>
           <input class="field" type="number" min="0" max="32" id="tabTitleSize" name="tabTitleSize">
         </p>
-        <p class="inputs">
+        <p class="inputs browser-style">
           <label for="tabUrlSize">Tab url font size (px): &emsp;</label>
           <input class="field" type="number" min="0" max="32" id="tabUrlSize" name="tabUrlSize">
         </p>
 
       </fieldset>
       <fieldset>
-        <legend>
-          <h2>Search Results</h2>
-        </legend>
+        <header>
+          <h2>Results</h2>
+          <button class="browser-style">Reset to Defaults</button>
+        </header>
         <p class="inputs">
           <input class="field" type="checkbox" name="showBookmarks" id="showBookmarks">
           <label for="showBookmarks">Show Bookmarks in search results</label>
@@ -60,10 +58,10 @@
           <input class="field" type="checkbox" name="showHistory" id="showHistory">
           <label for="showHistory">Show History in search results</label>
         </p>
-        <div class="flex flex-justify justify-between flex-center">
+        <div>
           <p class="inputs">
             <input type="checkbox" name="showRecentlyClosed" id="showRecentlyClosed">
-            <label for="showRecentlyClosed">Show recently closed tabs</label>
+            <label for="showRecentlyClosed">Show Recently Closed Tabs</label>
           </p>
           <p class="inputs">
             <label for="recentlyClosedLimit">Limit (max. 25): &nbsp;</label>
@@ -74,7 +72,7 @@
         <p class="inputs">
           <input type="checkbox" name="alwaysShowRecentlyClosedAtTheBottom" id="alwaysShowRecentlyClosedAtTheBottom">
           <label for="alwaysShowRecentlyClosedAtTheBottom">
-            Always show recently closed tabs at the bottom of the search list
+            Always show Recently Closed Tabs at the bottom of the search list
           </label>
         </p>
         <p class="inputs">
@@ -93,7 +91,7 @@
            Sort tabs by most recently used (MRU) on when search is empty and on popup
           </label>
         </p>
-        <p class="inputs">
+        <p class="inputs browser-style">
 <input type="checkbox" name="shouldSortByMostRecentlyUsedAll" id="shouldSortByMostRecentlyUsedAll">
 <label for="shouldSortByMostRecentlyUsedAll">
             <em>Always</em> sort tabs by most recently used (MRU)
@@ -101,22 +99,23 @@
         </p>
       </fieldset>
       <fieldset>
-        <legend>
-          <h2>Search Settings</h2>
-        </legend>
-        <p class="inputs">
+        <header>
+          <h2>Behavior</h2>
+          <button class="browser-style">Reset to Defaults</button>
+        </header>
+        <p class="inputs browser-style">
           <input type="checkbox" name="showUrls" id="showUrls">
           <label for="showUrls">Search by url</label>
         </p>
-        <p class="inputs">
+        <p class="inputs browser-style">
           <input type="checkbox" name="enableFuzzySearch" id="enableFuzzySearch">
           <label for="enableFuzzySearch">Enable fuzzy search</label>
         </p>
-        <p class="inputs">
+        <p class="inputs browser-style">
           <input type="checkbox" name="shouldSort" id="shouldSort">
           <label for="shouldSort">Sort results by how close they match the search query</label>
         </p>
-        <p class="inputs">
+        <p class="inputs browser-style">
           <label class="fixed-width" for="threshold">Fuzzy search similarity threshold: </label>
           <label class="center range-clarification" for="thresholdDisplay">
             <strong>1</strong>
@@ -132,8 +131,11 @@
         </p>
       </fieldset>
     </form>
-    <div class="flex flex-justify justify-between">
-      <h2>Keyboard Shortcuts</h2>
+    <div>
+      <header>
+        <h2>Keyboard Shortcuts</h2>
+        <button class="browser-style">Reset to Defaults</button>
+      </header>
       <button type="reset" id="shortcut-reset">
         Reset Shortcut Defaults
       </button>
@@ -141,13 +143,13 @@
     <!-- TODO: Add a box for flashing error/warning messages -->
     <p>Here is a list of shortcuts you can customize. Click the input in the left and press your desired key-combination.</p>
     <p><strong>If your shortcut overlaps with a browser or system shortcut it will not work.</strong></p>
-    <div id="shortcut-flash" class="shortcut-flash rounded border">
+    <div id="shortcut-flash" class="shortcut-flash">
     </div>
     <table id="shortcut-table" class="shortcut-table">
       <thead class="shortcut-table__header">
         <tr>
-          <th>Shortcut</th>
-          <th>Name</th>
+          <th class="lalign">Name</th>
+          <th class="lalign">Shortcut</th>
           <th>Description</th>
         </tr>
       </thead>

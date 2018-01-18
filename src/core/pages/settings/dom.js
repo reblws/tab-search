@@ -43,9 +43,9 @@ export function initKeybindingTable(store) {
   const stTableBody = d.getElementById(SHORTCUT_TABLE_BODY);
   // Connect to bg-store
   const { subscribe, dispatch, getState } = store;
-  const kbHandlers = keybindInputHandlers(store);
   const kbString = x =>
-    keyboard.toString(x, store.os === browser.runtime.platformOs.MAC);
+    keyboard.toString(x, store.os === browser.runtime.PlatformOs.MAC);
+  const kbHandlers = keybindInputHandlers(store, kbString);
   const { keyboard: keyboardState } = getState();
 
   // Handle dom updates on state-change
@@ -53,7 +53,7 @@ export function initKeybindingTable(store) {
 
   // Prepare the table
   clearChildNodes(stTableBody);
-  stateToTableRows(keyboardState, kbHandlers).forEach((trRow) => {
+  stateToTableRows(keyboardState, kbHandlers, kbString).forEach((trRow) => {
     stTableBody.appendChild(trRow);
   });
 
@@ -199,9 +199,9 @@ function diffStateKeys(obj1, obj2, compare) {
 }
 
 // Given the entire keyboard-shortcut state, return an array of <tr> nodes
-function stateToTableRows(keyboardState, handlers) {
+function stateToTableRows(keyboardState, handlers, kbString) {
   return Object.keys(keyboardState)
-    .map(key => commandToTableRow(keyboardState[key], handlers));
+    .map(key => commandToTableRow(keyboardState[key], handlers, kbString));
 }
 
 // Given a row id and the table node, update that row's input node to
@@ -227,7 +227,7 @@ function updateTableRow(id, value) {
 */
 // Given an object from the keyboard reducer, output a table row
 // for insertion into the settings page
-function commandToTableRow({ key, name, command, description }, handlers) {
+function commandToTableRow({ key, name, command, description }, handlers, kbString) {
   const trNode = d.createElement('tr');
   trNode.setAttribute('id', key);
 
@@ -255,7 +255,7 @@ function commandToTableRow({ key, name, command, description }, handlers) {
   tdShortcutDescriptionNode.classList.add(SHORTCUT_TABLE_DESCRIPTION);
   tdShortcutDescriptionNode.appendChild(d.createTextNode(description));
 
-  const trChildren = [tdShortcutNode, tdNameNode, tdShortcutDescriptionNode];
+  const trChildren = [tdNameNode, tdShortcutNode, tdShortcutDescriptionNode];
   for (let i = 0; i < trChildren.length; i += 1) {
     const child = trChildren[i];
     trNode.appendChild(child);
@@ -263,7 +263,7 @@ function commandToTableRow({ key, name, command, description }, handlers) {
   return trNode;
 }
 
-function keybindInputHandlers(store) {
+function keybindInputHandlers(store, kbString) {
   return {
     onInputFocus,
     onInputBlur,

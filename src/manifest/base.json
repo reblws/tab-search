@@ -27,7 +27,8 @@
   },
   "options_ui": {
     "page": "settings/index.html",
-    "open_in_tab": true
+    "open_in_tab": true,
+    "browser_style": true
   },
   "commands": {
     "_execute_browser_action": {
