@@ -2,6 +2,7 @@ import {
   searchInput,
   deleteButton,
   d,
+  prefsBtn,
 } from './constants';
 import {
   scrollIfNeeded,
@@ -11,6 +12,7 @@ import {
 } from './utils/dom';
 import {
   getOsShortcut,
+  createTab,
 } from './utils/browser';
 import {
   keydownHandler,
@@ -20,6 +22,13 @@ import {
   updateLastQueryOnKeydown,
 } from './event-callbacks';
 
+function openSettingsPage() {
+  createTab({
+    url: browser.runtime.getURL('../settings/index.html'),
+    active: true,
+  }).then(() => window.close());
+}
+
 export function addEventListeners(store) {
   const { showLastQueryOnPopup } = store.getState().general;
   const updateSearchResults = configureSearch(store);
@@ -27,6 +36,7 @@ export function addEventListeners(store) {
   window.addEventListener('keydown', handleKeydown);
   deleteButton.addEventListener('click', clearInput);
   searchInput.addEventListener('input', updateSearchResults);
+  prefsBtn.addEventListener('click', openSettingsPage);
 
   if (showLastQueryOnPopup) {
     searchInput.addEventListener('input', updateLastQueryOnKeydown(store));
@@ -83,13 +93,14 @@ export function doFinalSideEffects(store) {
 // https://bugzilla.mozilla.org/show_bug.cgi?id=1324255#c14
 export function focusSearchInputWorkaround() {
   window.addEventListener('load', () => {
-    setTimeout(() => searchInput.focus(), 100);
+    setTimeout(() => {
+      searchInput.focus();
+    }, 100);
   });
   d.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => searchInput.focus(), 150);
   });
 }
-
 
 function updatePlaceholderTextWithShortcutHint() {
   const hintText = shortcut => `(${shortcut} opens this)`;
