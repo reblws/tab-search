@@ -28,12 +28,21 @@ input[type="search"] {
 }
 
 header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   padding: 0.5em;
   width: 355px;
   box-sizing: border-box;
   border-bottom: 1px;
   border-style: solid;
   border-color: var(--whitesmokeBorder);
+}
+
+#pref-btn {
+  color: black;
+  text-decoration: none;
+  font-size: 1.2rem;
 }
 
 .search-form {
@@ -222,16 +231,17 @@ p {
 }
 
 .delete-circle {
-  position: absolute;
-	max-width: 16px;
-	top: 14px;
-	right: 31px;
+  position: relative;
+  width: 16px;
+  margin-right: -16px;
+  right: 35px;
   cursor: pointer;
 }
 
 .hidden {
   visibility: hidden;
 }
+
 
 /* tablist types */
 .tab {
