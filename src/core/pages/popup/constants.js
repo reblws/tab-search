@@ -6,6 +6,7 @@ export const RELOAD_SVG_PATH = '/assets/reload.svg';
 export const deleteButton = document.querySelector('.delete-circle');
 export const searchInput = document.querySelector('.search');
 export const tabList = document.querySelector('.tab-list');
+export const prefsBtn = document.getElementById('pref-btn');
 
 // Object types
 export const TAB_TYPE = 'tab';
@@ -23,3 +24,6 @@ export const TAB_URL_CLASSNAME = 'tab-url';
 export const TAB_PIN_CLASSNAME = 'pin';
 export const TAB_MUTED_CLASSNAME = 'mute';
 export const d = document;
+
+// css ids
+export const TAB_ACTIVE_ID = 'activeTab';

@@ -12,6 +12,7 @@ import {
   HISTORY_TYPE,
   TAB_PIN_CLASSNAME,
   TAB_MUTED_CLASSNAME,
+  TAB_ACTIVE_ID,
 } from '../constants';
 import { badFavIconCache } from '../caches';
 import {
@@ -74,6 +75,7 @@ export function tabToTag(getState) {
       windowId,
       mutedInfo,
       pinned,
+      isActive,
     } = tab;
     const isValidFavIconUrl = favIconUrl
       && !badFavIconCache().includes(favIconUrl);
@@ -104,6 +106,7 @@ export function tabToTag(getState) {
       tabTitleSize,
       mutedInfo,
       pinned,
+      isActive,
     }, shouldWordBreak(title));
   };
 }
@@ -121,6 +124,7 @@ function createTabObject({
   tabTitleSize,
   mutedInfo,
   pinned,
+  isActive,
 }, wordBreak) {
   const dataId = sessionId || id;
   // Create the parent div
@@ -191,6 +195,9 @@ function createTabObject({
   }
   if (mutedInfo && mutedInfo.muted) {
     tabObjectNode.classList.add(TAB_MUTED_CLASSNAME);
+  }
+  if (isActive) {
+    tabObjectNode.id = TAB_ACTIVE_ID;
   }
 
   return tabObjectNode;
