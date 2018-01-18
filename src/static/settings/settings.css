@@ -1,10 +1,60 @@
 :root {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --primaryTextColor: var(--grey-90);
+  --secondaryTextColor: var(--grey-50)
 }
 
+body {
+  font-size: 18px;
+  padding: 1rem 3rem;
+  background-color: #f9f9fa;
+  color: var(--primaryTextColor);
+}
+
+form {
+  columns: 3 30vw;
+}
+
+.subheader {
+  color: var(--secondaryTextColor);
+}
+
+.shortcuts,
 fieldset {
-  border: none;
+  border-top: 1px;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-color: var(--grey-50);
+  border-style: solid;
   padding: 0;
+}
+
+fieldset > header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+fieldset > header button {
+  flex-grow: 0;
+  height: 3.5em;
+  flex-basis: -moz-max-content;
+}
+
+fieldset > legend {
+  margin: 0 auto;
+}
+
+input[type=number] {
+  width: 40px;
+}
+
+input[type=range]::-moz-range-thumb
+ {
+  background-color: white;
+  border-width: 2px;
 }
 
 legend {
@@ -12,9 +62,7 @@ legend {
 }
 
 .container {
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 1em;
 }
 
 .fixed {
@@ -31,23 +79,11 @@ legend {
 }
 
 .disabled-label {
-  color: grey;
+  color: var(--grey);
 }
 
 .strikethrough {
   text-decoration: strikethrough;
-}
-
-.number-input:valid {
-  border: 1px solid green;
-}
-
-.number-input:invalid {
-  border: 1px solid red;
-}
-
-.number-input:focus {
-  border: 1px solid black;
 }
 
 .range-clarification {
@@ -65,3 +101,58 @@ legend {
 .shortcut-flash p:last-child {
   margin: 0;
 }
+
+
+.shortcut-table > tr {
+  background-color: var(--grey-20);
+}
+
+.shortcut-table__header {
+  border-bottom: 1px solid var(--grey-90);
+}
+
+.shortcut-table__header > tr > th.lalign {
+  text-align: left;
+}
+
+.shortcut-table__header > tr > th.center {
+  text-align: center;
+}
+
+.shortcut-table input {
+  text-align: center;
+}
+
+.shortcut-table td:first-child {
+  border-top: 1px solid var(grey-90);
+}
+
+.shortcut-table td,
+.shortcut-table th {
+  padding: 12px 32px;
+}
+
+.ok {
+  background-color: var(--green-70);
+  color: white;
+}
+.warning {
+  background-color: var(--yellow-50);
+  color: var(--grey-90);
+}
+.error {
+  background-color: var(--red-70);
+  color: white;
+}
+
+.warning,
+.error,
+.ok {
+  text-align: center;
+}
+
+.shortcuts {
+  margin-top: 16px;
+}
+
+

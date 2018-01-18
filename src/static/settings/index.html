@@ -4,12 +4,11 @@
 <head>
   <meta charset="utf-8">
   <title>TabSearch Settings</title>
-
+  <link rel="icon" type="image/x-icon" href="../icons/logo-48.png">
   <link href="../lib/photon.css" rel="stylesheet">
   <link href="settings.css" rel="stylesheet">
 </head>
 <body>
-  <main class="container">
     <header>
       <h1>TabSearch Settings</h1>
     </header>
@@ -38,12 +37,14 @@
           </label>
         </p>
         <p class="inputs browser-style">
-          <label for="tabTitleSize">Tab title font size (px):&emsp;</label>
-          <input class="field" type="number" min="0" max="32" id="tabTitleSize" name="tabTitleSize">
+          <input class="field" type="number" min="8" max="32" id="tabTitleSize" name="tabTitleSize">
+          &ensp;
+          <label for="tabTitleSize">px Tab title font size</label>
         </p>
         <p class="inputs browser-style">
-          <label for="tabUrlSize">Tab url font size (px): &emsp;</label>
           <input class="field" type="number" min="0" max="32" id="tabUrlSize" name="tabUrlSize">
+          &ensp;
+          <label for="tabUrlSize">px Tab url font size</label>
         </p>
 
       </fieldset>
@@ -119,6 +120,7 @@
         </p>
         <p class="inputs browser-style">
           <label class="fixed-width" for="threshold">Fuzzy search similarity threshold: </label>
+          <br>
           <label class="center range-clarification" for="thresholdDisplay">
             <strong>1</strong>
             <br> (Strict search)
@@ -133,39 +135,35 @@
         </p>
       </fieldset>
     </form>
-    <div>
+    <div id="shortcuts" class="shortcuts">
       <header>
         <h2>Keyboard Shortcuts</h2>
-        <button class="browser-style">Reset to Defaults</button>
+        <button class="browser-style" id="shortcut-reset">Reset to Defaults</button>
       </header>
-      <button type="reset" id="shortcut-reset">
-        Reset Shortcut Defaults
-      </button>
+      <p>Here is a list of shortcuts you can customize. Click the input in the left and press your desired key-combination.</p>
+      <p><strong>If your shortcut overlaps with a browser or system shortcut it will not work.</strong></p>
+      <div id="shortcut-flash" class="shortcut-flash">
+      </div>
+      <table id="shortcut-table" class="shortcut-table">
+        <thead class="shortcut-table__header">
+          <tr>
+            <th class="lalign">Name</th>
+            <th class="calign">Shortcut</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody id="shortcut-table__body" class=" shortcut-table__body ">
+          <!-- filled in with JS -->
+          <tr>
+            <td class="shortcut-table__shortcut">
+              <input type="text" class="shortcut-table__shortcut--input">
+            </td>
+            <td class="shortcut-table__name">Loading....</td>
+            <td class="shortcut-table__description">If you see this there's a problem loading the page.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <p>Here is a list of shortcuts you can customize. Click the input in the left and press your desired key-combination.</p>
-    <p><strong>If your shortcut overlaps with a browser or system shortcut it will not work.</strong></p>
-    <div id="shortcut-flash" class="shortcut-flash">
-    </div>
-    <table id="shortcut-table" class="shortcut-table">
-      <thead class="shortcut-table__header">
-        <tr>
-          <th class="lalign">Name</th>
-          <th class="lalign">Shortcut</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody id="shortcut-table__body" class=" shortcut-table__body ">
-        <!-- filled in with JS -->
-        <tr>
-          <td class="shortcut-table__shortcut">
-            <input type="text" class="shortcut-table__shortcut--input">
-          </td>
-          <td class="shortcut-table__name">Loading....</td>
-          <td class="shortcut-table__description">If you see this there's a problem loading the page.</td>
-        </tr>
-      </tbody>
-    </table>
-  </main>
   <script src="../settings_bundle.js"></script>
 </body>
 
