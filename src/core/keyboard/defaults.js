@@ -2,12 +2,6 @@ import * as c from './constants';
 import { kbdCommand } from './constructor';
 
 export const defaultCommands = {
-  [c.TAB_DELETE]: {
-    key: c.TAB_DELETE,
-    name: 'Delete Tab',
-    command: kbdCommand('Ctrl+Backspace'),
-    description: 'Deletes the tab currently selected',
-  },
   [c.TAB_OPEN]: {
     key: c.TAB_OPEN,
     name: 'Open Tab',
@@ -25,6 +19,12 @@ export const defaultCommands = {
     name: 'Previous Tab',
     command: kbdCommand('ArrowUp'),
     description: 'Moves to the previous tab in the list.',
+  },
+  [c.TAB_DELETE]: {
+    key: c.TAB_DELETE,
+    name: 'Delete Tab',
+    command: kbdCommand('Ctrl+Backspace'),
+    description: 'Deletes the tab currently selected',
   },
   [c.TAB_REFRESH]: {
     key: c.TAB_REFRESH,
