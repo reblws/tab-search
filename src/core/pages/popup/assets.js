@@ -1,4 +1,4 @@
-import histSvg from 'static/assets/clock.svg';
+import histSvg from 'static/assets/history-16.svg';
 import bkmrkSvg from 'static/assets/bookmark.svg';
 
 // Firefox doesnt like # signs in data uris so hex values are a no-go,
