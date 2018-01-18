@@ -1,7 +1,7 @@
 /* http://clrs.cc/ */
 :root {
   --lightblue: var(--blue-40);
-  --whitesmokeBorder: var(--grey-20);
+  --whitesmokeBorder: var(--grey-30);
   --whitesmoke: var(--grey-10);
   --bgColor: var(--whitesmoke);
   --searchBarFocusColor:  var(--lightblue);
@@ -15,7 +15,7 @@
 }
 
 body {
-  border: 1px solid var(--grey-20);
+  border: 1px solid var(--grey-30);
   background-color: var(--whitesmoke);
   font-family: 'Inter UI', sans-serif;
   width: 355px;
