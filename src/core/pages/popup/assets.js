@@ -3,8 +3,8 @@ import bkmrkSvg from 'static/assets/bookmark.svg';
 
 // Firefox doesnt like # signs in data uris so hex values are a no-go,
 // inline the rgb values instead so the colors show up.
-export const BOOKMARK_COLOR = 'rgb(0,31,63)';
-export const HISTORY_COLOR = 'rgb(177,13,201)';
+export const BOOKMARK_COLOR = 'rgba(54, 57, 89)';
+export const HISTORY_COLOR = 'rgba(98, 0, 164)';
 
 const historySvg = histSvg;
 const bookmarkSvg = bkmrkSvg;

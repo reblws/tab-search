@@ -4,6 +4,8 @@
 <head>
   <meta charset="utf-8">
   <title>TabSearch Settings</title>
+
+  <link href="../lib/photon.css" rel="stylesheet">
   <link href="settings.css" rel="stylesheet">
 </head>
 <body>
@@ -140,7 +142,6 @@
         Reset Shortcut Defaults
       </button>
     </div>
-    <!-- TODO: Add a box for flashing error/warning messages -->
     <p>Here is a list of shortcuts you can customize. Click the input in the left and press your desired key-combination.</p>
     <p><strong>If your shortcut overlaps with a browser or system shortcut it will not work.</strong></p>
     <div id="shortcut-flash" class="shortcut-flash">
@@ -159,8 +160,8 @@
           <td class="shortcut-table__shortcut">
             <input type="text" class="shortcut-table__shortcut--input">
           </td>
-          <td class="shortcut-table__name">Some stuff</td>
-          <td class="shortcut-table__description">Some stuff</td>
+          <td class="shortcut-table__name">Loading....</td>
+          <td class="shortcut-table__description">If you see this there's a problem loading the page.</td>
         </tr>
       </tbody>
     </table>

@@ -1,21 +1,21 @@
 /* http://clrs.cc/ */
 :root {
-  --lightblue: #5294e2;
-  --whitesmokeBorder: #dcdfe3;
-  --whitesmoke: #f6f7f8;
+  --lightblue: var(--blue-40);
+  --whitesmokeBorder: var(--grey-20);
+  --whitesmoke: var(--grey-10);
   --bgColor: var(--whitesmoke);
   --searchBarFocusColor:  var(--lightblue);
-  --blue: #0074D9;
+  --blue: var(--blue-60);
   --tabFocusColor: var(--blue);
-  --red: #cd6155;
-  --navy: rgb(0,31,63);
-  --yellow: #f4d03f;
-  --purple: rgb(177,13,201);
+  --red: var(--red-60);
+  --navy: var(--ink-70);
+  --yellow: var(--yellow-50);
+  --purple: var(--purple-70);
   --headerHeight: 48px;
 }
 
 body {
-  border: 2px solid var(--whitesmokeBorder);
+  border: 1px solid var(--grey-20);
   background-color: var(--whitesmoke);
   font-family: 'Inter UI', sans-serif;
   width: 355px;
@@ -109,6 +109,7 @@ header {
 }
 
 .tab-object {
+  color: var(--grey-90);
   display: flex;
 	align-items: center;
 	justify-content: center;
