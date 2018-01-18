@@ -20,6 +20,7 @@ import {
   HISTORY_TYPE,
   BOOKMARK_TYPE,
   TAB_TYPE,
+  OTHER_WINDOW_TAB_TYPE,
 } from './constants';
 import { updateLastQuery } from './actions';
 import filterResults from './search';
@@ -124,6 +125,7 @@ export function handleTabClick(getState) {
     const { type } = dataset;
     // Decide what to do depending if ctrl is held
     switch (type) {
+      case OTHER_WINDOW_TAB_TYPE:
       case TAB_TYPE: {
         if (ctrlKey) {
           return deleteTab(currentTarget, showRecentlyClosed, true);
