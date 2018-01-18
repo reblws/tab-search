@@ -44,6 +44,8 @@ export function initKeybindingTable(store) {
   // Connect to bg-store
   const { subscribe, dispatch, getState } = store;
   const kbHandlers = keybindInputHandlers(store);
+  const kbString = x =>
+    keyboard.toString(x, store.os === browser.runtime.platformOs.MAC);
   const { keyboard: keyboardState } = getState();
 
   // Handle dom updates on state-change
@@ -72,9 +74,9 @@ export function initKeybindingTable(store) {
         const { command: oldCommand } = prevState[key];
         const { name, command: newCommand } = newState[key];
         const msg = `
-          ${name} shortcut updated: <${keyboard.toString(oldCommand)}> changed to <${keyboard.toString(newCommand)}>
+          ${name} shortcut updated: <${kbString(oldCommand)}> changed to <${kbString(newCommand)}>
         `;
-        updateTableRow(key, keyboard.toString(newCommand));
+        updateTableRow(key, kbString(newCommand));
         Flash.message(msg, Flash.OK, false);
       });
     prevState = newState;
@@ -239,8 +241,8 @@ function commandToTableRow({ key, name, command, description }, handlers) {
   const inputShortcutNode = d.createElement('input');
   inputShortcutNode.setAttribute('type', 'text');
   inputShortcutNode.classList.add(SHORTCUT_TABLE_INPUT);
-  inputShortcutNode.value = keyboard.toString(command);
-  inputShortcutNode.defaultValue = keyboard.toString(command);
+  inputShortcutNode.value = kbString(command);
+  inputShortcutNode.defaultValue = kbString(command);
 
   // Attach event listeners
   inputShortcutNode.addEventListener('blur', handlers.onInputBlur);
@@ -300,10 +302,10 @@ function keybindInputHandlers(store) {
       const { isDuplicate, key: duplicateKey } =
         isDuplicateCommand(store.getState().keyboard, command);
       if (isDuplicate && duplicateKey === parentId) {
-        Flash.message(`<${keyboard.toString(command)}> is already ${name}'s shortcut.`, Flash.WARNING);
+        Flash.message(`<${kbString(command)}> is already ${name}'s shortcut.`, Flash.WARNING);
         event.currentTarget.blur();
       } else if (isDuplicate) {
-        Flash.message(`Duplicate key! <${keyboard.toString(command)}> is ${name}'s shortcut.`, Flash.ERROR);
+        Flash.message(`Duplicate key! <${kbString(command)}> is ${name}'s shortcut.`, Flash.ERROR);
       } else {
         // Stop input reset race
         event.currentTarget.blur();
@@ -333,7 +335,7 @@ function keybindInputHandlers(store) {
           break;
       }
       Flash.message(
-        `${keyboard.toString(command)} is ${lowerCaseSentence(command.error)}`,
+        `${kbString(command)} is ${lowerCaseSentence(command.error)}`,
         flashType,
       );
       Flash.append(appendMsg);
