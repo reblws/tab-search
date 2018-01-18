@@ -96,8 +96,7 @@ export default function filterResult(
 
     // Apply any extra transformations to results
     const shouldMruSort = (sortMruAll && sortMruPopup)
-      ? sortMruAll
-      : isQueryEmpty && sortMruPopup;
+      || (isQueryEmpty && sortMruPopup);
     return arrayToSearch
       .then(search)
       .then((searchResults) => {
