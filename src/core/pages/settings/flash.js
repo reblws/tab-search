@@ -1,23 +1,14 @@
 import { clearChildNodes } from './dom';
-import { SHORTCUT_FLASH_AREA_ID } from './constants';
 
 export const WARNING = 'warning';
 export const ERROR = 'error';
 export const OK = 'ok';
+export const SHORTCUT_FLASH_AREA_ID = 'shortcut-flash';
 
 const styles = {
-  [OK]: {
-    backgroundColor: 'bg-lime',
-    color: 'black',
-  },
-  [WARNING]: {
-    backgroundColor: 'bg-yellow',
-    color: 'black',
-  },
-  [ERROR]: {
-    backgroundColor: 'bg-red',
-    color: 'white',
-  },
+  [OK]: 'flash-ok',
+  [WARNING]: 'flash-warning',
+  [ERROR]: 'flash-error',
 };
 
 const d = document;
@@ -68,25 +59,19 @@ export function message(msg, type = OK, shouldClear = true, shouldUpdateStyle = 
       break;
     }
   }
+  flashNode.scrollIntoView();
 }
 
 // Given a style, removes all classes not equal to that style in the
 // styles object, and then adds that style.
 function updateStyle(type, node) {
   const hasStyle = style => node.classList.contains(style);
-  if (hasStyle(styles[type].color) && hasStyle(styles[type].backgroundColor)) {
+  if (hasStyle(type)) {
     return node;
   }
-  const targetColor = styles[type].color;
-  const targetBgColor = styles[type].backgroundColor;
-  Object.keys(styles).forEach((key) => {
-    const s = styles[key];
-    if (key !== type) {
-      node.classList.remove(s.color);
-      node.classList.remove(s.backgroundColor);
-    }
+  Object.keys(styles).forEach((s) => {
+    node.classList.remove(s);
   });
-  node.classList.add(targetColor);
-  node.classList.add(targetBgColor);
+  node.classList.add(type);
   return node;
 }
