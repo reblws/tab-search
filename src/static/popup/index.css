@@ -11,10 +11,11 @@
   --navy: rgb(0,31,63);
   --yellow: #f4d03f;
   --purple: rgb(177,13,201);
+  --headerHeight: 48px;
 }
 
 body {
-  border: 1px solid var(--whitesmokeBorder);
+  border: 2px solid var(--whitesmokeBorder);
   background-color: var(--whitesmoke);
   font-family: 'Inter UI', sans-serif;
   width: 355px;
@@ -22,6 +23,7 @@ body {
 
 
 input[type="search"] {
+  color: var(--grey-90);
   line-height: 2em;
   width: 300px;
   margin: auto;
@@ -29,9 +31,11 @@ input[type="search"] {
 
 header {
   display: flex;
+  flex: 0 0 auto;
   flex-direction: row;
   align-items: center;
   padding: 0.5em;
+  height: var(--headerHeight);
   width: 355px;
   box-sizing: border-box;
   border-bottom: 1px;
@@ -40,9 +44,9 @@ header {
 }
 
 #pref-btn {
-  color: black;
+  color: var(--grey-50);
   text-decoration: none;
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .search-form {
@@ -76,15 +80,19 @@ header {
 
 .search {
   top: 10px;
+  height: 32px;
   width: 300px;
+  padding-left: 8px;
+  padding-right: 24px;
+  line-height: 32px;
   text-indent: 20px;
   font-size: 12px;
   background-image: url('/assets/search.svg');
   background-repeat: no-repeat;
-  background-position-x: 3px;
+  background-position-x: 8px;
   background-position-y: center;
   background-size: 16px 16px;
-  border: 1px solid rgb(210, 210, 210);;
+  border: 1.5px solid rgb(210, 210, 210);;
   border-radius: 5px;
   transition: all 0.15s ease-in-out;
   outline: none;
@@ -92,7 +100,7 @@ header {
 }
 
 .search:focus {
-  border-color: var(--searchBarFocusColor);
+  border-color: var(--blue-50);
   box-shadow: 2px var(--searchBarFocusColor);
 }
 
@@ -231,10 +239,10 @@ p {
 }
 
 .delete-circle {
-  position: relative;
-  width: 16px;
-  margin-right: -16px;
-  right: 35px;
+  display: inline-block;
+  height: 16px;
+  position: absolute;
+  transform: translateY(8px) translateX(-20px);
   cursor: pointer;
 }
 
