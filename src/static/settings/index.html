@@ -9,8 +9,10 @@
   <link href="settings.css" rel="stylesheet">
 </head>
 <body>
-    <header>
+    <header class="section-header">
       <h1>TabSearch Settings</h1>
+      <p id="versioning" class="subheader">
+      </p>
     </header>
     <p class="subheader">
       Settings are saved after every change
@@ -67,7 +69,7 @@
             <label for="showRecentlyClosed">Show Recently Closed Tabs</label>
           </p>
           <p class="inputs">
-            <label for="recentlyClosedLimit">Limit (max. 25): &nbsp;</label>
+            <label for="recentlyClosedLimit">Recently closed tabs limit (max. 25): &nbsp;</label>
             <input class="number-input" type="number" name="recentlyClosedLimit" id="recentlyClosedLimit" min="0" max="25">
           </p>
         </div>
