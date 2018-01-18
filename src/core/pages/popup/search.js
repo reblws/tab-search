@@ -50,8 +50,8 @@ export default function filterResult(
   const { enableFuzzySearch, keys: searchKeys } = options;
   return function promiseSearchResults(loadedTabs) {
     const isQueryEmpty = query.length === 0;
-    // const isTabType = isOfType(TAB_TYPE);
     const isSessionType = isOfType(SESSION_TYPE);
+    const isOtherWindowTabType = isOfType(OTHER_WINDOW_TAB_TYPE);
     const tabFilter = ({ id }) => !deletedTabsCache().includes(id);
     // First filter any unwanted results
     const annotatedTabs = loadedTabs.filter(tabFilter).map(
@@ -101,8 +101,13 @@ export default function filterResult(
     return arrayToSearch
       .then(search)
       .then((searchResults) => {
-        // Sort it by how closely
-        // Array is partitioned right-to-left
+        // If query is empty then we just need to show them in order of tab
+        // posn, partitioned by tab type
+        if (isQueryEmpty && !shouldMruSort) {
+          return partition(isSessionType, isOtherWindowTabType)(searchResults)
+            .reduceRight(concat);
+        }
+        // Array is ordered by predicates from right-to-left
         const predicates = [];
         if (shouldMoveClosedToBottom) {
           predicates.push(isSessionType);
