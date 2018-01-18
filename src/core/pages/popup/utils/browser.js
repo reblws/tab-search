@@ -131,7 +131,7 @@ function queryTabs(queryOptions) {
   return apiP(browser.tabs, 'query', queryOptions);
 }
 
-function createTab(createOptions) {
+export function createTab(createOptions) {
   return apiP(browser.tabs, 'create', createOptions);
 }
 
