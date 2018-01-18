@@ -5,14 +5,41 @@
 }
 
 body {
-  font-size: 18px;
-  padding: 1rem 3rem;
+  font-size: 16px;
   background-color: #f9f9fa;
   color: var(--primaryTextColor);
 }
 
-form {
-  columns: 3 30vw;
+.ralign {
+  text-align: right;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.disabled-label {
+  color: var(--secondaryTextColor);
+}
+
+@media screen and (min-width: 900px) {
+  body {
+    padding: 1rem 3rem;
+  }
+  form {
+    columns: 3;
+  }
+}
+
+@media screen and (width < 900px) {
+  body {
+    padding: 1rem;
+  }
+  form {
+    columns: 1;
+  }
 }
 
 .subheader {
