@@ -5,15 +5,19 @@ import { initKeybindingTable, initSettings } from './dom';
 
 addInputBindings();
 
-createUIStore().then((store) => {
-  initSettings(store);
-  initKeybindingTable(store);
-  // Fill in current keyboard setting in table
-  document.getElementById('reset-defaults').addEventListener('click', () => {
-    store.dispatch(resetSettings());
-    location.reload(true);
+const appendOsToStore = store =>
+  browser.runtime.getPlatformInfo().then(({ os }) => Object.assign({ os }, store));
+
+createUIStore()
+  .then(appendOsToStore)
+  .then((store) => {
+    initSettings(store);
+    initKeybindingTable(store);
+    document.getElementById('reset-defaults').addEventListener('click', () => {
+      store.dispatch(resetSettings());
+      location.reload(true);
+    });
+    return store;
+  }).catch((e) => {
+    throw e;
   });
-  return store;
-}).catch((e) => {
-  throw e;
-});
