@@ -242,7 +242,7 @@ p {
   display: inline-block;
   height: 16px;
   position: absolute;
-  transform: translateY(8px) translateX(-20px);
+  transform: translateY(8px) translateX(-22px);
   cursor: pointer;
 }
 
