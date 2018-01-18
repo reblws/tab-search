@@ -86,7 +86,7 @@ function kbdCommandEvent(event) {
   // e.g. Pressing Shift+. causes event.key = '>'
   //      the key value of kbdCommand should reflect the unshifted value, so
   //      we want to show the '.' when printing the command in the above example
-  if (event.shiftKey && event.code in puncCodeMap) {
+  if (event.code && event.shiftKey && event.code in puncCodeMap) {
     const {
       ctrlKey,
       metaKey,
