@@ -207,7 +207,7 @@ function stateToTableRows(keyboardState, handlers, kbString) {
 // Given a row id and the table node, update that row's input node to
 // display the given value
 function updateTableRow(id, value) {
-  const input = d.getElementById(id).firstElementChild.firstElementChild;
+  const input = d.getElementById(id).querySelector('input');
   input.defaultValue = value;
   input.value = value;
 }
