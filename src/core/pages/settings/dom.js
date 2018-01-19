@@ -9,6 +9,7 @@ import {
   updateFuzzySearchKeys,
   updateNumber,
   resetSetting,
+  updateColor,
 } from './actions';
 import * as Flash from './flash';
 import {
@@ -130,6 +131,7 @@ function getStateSettings(settings) {
           node.checked = stateSettingValue.includes('url');
         }
         break;
+      case 'color':
       case 'number':
         node.value = stateSettingValue;
         break;
@@ -193,6 +195,7 @@ function configureSettingListeners(dispatch) {
           }
           break;
         }
+        case 'color': dispatch(updateColor(settingKey, value));
         default: break;
       }
     });
