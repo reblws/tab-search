@@ -11,6 +11,7 @@ import {
   LAST_QUERY_UPDATE,
   KEYBINDING_UPDATE,
   KEYBINDING_DEFAULT_RESET,
+  COLOR_UPDATE,
 } from 'core/actions/types';
 import {
   updateCheckbox,
@@ -23,6 +24,7 @@ import {
   updateKeybinding,
   resetDefaultKeybindings,
   resetSetting,
+  updateColor,
 } from 'core/actions';
 
 export default createBackgroundStore({
@@ -38,5 +40,6 @@ export default createBackgroundStore({
     [KEYBINDING_UPDATE]: updateKeybinding,
     [KEYBINDING_DEFAULT_RESET]: resetDefaultKeybindings,
     [SETTING_RESET]: resetSetting,
+    [COLOR_UPDATE]: updateColor,
   },
 });

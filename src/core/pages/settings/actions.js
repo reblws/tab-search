@@ -9,6 +9,7 @@ import {
   NUMBER_UPDATE,
   KEYBINDING_UPDATE,
   KEYBINDING_DEFAULT_RESET,
+  COLOR_UPDATE,
 } from '../../actions/types';
 import inputReducerMap from './inputs-to-reducer';
 
@@ -32,3 +33,4 @@ export const resetSetting = key => action(
   SETTING_RESET,
   inputReducerMap[key],
 );
+export const updateColor = (k, v) => action(COLOR_UPDATE, k, v);
