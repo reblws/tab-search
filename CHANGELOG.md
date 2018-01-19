@@ -1,28 +1,64 @@
 # Changelog
 
-## Unreleased
-- Vertically centered overlay
+## Todo
+
+- Move tabs
 - Focus active tab in list on popup initialization
-- History
-- Bookmarks
-- Custom shortcuts (NOT the main popup shortcut)
+- Compact layout
+- Dark theme
+- Vertically centered overlay
+
+## 0.4.0 (2018-01-18)
+
+- Added new tab management commands:
+  - Refresh Tab
+  - Pin Tab
+  - Copy URL
+  - Delete All Duplicate Tabs
+  - Toggle Mute
+- Added custom shortcuts and tab management. (This does not include the popup shortcut) Can now change the following shortcuts:
+  - Open Tab
+  - Next Tab
+  - Previous Tab
+  - Delete Tab
+  - Refresh Tab
+  - Pin Tab
+  - Copy URL
+  - Delete All Duplicate Tabs
+  - Toggle Mute
+- Removed LeftArrow and RightArrow as keys for going to the previous or next tabs, so each command has exactly one shortcut
+- Added the following visual indicators for each tab:
+  - Mute tab
+  - Pinned tab
+  - Reloading tab
+- Redesigned settings page with responsive layout
+- Added options for showing results from History and Bookmarks
+- Added options for changing typography, can change font sizes or set the font to the default browser sans-serif
+- Changed color scheme to [Photon Design System colors](https://design.firefox.com/photon/visuals/color.html)
+- Added button in popup for entering settings page
+  - This might change
+- Numerous visual tweaks to the popup layout
 
 ## 0.3.10 (2017-12-02)
+
 - Added most recently used tab-sorting as a setting (thanks sinewave)
 - Settings css packaged locally in extension
 
 ## 0.3.8 (2017-11-25)
+
 - Changed tab-list to highlight the first tab when making a search query (suggests the idea you can press "Enter" from the input and activate the highlighted tab)
 - Changed tab-list to scroll to the very top when updating the search query
 - Smoothed scrolling when pressing "ArrowUp" or "ArrowDown"
 - Changed word-break rules for tab titles: words shouldn't break and enter a newline unless a single word is too long
 
 ## 0.3.7 (2017-11-20)
+
 - Added option to prefill search bar with the last query on popup
 - Fixed bug where extra "right" or "down" keystroke was needed to select tab list after filling search input with text
 - Input focus workaround (not guaranteed to work for most people)
 
 ## 0.3.6 (2017-11-16)
+
 - Fixed text overflow issue (thanks blakebutcher)
 - Fixed badge text setting not being disabled properly (on startup and mid browser-session)
 
