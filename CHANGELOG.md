@@ -8,6 +8,10 @@
 - Dark theme
 - Vertically centered overlay
 
+## 0.4.1 (2018-01-19)
+
+- Fix new settings being undefined after an update
+
 ## 0.4.0 (2018-01-18)
 
 - Added new tab management commands:

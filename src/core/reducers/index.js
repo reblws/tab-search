@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { persistReducer } from 'redux-persist';
+import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import fuzzySettingsReducer from './fuzzy-settings';
 import generalSettingsReducer from './settings';
 import keyboardConfigReducer from './keyboard';
@@ -11,6 +12,7 @@ const persistConfig = {
   storage,
   serialize: false,
   blacklist: ['state'],
+  stateReconciler: autoMergeLevel2,
 };
 
 
