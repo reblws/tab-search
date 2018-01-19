@@ -1,6 +1,6 @@
 ![logo-96](https://user-images.githubusercontent.com/9971847/31857881-e872b1e2-b6b6-11e7-9886-494e8a338a25.png)
 
-# tab-search
+# TabSearch
 
 Easy tab search & switching. This WebExtension provides a keyboard-accessible search interface for managing your open tabs.
 
@@ -13,10 +13,15 @@ Easy tab search & switching. This WebExtension provides a keyboard-accessible se
 | Windows/Linux | macOS | Description |
 | --- | --- | --- |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> | <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> | Toggle extension |
-| <kbd>Ctrl</kbd> + <kbd>Backspace</kbd>/Click | <kbd>Cmd</kbd> + <kbd>Backspace</kbd>/Click | Delete a tab |
-| <kbd>Enter</kbd> | <kbd>Enter</kbd> | Open selected tab or first in list if not selected |
-| <kbd>Up</kbd> / <kbd>Left</kbd> | <kbd>Up</kbd> / <kbd>Left</kbd> | Select next tab |
-| <kbd>Down</kbd> / <kbd>Right</kbd> | <kbd>Down</kbd> / <kbd>Right</kbd> | Select previous tab |
+| <kbd>Enter</kbd> | | Open selected tab or first in list if not selected |
+| <kbd>&#8592;</kbd>| | Select next tab |
+| <kbd>&#8595;</kbd> | | Select previous tab |
+| <kbd>Ctrl</kbd> + <kbd>Backspace</kbd> / <kbd>Ctrl</kbd> + Click | <kbd>Cmd</kbd> + <kbd>Backspace</kbd> / <kbd>Cmd</kbd> + Click | Delete a tab |
+| <kbd>Alt</kbd> + <kbd>R</kbd> | | Refresh tab
+| <kbd>Alt</kbd> + <kbd>P</kbd> | | Pin tab
+| <kbd>Ctrl</kbd> + <kbd>C</kbd> | <kbd>Cmd</kbd> + <kbd>C</kbd> | Copy Tab URL
+| <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd> | | Delete all duplicate tabs
+| <kbd>Alt</kbd> + <kbd>M</kbd> | | Mute (only if tab is audible)
 
 ## Usage
 

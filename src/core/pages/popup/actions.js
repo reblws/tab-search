@@ -1,10 +1,4 @@
-import {
-  LAST_QUERY_UPDATE,
-} from '../../actions/types';
+import { action } from 'core/actions/action';
+import { LAST_QUERY_UPDATE } from 'core/actions/types';
 
-export function updateLastQuery(newQuery) {
-  return {
-    type: LAST_QUERY_UPDATE,
-    payload: newQuery,
-  };
-}
+export const updateLastQuery = newQuery => action(LAST_QUERY_UPDATE, newQuery);

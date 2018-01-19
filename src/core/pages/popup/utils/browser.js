@@ -7,6 +7,7 @@ import {
   removeElementFromTabList,
   repaintElementWithType,
 } from './dom';
+import { decodeUrl } from './url';
 
 export function addTabsToPromiseChain(store) {
   const { getState } = store;
@@ -15,8 +16,8 @@ export function addTabsToPromiseChain(store) {
   if (!searchAllWindows) {
     tabQueryOptions.currentWindow = true;
   }
-  return browser.tabs.query(tabQueryOptions)
-    .then(tabs => Object.assign({}, store, { loadedTabs: tabs }));
+  const tabQueryPromise = () => queryTabs(tabQueryOptions);
+  return Object.assign({}, store, { tabQueryPromise });
 }
 
 export function addCurrentWindowIdToPromiseChain(store) {
@@ -80,7 +81,7 @@ export function switchActiveTab(tabDataset) {
     type,
   } = tabDataset;
   const numId = parseInt(id, 10);
-  browser.tabs.update(numId, { active: true });
+  apiP(browser.tabs, 'update', numId, { active: true });
   if (type === OTHER_WINDOW_TAB_TYPE) {
     focusWindow(windowId);
   }
@@ -109,3 +110,76 @@ function focusWindow(windowId) {
     },
   );
 }
+
+export function queryTab(id) {
+  return apiP(browser.tabs, 'get', parseInt(id, 10));
+}
+
+export function reloadTab(id) {
+  return apiP(browser.tabs, 'reload', parseInt(id, 10));
+}
+
+export function pinTab(id, pinned) {
+  return apiP(browser.tabs, 'update', parseInt(id, 10), { pinned });
+}
+
+export function muteTab(id, muted) {
+  return apiP(browser.tabs, 'update', parseInt(id, 10), { muted });
+}
+
+function queryTabs(queryOptions) {
+  return apiP(browser.tabs, 'query', queryOptions);
+}
+
+export function createTab(createOptions) {
+  return apiP(browser.tabs, 'create', createOptions);
+}
+
+export function searchBookmarks(query) {
+  return apiP(browser.bookmarks, 'search', query);
+}
+
+export function openBookmark(dataset) {
+  const { id } = dataset;
+  return createTab({
+    active: true,
+    url: decodeUrl(id),
+  })
+    .then(() => {
+      window.close();
+    });
+}
+
+export function openHistoryItem(dataset) {
+  const { url } = dataset;
+  return createTab({ active: true, url: decodeUrl(url) })
+    .then(() => window.close());
+}
+
+// recentlyclosed func
+export function getRecentlyClosed(maxResults) {
+  return apiP(browser.sessions, 'getRecentlyClosed', { maxResults });
+}
+
+// TODO: HISTORY_LIMIT should be a pref
+const HISTORY_LIMIT = 25;
+export function searchHistory(query) {
+  return apiP(browser.history, 'search', {
+    text: query,
+    maxResults: HISTORY_LIMIT,
+  });
+}
+
+// Promise that sends a rejection error if an API is undefined
+function apiP(api, method, ...args) {
+  return new Promise((resolve, reject) => {
+    if (api) {
+      resolve(api[method](...args));
+    } else if (!api[method]) {
+      reject(new Error(`Method ${method} doesn't exist on ${api}!`));
+    } else {
+      reject(new Error(`${api} API not available!`));
+    }
+  });
+}
+

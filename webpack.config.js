@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+// const FileWatcherPlugin = require('filewatcher-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { join } = require('path');
@@ -13,7 +14,7 @@ const PAGES_PATH = join(SRC_PATH, 'core', 'pages');
 // Replace webpack/global.js definition with window
 function applyGlobalVar(compiler) {
   compiler.plugin('compilation', (compilation, params) => {
-    params.normalModuleFactory.plugin('parser', function(parser) {
+    params.normalModuleFactory.plugin('parser', (parser) => {
       parser.plugin('expression global', function expressionGlobalPlugin() {
         this.state.module.addVariable('global', 'window');
         return false;
@@ -22,50 +23,69 @@ function applyGlobalVar(compiler) {
   });
 }
 
-module.exports = ({ targetBrowser, nodeEnv }) => {
-  const plugins = [
-    new CleanWebpackPlugin(DIST_PATH),
-    new CopyWebpackPlugin([{ from: join(SRC_PATH, 'static'), to: DIST_PATH }]),
-    new WebpackShellPlugin({
-      onBuildEnd: [
-        `node ./scripts/build-manifest.js ${targetBrowser} ${DIST_PATH}`,
-      ],
-    }),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(nodeEnv),
-    }),
-    { apply: applyGlobalVar },
-  ];
-  if (nodeEnv === 'production') {
-    plugins.push(new UglifyJsPlugin({
-      uglifyOptions: {
-        output: { beautify: true, comments: true },
+const plugins = [
+  new CleanWebpackPlugin(DIST_PATH),
+  new CopyWebpackPlugin([{ from: join(SRC_PATH, 'static'), to: DIST_PATH }]),
+  new WebpackShellPlugin({
+    onBuildEnd: [
+      `node ./scripts/build-manifest.js ${process.env.BROWSER} ${DIST_PATH}`,
+    ],
+  }),
+  new webpack.DefinePlugin({
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+  }),
+  { apply: applyGlobalVar },
+];
+if (process.env.NODE_ENV === 'development') {
+  // TODO: investigate whether this corrupts the bundle
+
+  // plugins.push(new FileWatcherPlugin({
+  //   watchFileRegex: [
+  //     join(SRC_PATH, 'static', '**/*.html'),
+  //     join(SRC_PATH, 'static', '**/*.css'),
+  //     join(SRC_PATH, 'manifest', '*.json'),
+  //   ],
+  // }));
+}
+if (process.env.NODE_ENV === 'production') {
+  plugins.push(new UglifyJsPlugin());
+  // lodash-es/_root.js calls eval, replace it with our own definition here
+  // so we can pass AMO validation tests
+  plugins.push(new webpack.NormalModuleReplacementPlugin(
+    /lodash-es\/_root.js/,
+    join(SRC_PATH, 'patch', 'lodash-es._root.js'),
+  ));
+}
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.svg/,
+        use: {
+          loader: 'svg-url-loader',
+          options: {
+            noquotes: true,
+          },
+        },
       },
-    }));
-    // lodash-es/_root.js calls eval, replace it with our own definition here
-    // so we can pass AMO validation tests
-    plugins.push(new webpack.NormalModuleReplacementPlugin(
-      /lodash-es\/_root.js/,
-      join(SRC_PATH, 'patch', 'lodash-es._root.js'),
-    ));
-  }
-  return {
-    entry: {
-      popup: join(PAGES_PATH, 'popup', 'index.js'),
-      background: join(PAGES_PATH, 'background', 'index.js'),
-      settings: join(PAGES_PATH, 'settings', 'index.js'),
-    },
-    output: {
-      path: DIST_PATH,
-      filename: '[name]_bundle.js',
-    },
-    target: 'web',
-    plugins,
-    resolve: {
-      modules: [
-        join(__dirname, 'src'),
-        'node_modules',
-      ],
-    },
-  };
+    ],
+  },
+  entry: {
+    popup: join(PAGES_PATH, 'popup', 'index.js'),
+    background: join(PAGES_PATH, 'background', 'index.js'),
+    settings: join(PAGES_PATH, 'settings', 'index.js'),
+  },
+  output: {
+    path: DIST_PATH,
+    filename: '[name]_bundle.js',
+  },
+  target: 'web',
+  plugins,
+  resolve: {
+    modules: [
+      join(__dirname, 'src'),
+      'node_modules',
+    ],
+  },
+  devtool: 'sourcemap',
 };

@@ -1,17 +1,24 @@
+import { initialGeneralSettings } from 'core/reducers/defaults';
 import { addTabListeners } from '../side-effects';
 import {
   favIconFallback,
   alertCircle,
   tabList,
   searchInput,
-  TAB_TYPE,
-  OTHER_WINDOW_TAB_TYPE,
-  SESSION_TYPE,
   d,
   WORDBREAK_ALL_CLASSNAME,
   SELECTED_TAB_CLASSNAME,
+  BOOKMARK_TYPE,
+  HISTORY_TYPE,
+  TAB_PIN_CLASSNAME,
+  TAB_MUTED_CLASSNAME,
+  TAB_ACTIVE_ID,
 } from '../constants';
 import { badFavIconCache } from '../caches';
+import {
+  filledHistorySvg,
+  filledBookmarkSvg,
+} from '../assets';
 
 const changeHeadTabListNodeSelectedStyle = method => () => {
   tabList.firstElementChild.classList[method](SELECTED_TAB_CLASSNAME);
@@ -23,53 +30,87 @@ export const removeHeadTabListNodeSelectedStyle =
 export const addHeadTabListNodeSelectedStyle =
   changeHeadTabListNodeSelectedStyle('add');
 
-
 export function isTabListEmpty() {
   return !tabList.firstElementChild.classList.contains('tab-object');
 }
 
+// Save the default values for font sizes so we know when to inline the font
+// sizes when we append tab nodes
+const {
+  tabUrlSize: defaultTabUrlSize,
+  tabTitleSize: defaultTabTitleSize,
+} = initialGeneralSettings;
+
+// Store all the bad favIcons so we don't get loading jank if a favIcon !exist
 function clearChildren(node) {
   while (node.firstChild) {
     node.removeChild(node.firstChild);
   }
 }
 
-export function tabToTag(tab) {
-  const {
-    favIconUrl,
-    title,
-    id,
-    url,
-    type,
-    sessionId,
-    windowId,
-  } = tab;
-  const isValidFavIconUrl = favIconUrl
-    && !badFavIconCache().includes(favIconUrl);
-  const favIconLink = isValidFavIconUrl
-    ? favIconUrl
-    : favIconFallback;
-
-  return createTabObject({
-    id,
-    url,
-    title,
-    favIconLink,
-    type,
-    sessionId,
-    windowId,
-  }, shouldWordBreak(title));
-}
-
 // Given a string, return true if one string is too long and should apply
 function shouldWordBreak(str) {
   const MAX_LENGTH = 40;
   // eslint-disable-next-line arrow-body-style
-  const longestWordLength = (acc, s) => {
-    return (s.length > acc) ? s.length : acc;
-  };
+  const longestWordLength = (acc, s) => s.length > acc
+    ? s.length
+    : acc;
   const longest = str.split(/\s/).reduce(longestWordLength, 0);
   return longest > MAX_LENGTH;
+}
+
+export function tabToTag(getState) {
+  const {
+    tabUrlSize,
+    tabTitleSize,
+  } = getState().general;
+  return function doCreateTabObject(tab) {
+    const {
+      favIconUrl,
+      title,
+      id,
+      url,
+      type,
+      sessionId,
+      windowId,
+      mutedInfo,
+      pinned,
+      isActive,
+      lastAccessed,
+    } = tab;
+    const isValidFavIconUrl = favIconUrl
+      && !badFavIconCache().includes(favIconUrl);
+    // Since favicon url of bookmarks isn't readily available,
+    // check the type and assign all bookmarks to the static svg
+    // for now.
+    let favIconLink;
+    switch (type) {
+      case HISTORY_TYPE:
+        favIconLink = filledHistorySvg;
+        break;
+      case BOOKMARK_TYPE:
+        favIconLink = filledBookmarkSvg;
+        break;
+      default:
+        favIconLink = isValidFavIconUrl ? favIconUrl : favIconFallback;
+        break;
+    }
+    return createTabObject({
+      id,
+      url,
+      title,
+      favIconLink,
+      type,
+      sessionId,
+      windowId,
+      tabUrlSize,
+      tabTitleSize,
+      mutedInfo,
+      pinned,
+      isActive,
+      lastAccessed,
+    }, shouldWordBreak(title));
+  };
 }
 
 function createTabObject({
@@ -80,6 +121,12 @@ function createTabObject({
   title,
   favIconLink,
   windowId,
+  lastAccessed,
+  tabUrlSize,
+  tabTitleSize,
+  mutedInfo,
+  pinned,
+  isActive,
 }, wordBreak) {
   const dataId = sessionId || id;
   // Create the parent div
@@ -87,28 +134,27 @@ function createTabObject({
   const tabObjectNode = d.createElement('div');
   tabObjectNode.setAttribute('tabindex', '0');
   tabObjectNode.classList.add('tab-object');
-  switch (type) {
-    case SESSION_TYPE:
-      tabObjectNode.classList.add(SESSION_TYPE);
-      break;
-    case OTHER_WINDOW_TAB_TYPE:
-      tabObjectNode.classList.add(OTHER_WINDOW_TAB_TYPE);
-      break;
-    default:
-      tabObjectNode.classList.add(TAB_TYPE);
-      break;
-  }
+  tabObjectNode.classList.add(type);
   // Declare id used for switching
   tabObjectNode.setAttribute('data-id', dataId);
   // Declare data type to know what to paint
   tabObjectNode.setAttribute('data-type', type);
   // Add window id
   tabObjectNode.setAttribute('data-window', windowId);
+  // Add url
+  tabObjectNode.setAttribute('data-url', url);
+  // Add lastaccessed
+  tabObjectNode.setAttribute('data-last-accessed', lastAccessed);
 
   // <img src="${favIconLink}">
+  const iconContainerNode = d.createElement('div');
+  iconContainerNode.classList.add('tab-img');
+
   const favIconNode = d.createElement('img');
   favIconNode.setAttribute('src', favIconLink);
   favIconNode.onerror = handleBadSvg;
+
+  iconContainerNode.appendChild(favIconNode);
 
   // tab-info
   //    <div class="tab-info">
@@ -116,22 +162,45 @@ function createTabObject({
   tabInfoNode.setAttribute('class', 'tab-info');
 
   //      <strong>${title}</strong>
+  // INLINE tabTitleSize HERE
   const titleNode = d.createElement('div');
   titleNode.classList.add('tab-title');
   if (wordBreak) {
     titleNode.classList.add(WORDBREAK_ALL_CLASSNAME);
   }
   titleNode.appendChild(d.createTextNode(title));
+  if (tabTitleSize !== defaultTabTitleSize) {
+    titleNode.style = `font-size: ${tabTitleSize}px`;
+  }
 
   //      <p>${url}</p>
+  // INLINE tabUrlSize HERE
   const urlNode = d.createElement('p');
+  urlNode.classList.add('tab-url');
   urlNode.appendChild(d.createTextNode(url));
+  if (tabUrlSize !== defaultTabUrlSize) {
+    urlNode.style = `font-size: ${tabUrlSize}px`;
+  }
 
-  // Append all block elementshttps://cloud.githubusercontent.com/assets/689327/26164874/6c2b8920-3b04-11e7-8d4e-f1db027cb4a2.jpg
+  // Append all block elements
   tabInfoNode.appendChild(titleNode);
-  tabInfoNode.appendChild(urlNode);
-  tabObjectNode.appendChild(favIconNode);
+  // Don't show the url if user specifies 0 as the url font size
+  if (tabUrlSize > 0) {
+    tabInfoNode.appendChild(urlNode);
+  }
+
+  tabObjectNode.appendChild(iconContainerNode);
   tabObjectNode.appendChild(tabInfoNode);
+
+  if (pinned) {
+    tabObjectNode.classList.add(TAB_PIN_CLASSNAME);
+  }
+  if (mutedInfo && mutedInfo.muted) {
+    tabObjectNode.classList.add(TAB_MUTED_CLASSNAME);
+  }
+  if (isActive) {
+    tabObjectNode.id = TAB_ACTIVE_ID;
+  }
 
   return tabObjectNode;
 }
@@ -174,6 +243,7 @@ export function createNoResult() {
 
   noResultNode.appendChild(alertCircleNode);
   noResultNode.appendChild(strongMsgNode);
+  noResultNode.id = 'no-result';
   return noResultNode;
 }
 
@@ -190,7 +260,7 @@ export function injectTabsInList(getState) {
     if (showNoResult) {
       tabList.appendChild(createNoResult());
     } else {
-      tabArray.map(tabToTag).forEach((tabNode) => {
+      tabArray.map(tabToTag(getState)).forEach((tabNode) => {
         addTabListeners(getState)(tabNode);
         tabList.appendChild(tabNode);
       });
@@ -216,34 +286,6 @@ export function scrollIfNeeded(event) {
     event.target.scrollIntoView(false);
   } else if (shouldScrollUp) {
     event.target.scrollIntoView(true);
-  }
-}
-
-export function navigateResults(direction) {
-  switch (direction) {
-    case 'Tab':
-    case 'ArrowRight':
-    case 'ArrowDown': {
-      const nextSibling = d.activeElement.nextElementSibling;
-      if (nextSibling && d.activeElement !== searchInput) {
-        nextSibling.focus();
-      } else {
-        // Return to top if next !exist
-        tabList.firstElementChild.focus();
-      }
-      break;
-    }
-    case 'ArrowLeft':
-    case 'ArrowUp': {
-      const prevSibling = d.activeElement.previousElementSibling;
-      if (prevSibling) {
-        prevSibling.focus();
-      } else {
-        searchInput.focus();
-      }
-      break;
-    }
-    default: break;
   }
 }
 
@@ -282,4 +324,10 @@ export function overrideFontStylesWithSansSerif() {
 export function appendSearchInputPlaceholderText(newText) {
   // eslint-disable-next-line prefer-template
   searchInput.placeholder += ' ' + newText;
+}
+
+export function selectNodeText(nodeToCopy) {
+  const range = d.createRange();
+  range.selectNode(nodeToCopy);
+  window.getSelection().addRange(range);
 }

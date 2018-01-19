@@ -7,25 +7,6 @@ import {
   initialGeneralSettings,
 } from 'core/reducers/defaults';
 
-
-const settingSkeleton = {
-  fuzzy: Object.keys(initialFuzzySettings),
-  general: Object.keys(initialGeneralSettings),
-};
-
-/*
-1. Map (x -> 'fuzzy.' + x)
-
-[
-  enableFuzzySearch,
-  shouldSort,
-  threshold,
-  maxPatternLength,
-  minMatchCharLength,
-  keys
-]
-*/
-
 const skeleton = {
   fuzzy: Object.keys(initialFuzzySettings),
   general: Object.keys(initialGeneralSettings),
@@ -49,18 +30,3 @@ export default Object.keys(skeleton).reduce((acc, keyPrefix) => {
     }, {}),
   );
 }, {});
-
-// export default {
-//   showLastQueryOnPopup: 'general.showLastQueryOnPopup',
-//   showTabCountBadgeText: 'general.showTabCountBadgeText',
-//   showRecentlyClosed: 'general.showRecentlyClosed',
-//   searchAllWindows: 'general.searchAllWindows',
-//   alwaysShowRecentlyClosedAtTheBottom: 'general.alwaysShowRecentlyClosedAtTheBottom',
-//   recentlyClosedLimit: 'general.recentlyClosedLimit',
-//   enableOverlay: 'general.enableOverlay',
-//   useFallbackFont: 'general.useFallbackFont',
-//   enableFuzzySearch: 'fuzzy.enableFuzzySearch',
-//   shouldSort: 'fuzzy.shouldSort',
-//   threshold: 'fuzzy.threshold',
-//   showUrls: 'fuzzy.keys', // Modifies 'keys'
-// };

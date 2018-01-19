@@ -1,0 +1,39 @@
+extends: "airbnb-base"
+plugins:
+    - "import"
+env:
+    browser: true
+    webextensions: true
+settings:
+    import/resolver:
+        node:
+            paths:
+                - src
+                - node_modules
+    import/no-extraneous-dependencies:
+        - error
+        - devDependencies: false
+          optionalDependencies: false
+          peerDependencies: false
+          packageDir: "./"
+rules:
+    no-use-before-define: 0
+    no-fallthrough: 0
+    no-param-reassign: 0
+    import/prefer-default-export: 0
+    no-underscore-dangle: 0
+    ignore-rest-siblings: 0
+    prefer-arrow-callback: 0
+overrides:
+    - files:
+        - src/**/*.spec.js
+      env:
+        mocha: true
+      globals:
+        expect: false
+      rules:
+        prefer-arrow-callback: 0
+        func-names: 0
+        prefer-template: 0
+        no-plusplus: 0
+        no-unused-expressions: 0

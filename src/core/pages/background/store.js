@@ -1,14 +1,17 @@
 import { createBackgroundStore } from 'redux-webext';
-import store from '../../store';
+import store from 'core/store';
 import {
   CHECKBOX_UPDATE,
   RANGE_UPDATE,
   SEARCH_KEY_UPDATE,
   FUZZY,
   SETTINGS_RESET,
+  SETTING_RESET,
   NUMBER_UPDATE,
   LAST_QUERY_UPDATE,
-} from '../../actions/types';
+  KEYBINDING_UPDATE,
+  KEYBINDING_DEFAULT_RESET,
+} from 'core/actions/types';
 import {
   updateCheckbox,
   updateFuzzyCheckbox,
@@ -17,7 +20,10 @@ import {
   updateNumber,
   resetSettings,
   updateLastQuery,
-} from '../../actions';
+  updateKeybinding,
+  resetDefaultKeybindings,
+  resetSetting,
+} from 'core/actions';
 
 export default createBackgroundStore({
   store,
@@ -29,5 +35,8 @@ export default createBackgroundStore({
     [SETTINGS_RESET]: resetSettings,
     [NUMBER_UPDATE]: updateNumber,
     [LAST_QUERY_UPDATE]: updateLastQuery,
+    [KEYBINDING_UPDATE]: updateKeybinding,
+    [KEYBINDING_DEFAULT_RESET]: resetDefaultKeybindings,
+    [SETTING_RESET]: resetSetting,
   },
 });

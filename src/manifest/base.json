@@ -1,13 +1,17 @@
 {
   "manifest_version": 2,
   "name": "TabSearch",
-  "version": "0.3.10",
+  "version": "0.4.0",
   "description": "Easy tab search & switching",
   "permissions": [
     "tabs",
     "activeTab",
     "storage",
     "sessions"
+  ],
+  "optional_permissions": [
+    "bookmarks",
+    "history"
   ],
   "icons": {
     "48": "icons/logo-48.png",
@@ -23,7 +27,8 @@
   },
   "options_ui": {
     "page": "settings/index.html",
-    "open_in_tab": true
+    "open_in_tab": true,
+    "browser_style": true
   },
   "commands": {
     "_execute_browser_action": {

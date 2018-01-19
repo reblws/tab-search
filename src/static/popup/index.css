@@ -1,18 +1,59 @@
+/* http://clrs.cc/ */
+:root {
+  --lightblue: var(--blue-40);
+  --whitesmokeBorder: var(--grey-30);
+  --whitesmoke: var(--grey-10);
+  --bgColor: var(--whitesmoke);
+  --searchBarFocusColor:  var(--lightblue);
+  --blue: var(--blue-60);
+  --tabFocusColor: var(--blue);
+  --red: var(--red-60);
+  --navy: var(--ink-70);
+  --yellow: var(--yellow-50);
+  --purple: var(--purple-70);
+  --headerHeight: 48px;
+}
+
 body {
-  background-color: rgb(238, 238, 238);
+  border: 1px solid var(--grey-30);
+  background-color: var(--whitesmoke);
   font-family: 'Inter UI', sans-serif;
+  width: 355px;
 }
 
 
 input[type="search"] {
+  color: var(--grey-90);
   line-height: 2em;
+  width: 300px;
+  margin: auto;
 }
 
 header {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: row;
+  align-items: center;
   padding: 0.5em;
+  height: var(--headerHeight);
+  width: 355px;
+  box-sizing: border-box;
+  border-bottom: 1px;
+  border-style: solid;
+  border-color: var(--whitesmokeBorder);
+}
+
+#pref-btn {
+  color: var(--grey-50);
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.search-form {
   width: 300px;
   margin-left: auto;
   margin-right: auto;
+  box-sizing: border-box;
 }
 
 .container {
@@ -22,35 +63,36 @@ header {
 }
 
 .tab-list {
+  box-sizing: border-box;
   font-size: 12px;
 	display: flex;
 	flex-direction: column;
 	overflow-y: scroll;
 	overflow-x: hidden;
-	height: 400px;
+	height: 450px;
   background-color: #fff;
-  border-color: rgb(215, 215, 215);
+  border-color: var(--whitesmokeBorder);
   border-style: solid;
   border-bottom: 1px;
-  border-right: 1px;
   border-left: 1px;
   border-top: 1px;
-  border-top-color: rgb(51, 51, 51);
 }
 
 .search {
-  /* box-sizing: border-box; */
   top: 10px;
+  height: 32px;
   width: 300px;
+  padding-left: 8px;
+  padding-right: 24px;
+  line-height: 32px;
   text-indent: 20px;
   font-size: 12px;
   background-image: url('/assets/search.svg');
   background-repeat: no-repeat;
-  /* background-position: left center; */
-  background-position-x: 3px;
+  background-position-x: 8px;
   background-position-y: center;
   background-size: 16px 16px;
-  border: 1px solid rgb(210, 210, 210);;
+  border: 1.5px solid rgb(210, 210, 210);;
   border-radius: 5px;
   transition: all 0.15s ease-in-out;
   outline: none;
@@ -58,8 +100,8 @@ header {
 }
 
 .search:focus {
-  border-color: #399cfc;
-  box-shadow: 2px #399cfc;
+  border-color: var(--blue-50);
+  box-shadow: 2px var(--searchBarFocusColor);
 }
 
 .tab-favicon {
@@ -67,11 +109,15 @@ header {
 }
 
 .tab-object {
+  color: var(--grey-90);
   display: flex;
 	align-items: center;
 	justify-content: center;
 	width: 20rem;
-	padding: 1rem 0.5rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 0;
+  padding-right: 3rem;
   cursor: pointer;
   /* For chrome to prevent box shrinking */
   flex-shrink: 0;
@@ -84,17 +130,60 @@ header {
 .tab-object--selected,
 .tab-object:hover,
 .tab-object:focus {
-  /*box-sizing: border-box;*/
-  background-color: #086DD6;
+  background-color: var(--tabFocusColor);
   color: white;
 }
 
-.tab-object > img {
+.tab-img {
   height: 2rem;
-  max-width: 100%;
-  max-height: 100%;
-  margin-right: 1rem;
-  margin-left: 0.70rem;
+  width: 4rem;
+}
+
+.tab-img img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  height: 2rem;
+  width: 2rem;
+}
+
+/* Positioning for tab status indicators */
+/*
+Negative margins set to the height/width of relative positioned element
+removes the extra space added by the pseudoelement
+*/
+.tab-object.mute.pin > .tab-img:before {
+  background : url('../assets/pin.svg'), url('../assets/volume-x.svg');
+  background-position: top, bottom;
+  background-repeat: no-repeat, no-repeat;
+  height: 32px;
+  margin-top: -32px;
+  top: 24px;
+}
+
+.tab-object.mute > .tab-img:before {
+  background: url('../assets/volume-x.svg');
+}
+
+/* .tab-object > .tab-img:before, */
+.tab-object.pin > .tab-img:before {
+  background: url('../assets/pin.svg');
+}
+
+/* Shared tab status styling */
+.tab-object.pin > .tab-img:before,
+.tab-object.mute > .tab-img:before {
+  position: relative;
+  top: 12px;
+  left: 2.66rem;
+  width: 16px;
+  margin-right: -16px;
+  height: 16px;
+  margin-top: -16px;
+  display: block;
+  content: "";
+  background-size: 100%;
+  background-repeat: no-repeat;
 }
 
 .no-result {
@@ -151,10 +240,10 @@ p {
 }
 
 .delete-circle {
+  display: inline-block;
+  height: 16px;
   position: absolute;
-	max-width: 16px;
-	top: 14px;
-	right: 31px;
+  transform: translateY(8px) translateX(-22px);
   cursor: pointer;
 }
 
@@ -162,14 +251,24 @@ p {
   visibility: hidden;
 }
 
+
+/* tablist types */
 .tab {
-  border-left: 5px #3498db   solid;
+  border-left: 5px var(--blue) solid;
 }
 
 .session {
-  border-left: 5px #cd6155  solid;
+  border-left: 5px var(--red) solid;
 }
 
 .other-window-tab {
-  border-left: 5px #f4d03f    solid;
+  border-left: 5px var(--yellow) solid;
+}
+
+.bookmark {
+  border-left: 5px var(--navy) solid;
+}
+
+.history {
+  border-left: 5px var(--purple) solid;
 }

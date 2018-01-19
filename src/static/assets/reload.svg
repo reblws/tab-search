@@ -1,0 +1,7 @@
+<svg width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-reload" style="animation-play-state: running; animation-delay: 0s; background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%;">
+    <g style="animation-play-state: running; animation-delay: 0s;">
+      <path d="M50 15A35 35 0 1 0 74.787 25.213" fill="none" ng-attr-stroke="{{config.color}}" ng-attr-stroke-width="{{config.width}}" stroke="#AAAAAA" stroke-width="12" style="animation-play-state: running; animation-delay: 0s;"></path>
+      <path ng-attr-d="{{config.darrow}}" ng-attr-fill="{{config.color}}" d="M49 3L49 27L61 15L49 3" fill="#AAAAAA" style="animation-play-state: running; animation-delay: 0s;"></path>
+      <animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite" style="animation-play-state: running; animation-delay: 0s;"></animateTransform>
+    </g>
+  </svg>

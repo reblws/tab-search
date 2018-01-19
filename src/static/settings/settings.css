@@ -1,0 +1,188 @@
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --primaryTextColor: var(--grey-90);
+  --secondaryTextColor: var(--grey-50)
+}
+
+body {
+  font-size: 16px;
+  background-color: #f9f9fa;
+  color: var(--primaryTextColor);
+}
+
+.ralign {
+  text-align: right;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.disabled-label {
+  color: var(--secondaryTextColor);
+  user-select: none;
+  -moz-user-select: none;
+}
+
+@media screen and (min-width: 900px) {
+  body {
+    padding: 1rem 3rem;
+  }
+  form {
+    columns: 3;
+  }
+}
+
+@media screen and (width < 900px) {
+  body {
+    padding: 1rem;
+  }
+  form {
+    columns: 1;
+  }
+}
+
+.disabled-label,
+.subheader {
+  color: var(--secondaryTextColor);
+}
+
+.subheader.hint {
+  margin-top: 0;
+}
+
+.shortcuts,
+fieldset {
+  border-top: 1px;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-color: var(--grey-50);
+  border-style: solid;
+  padding: 0;
+}
+
+fieldset > header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+fieldset > header button {
+  flex-grow: 0;
+  height: 3.5em;
+  flex-basis: -moz-min-content;
+}
+
+fieldset > legend {
+  margin: 0 auto;
+}
+
+input[type=number] {
+  width: 40px;
+}
+
+input[type=range]::-moz-range-thumb
+ {
+  background-color: white;
+  border-width: 2px;
+}
+
+legend {
+  margin-bottom: 0.2rem;
+}
+
+.container {
+  margin: 1em;
+}
+
+.fixed {
+  width: 5px;
+}
+
+.inputs {
+  display: flex;
+  align-items: center;
+}
+
+.defaults {
+  max-height: 10px;
+}
+
+.strikethrough {
+  text-decoration: strikethrough;
+}
+
+.range-clarification {
+  font-size: 0.9em;
+}
+
+.shortcut-flash {
+  display: none;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding-top: 2em;
+  padding-bottom: 2em;
+}
+
+.shortcut-flash p:last-child {
+  margin: 0;
+}
+
+
+.shortcut-table > tr {
+  background-color: var(--grey-20);
+}
+
+.shortcut-table__header {
+  border-bottom: 1px solid var(--grey-90);
+}
+
+.shortcut-table__header > tr > th.lalign {
+  text-align: left;
+}
+
+.shortcut-table__header > tr > th.center {
+  text-align: center;
+}
+
+.shortcut-table input {
+  text-align: center;
+}
+
+.shortcut-table td:first-child {
+  border-top: 1px solid var(grey-90);
+}
+
+.shortcut-table td,
+.shortcut-table th {
+  padding: 12px 32px;
+}
+
+.ok {
+  background-color: var(--green-70);
+  color: white;
+}
+.warning {
+  background-color: var(--yellow-50);
+  color: var(--grey-90);
+}
+.error {
+  background-color: var(--red-70);
+  color: white;
+}
+
+.warning,
+.error,
+.ok {
+  text-align: center;
+}
+
+.shortcuts {
+  margin-top: 16px;
+}
+
+
