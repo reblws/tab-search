@@ -241,6 +241,7 @@ export function createNoResult() {
 
   noResultNode.appendChild(alertCircleNode);
   noResultNode.appendChild(strongMsgNode);
+  noResultNode.id = 'no-result';
   return noResultNode;
 }
 
