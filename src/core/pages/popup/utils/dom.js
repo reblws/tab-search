@@ -76,6 +76,7 @@ export function tabToTag(getState) {
       mutedInfo,
       pinned,
       isActive,
+      lastAccessed,
     } = tab;
     const isValidFavIconUrl = favIconUrl
       && !badFavIconCache().includes(favIconUrl);
@@ -107,6 +108,7 @@ export function tabToTag(getState) {
       mutedInfo,
       pinned,
       isActive,
+      lastAccessed,
     }, shouldWordBreak(title));
   };
 }

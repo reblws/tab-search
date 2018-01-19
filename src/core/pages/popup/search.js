@@ -141,6 +141,7 @@ function mostRecentlyUsed(a, b) {
 // At minimum, each normalized object should have the following fields:
 //        type: the typestring specified in constants
 //        id: retrieving this specific object should depend on this value
+//        lastAccessed: when was this guy last accessed
 
 // Should normalize results to match a tabs.Tab object as closely as possible
 // https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/Tab
@@ -189,7 +190,9 @@ function normalizeBookmarks(bookmarks) {
   const normalize = bs =>
     bs.filter(filterFolders)
       .map(annotateType(BOOKMARK_TYPE))
-      .map(urlAsId);
+      .map(urlAsId)
+      .map(x => Object.assign(x, { lastAccessed: x.dateAdded || 1 }));
+  // Treat date added bookmark as lastaccessed so we at least have a value
   return normalize(bookmarks);
 }
 
@@ -197,5 +200,6 @@ function normalizeHistory(historicalRecords) {
   if (!historicalRecords) {
     return [];
   }
-  return historicalRecords.map(annotateType(HISTORY_TYPE));
+  return historicalRecords.map(annotateType(HISTORY_TYPE))
+    .map(x => Object.assign(x, { lastAccessed: x.lastVisitTime || 1 }));
 }
