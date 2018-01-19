@@ -37,7 +37,7 @@ import {
 } from '../constants';
 
 export function navigateResults(cmdKey, showRecentlyClosed) {
-  const isNoResult = tabList.children[0].classList.contains(NO_RESULT_CLASSNAME);
+  const isNoResult = !!d.getElementById(NO_RESULT_CLASSNAME) || tabList.children.length === 0;
   const isSearchActive = d.activeElement === searchInput;
   const selectedTab = !isSearchActive
     ? d.activeElement
