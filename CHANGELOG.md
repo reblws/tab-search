@@ -8,9 +8,13 @@
 - Dark theme
 - Vertically centered overlay
 
+## 0.4.1a (2018-01-19)
+
+- Fixed production build mangling vital property names, which caused the tab popup to be empty (Thanks Michael for the quick email)
+
 ## 0.4.1 (2018-01-19)
 
-- Fix new settings being undefined after an update
+- Fixed new settings being undefined after an update
 
 ## 0.4.0 (2018-01-18)
 
