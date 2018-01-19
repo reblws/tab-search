@@ -4,6 +4,7 @@ import {
   FUZZY,
   SEARCH_KEY_UPDATE,
   SETTINGS_RESET,
+  SETTING_RESET,
   NUMBER_UPDATE,
   LAST_QUERY_UPDATE,
   KEYBINDING_UPDATE,
@@ -37,6 +38,10 @@ export function resetSettings() {
   return action(SETTINGS_RESET);
 }
 
+export function resetSetting({ payload: { key } }) {
+  return action(SETTING_RESET, key);
+}
+
 export function updateLastQuery({ payload: { key, value } }) {
   return action(LAST_QUERY_UPDATE, key, value);
 }
@@ -48,3 +53,4 @@ export function updateKeybinding({ payload: { key, value } }) {
 export function resetDefaultKeybindings() {
   return action(KEYBINDING_DEFAULT_RESET);
 }
+

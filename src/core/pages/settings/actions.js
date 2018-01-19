@@ -5,10 +5,12 @@ import {
   FUZZY,
   SEARCH_KEY_UPDATE,
   SETTINGS_RESET,
+  SETTING_RESET,
   NUMBER_UPDATE,
   KEYBINDING_UPDATE,
   KEYBINDING_DEFAULT_RESET,
 } from '../../actions/types';
+import inputReducerMap from './inputs-to-reducer';
 
 export const updateNumber =
   (key, value) => action(NUMBER_UPDATE, key, value);
@@ -26,3 +28,7 @@ export const updateKeybinding =
   (key, command) => action(KEYBINDING_UPDATE, key, command);
 export const resetKeyboardToDefaults =
   () => action(KEYBINDING_DEFAULT_RESET);
+export const resetSetting = key => action(
+  SETTING_RESET,
+  inputReducerMap[key],
+);

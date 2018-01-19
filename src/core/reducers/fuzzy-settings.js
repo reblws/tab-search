@@ -4,6 +4,7 @@ import {
   SEARCH_KEY_UPDATE,
   FUZZY,
   SETTINGS_RESET,
+  SETTING_RESET,
 } from '../actions/types';
 import { initialFuzzySettings } from './defaults';
 
@@ -28,6 +29,15 @@ export default function fuzzySettingsReducer(state = initialFuzzySettings, actio
     }
     case SETTINGS_RESET: {
       return initialFuzzySettings;
+    }
+    case SETTING_RESET: {
+      const { key } = action.payload;
+      const [reducer, k] = key.split('.');
+      const f = initialFuzzySettings;
+      if (reducer === 'fuzzy' && k in f) {
+        return Object.assign({}, state, { [k]: f[k] });
+      }
+      return state;
     }
     default:
       return state;

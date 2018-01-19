@@ -8,6 +8,7 @@ import {
   updateFuzzyCheckbox,
   updateFuzzySearchKeys,
   updateNumber,
+  resetSetting,
 } from './actions';
 import * as Flash from './flash';
 import {
@@ -36,6 +37,18 @@ export function initSettings(store) {
   const inputs = findInputs();
   Object.values(inputs).forEach(fillStateSettings);
   Object.values(inputs).forEach(attachEventListeners);
+
+  // Reset each setting
+  const fieldsetButtons = [...document.querySelectorAll('fieldset')]
+    .map(x => [x, x.querySelector('button')]);
+  fieldsetButtons.forEach(([fieldsetNode, btn]) => {
+    btn.addEventListener('click', () => {
+      fieldsetNode.querySelectorAll('input').forEach(({ name }) => {
+        store.dispatch(resetSetting(name));
+      });
+      location.reload(true);
+    });
+  });
 }
 
 // Fills in the keyboard area of the settings page with state from current setting
