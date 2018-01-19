@@ -38,6 +38,7 @@
 - Added button in popup for entering settings page
   - This might change
 - Numerous visual tweaks to the popup layout
+- Fixed bug where tabs from other windows were ordered first on initial popup
 
 ## 0.3.10 (2017-12-02)
 
