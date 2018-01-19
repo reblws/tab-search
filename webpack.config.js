@@ -48,7 +48,11 @@ if (process.env.NODE_ENV === 'development') {
   // }));
 }
 if (process.env.NODE_ENV === 'production') {
-  plugins.push(new UglifyJsPlugin());
+  plugins.push(new UglifyJsPlugin({
+    uglifyOptions: {
+      output: { beautify: true, comments: true },
+    },
+  }));
   // lodash-es/_root.js calls eval, replace it with our own definition here
   // so we can pass AMO validation tests
   plugins.push(new webpack.NormalModuleReplacementPlugin(
