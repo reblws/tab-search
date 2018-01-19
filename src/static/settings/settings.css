@@ -22,6 +22,8 @@ body {
 
 .disabled-label {
   color: var(--secondaryTextColor);
+  user-select: none;
+  -moz-user-select: none;
 }
 
 @media screen and (min-width: 900px) {
@@ -42,8 +44,13 @@ body {
   }
 }
 
+.disabled-label,
 .subheader {
   color: var(--secondaryTextColor);
+}
+
+.subheader.hint {
+  margin-top: 0;
 }
 
 .shortcuts,
@@ -67,7 +74,7 @@ fieldset > header {
 fieldset > header button {
   flex-grow: 0;
   height: 3.5em;
-  flex-basis: -moz-max-content;
+  flex-basis: -moz-min-content;
 }
 
 fieldset > legend {
@@ -103,10 +110,6 @@ legend {
 
 .defaults {
   max-height: 10px;
-}
-
-.disabled-label {
-  color: var(--grey);
 }
 
 .strikethrough {
