@@ -42,8 +42,8 @@ export function resetSetting({ payload: { key } }) {
   return action(SETTING_RESET, key);
 }
 
-export function updateLastQuery({ payload: { key, value } }) {
-  return action(LAST_QUERY_UPDATE, key, value);
+export function updateLastQuery(a) {
+  return action(LAST_QUERY_UPDATE, a.payload.key);
 }
 
 export function updateKeybinding({ payload: { key, value } }) {

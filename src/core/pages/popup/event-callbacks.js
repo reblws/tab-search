@@ -159,6 +159,6 @@ export function updateLastQueryOnKeydown(store) {
   const { dispatch } = store;
   return (event) => {
     const { value } = event.currentTarget;
-    return dispatch(updateLastQuery(value.trim()));
+    dispatch(updateLastQuery(value.trim()));
   };
 }

@@ -9,7 +9,7 @@ export default function stateReducer(state = initialState, action) {
     return Object.assign(
       {},
       state,
-      { lastQuery: payload },
+      { lastQuery: payload.key },
     );
   }
   return state;
