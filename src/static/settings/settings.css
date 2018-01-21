@@ -26,7 +26,7 @@ body {
   -moz-user-select: none;
 }
 
-@media screen and (min-width: 900px) {
+@media screen and (min-width: 1000px) {
   body {
     padding: 1rem 3rem;
   }
@@ -35,10 +35,13 @@ body {
   }
 }
 
-@media screen and (width < 900px) {
+@media screen and (min-width: 900px) {
   body {
     padding: 1rem;
   }
+}
+
+@media screen and (width < 900px) {
   form {
     columns: 1;
   }
@@ -189,4 +192,8 @@ legend {
   margin-top: 16px;
 }
 
+#thresholdDisplay {
+  display: block;
+  margin: 0 auto;
+}
 
