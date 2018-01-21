@@ -81,6 +81,10 @@ fieldset > legend {
   margin: 0 auto;
 }
 
+input[type=color] {
+  margin-right: 8px;
+}
+
 input[type=number] {
   width: 40px;
 }

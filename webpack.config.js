@@ -37,6 +37,8 @@ const plugins = [
   { apply: applyGlobalVar },
 ];
 if (process.env.NODE_ENV === 'production') {
+  // web-ext zip strips out sourcemaps, so we need to beautify the output
+  // so destructuring assignments don't break. Need to investigate this more.
   plugins.push(new UglifyJsPlugin({
     sourceMap: true,
     uglifyOptions: {
@@ -62,6 +64,12 @@ module.exports = {
             noquotes: true,
           },
         },
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/,
+        loader: 'css-object-loader',
+        exclude: /node_modules/,
       },
     ],
   },

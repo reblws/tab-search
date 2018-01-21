@@ -4,6 +4,7 @@ import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import fuzzySettingsReducer from './fuzzy-settings';
 import generalSettingsReducer from './settings';
 import keyboardConfigReducer from './keyboard';
+import colorSettingsReducer from './colors';
 import stateReducer from './state';
 import storage from './services/storage-adapter';
 
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   general: generalSettingsReducer,
   state: stateReducer,
   keyboard: keyboardConfigReducer,
+  color: colorSettingsReducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);

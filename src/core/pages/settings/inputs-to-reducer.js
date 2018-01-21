@@ -5,11 +5,13 @@ This works as long as these two reducers are only a flat 1-level object
 import {
   initialFuzzySettings,
   initialGeneralSettings,
+  initialColorSettings,
 } from 'core/reducers/defaults';
 
 const skeleton = {
   fuzzy: Object.keys(initialFuzzySettings),
   general: Object.keys(initialGeneralSettings),
+  color: Object.keys(initialColorSettings),
 };
 
 export default Object.keys(skeleton).reduce((acc, keyPrefix) => {

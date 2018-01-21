@@ -21,43 +21,69 @@
       Settings are saved after every change
     </p>
     <form>
-      <fieldset>
-        <header>
-          <h2>Appearance</h2>
-          <button class="browser-style">Reset to Defaults</button>
-        </header>
-        <p class="inputs browser-style">
-          <input class="field" type="checkbox" name="useFallbackFont" id="useFallbackFont">
-          <label for="useFallbackFont">Use browser's default font (sans-serif)</label>
-        </p>
+      <div>
+        <fieldset>
+          <header>
+            <h2>Appearance</h2>
+            <button class="browser-style">Reset to Defaults</button>
+          </header>
+          <p class="inputs browser-style">
+            <input type="checkbox" name="useFallbackFont" id="useFallbackFont">
+            <label for="useFallbackFont">Use browser's default font (sans-serif)</label>
+          </p>
 
-        <p class="inputs browser-style">
-          <input class="field" type="checkbox" name="showTabCountBadgeText" id="showTabCountBadgeText">
-          <label for="showTabCountBadgeText">Display total number of tabs above the popup icon</label>
-        </p>
-        <p class="inputs browser-style">
-          <input class="field" type="number" min="8" max="32" id="tabTitleSize" name="tabTitleSize">
-          &ensp;
-          <label for="tabTitleSize">px Tab title font size</label>
-        </p>
-        <p class="inputs browser-style">
-          <input class="field" type="number" min="0" max="32" id="tabUrlSize" name="tabUrlSize">
-          &ensp;
-          <label for="tabUrlSize">px Tab url font size</label>
-        </p>
+          <p class="inputs browser-style">
+            <input type="checkbox" name="showTabCountBadgeText" id="showTabCountBadgeText">
+            <label for="showTabCountBadgeText">Display total number of tabs above the popup icon</label>
+          </p>
+          <p class="inputs browser-style">
+            <input type="number" min="8" max="32" id="tabTitleSize" name="tabTitleSize"> &ensp;
+            <label for="tabTitleSize">px Tab title font size</label>
+          </p>
+          <p class="inputs browser-style">
+            <input type="number" min="0" max="32" id="tabUrlSize" name="tabUrlSize"> &ensp;
+            <label for="tabUrlSize">px Tab url font size</label>
+          </p>
+        </fieldset>
+        <fieldset>
+          <header>
+            <h2>Colors</h2>
+            <button class="browser-style">Reset to Defaults</button>
+          </header>
+          <p class="inputs browser-style">
+            <input name="tabColor" id="tabColor" type="color">
+            <label for="tabColor">Tab Color</label>
+          </p>
+          <p class="inputs browser-style">
+            <input name="otherWindowTabColor" id="otherWindowTabColor" type="color">
+            <label for="otherWindowTabColor">Other Window Tab Color</label>
+          </p>
+          <p class="inputs browser-style">
+            <input name="recentlyClosedTabColor" id="recentlyClosedTabColor" type="color">
+            <label for="recentlyClosedTabColor">Recently Closed Tab Color</label>
+          </p>
+          <p class="inputs browser-style">
+            <input name="bookmarkColor" id="bookmarkColor" type="color">
+            <label for="bookmarkColor">Bookmark Color</label>
+          </p>
+          <p class="inputs browser-style">
+            <input name="historyColor" id="historyColor" type="color">
+            <label for="historyColor">History Color</label>
+          </p>
+        </fieldset>
+      </div>
 
-      </fieldset>
       <fieldset>
         <header>
           <h2>Results</h2>
           <button class="browser-style">Reset to Defaults</button>
         </header>
         <p class="inputs">
-          <input class="field" type="checkbox" name="showBookmarks" id="showBookmarks">
+          <input type="checkbox" name="showBookmarks" id="showBookmarks">
           <label for="showBookmarks">Show Bookmarks in search results</label>
         </p>
         <p class="inputs">
-          <input class="field" type="checkbox" name="showHistory" id="showHistory">
+          <input type="checkbox" name="showHistory" id="showHistory">
           <label for="showHistory">Show History in search results</label>
         </p>
         <div>

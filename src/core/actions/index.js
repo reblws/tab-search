@@ -9,6 +9,7 @@ import {
   LAST_QUERY_UPDATE,
   KEYBINDING_UPDATE,
   KEYBINDING_DEFAULT_RESET,
+  COLOR_UPDATE,
 } from './types';
 import { action } from './action';
 
@@ -52,5 +53,9 @@ export function updateKeybinding({ payload: { key, value } }) {
 
 export function resetDefaultKeybindings() {
   return action(KEYBINDING_DEFAULT_RESET);
+}
+
+export function updateColor(a) {
+  return action(COLOR_UPDATE, a.payload.key, a.payload.value);
 }
 

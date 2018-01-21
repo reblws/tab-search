@@ -1,4 +1,9 @@
-import { CHECKBOX_UPDATE, SETTINGS_RESET, NUMBER_UPDATE, SETTING_RESET } from '../actions/types';
+import {
+  CHECKBOX_UPDATE,
+  SETTINGS_RESET,
+  NUMBER_UPDATE,
+  SETTING_RESET,
+} from '../actions/types';
 import { initialGeneralSettings } from './defaults';
 
 export default function generalSettingsReducer(state = initialGeneralSettings, action) {
@@ -14,9 +19,9 @@ export default function generalSettingsReducer(state = initialGeneralSettings, a
     }
     case SETTING_RESET: {
       const { key } = action.payload;
-      const [reducer, k] = key.split('.');
       const g = initialGeneralSettings;
-      if (reducer === 'general' && k in g) {
+      const [reducer, k] = key.split('.');
+      if (reducer === 'general' && k in state) {
         return Object.assign({}, state, { [k]: g[k] });
       }
       return state;

@@ -1,3 +1,13 @@
+import PhotonColors from 'static/lib/photon.css';
+
+const {
+  blue60: tabColor,
+  yellow50: otherWindowTabColor,
+  red60: recentlyClosedTabColor,
+  ink70: bookmarkColor,
+  purple70: historyColor,
+} = PhotonColors[':root'];
+
 export { defaultCommands } from 'core/keyboard';
 export const initialFuzzySettings = {
   enableFuzzySearch: true,
@@ -27,4 +37,12 @@ export const initialGeneralSettings = {
 
 export const initialState = {
   lastQuery: '',
+};
+
+export const initialColorSettings = {
+  tabColor,
+  otherWindowTabColor,
+  recentlyClosedTabColor,
+  bookmarkColor,
+  historyColor,
 };
