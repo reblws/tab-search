@@ -3,6 +3,7 @@ export const alertCircle = '/assets/alert-circle.svg';
 export const BOOKMARKS_SVG_PATH = '/assets/bookmark.svg';
 export const HISTORY_SVG_PATH = '/assets/book.svg';
 export const RELOAD_SVG_PATH = '/assets/reload.svg';
+export const DEL_CIRCLE_SVG_PATH = '/assets/x-circle.svg';
 export const deleteButton = document.querySelector('.delete-circle');
 export const searchInput = document.querySelector('.search');
 export const tabList = document.querySelector('.tab-list');
@@ -23,6 +24,7 @@ export const NO_RESULT_CLASSNAME = 'no-result';
 export const TAB_URL_CLASSNAME = 'tab-url';
 export const TAB_PIN_CLASSNAME = 'pin';
 export const TAB_MUTED_CLASSNAME = 'mute';
+export const TAB_DELETE_BTN_CLASSNAME = 'tab-object__delete-button';
 export const d = document;
 
 // css ids

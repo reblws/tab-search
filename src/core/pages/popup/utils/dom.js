@@ -16,6 +16,8 @@ import {
   OTHER_WINDOW_TAB_TYPE,
   SESSION_TYPE,
   TAB_TYPE,
+  DEL_CIRCLE_SVG_PATH,
+  TAB_DELETE_BTN_CLASSNAME,
 } from '../constants';
 import { badFavIconCache } from '../caches';
 import { configureSvg } from '../assets';
@@ -78,7 +80,7 @@ const colorTypeMap = {
 };
 
 export function tabToTag(getState) {
-  const { color: colorSettings } = getState();
+  const { color: colorSettings, general: generalSettings } = getState();
   const { tabUrlSize, tabTitleSize } = getState().general;
   const inline = inlineOpts(colorSettings);
   const assets = configureSvg(inline);
@@ -121,6 +123,7 @@ export function tabToTag(getState) {
       tabInline,
       tabUrlSize,
       tabTitleSize,
+      showRecentlyClosed: generalSettings.showRecentlyClosed,
       wordBreak: shouldWordBreak(title),
     };
     return createTabObject({
@@ -227,9 +230,16 @@ function createTabObject({
     tabInfoNode.appendChild(urlNode);
   }
 
+  // Delete this tab!
+  if (type === OTHER_WINDOW_TAB_TYPE || type === TAB_TYPE) {
+    const delBtn = d.createElement('img');
+    delBtn.src = DEL_CIRCLE_SVG_PATH;
+    delBtn.classList.add(TAB_DELETE_BTN_CLASSNAME);
+    tabObjectNode.appendChild(delBtn);
+  }
+
   tabObjectNode.appendChild(iconContainerNode);
   tabObjectNode.appendChild(tabInfoNode);
-
   if (pinned) {
     tabObjectNode.classList.add(TAB_PIN_CLASSNAME);
   }

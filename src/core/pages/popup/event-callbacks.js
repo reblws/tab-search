@@ -21,6 +21,7 @@ import {
   BOOKMARK_TYPE,
   TAB_TYPE,
   OTHER_WINDOW_TAB_TYPE,
+  TAB_DELETE_BTN_CLASSNAME,
 } from './constants';
 import { updateLastQuery } from './actions';
 import filterResults from './search';
@@ -120,7 +121,11 @@ export function handleTabClick(getState) {
     const {
       showRecentlyClosed,
     } = getState().general;
-    const { currentTarget, ctrlKey } = event;
+    const { currentTarget, ctrlKey, target } = event;
+    if (target.nodeName === 'IMG'
+      && target.classList.contains(TAB_DELETE_BTN_CLASSNAME)) {
+      return deleteTab(currentTarget, showRecentlyClosed, true);
+    }
     const { dataset } = currentTarget;
     const { type } = dataset;
     // Decide what to do depending if ctrl is held

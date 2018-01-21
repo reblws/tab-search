@@ -12,13 +12,14 @@
   --yellow: var(--yellow-50);
   --purple: var(--purple-70);
   --headerHeight: 48px;
+  --bodyWidth: 355px;
 }
 
 body {
   border: 1px solid var(--grey-30);
   background-color: var(--whitesmoke);
   font-family: 'Inter UI', sans-serif;
-  width: 355px;
+  width: var(--bodyWidth);
 }
 
 
@@ -186,6 +187,21 @@ removes the extra space added by the pseudoelement
   background-repeat: no-repeat;
 }
 
+.tab-object:hover .tab-object__delete-button:hover {
+  filter: grayscale(20%);
+}
+
+.tab-object:hover .tab-object__delete-button {
+  visibility: visible;
+}
+
+.tab-object .tab-object__delete-button {
+  position: relative;
+  visibility: hidden;
+  margin-right: -16px;
+  transform: translateX(calc(0.9 * var(--bodyWidth) - 8px));
+}
+
 .no-result {
   display: flex;
 	flex-direction: column;
@@ -239,12 +255,15 @@ p {
   margin: 0;
 }
 
+.tab-object__delete-button,
 .delete-circle {
-  display: inline-block;
   height: 16px;
+  cursor: pointer;
+}
+
+.delete-circle {
   position: absolute;
   transform: translateY(8px) translateX(-22px);
-  cursor: pointer;
 }
 
 .hidden {
