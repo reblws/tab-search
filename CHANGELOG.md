@@ -8,6 +8,18 @@
 - Dark theme
 - Vertically centered overlay
 
+## 0.4.2 (2018-01-20)
+
+- Added customizable colors for each tab type:
+  - Can change the border colors for:
+    - Regular Tabs
+    - Other Window Tabs
+    - Bookmarks
+    - History
+    - Recently Closed Tabs
+- Added a visual delete button for closing tabs with only the mouse
+  - Also has an option to disable this
+
 ## 0.4.1a (2018-01-19)
 
 - Fixed production build mangling vital property names, which caused the tab popup to be empty (Thanks Michael for the quick email)
