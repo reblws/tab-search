@@ -8,6 +8,11 @@
 - Dark theme
 - Vertically centered overlay
 
+## 0.4.3 (2018-01-20)
+
+- (Potentially) Fix recently closed tabs setting causing popup to crash
+- Improve error logging
+
 ## 0.4.2 (2018-01-20)
 
 - Added customizable colors for each tab type:
