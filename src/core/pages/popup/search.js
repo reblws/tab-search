@@ -147,18 +147,17 @@ function mostRecentlyUsed(a, b) {
 // https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/Tab
 
 function normalizeRecentlyClosedTabs(maxResults) {
-  const tab = ({ tab: _tab }) => _tab;
+  const mTab = s => s.tab || {};
   // No incognito please
-  const filterIncognito = ({ incognito }) => !incognito;
+  const filterIncognito = ({ incognito }) => incognito === false;
   // Don't want to show new tab pages
   const filterNewTab = x => !isOfUrl('about:newtab')(x);
   const filters = composeFilterOr(
-    tab,
     filterNewTab,
     filterIncognito,
   );
   const normalize = sessionTabs => sessionTabs
-    .map(tab)
+    .map(mTab)
     .filter(filters)
     .map(annotateType(SESSION_TYPE));
   return getRecentlyClosed(maxResults).then(normalize);
