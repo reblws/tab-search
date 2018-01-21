@@ -19,7 +19,7 @@ export const initialFuzzySettings = {
 };
 
 export const initialGeneralSettings = {
-  oneLineTabTitles: true,
+  oneLineTabTitles: false,
   showVisualDeleteTabButton: true,
   showHistory: false,
   showBookmarks: false,
