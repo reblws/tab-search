@@ -42,6 +42,7 @@ export const initialState = {
 };
 
 export const initialColorSettings = {
+  popupBadgeColor: '#FF0000',
   tabColor,
   otherWindowTabColor,
   recentlyClosedTabColor,

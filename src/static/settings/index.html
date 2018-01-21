@@ -59,6 +59,10 @@
             <button class="browser-style">Reset to Defaults</button>
           </header>
           <p class="inputs browser-style">
+            <input name="popupBadgeColor" id="popupBadgeColor" type="color">
+            <label for="popupBadgeColor">Tab Count Badge Color</label>
+          </p>
+          <p class="inputs browser-style">
             <input name="tabColor" id="tabColor" type="color">
             <label for="tabColor">Tab Color</label>
           </p>
@@ -151,17 +155,17 @@
           <input type="checkbox" name="shouldSort" id="shouldSort">
           <label for="shouldSort">Sort results by how close they match the search query</label>
         </p>
+        <br>
         <p class="inputs browser-style">
           <label class="fixed-width" for="threshold">Fuzzy search similarity threshold: </label>
-          <br>
+        </p>
+        <p>
           <label class="center range-clarification" for="thresholdDisplay">
-            <strong>1</strong>
-            <br> (Strict search)
+            <strong>Strict Search</strong>
           </label>
           <input class="input-range" type="range" min="1" max="9" name="threshold" id="threshold">
           <label class="center range-clarification" for="thresholdDisplay">
-            <strong>9</strong>
-            <br> (Loose search)
+            <strong>Loose Search</strong>
           </label>
           &emsp;
           <input type="number" class="number-input" min="1" max="9" name="thresholdDisplay" id="thresholdDisplay">

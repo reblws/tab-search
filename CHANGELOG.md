@@ -8,6 +8,12 @@
 - Dark theme
 - Vertically centered overlay
 
+## 0.4.4 (2018-01-21)
+
+- Add option for changing popup badge color
+- Slight visual tweaks to settings page
+- Fix recently closed tabs issue where closing a window caused the initial popup to no display
+
 ## 0.4.3 (2018-01-20)
 
 - (Potentially) Fix recently closed tabs setting causing popup to crash
