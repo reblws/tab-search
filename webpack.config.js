@@ -40,7 +40,6 @@ if (process.env.NODE_ENV === 'production') {
   // web-ext zip strips out sourcemaps, so we need to beautify the output
   // so destructuring assignments don't break. Need to investigate this more.
   plugins.push(new UglifyJsPlugin({
-    sourceMap: true,
     uglifyOptions: {
       output: { beautify: true, comments: true },
       mangle: false,
@@ -53,7 +52,7 @@ if (process.env.NODE_ENV === 'production') {
     join(SRC_PATH, 'patch', 'lodash-es._root.js'),
   ));
 }
-module.exports = {
+const webpackConfig = {
   module: {
     rules: [
       {
@@ -73,7 +72,6 @@ module.exports = {
       },
     ],
   },
-  devtool: 'sourcemap',
   entry: {
     popup: join(PAGES_PATH, 'popup', 'index.js'),
     background: join(PAGES_PATH, 'background', 'index.js'),
@@ -92,3 +90,9 @@ module.exports = {
     ],
   },
 };
+
+if (process.env.NODE_ENV === 'development') {
+  webpackConfig.devtool = 'sourcemap';
+}
+
+module.exports = webpackConfig;
