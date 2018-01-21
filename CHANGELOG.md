@@ -19,6 +19,7 @@
     - Recently Closed Tabs
 - Added a visual delete button for closing tabs with only the mouse
   - Also has an option to disable this
+- Added an option for one line tab titles, in case you frequently run into humongous tab titles
 
 ## 0.4.1a (2018-01-19)
 
