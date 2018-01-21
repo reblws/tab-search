@@ -36,21 +36,12 @@ const plugins = [
   }),
   { apply: applyGlobalVar },
 ];
-if (process.env.NODE_ENV === 'development') {
-  // TODO: investigate whether this corrupts the bundle
-
-  // plugins.push(new FileWatcherPlugin({
-  //   watchFileRegex: [
-  //     join(SRC_PATH, 'static', '**/*.html'),
-  //     join(SRC_PATH, 'static', '**/*.css'),
-  //     join(SRC_PATH, 'manifest', '*.json'),
-  //   ],
-  // }));
-}
 if (process.env.NODE_ENV === 'production') {
   plugins.push(new UglifyJsPlugin({
+    sourceMap: true,
     uglifyOptions: {
       output: { beautify: true, comments: true },
+      mangle: false,
     },
   }));
   // lodash-es/_root.js calls eval, replace it with our own definition here
@@ -74,6 +65,7 @@ module.exports = {
       },
     ],
   },
+  devtool: 'sourcemap',
   entry: {
     popup: join(PAGES_PATH, 'popup', 'index.js'),
     background: join(PAGES_PATH, 'background', 'index.js'),
@@ -91,5 +83,4 @@ module.exports = {
       'node_modules',
     ],
   },
-  devtool: 'sourcemap',
 };

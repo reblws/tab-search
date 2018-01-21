@@ -18,9 +18,7 @@ createUIStore()
   .then(addEventListeners)
   .then(doFinalSideEffects)
   .catch((e) => {
-    if (process.env.NODE_ENV !== 'production') {
-      console.error(e);
-    }
-    throw new Error(`Ran into a problem initializing popup window: ${e}`);
+    console.error(e);
+    throw new Error(`Ran into a problem initializing popup window: ${e.stack}`);
   });
 
