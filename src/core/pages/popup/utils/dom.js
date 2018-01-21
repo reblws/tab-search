@@ -1,4 +1,4 @@
-import { initialGeneralSettings } from 'core/reducers/defaults';
+import { initialGeneralSettings, initialColorSettings } from 'core/reducers/defaults';
 import { addTabListeners } from '../side-effects';
 import {
   favIconFallback,
@@ -13,12 +13,12 @@ import {
   TAB_PIN_CLASSNAME,
   TAB_MUTED_CLASSNAME,
   TAB_ACTIVE_ID,
+  OTHER_WINDOW_TAB_TYPE,
+  SESSION_TYPE,
+  TAB_TYPE,
 } from '../constants';
 import { badFavIconCache } from '../caches';
-import {
-  filledHistorySvg,
-  filledBookmarkSvg,
-} from '../assets';
+import { configureSvg } from '../assets';
 
 const changeHeadTabListNodeSelectedStyle = method => () => {
   tabList.firstElementChild.classList[method](SELECTED_TAB_CLASSNAME);
@@ -41,6 +41,7 @@ const {
   tabTitleSize: defaultTabTitleSize,
 } = initialGeneralSettings;
 
+
 // Store all the bad favIcons so we don't get loading jank if a favIcon !exist
 function clearChildren(node) {
   while (node.firstChild) {
@@ -59,11 +60,28 @@ function shouldWordBreak(str) {
   return longest > MAX_LENGTH;
 }
 
+function inlineOpts(setting) {
+  return Object.keys(initialColorSettings).reduce((acc, c) => {
+    if (setting[c] === initialColorSettings[c]) {
+      return acc;
+    }
+    return Object.assign({ [c]: setting[c] }, acc);
+  }, {});
+}
+
+const colorTypeMap = {
+  [TAB_TYPE]: 'tabColor',
+  [OTHER_WINDOW_TAB_TYPE]: 'otherWindowTabColor',
+  [SESSION_TYPE]: 'recentlyClosedTabColor',
+  [BOOKMARK_TYPE]: 'bookmarkColor',
+  [HISTORY_TYPE]: 'historyColor',
+};
+
 export function tabToTag(getState) {
-  const {
-    tabUrlSize,
-    tabTitleSize,
-  } = getState().general;
+  const { color: colorSettings } = getState();
+  const { tabUrlSize, tabTitleSize } = getState().general;
+  const inline = inlineOpts(colorSettings);
+  const assets = configureSvg(inline);
   return function doCreateTabObject(tab) {
     const {
       favIconUrl,
@@ -83,18 +101,28 @@ export function tabToTag(getState) {
     // Since favicon url of bookmarks isn't readily available,
     // check the type and assign all bookmarks to the static svg
     // for now.
+    const tabInline = {};
+    if (colorTypeMap[type] in inline) {
+      tabInline.borderColor = inline[colorTypeMap[type]];
+    }
     let favIconLink;
     switch (type) {
       case HISTORY_TYPE:
-        favIconLink = filledHistorySvg;
+        favIconLink = assets.historySvg;
         break;
       case BOOKMARK_TYPE:
-        favIconLink = filledBookmarkSvg;
+        favIconLink = assets.bookmarkSvg;
         break;
       default:
         favIconLink = isValidFavIconUrl ? favIconUrl : favIconFallback;
         break;
     }
+    const ctoOpts = {
+      tabInline,
+      tabUrlSize,
+      tabTitleSize,
+      wordBreak: shouldWordBreak(title),
+    };
     return createTabObject({
       id,
       url,
@@ -103,16 +131,19 @@ export function tabToTag(getState) {
       type,
       sessionId,
       windowId,
-      tabUrlSize,
-      tabTitleSize,
       mutedInfo,
       pinned,
       isActive,
       lastAccessed,
-    }, shouldWordBreak(title));
+    }, ctoOpts);
   };
 }
 
+// Opt keys:
+//   - wordBreak: bool
+//   - inline: obj
+//   - tabUrlSize
+//   - tabTitleSize
 function createTabObject({
   id,
   sessionId,
@@ -122,12 +153,16 @@ function createTabObject({
   favIconLink,
   windowId,
   lastAccessed,
-  tabUrlSize,
-  tabTitleSize,
   mutedInfo,
   pinned,
   isActive,
-}, wordBreak) {
+}, opts) {
+  const {
+    wordBreak,
+    tabInline,
+    tabUrlSize,
+    tabTitleSize,
+  } = opts;
   const dataId = sessionId || id;
   // Create the parent div
   // <div class="tab-object" data-id="${id}" tabIndex="0" data-type="tab" data-window="1">
@@ -135,6 +170,9 @@ function createTabObject({
   tabObjectNode.setAttribute('tabindex', '0');
   tabObjectNode.classList.add('tab-object');
   tabObjectNode.classList.add(type);
+  if (tabInline && tabInline.borderColor) {
+    tabObjectNode.style.borderColor = tabInline.borderColor;
+  }
   // Declare id used for switching
   tabObjectNode.setAttribute('data-id', dataId);
   // Declare data type to know what to paint

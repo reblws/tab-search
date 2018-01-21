@@ -1,17 +1,34 @@
+import rgb from 'rgb';
 import historySvg from 'static/assets/history-16.svg';
 import bookmarkSvg from 'static/assets/bookmark.svg';
 import { compose } from 'redux';
+import { initialColorSettings } from 'core/reducers/defaults';
+
+const {
+  bookmarkColor: defaultBookmarkColor,
+  historyColor: defaultHistoryColor,
+} = initialColorSettings;
 
 // Firefox doesnt like # signs in data uris so hex values are a no-go,
 // inline the rgb values instead so the colors show up.
-export const BOOKMARK_COLOR = 'rgba(54, 57, 89)';
-export const HISTORY_COLOR = 'rgb(68, 0, 113)';
+export const DEFAULT_BOOKMARK_COLOR = rgb(defaultBookmarkColor);
+export const DEFAULT_HISTORY_COLOR = rgb(defaultHistoryColor);
 
 const fillSvgUri = replaceAttr('fill');
 const strokeSvgUri = replaceAttr('stroke');
 
-export const filledHistorySvg = fillSvgUri(historySvg, HISTORY_COLOR);
-export const filledBookmarkSvg = fillAndStroke(bookmarkSvg, BOOKMARK_COLOR);
+export function configureSvg(inline) {
+  const historyColor = inline.historyColor
+    ? rgb(inline.historyColor)
+    : DEFAULT_HISTORY_COLOR;
+  const bookmarkColor = inline.bookmarkColor
+    ? rgb(inline.bookmarkColor)
+    : DEFAULT_BOOKMARK_COLOR;
+  return {
+    historySvg: fillSvgUri(historySvg, historyColor),
+    bookmarkSvg: fillAndStroke(bookmarkSvg, bookmarkColor),
+  };
+}
 
 function replaceAttr(key) {
   return function replace(uri, value) {
