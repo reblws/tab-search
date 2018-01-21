@@ -148,6 +148,10 @@ header {
   width: 2rem;
 }
 
+.tab-title.nowrap {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 /* Positioning for tab status indicators */
 /*
 Negative margins set to the height/width of relative positioned element
@@ -195,11 +199,19 @@ removes the extra space added by the pseudoelement
   visibility: visible;
 }
 
+.tab-object.pinned:hover .tab-object__delete-button {
+  visibility:hidden;
+}
+
 .tab-object .tab-object__delete-button {
   position: relative;
   visibility: hidden;
   margin-right: -16px;
   transform: translateX(calc(0.9 * var(--bodyWidth) - 8px));
+}
+
+.tab-object.nowrap .tab-title {
+  overflow-wrap: unset;
 }
 
 .no-result {
@@ -223,6 +235,7 @@ removes the extra space added by the pseudoelement
 
 .tab-object > .tab-info {
   flex: 1;
+  min-width: 0;
 }
 
 .tab-title {

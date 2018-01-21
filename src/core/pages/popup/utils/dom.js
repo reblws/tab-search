@@ -80,8 +80,14 @@ const colorTypeMap = {
 };
 
 export function tabToTag(getState) {
-  const { color: colorSettings, general: generalSettings } = getState();
-  const { tabUrlSize, tabTitleSize } = getState().general;
+  const { color: colorSettings } = getState();
+  const {
+    tabUrlSize,
+    tabTitleSize,
+    showRecentlyClosed,
+    showVisualDeleteTabButton,
+    oneLineTabTitles,
+  } = getState().general;
   const inline = inlineOpts(colorSettings);
   const assets = configureSvg(inline);
   return function doCreateTabObject(tab) {
@@ -123,7 +129,9 @@ export function tabToTag(getState) {
       tabInline,
       tabUrlSize,
       tabTitleSize,
-      showRecentlyClosed: generalSettings.showRecentlyClosed,
+      showRecentlyClosed,
+      oneLineTabTitles,
+      showVisualDeleteTabButton,
       wordBreak: shouldWordBreak(title),
     };
     return createTabObject({
@@ -165,6 +173,8 @@ function createTabObject({
     tabInline,
     tabUrlSize,
     tabTitleSize,
+    showVisualDeleteTabButton,
+    oneLineTabTitles,
   } = opts;
   const dataId = sessionId || id;
   // Create the parent div
@@ -206,8 +216,10 @@ function createTabObject({
   // INLINE tabTitleSize HERE
   const titleNode = d.createElement('div');
   titleNode.classList.add('tab-title');
-  if (wordBreak) {
+  if (wordBreak && !oneLineTabTitles) {
     titleNode.classList.add(WORDBREAK_ALL_CLASSNAME);
+  } else if (oneLineTabTitles) {
+    titleNode.classList.add('nowrap');
   }
   titleNode.appendChild(d.createTextNode(title));
   if (tabTitleSize !== defaultTabTitleSize) {
@@ -231,9 +243,10 @@ function createTabObject({
   }
 
   // Delete this tab!
-  if (type === OTHER_WINDOW_TAB_TYPE || type === TAB_TYPE) {
+  if (showVisualDeleteTabButton && (type === OTHER_WINDOW_TAB_TYPE || type === TAB_TYPE)) {
     const delBtn = d.createElement('img');
     delBtn.src = DEL_CIRCLE_SVG_PATH;
+    delBtn.title = 'Delete Tab';
     delBtn.classList.add(TAB_DELETE_BTN_CLASSNAME);
     tabObjectNode.appendChild(delBtn);
   }
