@@ -71,13 +71,15 @@ export function doFinalSideEffects(store) {
   // Give a shortcut hint
   updatePlaceholderTextWithShortcutHint()
     .catch((err) => {
-      throw new Error(`Can't update search input placeholder text! ${err}`);
+      console.error(err);
+      throw new Error(`Can't update search input placeholder text! ${err.stack}`);
     });
   // Populate the initial tab list here.
   // TODO: Add option for showing last query on popup
   populateTabList(updateSearchResults())
     .catch((err) => {
-      throw new Error(`Can't populate initial tabList. ${err}`);
+      console.error(err);
+      throw new Error(`Can't populate initial tabList. ${err.stack}`);
     });
 
 
