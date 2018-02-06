@@ -50,8 +50,10 @@ export function navigateResults(cmdKey, showRecentlyClosed) {
       removeHeadTabListNodeSelectedStyle();
       if (isSearchActive) {
         selectedTab.focus();
-      } else {
+      } else if (selectedTab.nextElementSibling) {
         selectedTab.nextElementSibling.focus();
+      } else { // If no nextElementSibling focus searchbar
+        searchInput.focus();
       }
       break;
     }
