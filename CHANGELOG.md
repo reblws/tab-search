@@ -2,11 +2,22 @@
 
 ## Todo
 
+- More mouse controls for tab management
+- Internationalization
+  + In progress
 - Move tabs
 - Focus active tab in list on popup initialization
 - Compact layout
 - Dark theme
 - Vertically centered overlay
+
+## 0.4.5 (2018-02-11)
+
+- Added graphical indicator for audible tabs
+- Fixed reload graphic not loading when reloading a tab
+- Changed <Tab> behavior to no longer focus the entire popup window after the last tab in entry
+- Use Photon icon for muted tabs
+- Improved error handling, if an error occurs during tab list generation, it logs the error to the console
 
 ## 0.4.4 (2018-01-21)
 
