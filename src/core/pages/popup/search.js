@@ -66,14 +66,39 @@ export default function filterResult(
     // If we want to move the closed tabs to the botttom filter it
     const shouldMoveClosedToBottom = showRecentlyClosed && recentAtBottom;
     const arrayToSearchP = [annotatedTabs];
+
+    // TODO: The error handling should be handled by a function that throws
+    //       in development and logs during production so nothing crashes
+    //       need to set up a section for logs and an option to store error logs
+    //       for the current session
     if (showHistory && hasMinQueryLen) {
-      arrayToSearchP.push(searchHistory(query).then(normalizeHistory));
+      arrayToSearchP.push(
+        searchHistory(query).then(normalizeHistory)
+          .catch((e) => {
+            console.error(`Had trouble searching history: ${e}`);
+            return [];
+          }),
+      );
     }
     if (showRecentlyClosed) {
-      arrayToSearchP.push(normalizeRecentlyClosedTabs(recentlyClosedLimit));
+      arrayToSearchP.push(
+        getRecentlyClosed(recentlyClosedLimit)
+          .then(normalizeRecentlyClosedTabs)
+          .catch((e) => {
+            console.error(`Had trouble getting recently closed tabs: ${e}`);
+            return [];
+          }),
+      );
     }
     if (showBookmarks && hasMinQueryLen) {
-      arrayToSearchP.push(searchBookmarks(query).then(normalizeBookmarks));
+      arrayToSearchP.push(
+        searchBookmarks(query)
+          .then(normalizeBookmarks)
+          .catch((e) => {
+            console.error(`Had trouble querying bookmarks: ${e}`);
+            return [];
+          }),
+      );
     }
     const arrayToSearch = Promise.all(arrayToSearchP).then(xs => xs.reduce(concat));
     let search;
@@ -142,11 +167,12 @@ function mostRecentlyUsed(a, b) {
 //        type: the typestring specified in constants
 //        id: retrieving this specific object should depend on this value
 //        lastAccessed: when was this guy last accessed
+//        url: link to the resource
 
 // Should normalize results to match a tabs.Tab object as closely as possible
 // https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/Tab
 
-function normalizeRecentlyClosedTabs(maxResults) {
+function normalizeRecentlyClosedTabs(results) {
   // No incognito please
   const annotateSession = annotateType(SESSION_TYPE);
   const filterIncognito = ({ incognito }) => !incognito;
@@ -164,7 +190,7 @@ function normalizeRecentlyClosedTabs(maxResults) {
       }
       return [...acc, annotateSession(session.tab)];
     }, []);
-  return getRecentlyClosed(maxResults).then(normalize);
+  return normalize(results);
 }
 
 function normalizeBookmarks(bookmarks) {
