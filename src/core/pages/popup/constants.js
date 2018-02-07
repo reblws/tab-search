@@ -17,6 +17,7 @@ export const BOOKMARK_TYPE = 'bookmark';
 export const HISTORY_TYPE = 'history';
 
 // css classnames
+export const AUDIBLE_CLASSNAME = 'audible';
 export const LOADER_CLASSNAME = 'loader';
 export const WORDBREAK_ALL_CLASSNAME = 'wordbreak-all';
 export const SELECTED_TAB_CLASSNAME = 'tab-object--selected';

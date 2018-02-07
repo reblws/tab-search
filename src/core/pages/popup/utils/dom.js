@@ -6,6 +6,7 @@ import {
   tabList,
   searchInput,
   d,
+  AUDIBLE_CLASSNAME,
   WORDBREAK_ALL_CLASSNAME,
   SELECTED_TAB_CLASSNAME,
   BOOKMARK_TYPE,
@@ -103,6 +104,7 @@ export function tabToTag(getState) {
       pinned,
       isActive,
       lastAccessed,
+      audible,
     } = tab;
     const isValidFavIconUrl = favIconUrl
       && !badFavIconCache().includes(favIconUrl);
@@ -146,6 +148,7 @@ export function tabToTag(getState) {
       pinned,
       isActive,
       lastAccessed,
+      audible,
     }, ctoOpts);
   };
 }
@@ -167,6 +170,7 @@ function createTabObject({
   mutedInfo,
   pinned,
   isActive,
+  audible,
 }, opts) {
   const {
     wordBreak,
@@ -255,6 +259,9 @@ function createTabObject({
   tabObjectNode.appendChild(tabInfoNode);
   if (pinned) {
     tabObjectNode.classList.add(TAB_PIN_CLASSNAME);
+  }
+  if (audible) {
+    tabObjectNode.classList.add(AUDIBLE_CLASSNAME);
   }
   if (mutedInfo && mutedInfo.muted) {
     tabObjectNode.classList.add(TAB_MUTED_CLASSNAME);
