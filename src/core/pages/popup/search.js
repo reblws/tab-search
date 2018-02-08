@@ -52,7 +52,7 @@ export default function filterResult(
     const isQueryEmpty = query.length === 0;
     const isSessionType = isOfType(SESSION_TYPE);
     const isOtherWindowTabType = isOfType(OTHER_WINDOW_TAB_TYPE);
-    const tabFilter = ({ id }) => !deletedTabsCache().includes(id);
+    const tabFilter = ({ id }) => !deletedTabsCache().has(id);
     // First filter any unwanted results
     const annotatedTabs = loadedTabs.filter(tabFilter).map(
       annotateTypeConditionally(

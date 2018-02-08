@@ -107,7 +107,7 @@ export function tabToTag(getState) {
       audible,
     } = tab;
     const isValidFavIconUrl = favIconUrl
-      && !badFavIconCache().includes(favIconUrl);
+      && !badFavIconCache().has(favIconUrl);
     // Since favicon url of bookmarks isn't readily available,
     // check the type and assign all bookmarks to the static svg
     // for now.
@@ -274,7 +274,7 @@ function createTabObject({
 }
 
 function handleBadSvg() {
-  badFavIconCache().push(this.src);
+  badFavIconCache().add(this.src);
   this.src = favIconFallback;
 }
 
