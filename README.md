@@ -6,7 +6,7 @@ Easy tab search & switching. This WebExtension provides a keyboard-accessible se
 
 [Get it from Mozilla Addons!](https://addons.mozilla.org/en-US/firefox/addon/tab_search/)
 
-![screenshot](https://user-images.githubusercontent.com/9971847/29625159-f34baa02-87f8-11e7-965d-a76d8262c643.png)
+![screenshot](https://user-images.githubusercontent.com/9971847/36081161-401e4af4-0f69-11e8-910f-ad89d44a7b5a.png)
 
 ## Shortcuts
 
