@@ -14,9 +14,9 @@ Easy tab search & switching. This WebExtension provides a keyboard-accessible se
 | --- | --- | --- |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> | <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> | Toggle extension |
 | <kbd>Enter</kbd> | | Open selected tab or first in list if not selected |
-| <kbd>&#8592;</kbd>| | Select next tab |
-| <kbd>&#8595;</kbd> | | Select previous tab |
-| <kbd>Ctrl</kbd> + <kbd>Backspace</kbd> / <kbd>Ctrl</kbd> + Click | <kbd>Cmd</kbd> + <kbd>Backspace</kbd> / <kbd>Cmd</kbd> + Click | Delete a tab |
+| <kbd>&#8593;</kbd> | | Select previous tab |
+| <kbd>&#8595;</kbd>| | Select next tab |
+| <kbd>Ctrl</kbd> + <kbd>Backspace</kbd> | <kbd>Cmd</kbd> + <kbd>Backspace</kbd> | Delete a tab |
 | <kbd>Alt</kbd> + <kbd>R</kbd> | | Refresh tab
 | <kbd>Alt</kbd> + <kbd>P</kbd> | | Pin tab
 | <kbd>Ctrl</kbd> + <kbd>C</kbd> | <kbd>Cmd</kbd> + <kbd>C</kbd> | Copy Tab URL
