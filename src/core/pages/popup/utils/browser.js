@@ -33,6 +33,9 @@ export function deleteTab(
   const { id } = elementToRemove.dataset;
   // Cache the deleted tabId since the current store passed into configureSearch
   // isn't updated with the latest tabs after tab deletion`
+  // Don't have to worry about removing it since the only way
+  // to restore a tab is by entering it -> which closes the
+  // popup and flushes the cache
   const tabId = parseInt(id, 10);
   if (!showRecentlyClosed) {
     removeElementFromTabList(elementToRemove, wasClicked);
@@ -41,7 +44,7 @@ export function deleteTab(
     // if we want to show recently closed tabs
     repaintElementWithType(elementToRemove, SESSION_TYPE);
   }
-  deletedTabsCache().push(tabId);
+  deletedTabsCache().add(tabId);
   browser.tabs.remove(tabId);
 }
 

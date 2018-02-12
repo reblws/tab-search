@@ -71,15 +71,14 @@ export function doFinalSideEffects(store) {
   // Give a shortcut hint
   updatePlaceholderTextWithShortcutHint()
     .catch((err) => {
-      console.error(err);
-      throw new Error(`Can't update search input placeholder text! ${err.stack}`);
+      // TODO: Find a place to put these error messages away so people can
+      //       c/p logged errors
+      console.error(`Can't update search input placeholder text! ${err.stack}`);
     });
   // Populate the initial tab list here.
-  // TODO: Add option for showing last query on popup
   populateTabList(updateSearchResults())
     .catch((err) => {
-      console.error(err);
-      throw new Error(`Can't populate initial tabList. ${err.stack}`);
+      console.error(`Can't populate initial tabList. ${err.stack}`);
     });
 
 

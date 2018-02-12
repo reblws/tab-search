@@ -50,8 +50,10 @@ export function navigateResults(cmdKey, showRecentlyClosed) {
       removeHeadTabListNodeSelectedStyle();
       if (isSearchActive) {
         selectedTab.focus();
-      } else {
+      } else if (selectedTab.nextElementSibling) {
         selectedTab.nextElementSibling.focus();
+      } else { // If no nextElementSibling focus searchbar
+        searchInput.focus();
       }
       break;
     }
@@ -80,12 +82,12 @@ export function navigateResults(cmdKey, showRecentlyClosed) {
       if (!isRegularTab(selectedTab.dataset)) {
         break;
       }
-      const selectedTabImg = selectedTab.querySelector('img');
+      const selectedTabImg = selectedTab.querySelector('.tab-img img');
       const originalFavIconSrc = selectedTabImg.src;
-      selectedTabImg.src = RELOAD_SVG_PATH;
+      selectedTabImg.setAttribute('src', RELOAD_SVG_PATH);
       reloadTab(id).then(() => {
         setTimeout(
-          () => { selectedTabImg.src = originalFavIconSrc; },
+          () => { selectedTabImg.setAttribute('src', originalFavIconSrc); },
           500,
         );
       });

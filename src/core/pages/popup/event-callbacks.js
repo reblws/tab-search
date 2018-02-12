@@ -1,5 +1,5 @@
 /* Main DOM event-handlers */
-import keyboard from 'core/keyboard';
+import keyboard, { TAB_NEXT } from 'core/keyboard';
 import {
   injectTabsInList,
   addHeadTabListNodeSelectedStyle,
@@ -93,6 +93,12 @@ export function keydownHandler(store) {
     // Handle preventing default
     // Delete, Backspace, Tab, ArrowUp, Arrowdown, Enter
     switch (event.key) {
+      case 'Tab':
+      //   // Change it so tab no longer focuses the entire popup window
+      //   // and behaves like a TAB_NEXT command
+      //   // This could break the tab-fix if the popup focus bug occurs
+      //   // so remove this if someone complains
+      //
       case 'ArrowUp':
       case 'ArrowDown':
       case 'Enter':
@@ -104,6 +110,9 @@ export function keydownHandler(store) {
       const cmd = keyboard.command(event);
       const key = [...kbdControlMap.keys()].find(x => keyboard.isEqual(x, cmd));
       return navigateResults(kbdControlMap.get(key), showRecentlyClosed);
+    }
+    if (event.key === 'Tab') {
+      return navigateResults(TAB_NEXT, showRecentlyClosed);
     }
     const shouldJustFocusSearchBar = (event.key === 'Backspace' && !isModifierSingle(event))
       || (/^([A-Za-z]|\d)$/.test(event.key) && !isModifierSingle(event));

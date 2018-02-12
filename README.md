@@ -6,7 +6,7 @@ Easy tab search & switching. This WebExtension provides a keyboard-accessible se
 
 [Get it from Mozilla Addons!](https://addons.mozilla.org/en-US/firefox/addon/tab_search/)
 
-![screenshot](https://user-images.githubusercontent.com/9971847/29625159-f34baa02-87f8-11e7-965d-a76d8262c643.png)
+![screenshot](https://user-images.githubusercontent.com/9971847/36081161-401e4af4-0f69-11e8-910f-ad89d44a7b5a.png)
 
 ## Shortcuts
 
@@ -14,9 +14,9 @@ Easy tab search & switching. This WebExtension provides a keyboard-accessible se
 | --- | --- | --- |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> | <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> | Toggle extension |
 | <kbd>Enter</kbd> | | Open selected tab or first in list if not selected |
-| <kbd>&#8592;</kbd>| | Select next tab |
-| <kbd>&#8595;</kbd> | | Select previous tab |
-| <kbd>Ctrl</kbd> + <kbd>Backspace</kbd> / <kbd>Ctrl</kbd> + Click | <kbd>Cmd</kbd> + <kbd>Backspace</kbd> / <kbd>Cmd</kbd> + Click | Delete a tab |
+| <kbd>&#8593;</kbd> | | Select previous tab |
+| <kbd>&#8595;</kbd>| | Select next tab |
+| <kbd>Ctrl</kbd> + <kbd>Backspace</kbd> | <kbd>Cmd</kbd> + <kbd>Backspace</kbd> | Delete a tab |
 | <kbd>Alt</kbd> + <kbd>R</kbd> | | Refresh tab
 | <kbd>Alt</kbd> + <kbd>P</kbd> | | Pin tab
 | <kbd>Ctrl</kbd> + <kbd>C</kbd> | <kbd>Cmd</kbd> + <kbd>C</kbd> | Copy Tab URL

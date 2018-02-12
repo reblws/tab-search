@@ -6,6 +6,7 @@ import {
   tabList,
   searchInput,
   d,
+  AUDIBLE_CLASSNAME,
   WORDBREAK_ALL_CLASSNAME,
   SELECTED_TAB_CLASSNAME,
   BOOKMARK_TYPE,
@@ -103,9 +104,10 @@ export function tabToTag(getState) {
       pinned,
       isActive,
       lastAccessed,
+      audible,
     } = tab;
     const isValidFavIconUrl = favIconUrl
-      && !badFavIconCache().includes(favIconUrl);
+      && !badFavIconCache().has(favIconUrl);
     // Since favicon url of bookmarks isn't readily available,
     // check the type and assign all bookmarks to the static svg
     // for now.
@@ -146,6 +148,7 @@ export function tabToTag(getState) {
       pinned,
       isActive,
       lastAccessed,
+      audible,
     }, ctoOpts);
   };
 }
@@ -167,6 +170,7 @@ function createTabObject({
   mutedInfo,
   pinned,
   isActive,
+  audible,
 }, opts) {
   const {
     wordBreak,
@@ -256,6 +260,9 @@ function createTabObject({
   if (pinned) {
     tabObjectNode.classList.add(TAB_PIN_CLASSNAME);
   }
+  if (audible) {
+    tabObjectNode.classList.add(AUDIBLE_CLASSNAME);
+  }
   if (mutedInfo && mutedInfo.muted) {
     tabObjectNode.classList.add(TAB_MUTED_CLASSNAME);
   }
@@ -267,7 +274,7 @@ function createTabObject({
 }
 
 function handleBadSvg() {
-  badFavIconCache().push(this.src);
+  badFavIconCache().add(this.src);
   this.src = favIconFallback;
 }
 

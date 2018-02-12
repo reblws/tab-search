@@ -1,6 +1,8 @@
 {
   "scripts": {
     "start": "npm run start:firefox",
+    "build": "npm run build:firefox",
+    "watch": "npm run watch:firefox",
     "start:firefox": "BROWSER=firefox NODE_ENV=development webpack --progress --colors --watch",
     "start:chrome": "BROWSER=chrome NODE_ENV=development webpack --progress --colors --watch",
     "build:firefox": "BROWSER=firefox NODE_ENV=production webpack && npm run lint:web-ext",

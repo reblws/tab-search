@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "TabSearch",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Easy tab search & switching",
   "permissions": [
     "tabs",

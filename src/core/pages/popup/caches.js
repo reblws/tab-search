@@ -1,9 +1,8 @@
 const cache = function getCache() {
-  const ary = [];
-  return () => ary;
+  const set = new Set();
+  return () => set;
 };
 
-// If a website doesn't have a favicon save that favicon's url here so a place
+// Stop loading jank if favicon doesn't exist
 export const badFavIconCache = cache();
-
 export const deletedTabsCache = cache();
