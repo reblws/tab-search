@@ -207,7 +207,7 @@ function createTabObject({
 
   const favIconNode = d.createElement('img');
   favIconNode.setAttribute('src', favIconLink);
-  favIconNode.onerror = handleBadSvg;
+  favIconNode.addEventListener('error', handleBadSvg);
 
   iconContainerNode.appendChild(favIconNode);
 
@@ -273,9 +273,9 @@ function createTabObject({
   return tabObjectNode;
 }
 
-function handleBadSvg() {
-  badFavIconCache().add(this.src);
-  this.src = favIconFallback;
+function handleBadSvg(event) {
+  badFavIconCache().add(event.currentTarget.src);
+  event.currentTarget.src = favIconFallback;
 }
 
 // Get focused node's position relative to the current scrolled view
@@ -399,3 +399,5 @@ export function selectNodeText(nodeToCopy) {
   range.selectNode(nodeToCopy);
   window.getSelection().addRange(range);
 }
+
+
