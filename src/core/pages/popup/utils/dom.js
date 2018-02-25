@@ -15,7 +15,6 @@ import {
   TAB_MUTED_CLASSNAME,
   TAB_ACTIVE_ID,
   OTHER_WINDOW_TAB_TYPE,
-  SESSION_TYPE,
   TAB_TYPE,
   DEL_CIRCLE_SVG_PATH,
   TAB_DELETE_BTN_CLASSNAME,
@@ -55,8 +54,8 @@ function clearChildren(node) {
 // Given a string, return true if one string is too long and should apply
 function shouldWordBreak(str) {
   const MAX_LENGTH = 40;
-  // eslint-disable-next-line arrow-body-style
-  const longestWordLength = (acc, s) => s.length > acc
+  // eslint-disable-next-line no-confusing-arrow
+  const longestWordLength = (acc, s) => (s.length > acc)
     ? s.length
     : acc;
   const longest = str.split(/\s/).reduce(longestWordLength, 0);
@@ -71,14 +70,6 @@ function inlineOpts(setting) {
     return Object.assign({ [c]: setting[c] }, acc);
   }, {});
 }
-
-const colorTypeMap = {
-  [TAB_TYPE]: 'tabColor',
-  [OTHER_WINDOW_TAB_TYPE]: 'otherWindowTabColor',
-  [SESSION_TYPE]: 'recentlyClosedTabColor',
-  [BOOKMARK_TYPE]: 'bookmarkColor',
-  [HISTORY_TYPE]: 'historyColor',
-};
 
 export function tabToTag(getState) {
   const { color: colorSettings } = getState();
@@ -111,10 +102,6 @@ export function tabToTag(getState) {
     // Since favicon url of bookmarks isn't readily available,
     // check the type and assign all bookmarks to the static svg
     // for now.
-    const tabInline = {};
-    if (colorTypeMap[type] in inline) {
-      tabInline.borderColor = inline[colorTypeMap[type]];
-    }
     let favIconLink;
     switch (type) {
       case HISTORY_TYPE:
@@ -128,7 +115,6 @@ export function tabToTag(getState) {
         break;
     }
     const ctoOpts = {
-      tabInline,
       tabUrlSize,
       tabTitleSize,
       showRecentlyClosed,
@@ -174,7 +160,6 @@ function createTabObject({
 }, opts) {
   const {
     wordBreak,
-    tabInline,
     tabUrlSize,
     tabTitleSize,
     showVisualDeleteTabButton,
@@ -187,9 +172,6 @@ function createTabObject({
   tabObjectNode.setAttribute('tabindex', '0');
   tabObjectNode.classList.add('tab-object');
   tabObjectNode.classList.add(type);
-  if (tabInline && tabInline.borderColor) {
-    tabObjectNode.style.borderColor = tabInline.borderColor;
-  }
   // Declare id used for switching
   tabObjectNode.setAttribute('data-id', dataId);
   // Declare data type to know what to paint
@@ -400,4 +382,15 @@ export function selectNodeText(nodeToCopy) {
   window.getSelection().addRange(range);
 }
 
+// This is dependent on the popup css file being called "index.css" exactly
+const popupCssStyleSheet = [...d.styleSheets].find(s => /index.css$/.test(s.href));
 
+export function setStyleSheetRule(selectorName, key, value) {
+  const rules = popupCssStyleSheet.cssRules;
+  const rule = [...rules].find(r => r.selectorText === selectorName);
+  if (!rule) {
+    console.error(`Can't find CSS Selector ${selectorName}`);
+    return;
+  }
+  rule.style.setProperty(key, value);
+}
