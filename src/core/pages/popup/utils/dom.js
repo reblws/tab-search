@@ -349,6 +349,8 @@ export function removeElementFromTabList(element, wasClicked) {
   }
 }
 
+// Changes both the type classname (for styling)
+// and the type prop in the dataset
 export function repaintElementWithType(element, typeToAdd) {
   const { type: typeToRemove } = element.dataset;
   element.classList.remove(typeToRemove);
@@ -393,4 +395,21 @@ export function setStyleSheetRule(selectorName, key, value) {
     return;
   }
   rule.style.setProperty(key, value);
+}
+
+// Finds the first element in tabList that has type
+// this should only be called if recently closed tabs are always shown at the
+// bottom of the tab list. If no recently recently closed tabs found,
+// returns undefined
+export function findLastElType(type, domNodes) {
+  let last;
+  // Iterate the array in reverse order
+  for (let i = domNodes.length - 1; i >= 0; i -= 1) {
+    const el = domNodes[i];
+    if (el.dataset.type !== type) {
+      return last;
+    }
+    last = el;
+  }
+  return last;
 }

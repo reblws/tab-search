@@ -36,7 +36,8 @@ import {
   RELOAD_SVG_PATH,
 } from '../constants';
 
-export function navigateResults(cmdKey, showRecentlyClosed) {
+export function navigateResults(cmdKey, getState) {
+  const generalSettings = getState().general;
   const isNoResult = !!d.getElementById(NO_RESULT_CLASSNAME) || tabList.children.length === 0;
   const isSearchActive = d.activeElement === searchInput;
   const selectedTab = !isSearchActive
@@ -71,7 +72,7 @@ export function navigateResults(cmdKey, showRecentlyClosed) {
       if (!isRegularTab(selectedTab.dataset) || isSearchActive) {
         break;
       }
-      deleteTab(selectedTab, showRecentlyClosed);
+      deleteTab(selectedTab, generalSettings);
       break;
     }
     case TAB_OPEN: {
@@ -159,7 +160,7 @@ export function navigateResults(cmdKey, showRecentlyClosed) {
         const domNodes = duplicateTabs[key];
         domNodes.forEach((domNode, index) => {
           if (index !== 0) {
-            deleteTab(domNode, showRecentlyClosed);
+            deleteTab(domNode, generalSettings);
           }
         });
       });
