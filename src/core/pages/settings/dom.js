@@ -10,6 +10,7 @@ import {
   updateNumber,
   resetSetting,
   updateColor,
+  updateSecondaryKeybinding,
 } from './actions';
 import * as Flash from './flash';
 import {
@@ -78,29 +79,49 @@ export function initKeybindingTable(store) {
   });
 
   let prevState = keyboardState;
+  // TODO: Fix flashing multiple changes (i.e. clicks reset to default)
   function keyBindingSubscription() {
-    const compareCommands = (x, y) => keyboard.isEqual(x.command, y.command);
+    const compareCommands = (x, y) => keyboard.isEqual(x.command, y.command)
+      && keyboard.isEqual(x.secondaryCommand, y.secondaryCommand);
     const selectKbd = state => state().keyboard;
     const newState = selectKbd(store.getState);
-
+    const not = predicate => (...args) => !predicate(...args);
     diffStateKeys(prevState, newState, compareCommands)
       .forEach((key) => {
-        const { command: oldCommand } = prevState[key];
-        const { name, command: newCommand } = newState[key];
-        const msg = `
-          ${name} shortcut updated: <${kbString(oldCommand)}> changed to <${kbString(newCommand)}>
+        const {
+          command: oldCommand,
+          secondaryCommand: oldSecondaryCommand,
+        } = prevState[key];
+        const {
+          name,
+          command: newCommand,
+          secondaryCommand: newSecondaryCommand,
+        } = newState[key];
+        const msg = (oldC, newC) => `
+          ${name} shortcut updated: <${kbString(oldC)}> changed to <${kbString(newC)}>
         `;
-        updateTableRow(key, kbString(newCommand));
-        Flash.message(msg, Flash.OK, false);
+        const changed = [
+          [oldCommand, newCommand],
+          [oldSecondaryCommand, newSecondaryCommand],
+        ].filter(not(keyboard.isEqual));
+        changed.forEach(([prev, next], i) => {
+          if (i === 0) {
+            Flash.message(msg(prev, next), Flash.OK);
+          } else {
+            Flash.append(msg(prev, next));
+          }
+        });
+        updateTableRow(key, kbString(newCommand), kbString(newSecondaryCommand));
       });
     prevState = newState;
   }
 }
 
-// Object containing input ids and their corresponding nodes
+// Object containing input ids and their Handlerscorresponding nodes
 function findInputs() {
   return [...document.querySelectorAll('input')]
-    .filter(({ id }) => Object.keys(reducerMap).includes(id)) // Filter out all inputs who arent in charge of a setting
+    // Filter out all inputs who arent in charge of a setting
+    .filter(({ id }) => id in reducerMap)
     .reduce((acc, node) => Object.assign({}, acc, { [node.id]: node }), {});
 }
 // Given the setting object and the location we want to search, return the
@@ -216,16 +237,27 @@ function diffStateKeys(obj1, obj2, compare) {
 
 // Given the entire keyboard-shortcut state, return an array of <tr> nodes
 function stateToTableRows(keyboardState, handlers, kbString) {
-  return Object.keys(keyboardState)
-    .map(key => commandToTableRow(keyboardState[key], handlers, kbString));
+  const toRow = key => commandToTableRow(
+    keyboardState[key],
+    handlers,
+    kbString,
+  );
+  return Object.keys(keyboardState).map(toRow);
 }
 
 // Given a row id and the table node, update that row's input node to
 // display the given value
-function updateTableRow(id, value) {
-  const input = d.getElementById(id).querySelector('input');
-  input.defaultValue = value;
-  input.value = value;
+function updateTableRow(id, primaryShortcut, secondaryShortcut) {
+  // Update both values at a time, even if one doesn't change
+  // This selector works as long as there are exactly 2 inputs
+  const inputs = d.getElementById(id).querySelectorAll('input');
+  inputs.forEach((input) => {
+    const value = input.dataset.key === 'command'
+      ? primaryShortcut
+      : secondaryShortcut;
+    input.defaultValue = value;
+    input.value = value;
+  });
 }
 
 /* Output:
@@ -234,7 +266,10 @@ function updateTableRow(id, value) {
     {NAME}
   </td>
   <td>
-    <input type="text" value={string(command)}>
+    <input type="text" value={string(command)} data-key="command">
+  </td>
+  <td>
+    <input type="text" value={string(command)} data-key="secondaryCommand">
   </td>
   <td>
     {description}
@@ -243,7 +278,11 @@ function updateTableRow(id, value) {
 */
 // Given an object from the keyboard reducer, output a table row
 // for insertion into the settings page
-function commandToTableRow({ key, name, command, description }, handlers, kbString) {
+function commandToTableRow(
+  { key, name, command, secondaryCommand, description },
+  handlers,
+  kbString,
+) {
   const trNode = d.createElement('tr');
   trNode.setAttribute('id', key);
 
@@ -252,26 +291,53 @@ function commandToTableRow({ key, name, command, description }, handlers, kbStri
   tdNameNode.appendChild(d.createTextNode(name));
 
   const tdShortcutNode = d.createElement('td');
-  tdShortcutNode.classList.add(SHORTCUT_TABLE_SHORTCUT);
+  const tdSecondaryShortcutNode = d.createElement('td');
+  const tds = [tdShortcutNode, tdSecondaryShortcutNode];
+  tds.forEach((node) => {
+    node.classList.add(SHORTCUT_TABLE_SHORTCUT);
+  });
 
-  const inputShortcutNode = d.createElement('input');
-  inputShortcutNode.setAttribute('type', 'text');
-  inputShortcutNode.classList.add(SHORTCUT_TABLE_INPUT);
-  inputShortcutNode.value = kbString(command);
-  inputShortcutNode.defaultValue = kbString(command);
-
-  // Attach event listeners
-  inputShortcutNode.addEventListener('blur', handlers.onInputBlur);
-  inputShortcutNode.addEventListener('focus', handlers.onInputFocus);
-
-  // Input goes inside shortcut td node
-  tdShortcutNode.appendChild(inputShortcutNode);
+  // Shortcut input handlers
+  // The secondaryInputNode should have the special property of being
+  // deleteable, if deleted it should show 'No Shortcut Set'.
+  // In the future, we might want to make both shortcuts deletable.
+  // This would require making the secondary shortcut shift up to the
+  // primary shortcuts position.
+  const primaryInputNode = [d.createElement('input'), 'command'];
+  const secondaryInputNode = [d.createElement('input'), 'secondaryCommand'];
+  const inputs = [primaryInputNode, secondaryInputNode];
+  inputs.forEach(([node, commandKey]) => {
+    const isPrimary = commandKey !== 'secondaryCommand';
+    node.setAttribute('type', 'text');
+    node.classList.add(SHORTCUT_TABLE_INPUT);
+    if (isPrimary) {
+      node.value = kbString(command);
+      node.defaultValue = kbString(command);
+    } else {
+      // Secondary case
+      node.value = kbString(secondaryCommand);
+      node.defaultValue = kbString(secondaryCommand);
+    }
+    node.dataset.key = commandKey;
+    node.addEventListener('blur', handlers.onInputBlur);
+    node.addEventListener('focus', handlers.onInputFocus);
+    if (isPrimary) {
+      tdShortcutNode.appendChild(node);
+    } else {
+      tdSecondaryShortcutNode.append(node);
+    }
+  });
 
   const tdShortcutDescriptionNode = d.createElement('td');
   tdShortcutDescriptionNode.classList.add(SHORTCUT_TABLE_DESCRIPTION);
   tdShortcutDescriptionNode.appendChild(d.createTextNode(description));
 
-  const trChildren = [tdNameNode, tdShortcutNode, tdShortcutDescriptionNode];
+  const trChildren = [
+    tdNameNode,
+    tdShortcutNode,
+    tdSecondaryShortcutNode,
+    tdShortcutDescriptionNode,
+  ];
   for (let i = 0; i < trChildren.length; i += 1) {
     const child = trChildren[i];
     trNode.appendChild(child);
@@ -280,36 +346,38 @@ function commandToTableRow({ key, name, command, description }, handlers, kbStri
 }
 
 function keybindInputHandlers(store, kbString) {
+  const onInputFocus = (event) => {
+    event.currentTarget.value = 'Enter your shortcut...';
+    event.currentTarget.addEventListener('keydown', onInputKeydown);
+    return event;
+  };
+  // On blur we'll probably flash the last error message if it wasn't a valid key
+  const onInputBlur = (event) => {
+    event.currentTarget.removeEventListener('keydown', onInputKeydown);
+    event.currentTarget.value = event.currentTarget.defaultValue;
+  };
+
   return {
     onInputFocus,
     onInputBlur,
   };
 
-  function onInputFocus(event) {
-    event.currentTarget.value = 'Enter your shortcut...';
-    event.currentTarget.addEventListener('keydown', onInputKeydown);
-    return event;
-  }
-
-  // On blur we'll probably flash the last error message if it wasn't a valid key
-  function onInputBlur(event) {
-    event.currentTarget.removeEventListener('keydown', onInputKeydown);
-    event.currentTarget.value = event.currentTarget.defaultValue;
-  }
-
   function isDuplicateCommand(state, command) {
     const key = Object.values(state)
-      .find(k => keyboard.isEqual(k.command, command));
+      .find(k => keyboard.isEqual(k.command, command)
+        || keyboard.isEqual(k.secondaryCommand, command),
+      );
+
     if (key) {
       return { key, isDuplicate: true };
     }
+
     return { isDuplicate: false };
   }
 
   // Handles incoming new commands
   function onInputKeydown(event) {
     event.preventDefault();
-
     const { id: parentId } = event.currentTarget.parentElement.parentElement;
     const command = keyboard.command(event);
     const isValid = keyboard.isValid(command);
@@ -326,7 +394,12 @@ function keybindInputHandlers(store, kbString) {
         // Stop input reset race
         event.currentTarget.blur();
         Flash.close();
-        store.dispatch(updateKeybinding(parentId, command));
+        // Actually update the store with the new binding here
+        const updateBinding =
+          event.currentTarget.dataset.key === 'secondaryCommand'
+            ? updateSecondaryKeybinding
+            : updateKeybinding;
+        store.dispatch(updateBinding(parentId, command));
       }
     } else {
       // Then it's an error
