@@ -20,7 +20,6 @@
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "redux-persist": "^5.9.1",
-    "redux-thunk": "^2.2.0",
     "redux-webext": "^1.1.2",
     "rgb": "^0.1.0"
   },
