@@ -14,6 +14,9 @@ const persistConfig = {
   serialize: false,
   blacklist: ['state'],
   stateReconciler: autoMergeLevel2,
+  // Unversioned configs are set to -1 by default
+  // TODO: Write migrations
+  version: 0,
 };
 
 
