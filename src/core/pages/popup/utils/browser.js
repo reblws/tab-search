@@ -13,10 +13,16 @@ import { decodeUrl } from './url';
 
 export function addTabsToPromiseChain(store) {
   const { getState } = store;
-  const { searchAllWindows } = getState().general;
+  const {
+    searchAllWindows,
+    ignorePinnedTabs,
+  } = getState().general;
   const tabQueryOptions = {};
   if (!searchAllWindows) {
     tabQueryOptions.currentWindow = true;
+  }
+  if (ignorePinnedTabs) {
+    tabQueryOptions.pinned = false;
   }
   const tabQueryPromise = () => queryTabs(tabQueryOptions);
   return Object.assign({}, store, { tabQueryPromise });

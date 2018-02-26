@@ -19,6 +19,7 @@ export const initialFuzzySettings = {
 };
 
 export const initialGeneralSettings = {
+  ignorePinnedTabs: false,
   oneLineTabTitles: false,
   showVisualDeleteTabButton: true,
   showHistory: false,
