@@ -11,6 +11,9 @@ const isKeyModifier = m =>
 
 // Returns a string representation of a kbdCommand
 export function kbdCommandToString(input, isMac = false) {
+  if (input === null) {
+    return '∅'; // TODO: Put this message string somewhere else
+  }
   if (typeof input === 'string') {
     return input;
   }
