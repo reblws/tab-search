@@ -1,4 +1,9 @@
-import { KEYBINDING_UPDATE, KEYBINDING_DEFAULT_RESET } from 'core/actions/types';
+import {
+  KEYBINDING_UPDATE,
+  KEYBINDING_DEFAULT_RESET,
+  SECONDARY_KEYBINDING_REMOVE,
+  SECONDARY_KEYBINDING_UPDATE,
+} from 'core/actions/types';
 import { defaultCommands } from './defaults';
 
 export default function keyboardConfigReducer(
@@ -7,12 +12,18 @@ export default function keyboardConfigReducer(
 ) {
   const { type } = action;
   switch (type) {
+    case SECONDARY_KEYBINDING_REMOVE:
+    case SECONDARY_KEYBINDING_UPDATE:
     case KEYBINDING_UPDATE: {
+      const commandKey = type === KEYBINDING_UPDATE
+        ? 'command'
+        : 'secondaryCommand';
       const { key, value } = action.payload;
       return Object.assign(
         {},
         state,
-        { [key]: Object.assign({}, state[key], { command: value }) },
+        // If value is falsey then we must be on SECONDARY_KEYBINDING_REMOVE
+        { [key]: Object.assign({}, state[key], { [commandKey]: value || null }) },
       );
     }
     case KEYBINDING_DEFAULT_RESET:

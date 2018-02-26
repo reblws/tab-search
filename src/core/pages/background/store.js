@@ -10,36 +10,29 @@ import {
   NUMBER_UPDATE,
   LAST_QUERY_UPDATE,
   KEYBINDING_UPDATE,
+  SECONDARY_KEYBINDING_UPDATE,
+  SECONDARY_KEYBINDING_REMOVE,
   KEYBINDING_DEFAULT_RESET,
   COLOR_UPDATE,
 } from 'core/actions/types';
-import {
-  updateCheckbox,
-  updateFuzzyCheckbox,
-  updateFuzzyRange,
-  updateFuzzySearchKeys,
-  updateNumber,
-  resetSettings,
-  updateLastQuery,
-  updateKeybinding,
-  resetDefaultKeybindings,
-  resetSetting,
-  updateColor,
-} from 'core/actions';
+
+const identity = x => x;
 
 export default createBackgroundStore({
   store,
   actions: {
-    [FUZZY + CHECKBOX_UPDATE]: updateFuzzyCheckbox,
-    [FUZZY + RANGE_UPDATE]: updateFuzzyRange,
-    [FUZZY + SEARCH_KEY_UPDATE]: updateFuzzySearchKeys,
-    [CHECKBOX_UPDATE]: updateCheckbox,
-    [SETTINGS_RESET]: resetSettings,
-    [NUMBER_UPDATE]: updateNumber,
-    [LAST_QUERY_UPDATE]: updateLastQuery,
-    [KEYBINDING_UPDATE]: updateKeybinding,
-    [KEYBINDING_DEFAULT_RESET]: resetDefaultKeybindings,
-    [SETTING_RESET]: resetSetting,
-    [COLOR_UPDATE]: updateColor,
+    [FUZZY + CHECKBOX_UPDATE]: identity,
+    [FUZZY + RANGE_UPDATE]: identity,
+    [FUZZY + SEARCH_KEY_UPDATE]: identity,
+    [CHECKBOX_UPDATE]: identity,
+    [SETTINGS_RESET]: identity,
+    [NUMBER_UPDATE]: identity,
+    [LAST_QUERY_UPDATE]: identity,
+    [KEYBINDING_UPDATE]: identity,
+    [KEYBINDING_DEFAULT_RESET]: identity,
+    [SETTING_RESET]: identity,
+    [COLOR_UPDATE]: identity,
+    [SECONDARY_KEYBINDING_UPDATE]: identity,
+    [SECONDARY_KEYBINDING_REMOVE]: identity,
   },
 });
