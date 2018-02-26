@@ -61,10 +61,27 @@ export function clearInput(event) {
   tabList.childNodes[0].focus();
 }
 
+// Merges maps into the one specified in target
+function mapAssign(target, ...sources) {
+  return sources.reduce(
+    (acc, map) => {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const [key, value] of map) {
+        acc.set(key, value);
+      }
+      return acc;
+    },
+    target,
+  );
+}
+
 // Given an object returns a Map with the keys and values swapped
-function swapKeyValueMap(obj, func = x => x) {
+function swapKeyValueMap(obj, f = x => x) {
   return Object.keys(obj)
-    .reduce((acc, key) => acc.set(func(obj[key]), key), new Map());
+    .reduce(
+      (acc, key) => (f(obj[key]) ? acc.set(f(obj[key]), key) : acc),
+      new Map(),
+    );
 }
 
 function isModifierSingle(event) {
@@ -84,7 +101,10 @@ export function keydownHandler(store) {
   // The keyboard object is an object with the mapping { [ACTION]: kbdcommand }
   // Mirror the keys and values so we have a Map:
   // {[kbdCommand]: ACTION}
-  const kbdControlMap = swapKeyValueMap(keyboardControls, x => x.command);
+  const kbdControlMap = mapAssign(
+    swapKeyValueMap(keyboardControls, x => x.command),
+    swapKeyValueMap(keyboardControls, x => x.secondaryCommand),
+  );
   return function handleKeyDown(event) {
     if (isModifierSingle(event)) {
       event.preventDefault();
