@@ -100,7 +100,7 @@ function kbdCommandEvent(event) {
   return makeKbdCommandFromEvent(event);
 }
 
-const isSingleKey = c => (!c.ctrlKey && !c.shiftKey && !c.altKey);
+const isSingleKey = c => (!c.ctrlKey && !c.shiftKey && !c.altKey && !c.metaKey);
 const isFinalKeyModifier = c => c.key === CONTROL
   || c.key === CTRL
   || c.key === META
