@@ -9,6 +9,13 @@ import {
 const isKeyModifier = m =>
   m === CONTROL || m === ALT || m === META || m === CTRL || m === SHIFT;
 
+const ARROW_UNICODE_MAP = {
+  ArrowLeft: '←',
+  ArrowUp: '↑',
+  ArrowRight: '→',
+  ArrowDown: '↓',
+};
+
 // Returns a string representation of a kbdCommand
 export function kbdCommandToString(input, isMac = false) {
   if (input === null) {
@@ -39,8 +46,10 @@ export function kbdCommandToString(input, isMac = false) {
     stringParts.push('Alt');
   }
 
-  if (!isKeyModifier(key)) {
+  if (!isKeyModifier(key) && !(key in ARROW_UNICODE_MAP)) {
     stringParts.push(key.length === 1 ? key.toUpperCase() : key);
+  } else {
+    stringParts.push(ARROW_UNICODE_MAP[key]);
   }
 
   return stringParts.join(' + ');
