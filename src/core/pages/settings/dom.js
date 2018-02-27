@@ -79,7 +79,6 @@ export function initKeybindingTable(store) {
   });
 
   let prevState = keyboardState;
-  // TODO: Fix flashing multiple changes (i.e. clicks reset to default)
   function keyBindingSubscription() {
     const compareCommands = (x, y) => keyboard.isEqual(x.command, y.command)
       && keyboard.isEqual(x.secondaryCommand, y.secondaryCommand);
@@ -104,13 +103,9 @@ export function initKeybindingTable(store) {
           [oldCommand, newCommand],
           [oldSecondaryCommand, newSecondaryCommand],
         ].filter(not(keyboard.isEqual));
-        changed.forEach(([prev, next], i) => {
-          if (i === 0) {
-            Flash.message(msg(prev, next), Flash.OK);
-          } else {
-            Flash.append(msg(prev, next));
-          }
-        });
+        // Flash each shortcut changed
+        const appendOkFlash = ([prev, next]) => Flash.appendOk(msg(prev, next));
+        changed.forEach(appendOkFlash);
         updateTableRow(key, kbString(newCommand), kbString(newSecondaryCommand));
       });
     prevState = newState;

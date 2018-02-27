@@ -23,6 +23,10 @@ export function append(msg) {
   return message(msg, null, false, false);
 }
 
+export function appendOk(msg) {
+  return message(msg, OK, false);
+}
+
 export function message(msg, type = OK, shouldClear = true, shouldUpdateStyle = true) {
   if (typeof msg === 'object' && !Array.isArray(msg)) {
     console.error('Got a msg object but it wasn\'t an array! msg should be an string or an array.');
