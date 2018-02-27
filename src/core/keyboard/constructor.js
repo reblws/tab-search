@@ -15,22 +15,19 @@ import {
 } from './regex';
 import puncCodeMap from './punc-code-map.json';
 
-// On macs the metaKey is triggered. We want them to be treated equivalently?
-// So the value of the ctrlKey property should be (ctrlKey || metaKey
 const modifierPropsMap = {
   [CTRL]: 'ctrlKey',
   [ALT]: 'altKey',
   [SHIFT]: 'shiftKey',
-  [META]: 'ctrlKey', // Point meta key to ctrl key
+  [META]: 'metaKey',
 };
-
-// const modifiersArray = Object.keys(modifierPropsMap);
 
 const protoKbdCommand = {
   key: null,
   ctrlKey: false,
   altKey: false,
   shiftKey: false,
+  metaKey: false,
 };
 
 // Returns a bool indicating whether this input is valid
@@ -56,8 +53,7 @@ export function kbdCommand(input) {
     return kbdCommandEvent(input);
   }
   throw new TypeError(
-    "Command input isn't the right type. KbdCommand requires a valid command\
-    string or object",
+    "Command input isn't the right type. KbdCommand requires a valid command string or object",
   );
 }
 
@@ -120,7 +116,8 @@ function makeKbdCommandFromEvent({
 }) {
   const command = {
     key: capitalizeFirstLetter(key),
-    ctrlKey: ctrlKey || metaKey,
+    ctrlKey,
+    metaKey,
     altKey,
     shiftKey,
   };

@@ -12,28 +12,36 @@ const isKeyModifier = m =>
 // Returns a string representation of a kbdCommand
 export function kbdCommandToString(input, isMac = false) {
   if (input === null) {
-    return '∅'; // TODO: Put this message string somewhere else
+    return '∅';
   }
   if (typeof input === 'string') {
     return input;
   }
-  const { key, ctrlKey, altKey, shiftKey } = input;
+  const { key, ctrlKey, altKey, shiftKey, metaKey } = input;
   const stringParts = [];
-  // Show command if isMac
-  if (ctrlKey && isMac) {
+  // Show Cmd if isMac
+  // Win is more recognizable than Meta
+  if (metaKey && isMac) {
     stringParts.push('Cmd');
-  } else if (ctrlKey) {
+  } else if (metaKey) {
+    stringParts.push('Win');
+  }
+
+  if (ctrlKey) {
     stringParts.push('Ctrl');
   }
 
   if (shiftKey) {
     stringParts.push('Shift');
   }
+
   if (altKey) {
     stringParts.push('Alt');
   }
+
   if (!isKeyModifier(key)) {
     stringParts.push(key.length === 1 ? key.toUpperCase() : key);
   }
+
   return stringParts.join(' + ');
 }
