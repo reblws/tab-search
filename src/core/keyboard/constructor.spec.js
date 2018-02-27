@@ -2,7 +2,6 @@ import {
   alphanumerics,
   BACKSPACE,
   modifiers,
-  shiftedValues,
 } from './__test__/keys';
 import {
   kbdCommand,
@@ -11,11 +10,12 @@ import {
 import {
   defaultCommands,
 } from './defaults';
+import { kbdCommandToString } from './to-string';
 import * as constants from './constants';
 import * as e from './__test__/events';
 
 const singleKey = key =>
-  ({ key, ctrlKey: false, altKey: false, shiftKey: false });
+  ({ key, ctrlKey: false, altKey: false, shiftKey: false, metaKey: false });
 describe('keyboard.constructor', function () {
   describe('kbdCommand', function () {
     describe('string inputs', function () {
@@ -40,58 +40,61 @@ describe('keyboard.constructor', function () {
           ctrlKey: true,
           altKey: false,
           shiftKey: false,
+          metaKey: false,
         });
         expect(kbdCommand('Alt+ArrowUp')).to.deep.equal({
           key: 'ArrowUp',
           ctrlKey: false,
           altKey: true,
           shiftKey: false,
+          metaKey: false,
         });
       });
       it('should interpret multiple modifiers properly', function () {
         expect(kbdCommand('Meta+Shift+F')).to.deep.equal({
           key: 'F',
-          ctrlKey: true,
+          ctrlKey: false,
           shiftKey: true,
           altKey: false,
+          metaKey: true,
         });
         expect(kbdCommand('Ctrl+Alt+Z')).to.deep.equal({
           key: 'Z',
           ctrlKey: true,
           shiftKey: false,
           altKey: true,
+          metaKey: false,
         });
         expect(kbdCommand('Alt+Shift+`')).to.deep.equal({
           key: '`',
           ctrlKey: false,
           shiftKey: true,
           altKey: true,
+          metaKey: false,
         });
       });
-      it('should interpret meta keys as a ctrl', function () {
-        expect(kbdCommand('Meta+Z')).to.deep.equal(kbdCommand('Ctrl+Z'));
+      it('should NOT interpret meta keys as a ctrl', function () {
+        const metaZ = kbdCommand('Meta+Z');
+        expect(metaZ).to.not.deep.equal(kbdCommand('Ctrl+Z'));
         expect(
           kbdCommand('Meta+Ctrl+Z'),
-        ).to.deep.equal(kbdCommand('Ctrl+Z'));
+        ).to.not.deep.equal(kbdCommand('Ctrl+Z'));
+        expect(metaZ).to.deep.equal({
+          key: 'Z',
+          ctrlKey: false,
+          shiftKey: false,
+          altKey: false,
+          metaKey: true,
+        });
       });
 
       describe('default keybindings', function () {
-        const defaultBindings = [
-          'Ctrl+Backspace',
-          'Enter',
-          'ArrowUp',
-          'ArrowDown',
-          'ArrowRight',
-          'ArrowLeft',
-          'Alt+R',
-          'Alt+P',
-          'Alt+C',
-          'Alt+B',
-          'Alt+Shift+D',
-        ];
+        const defaultBindings =
+          Object.values(defaultCommands)
+            .map(x => x.command);
         for (const binding of defaultBindings) {
-          it(`should have no errors on ${binding}`, function () {
-            expect(kbdCommand(binding).error).to.be.undefined;
+          it(`should have no errors on ${kbdCommandToString(binding)}`, function () {
+            expect(kbdCommand(binding)).to.not.have.property('error');
           });
         }
       });
@@ -107,6 +110,7 @@ describe('keyboard.constructor', function () {
           ctrlKey: true,
           shiftKey: true,
           altKey: false,
+          metaKey: false,
         });
       });
       it('should handle Ctrl+`', function () {
@@ -115,24 +119,24 @@ describe('keyboard.constructor', function () {
           ctrlKey: true,
           shiftKey: false,
           altKey: false,
+          metaKey: false,
         });
       });
-      it('should treat meta the same as Ctrl', function () {
-        expect(kbdCommand(e.eventMeta1)).to.deep.equal({
-          key: '1',
-          ctrlKey: true,
-          shiftKey: false,
-          altKey: false,
-        });
-        expect(kbdCommand(e.eventCtrl1)).to.deep.equal(kbdCommand(e.eventMeta1));
+      it('should NOT treat Meta the same as Ctrl', function () {
+        expect(kbdCommand(e.eventCtrl1))
+          .to.not.deep.equal(kbdCommand(e.eventMeta1));
+      });
+      it('should not have errors on meta', function () {
+        expect(kbdCommand(e.eventMeta1)).to.not.have.property('error');
       });
       it('should allow a valid single key <[>', function () {
-        expect(kbdCommand(e.eventBracketLeft).error).be.undefined;
+        expect(kbdCommand(e.eventBracketLeft)).to.not.have.property('error');
         expect(kbdCommand(e.eventBracketLeft)).to.deep.equal({
           key: '[',
           ctrlKey: false,
           shiftKey: false,
           altKey: false,
+          metaKey: false,
         });
       });
       it('should allow a valid single key <Enter>', function () {
@@ -143,30 +147,13 @@ describe('keyboard.constructor', function () {
         expect(kbdCommand(e.eventG).error).to.not.be.undefined;
       });
     });
-    describe('interpreting shifted values', function () {
-      const shiftedValueKeys = Object.keys(shiftedValues);
-      it('should treu', function () {
-        expect(true).to.be.true;
-      });
-      for (let i = 0; i < shiftedValueKeys; i++) {
-        const shiftedValue = shiftedValueKeys[i];
-        const {
-          code,
-          string: unshiftedValue,
-        } = shiftedValues[shiftedValue];
-        const shiftPlus = key => ({
-          key,
-          code,
-          shiftKey: true,
-        });
-        it(`should show ${unshiftedValue} when event.code = ${code}`, function () {
-          expect(kbdCommand(shiftPlus(shiftedValue))).to.have.property('key', 'a');
-        });
-      }
-    });
   });
   describe('isValidKbdCommand', function () {
-    describe('defaults', function () {
+    it('should reject null inputs', function () {
+      expect(isValidKbdCommand(null)).to.be.false;
+    });
+
+    describe('all reducer defaults pass true', function () {
       const commands = Object.values(defaultCommands);
       for (const command of commands) {
         it(`should return true for ${command.key}`, function () {
@@ -180,12 +167,14 @@ describe('keyboard.constructor', function () {
           const ctrlKey = /ctrl/i.test(m);
           const shiftKey = /shift/i.test(m);
           const altKey = /alt/i.test(m);
+          const metaKey = /meta/i.test(m);
           it(`should return false for ${m}`, function () {
             expect(isValidKbdCommand({
               key: m,
               ctrlKey,
               shiftKey,
               altKey,
+              metaKey,
             })).to.be.false;
           });
         }

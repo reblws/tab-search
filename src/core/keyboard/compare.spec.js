@@ -1,4 +1,5 @@
 import { compareKbdCommand } from './compare';
+
 describe('compareKbdCommand', function () {
   it('should return true for two separate but equal objects', function () {
     const c1 = {
