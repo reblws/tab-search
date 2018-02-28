@@ -11,7 +11,7 @@ Easy tab search & switching. This WebExtension provides a keyboard-accessible se
 ## Shortcuts
 
 | Shortcut | Description |
-| --- | --- | --- |
+| --- | --- |
 | Win/Linux: <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> / Mac: <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> | Toggle extension |
 | <kbd>Enter</kbd> | Open selected tab or first in list if not selected |
 | <kbd>&#8593;</kbd> | Select previous tab |
