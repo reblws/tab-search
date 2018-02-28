@@ -373,6 +373,10 @@ function keybindInputHandlers(store, kbString) {
   // Handles incoming new commands
   function onInputKeydown(event) {
     event.preventDefault();
+    if (event.key === 'Escape') {
+      event.currentTarget.blur();
+      return;
+    }
     const { id: parentId } = event.currentTarget.parentElement.parentElement;
     const command = keyboard.command(event);
     const isValid = keyboard.isValid(command);
