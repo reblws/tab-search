@@ -8,8 +8,10 @@ import {
   SETTING_RESET,
   NUMBER_UPDATE,
   KEYBINDING_UPDATE,
+  SECONDARY_KEYBINDING_UPDATE,
   KEYBINDING_DEFAULT_RESET,
   COLOR_UPDATE,
+  SECONDARY_KEYBINDING_REMOVE,
 } from '../../actions/types';
 import inputReducerMap from './inputs-to-reducer';
 
@@ -27,6 +29,10 @@ export const resetSettings =
   () => action(SETTINGS_RESET);
 export const updateKeybinding =
   (key, command) => action(KEYBINDING_UPDATE, key, command);
+export const updateSecondaryKeybinding =
+  (key, command) => action(SECONDARY_KEYBINDING_UPDATE, key, command);
+export const removeSecondaryKeybinding =
+  key => action(SECONDARY_KEYBINDING_REMOVE, key);
 export const resetKeyboardToDefaults =
   () => action(KEYBINDING_DEFAULT_RESET);
 export const resetSetting = key => action(

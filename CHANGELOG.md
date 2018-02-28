@@ -11,6 +11,20 @@
 - Dark theme
 - Vertically centered overlay
 
+## 0.4.6 (2018-02-27)
+
+- Added ability to bind a second shortcut
+- Added setting to ignore pinned tabs in search results
+- Fixed shortcut-handling so <kbd>Meta</kbd> (i.e. <kbd>Cmd</kbd>) is treated as a separate modifier from <kbd>Ctrl</kbd>
+  + If a shortcut is bound with <kbd>Ctrl</kbd>, an alternate <kbd>Cmd</kbd>-only version of the shortcut will be set as the secondary shortcut to respect old settings & behavior
+- Fixed tabs closed in the tab-list not behaving like Recently Closed Tabs if "Show Recently Closed Tabs" is enabled
+  + You can now click a closed-tab to re-open its session
+  + If "Always Show Recently Closed Tab At Bottom" (default) is enabled, the closed tab now moves to the bottom of the tab list with all the other session tabs
+  + Closed-tab color now respects user-settings for Recently Closed Tabs (it previously was stayed the default red)
+- Changed shortcut-handling in settings so <Escape> cancels the prompt and reverts back to the previous setting
+- Changed shortcut table to display Unicode arrows instead of "ArrowDown/Right/Up/Left"
+
+
 ## 0.4.5 (2018-02-11)
 
 - Added graphical indicator for audible tabs

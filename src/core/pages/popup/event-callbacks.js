@@ -61,10 +61,27 @@ export function clearInput(event) {
   tabList.childNodes[0].focus();
 }
 
+// Merges maps into the one specified in target
+function mapAssign(target, ...sources) {
+  return sources.reduce(
+    (acc, map) => {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const [key, value] of map) {
+        acc.set(key, value);
+      }
+      return acc;
+    },
+    target,
+  );
+}
+
 // Given an object returns a Map with the keys and values swapped
-function swapKeyValueMap(obj, func = x => x) {
+function swapKeyValueMap(obj, f = x => x) {
   return Object.keys(obj)
-    .reduce((acc, key) => acc.set(func(obj[key]), key), new Map());
+    .reduce(
+      (acc, key) => (f(obj[key]) ? acc.set(f(obj[key]), key) : acc),
+      new Map(),
+    );
 }
 
 function isModifierSingle(event) {
@@ -80,12 +97,14 @@ function isModifierSingle(event) {
 }
 
 export function keydownHandler(store) {
-  const { showRecentlyClosed } = store.getState().general;
   const { keyboard: keyboardControls } = store.getState();
   // The keyboard object is an object with the mapping { [ACTION]: kbdcommand }
   // Mirror the keys and values so we have a Map:
   // {[kbdCommand]: ACTION}
-  const kbdControlMap = swapKeyValueMap(keyboardControls, x => x.command);
+  const kbdControlMap = mapAssign(
+    swapKeyValueMap(keyboardControls, x => x.command),
+    swapKeyValueMap(keyboardControls, x => x.secondaryCommand),
+  );
   return function handleKeyDown(event) {
     if (isModifierSingle(event)) {
       event.preventDefault();
@@ -109,10 +128,10 @@ export function keydownHandler(store) {
     if (keyboard.isValid(event)) {
       const cmd = keyboard.command(event);
       const key = [...kbdControlMap.keys()].find(x => keyboard.isEqual(x, cmd));
-      return navigateResults(kbdControlMap.get(key), showRecentlyClosed);
+      return navigateResults(kbdControlMap.get(key), store.getState);
     }
     if (event.key === 'Tab') {
-      return navigateResults(TAB_NEXT, showRecentlyClosed);
+      return navigateResults(TAB_NEXT, store.getState);
     }
     const shouldJustFocusSearchBar = (event.key === 'Backspace' && !isModifierSingle(event))
       || (/^([A-Za-z]|\d)$/.test(event.key) && !isModifierSingle(event));
@@ -127,13 +146,11 @@ function noop() {}
 
 export function handleTabClick(getState) {
   return function doHandleTabClick(event) {
-    const {
-      showRecentlyClosed,
-    } = getState().general;
+    const generalSettings = getState().general;
     const { currentTarget, ctrlKey, target } = event;
     if (target.nodeName === 'IMG'
       && target.classList.contains(TAB_DELETE_BTN_CLASSNAME)) {
-      return deleteTab(currentTarget, showRecentlyClosed, true);
+      return deleteTab(currentTarget, generalSettings, true);
     }
     const { dataset } = currentTarget;
     const { type } = dataset;
@@ -142,7 +159,7 @@ export function handleTabClick(getState) {
       case OTHER_WINDOW_TAB_TYPE:
       case TAB_TYPE: {
         if (ctrlKey) {
-          return deleteTab(currentTarget, showRecentlyClosed, true);
+          return deleteTab(currentTarget, generalSettings, true);
         }
         return switchActiveTab(dataset);
       }

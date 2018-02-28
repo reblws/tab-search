@@ -29,5 +29,5 @@ export const HINT_MSG_SHOULD_USE_MODIFIERS =
 export const HINT_MSG_SINGLE_KEYS =
   "Letters and numbers [A-Za-z0-9] aren't allowed on their own as a shortcut.";
 export const HINT_MSG_TRY_PUNCTUATION =
-  'Punctuation keys [- = [ ] \\ ; \' , . /] tend to work well as shortcuts';
+  'Punctuation keys [- = [ ] \\ ; \' , . /] tend to work well as single-key shortcuts';
 export const HINT_MSG_NEED_FINAL_KEY = 'Finish your shortcut by pressing a non-modifier (NOT Ctrl/Cmd, Alt, or Shift) key.';

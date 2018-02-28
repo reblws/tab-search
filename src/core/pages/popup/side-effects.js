@@ -1,14 +1,18 @@
+import { initialColorSettings } from 'core/reducers/defaults';
 import {
   searchInput,
   deleteButton,
   d,
   prefsBtn,
+  TYPE_COLOR_PROPERTY_MAP,
+  COLOR_PROPERTY_TYPE_MAP,
 } from './constants';
 import {
   scrollIfNeeded,
   populateTabList,
   overrideFontStylesWithSansSerif,
   appendSearchInputPlaceholderText,
+  setStyleSheetRule,
 } from './utils/dom';
 import {
   getOsShortcut,
@@ -27,6 +31,25 @@ function openSettingsPage() {
     url: browser.runtime.getURL('../settings/index.html'),
     active: true,
   }).then(() => window.close());
+}
+
+export function overrideDomStyleSheets(store) {
+  const colorState = store.getState().color;
+  const typeClassName = type => `.${type}`;
+  const setColor = type =>
+    setStyleSheetRule(
+      typeClassName(type),
+      'border-left-color',
+      colorState[TYPE_COLOR_PROPERTY_MAP[type]],
+    );
+  Object.keys(colorState)
+    .filter(key =>
+      initialColorSettings[key] !== colorState[key]
+        && key in COLOR_PROPERTY_TYPE_MAP,
+    )
+    .map(key => COLOR_PROPERTY_TYPE_MAP[key])
+    .forEach(setColor);
+  return store;
 }
 
 export function addEventListeners(store) {

@@ -2,19 +2,27 @@ import { deletedTabsCache } from '../caches';
 import {
   SESSION_TYPE,
   OTHER_WINDOW_TAB_TYPE,
+  tabList,
 } from '../constants';
 import {
   removeElementFromTabList,
   repaintElementWithType,
+  findLastElType,
 } from './dom';
 import { decodeUrl } from './url';
 
 export function addTabsToPromiseChain(store) {
   const { getState } = store;
-  const { searchAllWindows } = getState().general;
+  const {
+    searchAllWindows,
+    ignorePinnedTabs,
+  } = getState().general;
   const tabQueryOptions = {};
   if (!searchAllWindows) {
     tabQueryOptions.currentWindow = true;
+  }
+  if (ignorePinnedTabs) {
+    tabQueryOptions.pinned = false;
   }
   const tabQueryPromise = () => queryTabs(tabQueryOptions);
   return Object.assign({}, store, { tabQueryPromise });
@@ -27,7 +35,10 @@ export function addCurrentWindowIdToPromiseChain(store) {
 
 export function deleteTab(
   elementToRemove,
-  showRecentlyClosed,
+  {
+    showRecentlyClosed,
+    alwaysShowRecentlyClosedAtTheBottom,
+  },
   wasClicked = false,
 ) {
   const { id } = elementToRemove.dataset;
@@ -43,9 +54,24 @@ export function deleteTab(
     // Paint it with our indicator instead of removing it from the dom
     // if we want to show recently closed tabs
     repaintElementWithType(elementToRemove, SESSION_TYPE);
+    // Get the most recently closed tab (should be the one we're deleting rn)
+    if (alwaysShowRecentlyClosedAtTheBottom) {
+      // Undefined if not found
+      const lastRecentlyClosedNode = findLastElType(SESSION_TYPE, tabList.children);
+      elementToRemove.parentElement.insertBefore(
+        elementToRemove,
+        // Need to pass null explicitly for append
+        lastRecentlyClosedNode || null,
+      );
+    }
   }
   deletedTabsCache().add(tabId);
-  browser.tabs.remove(tabId);
+  browser.tabs.remove(tabId)
+    .then(() => getRecentlyClosed(1))
+    .then(sessions => sessions[0].tab.sessionId)
+    .then((sessionId) => {
+      elementToRemove.dataset.id = sessionId;
+    });
 }
 
 function getUserOs() {
