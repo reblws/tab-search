@@ -10,18 +10,18 @@ Easy tab search & switching. This WebExtension provides a keyboard-accessible se
 
 ## Shortcuts
 
-| Windows/Linux | macOS | Description |
+| Shortcut | Description |
 | --- | --- | --- |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> | <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> | Toggle extension |
-| <kbd>Enter</kbd> | | Open selected tab or first in list if not selected |
-| <kbd>&#8593;</kbd> | | Select previous tab |
-| <kbd>&#8595;</kbd>| | Select next tab |
-| <kbd>Ctrl</kbd> + <kbd>Backspace</kbd> | <kbd>Cmd</kbd> + <kbd>Backspace</kbd> | Delete a tab |
-| <kbd>Alt</kbd> + <kbd>R</kbd> | | Refresh tab
-| <kbd>Alt</kbd> + <kbd>P</kbd> | | Pin tab
-| <kbd>Ctrl</kbd> + <kbd>C</kbd> | <kbd>Cmd</kbd> + <kbd>C</kbd> | Copy Tab URL
-| <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd> | | Delete all duplicate tabs
-| <kbd>Alt</kbd> + <kbd>M</kbd> | | Mute (only if tab is audible)
+| Win/Linux: <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> / Mac: <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> | Toggle extension |
+| <kbd>Enter</kbd> | Open selected tab or first in list if not selected |
+| <kbd>&#8593;</kbd> | Select previous tab |
+| <kbd>&#8595;</kbd> | Select next tab |
+| <kbd>Ctrl</kbd> + <kbd>Backspace</kbd> | Delete a tab |
+| <kbd>Alt</kbd> + <kbd>R</kbd> | Refresh tab
+| <kbd>Alt</kbd> + <kbd>P</kbd> | Pin tab
+| <kbd>Ctrl</kbd> + <kbd>C</kbd> | Copy Tab URL
+| <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd> | Delete all duplicate tabs
+| <kbd>Alt</kbd> + <kbd>M</kbd> | Mute (only if tab is audible)
 
 ## Usage
 
