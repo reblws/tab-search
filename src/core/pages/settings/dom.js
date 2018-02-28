@@ -1,4 +1,5 @@
 import keyboard from 'core/keyboard';
+import { DEL_CIRCLE_SVG_PATH } from 'core/pages/popup/constants';
 import reducerMap from './inputs-to-reducer';
 import {
   updateKeybinding,
@@ -11,6 +12,7 @@ import {
   resetSetting,
   updateColor,
   updateSecondaryKeybinding,
+  removeSecondaryKeybinding,
 } from './actions';
 import * as Flash from './flash';
 import {
@@ -247,11 +249,25 @@ function updateTableRow(id, primaryShortcut, secondaryShortcut) {
   // This selector works as long as there are exactly 2 inputs
   const inputs = d.getElementById(id).querySelectorAll('input');
   inputs.forEach((input) => {
-    const value = input.dataset.key === 'command'
-      ? primaryShortcut
-      : secondaryShortcut;
-    input.defaultValue = value;
-    input.value = value;
+    switch (input.type) {
+      case 'text': {
+        const value = input.dataset.key === 'command'
+          ? primaryShortcut
+          : secondaryShortcut;
+        input.defaultValue = value;
+        input.value = value;
+        break;
+      }
+      case 'image': {
+        if (secondaryShortcut === keyboard.toString(null)) {
+          input.classList.add('hidden');
+        } else {
+          input.classList.remove('hidden');
+        }
+        break;
+      }
+      default: break;
+    }
   });
 }
 
@@ -320,6 +336,17 @@ function commandToTableRow(
       tdShortcutNode.appendChild(node);
     } else {
       tdSecondaryShortcutNode.append(node);
+      // Reset secondary shortcuts
+      const secondaryResetButton = d.createElement('input');
+      secondaryResetButton.classList.add('delete-circle');
+      if (kbString(secondaryCommand) === keyboard.toString(null)) {
+        secondaryResetButton.classList.add('hidden');
+      }
+      secondaryResetButton.type = 'image';
+      secondaryResetButton.role = 'button';
+      secondaryResetButton.src = DEL_CIRCLE_SVG_PATH;
+      secondaryResetButton.addEventListener('click', handlers.onSecondaryReset);
+      tdSecondaryShortcutNode.append(secondaryResetButton);
     }
   });
 
@@ -346,15 +373,24 @@ function keybindInputHandlers(store, kbString) {
     event.currentTarget.addEventListener('keydown', onInputKeydown);
     return event;
   };
+
   // On blur we'll probably flash the last error message if it wasn't a valid key
   const onInputBlur = (event) => {
     event.currentTarget.removeEventListener('keydown', onInputKeydown);
     event.currentTarget.value = event.currentTarget.defaultValue;
   };
 
+  const onSecondaryReset = (event) => {
+    const { id: key } = event.currentTarget.parentElement.parentElement;
+    if (key in store.getState().keyboard) {
+      store.dispatch(removeSecondaryKeybinding(key));
+    }
+  };
+
   return {
     onInputFocus,
     onInputBlur,
+    onSecondaryReset,
   };
 
   function isDuplicateCommand(state, command) {
@@ -371,6 +407,7 @@ function keybindInputHandlers(store, kbString) {
   }
 
   // Handles incoming new commands
+  // Attached to dom by onInputFocus
   function onInputKeydown(event) {
     event.preventDefault();
     if (event.key === 'Escape') {

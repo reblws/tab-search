@@ -156,8 +156,9 @@ legend {
   text-align: center;
 }
 
-.shortcut-table input {
+.shortcut-table__input {
   text-align: center;
+  max-width: 150px;
 }
 
 .shortcut-table td:first-child {
@@ -197,3 +198,16 @@ legend {
   margin: 0 auto;
 }
 
+.delete-circle {
+  height: 12px;
+  cursor: pointer;
+}
+
+.delete-circle {
+  position: absolute;
+  transform: translateY(8px) translateX(-22px);
+}
+
+.hidden {
+  visibility: hidden;
+}
