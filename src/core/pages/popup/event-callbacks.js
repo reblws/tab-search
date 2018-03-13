@@ -1,5 +1,5 @@
 /* Main DOM event-handlers */
-import keyboard, { TAB_NEXT } from 'core/keyboard';
+import keyboard, { TAB_NEXT, TAB_PREV } from 'core/keyboard';
 import {
   injectTabsInList,
   addHeadTabListNodeSelectedStyle,
@@ -131,7 +131,10 @@ export function keydownHandler(store) {
       return navigateResults(kbdControlMap.get(key), store.getState);
     }
     if (event.key === 'Tab') {
-      return navigateResults(TAB_NEXT, store.getState);
+      return navigateResults(
+        event.shiftKey ? TAB_PREV : TAB_NEXT,
+        store.getState,
+      );
     }
     const shouldJustFocusSearchBar = (event.key === 'Backspace' && !isModifierSingle(event))
       || (/^([A-Za-z]|\d)$/.test(event.key) && !isModifierSingle(event));
