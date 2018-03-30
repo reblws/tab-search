@@ -97,6 +97,7 @@ function isModifierSingle(event) {
 }
 
 export function keydownHandler(store) {
+  const navigate = cmdKey => navigateResults(cmdKey, store.getState);
   const { keyboard: keyboardControls } = store.getState();
   // The keyboard object is an object with the mapping { [ACTION]: kbdcommand }
   // Mirror the keys and values so we have a Map:
@@ -120,26 +121,37 @@ export function keydownHandler(store) {
       case 'ArrowUp':
       case 'ArrowDown':
       case 'Enter':
-        event.preventDefault();
-        break;
-      case 'End':
-        tabList.lastChild.focus();
-        break;
       case 'Home':
-        tabList.firstChild.focus();
+      case 'End':
+      case 'PageDown':
+      case 'PageUp':
+        event.preventDefault();
         break;
       default: break;
     }
     if (keyboard.isValid(event)) {
       const cmd = keyboard.command(event);
       const key = [...kbdControlMap.keys()].find(x => keyboard.isEqual(x, cmd));
-      return navigateResults(kbdControlMap.get(key), store.getState);
+      return navigate(kbdControlMap.get(key));
     }
-    if (event.key === 'Tab') {
-      return navigateResults(
-        event.shiftKey ? TAB_PREV : TAB_NEXT,
-        store.getState,
-      );
+    // Keys that require special behavior
+    // In the case of 'End' or 'Home' this breaks the behavior of skipping to
+    // the beginning of the end of the line in the searchInput.
+    // Maybe we should only focus if the searchInput isn't active?
+    switch (event.key) {
+      case 'End':
+        tabList.lastChild.focus();
+        break;
+      case 'Home':
+        tabList.firstChild.focus();
+        break;
+      case 'PageDown':
+        return navigate(TAB_NEXT);
+      case 'PageUp':
+        return navigate(TAB_PREV);
+      case 'Tab':
+        return navigate(event.shiftKey ? TAB_PREV : TAB_NEXT);
+      default: break;
     }
     const shouldJustFocusSearchBar = (event.key === 'Backspace' && !isModifierSingle(event))
       || (/^([A-Za-z]|\d)$/.test(event.key) && !isModifierSingle(event));
