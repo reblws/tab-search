@@ -11,6 +11,14 @@
 - Dark theme
 - Vertically centered overlay
 
+## 0.4.7 (2018-03-30)
+
+- Changed previous tab command behavior: When the search input is active, going to the previous tab selects the last tab instead
+- Improved key-handling for common system shortcuts:
+  + <kbd>Shift</kbd>-<kbd>Tab</kbd> now goes to the previous item in the tab list
+  + <kbd>Home</kbd> and <kbd>End</kbd> jump to the beginning or the ending of the tab list
+  + <kbd>PgUp</kbd> and <kbd>PgDown</kbd> go to the previous or next tab in the tab list
+
 ## 0.4.6 (2018-02-27)
 
 - Added ability to bind a second shortcut
