@@ -63,8 +63,10 @@ export function navigateResults(cmdKey, getState) {
       const prevSibling = selectedTab.previousElementSibling;
       if (prevSibling) {
         prevSibling.focus();
-      } else {
+      } else if (document.activeElement !== searchInput) {
         searchInput.focus();
+      } else { // We're at the top but searchInput is focused
+        tabList.lastChild.focus();
       }
       break;
     }
