@@ -109,8 +109,7 @@ export function keydownHandler(store) {
     if (isModifierSingle(event)) {
       event.preventDefault();
     }
-    // Handle preventing default
-    // Delete, Backspace, Tab, ArrowUp, Arrowdown, Enter
+    // Handle preventing default key actions
     switch (event.key) {
       case 'Tab':
       //   // Change it so tab no longer focuses the entire popup window
@@ -122,6 +121,12 @@ export function keydownHandler(store) {
       case 'ArrowDown':
       case 'Enter':
         event.preventDefault();
+        break;
+      case 'End':
+        tabList.lastChild.focus();
+        break;
+      case 'Home':
+        tabList.firstChild.focus();
         break;
       default: break;
     }
