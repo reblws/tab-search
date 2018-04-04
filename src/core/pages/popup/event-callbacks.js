@@ -121,8 +121,6 @@ export function keydownHandler(store) {
       case 'ArrowUp':
       case 'ArrowDown':
       case 'Enter':
-      case 'Home':
-      case 'End':
       case 'PageDown':
       case 'PageUp':
         event.preventDefault();
@@ -140,10 +138,16 @@ export function keydownHandler(store) {
     // Maybe we should only focus if the searchInput isn't active?
     switch (event.key) {
       case 'End':
-        tabList.lastChild.focus();
+        if (document.activeElement !== searchInput) {
+          event.preventDefault();
+          tabList.lastChild.focus();
+        }
         break;
       case 'Home':
-        tabList.firstChild.focus();
+        if (document.activeElement !== searchInput) {
+          event.preventDefault();
+          tabList.firstChild.focus();
+        }
         break;
       case 'PageDown':
         return navigate(TAB_NEXT);
