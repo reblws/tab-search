@@ -11,6 +11,10 @@
 - Dark theme
 - Vertically centered overlay
 
+## 0.4.8 (2018-04-04)
+
+- Changed <kbd>Home</kbd>/<kbd>End</kbd> to only scroll to end if input isn't selected
+
 ## 0.4.7 (2018-03-30)
 
 - Changed previous tab command behavior: When the search input is active, going to the previous tab selects the last tab instead
