@@ -36,23 +36,25 @@ export function configureSearch(store) {
       deleteButton.classList.add('hidden');
     } else {
       deleteButton.classList.remove('hidden');
+      //only perform query when there's input
+      
+      // isSearchEmpty isn't based on this var so we can show delete button with
+      // just spaces
+      const query = event.currentTarget.value.trim().toLowerCase();
+      return Promise.resolve(tabQueryPromise())
+        .then(filterResults(query, fuzzy, general, currentWindowId))
+        .then(injectTabsInList(getState))
+        .then((results) => {
+          // Apply the selected style to the head of the tabList to suggest
+          // pressing <Enter> from the search input activates this tab
+          if (results.length > 0 && !isSearchEmpty) {
+            addHeadTabListNodeSelectedStyle();
+            // Scroll to the top
+            tabList.firstElementChild.scrollIntoView(true);
+          }
+          return results;
+        });
     }
-    // isSearchEmpty isn't based on this var so we can show delete button with
-    // just spaces
-    const query = event.currentTarget.value.trim().toLowerCase();
-    return Promise.resolve(tabQueryPromise())
-      .then(filterResults(query, fuzzy, general, currentWindowId))
-      .then(injectTabsInList(getState))
-      .then((results) => {
-        // Apply the selected style to the head of the tabList to suggest
-        // pressing <Enter> from the search input activates this tab
-        if (results.length > 0 && !isSearchEmpty) {
-          addHeadTabListNodeSelectedStyle();
-          // Scroll to the top
-          tabList.firstElementChild.scrollIntoView(true);
-        }
-        return results;
-      });
   };
 }
 
