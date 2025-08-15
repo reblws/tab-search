@@ -36,6 +36,7 @@ export const initialGeneralSettings = {
   shouldSortByMostRecentlyUsedAll: false,
   tabUrlSize: 11,
   tabTitleSize: 13,
+  enableDarkMode: false,
 };
 
 export const initialState = {

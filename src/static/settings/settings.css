@@ -1,7 +1,101 @@
 :root {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   --primaryTextColor: var(--grey-90);
-  --secondaryTextColor: var(--grey-50)
+  --secondaryTextColor: var(--grey-50);
+  
+  /* Dark mode variables */
+  --darkBgColor: var(--ink-90);
+  --darkBorderColor: var(--ink-70);
+  --darkTextColor: var(--grey-10);
+  --darkSecondaryTextColor: var(--grey-30);
+  --darkFieldsetBg: var(--ink-85);
+  --darkShortcutTableBg: var(--ink-80);
+}
+
+/* Dark mode styles */
+body.dark-mode {
+  background-color: var(--darkBgColor);
+  color: var(--darkTextColor);
+}
+
+body.dark-mode .subheader,
+body.dark-mode .disabled-label {
+  color: var(--darkSecondaryTextColor);
+}
+
+body.dark-mode .shortcuts,
+body.dark-mode fieldset {
+  border-color: var(--darkBorderColor);
+}
+
+body.dark-mode .shortcut-table > tr {
+  background-color: var(--darkShortcutTableBg);
+}
+
+body.dark-mode .shortcut-table__header {
+  border-bottom-color: var(--darkBorderColor);
+}
+
+body.dark-mode .shortcut-table td:first-child {
+  border-top-color: var(--darkBorderColor);
+}
+
+body.dark-mode input[type=range]::-moz-range-thumb {
+  background-color: var(--darkTextColor);
+  border-color: var(--darkBorderColor);
+}
+
+body.dark-mode input[type="text"],
+body.dark-mode input[type="number"],
+body.dark-mode input[type="search"] {
+  background-color: var(--darkFieldsetBg);
+  border-color: var(--darkBorderColor);
+  color: var(--darkTextColor);
+}
+
+body.dark-mode input[type="checkbox"] {
+  accent-color: var(--blue-60);
+}
+
+body.dark-mode button.browser-style {
+  background-color: var(--darkFieldsetBg);
+  border-color: var(--darkBorderColor);
+  color: var(--darkTextColor);
+}
+
+body.dark-mode button.browser-style:hover {
+  background-color: var(--ink-80);
+}
+
+body.dark-mode .range-clarification {
+  color: var(--darkTextColor);
+}
+
+body.dark-mode .shortcut-table__shortcut--input {
+  background-color: var(--darkFieldsetBg);
+  border-color: var(--darkBorderColor);
+  color: var(--darkTextColor);
+}
+
+body.dark-mode label {
+  color: var(--darkTextColor);
+}
+
+body.dark-mode strong {
+  color: var(--darkTextColor);
+}
+
+body.dark-mode h1,
+body.dark-mode h2 {
+  color: var(--darkTextColor);
+}
+
+body.dark-mode a {
+  color: var(--blue-60);
+}
+
+body.dark-mode a:hover {
+  color: var(--blue-50);
 }
 
 body {
