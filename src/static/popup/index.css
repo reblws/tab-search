@@ -13,6 +13,55 @@
   --purple: var(--purple-70);
   --headerHeight: 48px;
   --bodyWidth: 355px;
+  
+  /* Dark mode variables */
+  --darkBgColor: var(--ink-90);
+  --darkBorderColor: var(--ink-70);
+  --darkTextColor: var(--grey-10);
+  --darkSearchBg: var(--ink-80);
+  --darkSearchBorder: var(--ink-60);
+  --darkTabListBg: var(--ink-85);
+}
+
+/* Dark mode styles */
+body.dark-mode {
+  background-color: var(--darkBgColor);
+  color: var(--darkTextColor);
+  border-color: var(--darkBorderColor);
+}
+
+body.dark-mode header {
+  border-color: var(--darkBorderColor);
+}
+
+body.dark-mode .search {
+  background-color: var(--darkSearchBg);
+  border-color: var(--darkSearchBorder);
+  color: var(--darkTextColor);
+}
+
+body.dark-mode .search:focus {
+  border-color: var(--blue-50);
+}
+
+body.dark-mode .tab-list {
+  background-color: var(--darkTabListBg);
+  border-color: var(--darkBorderColor);
+}
+
+body.dark-mode .tab-object {
+  color: var(--darkTextColor);
+}
+
+body.dark-mode .tab-object--selected,
+body.dark-mode .tab-object:hover,
+body.dark-mode .tab-object:focus {
+  background-color: var(--tabFocusColor);
+  color: white;
+}
+
+body.dark-mode .no-result {
+  color: var(--darkTextColor);
 }
 
 body {

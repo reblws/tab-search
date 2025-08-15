@@ -56,6 +56,16 @@ export function addEventListeners(store) {
   const { showLastQueryOnPopup } = store.getState().general;
   const updateSearchResults = configureSearch(store);
   const handleKeydown = keydownHandler(store);
+  
+  store.subscribe(() => {
+    const { enableDarkMode } = store.getState().general;
+    if (enableDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  });
+  
   window.addEventListener('keydown', handleKeydown);
   deleteButton.addEventListener('click', clearInput);
   searchInput.addEventListener('input', updateSearchResults);
@@ -85,7 +95,15 @@ export function doFinalSideEffects(store) {
   const {
     useFallbackFont,
     showLastQueryOnPopup,
+    enableDarkMode,
   } = store.getState().general;
+
+  // Apply dark mode if enabled
+  if (enableDarkMode) {
+    document.body.classList.add('dark-mode');
+  } else {
+    document.body.classList.remove('dark-mode');
+  }
 
   if (showLastQueryOnPopup) {
     const { lastQuery } = store.getState().state;

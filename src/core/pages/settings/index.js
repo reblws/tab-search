@@ -14,6 +14,23 @@ const appendOsToStore = store =>
 createUIStore()
   .then(appendOsToStore)
   .then((store) => {
+    const applyDarkMode = () => {
+      const { enableDarkMode } = store.getState().general;
+      if (enableDarkMode) {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+      }
+    };
+    
+    // Initial dark mode application
+    applyDarkMode();
+    
+    // Subscribe to dark mode changes
+    store.subscribe(() => {
+      applyDarkMode();
+    });
+    
     initSettings(store);
     initKeybindingTable(store);
     return store;
