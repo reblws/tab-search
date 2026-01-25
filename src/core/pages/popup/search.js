@@ -110,7 +110,7 @@ export default function filterResult(
       if (sortMruAll) {
         fuseOptions = Object.assign({}, options, { shouldSort: false });
       }
-      search = arr => new Fuse(arr, fuseOptions).search(query);
+      search = arr => new Fuse(arr, fuseOptions).search(query).map(result => result.item);
     } else {
       // If enableFuzzySearch is off
       const matchedTabs = tab => searchKeys.some(
