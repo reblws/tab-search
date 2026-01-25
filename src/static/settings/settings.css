@@ -277,8 +277,7 @@ input[type="number"]:focus {
    Color Pickers
    =========================== */
 .color-row {
-  flex-direction: row-reverse;
-  justify-content: flex-end;
+  /* Normal flex order: input (swatch) on left, label on right */
 }
 
 .color-row input[type="color"] {
@@ -305,7 +304,6 @@ input[type="number"]:focus {
 
 .color-row label {
   margin-left: var(--space-md);
-  order: 1;
 }
 
 /* ===========================
@@ -497,6 +495,7 @@ input[type="range"]:focus::-moz-range-thumb {
 .shortcut-table td {
   font-size: 14px;
   color: var(--grey-70);
+  position: relative;
 }
 
 .shortcut-table__input {
@@ -507,26 +506,41 @@ input[type="range"]:focus::-moz-range-thumb {
 .shortcut-table__input input[type="text"],
 .shortcut-table input[type="text"] {
   font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 500;
   padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--input-border);
-  border-radius: var(--radius-sm);
+  min-width: 100px;
   text-align: center;
-  background-color: var(--input-bg);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-  width: 120px;
+
+  /* Keycap appearance */
+  background: linear-gradient(to bottom, #fafafa 0%, #e8e8e8 100%);
+  border: 1px solid var(--grey-40);
+  border-bottom-width: 3px;
+  border-bottom-color: var(--grey-50);
+  border-radius: var(--radius-sm);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 1px 2px rgba(0, 0, 0, 0.1);
+
+  color: var(--grey-80);
+  transition: all 0.1s ease;
 }
 
 .shortcut-table__input input[type="text"]:hover,
 .shortcut-table input[type="text"]:hover {
-  border-color: var(--grey-40);
+  background: linear-gradient(to bottom, #ffffff 0%, #f0f0f0 100%);
+  border-color: var(--grey-50);
 }
 
 .shortcut-table__input input[type="text"]:focus,
 .shortcut-table input[type="text"]:focus {
   outline: none;
-  border-color: var(--input-border-focus);
-  box-shadow: var(--shadow-focus);
+  background: linear-gradient(to bottom, #e8e8e8 0%, #d8d8d8 100%);
+  border-bottom-width: 1px;
+  transform: translateY(2px);
+  box-shadow:
+    0 0 0 3px var(--blue-50-a30),
+    0 1px 0 rgba(255, 255, 255, 0.5) inset;
 }
 
 /* ===========================
@@ -583,10 +597,19 @@ input[type="range"]:focus::-moz-range-thumb {
    Delete Circle
    =========================== */
 .delete-circle {
-  height: 12px;
+  height: 14px;
+  width: 14px;
   cursor: pointer;
   position: absolute;
-  transform: translateY(8px) translateX(-22px);
+  right: var(--space-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.delete-circle:hover {
+  opacity: 1;
 }
 
 .hidden {
@@ -814,9 +837,23 @@ input[type="range"]:focus::-moz-range-thumb {
 
   .shortcut-table__input input[type="text"],
   .shortcut-table input[type="text"] {
-    background-color: var(--input-bg);
-    border-color: var(--input-border);
+    background: linear-gradient(to bottom, var(--grey-60) 0%, var(--grey-70) 100%);
+    border-color: var(--grey-80);
+    border-bottom-color: #000;
     color: var(--grey-10);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.1) inset,
+      0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  .shortcut-table__input input[type="text"]:hover,
+  .shortcut-table input[type="text"]:hover {
+    background: linear-gradient(to bottom, var(--grey-50) 0%, var(--grey-60) 100%);
+  }
+
+  .shortcut-table__input input[type="text"]:focus,
+  .shortcut-table input[type="text"]:focus {
+    background: linear-gradient(to bottom, var(--grey-70) 0%, var(--grey-80) 100%);
   }
 
   .shortcut-flash.ok {
