@@ -497,9 +497,12 @@ input[type="range"]:focus::-moz-range-thumb {
   color: var(--grey-70);
 }
 
-.shortcut-table__input {
+.shortcut-table__input,
+.shortcut-table__shortcut {
   text-align: center;
   max-width: 150px;
+  position: relative;
+  white-space: nowrap;
 }
 
 .shortcut-table__input input[type="text"],
@@ -543,59 +546,137 @@ input[type="range"]:focus::-moz-range-thumb {
 }
 
 /* ===========================
-   Flash Notifications
+   Toast Notifications (Acorn Feedback Indicators)
    =========================== */
-.shortcut-flash {
-  display: none;
-  margin: var(--space-md) 0;
-  padding: var(--space-md) var(--space-lg);
-  border-radius: var(--radius-md);
-  animation: slideIn 0.3s ease;
+.toast-container {
+  position: fixed;
+  bottom: var(--space-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  pointer-events: none;
 }
 
-@keyframes slideIn {
-  from {
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  background-color: var(--grey-90);
+  color: #ffffff;
+  font-size: 14px;
+  box-shadow: var(--shadow-md), 0 4px 12px rgba(0, 0, 0, 0.15);
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toast--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast--dismissing {
+  animation: toastDismiss 0.2s ease forwards;
+}
+
+@keyframes toastDismiss {
+  to {
     opacity: 0;
     transform: translateY(-10px);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
-.shortcut-flash p:last-child {
-  margin: 0;
+.toast__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.shortcut-flash.ok {
-  background-color: rgba(5, 139, 0, 0.1);
-  border: 1px solid var(--green-60);
-  color: var(--green-70);
+.toast__message {
+  flex: 1;
+  line-height: 1.4;
 }
 
-.shortcut-flash.warning {
-  background-color: rgba(255, 233, 0, 0.15);
-  border: 1px solid var(--yellow-60);
-  color: var(--yellow-80);
+.toast__dismiss {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  opacity: 0.6;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.15s ease, background-color 0.15s ease;
 }
 
-.shortcut-flash.error {
-  background-color: rgba(255, 0, 57, 0.1);
-  border: 1px solid var(--red-60);
-  color: var(--red-70);
+.toast__dismiss:hover {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-.ok,
-.warning,
-.error {
-  text-align: center;
+.toast__dismiss:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+/* Toast type variants */
+.toast--success {
+  background-color: var(--green-70);
+}
+
+.toast--success .toast__icon {
+  color: var(--green-30);
+}
+
+.toast--warning {
+  background-color: var(--yellow-70);
+  color: var(--grey-90);
+}
+
+.toast--warning .toast__icon {
+  color: var(--yellow-30);
+}
+
+.toast--warning .toast__dismiss:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.toast--error {
+  background-color: var(--red-70);
+}
+
+.toast--error .toast__icon {
+  color: var(--red-30);
+}
+
+.toast--info {
+  background-color: var(--blue-60);
+}
+
+.toast--info .toast__icon {
+  color: var(--blue-30);
 }
 
 /* ===========================
    Delete Circle (Acorn Ghost Button)
    =========================== */
 .delete-circle {
+  position: absolute;
+  right: var(--space-sm);
+  top: 50%;
+  transform: translateY(-50%);
   height: 24px;
   width: 24px;
   padding: 4px;
@@ -605,7 +686,6 @@ input[type="range"]:focus::-moz-range-thumb {
   border: none;
   opacity: 0.5;
   transition: opacity 0.15s ease, background-color 0.15s ease;
-  vertical-align: middle;
 }
 
 .delete-circle:hover {
@@ -867,29 +947,32 @@ input[type="range"]:focus::-moz-range-thumb {
     background: linear-gradient(to bottom, var(--grey-70) 0%, var(--grey-80) 100%);
   }
 
-  .shortcut-flash.ok {
-    background-color: rgba(5, 139, 0, 0.2);
-    border-color: var(--green-50);
-    color: var(--green-50);
-  }
-
-  .shortcut-flash.warning {
-    background-color: rgba(255, 233, 0, 0.15);
-    border-color: var(--yellow-50);
-    color: var(--yellow-50);
-  }
-
-  .shortcut-flash.error {
-    background-color: rgba(255, 0, 57, 0.15);
-    border-color: var(--red-50);
-    color: var(--red-50);
-  }
-
   .delete-circle {
     filter: brightness(1.2);
   }
 
   .delete-circle:hover {
     background-color: rgba(255, 77, 106, 0.2);
+  }
+
+  /* Toast dark mode - slightly lighter backgrounds for contrast */
+  .toast {
+    box-shadow: var(--shadow-md), 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .toast--success {
+    background-color: var(--green-60);
+  }
+
+  .toast--warning {
+    background-color: var(--yellow-60);
+  }
+
+  .toast--error {
+    background-color: var(--red-60);
+  }
+
+  .toast--info {
+    background-color: var(--blue-50);
   }
 }
