@@ -14,10 +14,7 @@ import {
   appendSearchInputPlaceholderText,
   setStyleSheetRule,
 } from './utils/dom';
-import {
-  getOsShortcut,
-  createTab,
-} from './utils/browser';
+import { getOsShortcut, createTab } from './utils/browser';
 import {
   keydownHandler,
   configureSearch,
@@ -35,19 +32,20 @@ function openSettingsPage() {
 
 export function overrideDomStyleSheets(store) {
   const colorState = store.getState().color;
-  const typeClassName = type => `.${type}`;
-  const setColor = type =>
+  const typeClassName = (type) => `.${type}`;
+  const setColor = (type) =>
     setStyleSheetRule(
       typeClassName(type),
       'border-left-color',
-      colorState[TYPE_COLOR_PROPERTY_MAP[type]],
+      colorState[TYPE_COLOR_PROPERTY_MAP[type]]
     );
   Object.keys(colorState)
-    .filter(key =>
-      initialColorSettings[key] !== colorState[key]
-        && key in COLOR_PROPERTY_TYPE_MAP,
+    .filter(
+      (key) =>
+        initialColorSettings[key] !== colorState[key] &&
+        key in COLOR_PROPERTY_TYPE_MAP
     )
-    .map(key => COLOR_PROPERTY_TYPE_MAP[key])
+    .map((key) => COLOR_PROPERTY_TYPE_MAP[key])
     .forEach(setColor);
   return store;
 }
@@ -66,11 +64,7 @@ export function addEventListeners(store) {
   }
 
   // Populate store with current search fn
-  return Object.assign(
-    {},
-    store,
-    { updateSearchResults },
-  );
+  return Object.assign({}, store, { updateSearchResults });
 }
 
 export function addTabListeners(getState) {
@@ -82,28 +76,22 @@ export function addTabListeners(getState) {
 
 export function doFinalSideEffects(store) {
   const { updateSearchResults } = store;
-  const {
-    useFallbackFont,
-    showLastQueryOnPopup,
-  } = store.getState().general;
+  const { useFallbackFont, showLastQueryOnPopup } = store.getState().general;
 
   if (showLastQueryOnPopup) {
     const { lastQuery } = store.getState().state;
     searchInput.value = lastQuery;
   }
   // Give a shortcut hint
-  updatePlaceholderTextWithShortcutHint()
-    .catch((err) => {
-      // TODO: Find a place to put these error messages away so people can
-      //       c/p logged errors
-      console.error(`Can't update search input placeholder text! ${err.stack}`);
-    });
+  updatePlaceholderTextWithShortcutHint().catch((err) => {
+    // TODO: Find a place to put these error messages away so people can
+    //       c/p logged errors
+    console.error(`Can't update search input placeholder text! ${err.stack}`);
+  });
   // Populate the initial tab list here.
-  populateTabList(updateSearchResults())
-    .catch((err) => {
-      console.error(`Can't populate initial tabList. ${err.stack}`);
-    });
-
+  populateTabList(updateSearchResults()).catch((err) => {
+    console.error(`Can't populate initial tabList. ${err.stack}`);
+  });
 
   if (useFallbackFont) {
     // Lazy for now: Just override the css styles specifying a font-family
@@ -127,8 +115,6 @@ export function focusSearchInputWorkaround() {
 }
 
 function updatePlaceholderTextWithShortcutHint() {
-  const hintText = shortcut => `(${shortcut} opens this)`;
-  return getOsShortcut()
-    .then(hintText)
-    .then(appendSearchInputPlaceholderText);
+  const hintText = (shortcut) => `(${shortcut} opens this)`;
+  return getOsShortcut().then(hintText).then(appendSearchInputPlaceholderText);
 }

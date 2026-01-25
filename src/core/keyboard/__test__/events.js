@@ -37,7 +37,6 @@ export const eventCtrlShiftF = {
   which: 70,
 };
 
-
 export const eventCtrlBacktick = {
   altKey: false,
   bubbles: true,

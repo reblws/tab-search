@@ -1,4 +1,7 @@
-import { initialGeneralSettings, initialColorSettings } from 'core/reducers/defaults';
+import {
+  initialGeneralSettings,
+  initialColorSettings,
+} from 'core/reducers/defaults';
 import { addTabListeners } from '../side-effects';
 import {
   favIconFallback,
@@ -22,7 +25,7 @@ import {
 import { badFavIconCache } from '../caches';
 import { configureSvg } from '../assets';
 
-const changeHeadTabListNodeSelectedStyle = method => () => {
+const changeHeadTabListNodeSelectedStyle = (method) => () => {
   tabList.firstElementChild.classList[method](SELECTED_TAB_CLASSNAME);
 };
 
@@ -38,11 +41,8 @@ export function isTabListEmpty() {
 
 // Save the default values for font sizes so we know when to inline the font
 // sizes when we append tab nodes
-const {
-  tabUrlSize: defaultTabUrlSize,
-  tabTitleSize: defaultTabTitleSize,
-} = initialGeneralSettings;
-
+const { tabUrlSize: defaultTabUrlSize, tabTitleSize: defaultTabTitleSize } =
+  initialGeneralSettings;
 
 // Store all the bad favIcons so we don't get loading jank if a favIcon !exist
 function clearChildren(node) {
@@ -54,9 +54,7 @@ function clearChildren(node) {
 // Given a string, return true if one string is too long and should apply
 function shouldWordBreak(str) {
   const MAX_LENGTH = 40;
-  const longestWordLength = (acc, s) => (s.length > acc)
-    ? s.length
-    : acc;
+  const longestWordLength = (acc, s) => (s.length > acc ? s.length : acc);
   const longest = str.split(/\s/).reduce(longestWordLength, 0);
   return longest > MAX_LENGTH;
 }
@@ -96,8 +94,7 @@ export function tabToTag(getState) {
       lastAccessed,
       audible,
     } = tab;
-    const isValidFavIconUrl = favIconUrl
-      && !badFavIconCache().has(favIconUrl);
+    const isValidFavIconUrl = favIconUrl && !badFavIconCache().has(favIconUrl);
     // Since favicon url of bookmarks isn't readily available,
     // check the type and assign all bookmarks to the static svg
     // for now.
@@ -121,20 +118,23 @@ export function tabToTag(getState) {
       showVisualDeleteTabButton,
       wordBreak: shouldWordBreak(title),
     };
-    return createTabObject({
-      id,
-      url,
-      title,
-      favIconLink,
-      type,
-      sessionId,
-      windowId,
-      mutedInfo,
-      pinned,
-      isActive,
-      lastAccessed,
-      audible,
-    }, ctoOpts);
+    return createTabObject(
+      {
+        id,
+        url,
+        title,
+        favIconLink,
+        type,
+        sessionId,
+        windowId,
+        mutedInfo,
+        pinned,
+        isActive,
+        lastAccessed,
+        audible,
+      },
+      ctoOpts
+    );
   };
 }
 
@@ -143,20 +143,23 @@ export function tabToTag(getState) {
 //   - inline: obj
 //   - tabUrlSize
 //   - tabTitleSize
-function createTabObject({
-  id,
-  sessionId,
-  type,
-  url,
-  title,
-  favIconLink,
-  windowId,
-  lastAccessed,
-  mutedInfo,
-  pinned,
-  isActive,
-  audible,
-}, opts) {
+function createTabObject(
+  {
+    id,
+    sessionId,
+    type,
+    url,
+    title,
+    favIconLink,
+    windowId,
+    lastAccessed,
+    mutedInfo,
+    pinned,
+    isActive,
+    audible,
+  },
+  opts
+) {
   const {
     wordBreak,
     tabUrlSize,
@@ -228,7 +231,10 @@ function createTabObject({
   }
 
   // Delete this tab!
-  if (showVisualDeleteTabButton && (type === OTHER_WINDOW_TAB_TYPE || type === TAB_TYPE)) {
+  if (
+    showVisualDeleteTabButton &&
+    (type === OTHER_WINDOW_TAB_TYPE || type === TAB_TYPE)
+  ) {
     const delBtn = d.createElement('img');
     delBtn.src = DEL_CIRCLE_SVG_PATH;
     delBtn.title = 'Delete Tab';
@@ -262,9 +268,8 @@ function handleBadSvg(event) {
 // Get focused node's position relative to the current scrolled view
 export function getNodePositions(parentNode, selectedNode) {
   const parentHeight = parentNode.offsetHeight;
-  const selectedTop = (
-    selectedNode.offsetTop - parentNode.offsetTop
-  ) - parentNode.scrollTop;
+  const selectedTop =
+    selectedNode.offsetTop - parentNode.offsetTop - parentNode.scrollTop;
   const selectedBottom = selectedNode.offsetHeight + selectedTop;
   return {
     parentHeight,
@@ -321,11 +326,10 @@ export function injectTabsInList(getState) {
 export function scrollIfNeeded(event) {
   // If the selected tab isn't completely visible in the scrolled view,
   // force scroll
-  const {
-    parentHeight,
-    selectedBottom,
-    selectedTop,
-  } = getNodePositions(event.target.parentNode, event.target);
+  const { parentHeight, selectedBottom, selectedTop } = getNodePositions(
+    event.target.parentNode,
+    event.target
+  );
   const shouldScrollDown = selectedBottom > parentHeight;
   const shouldScrollUp = selectedTop < 0;
 
@@ -363,10 +367,7 @@ export function populateTabList(search) {
 }
 
 export function overrideFontStylesWithSansSerif() {
-  const elementStylesToOverride = [
-    d.body,
-    d.querySelector('.search'),
-  ];
+  const elementStylesToOverride = [d.body, d.querySelector('.search')];
   elementStylesToOverride.forEach((element) => {
     element.style = 'font-family: sans-serif;';
   });
@@ -383,11 +384,13 @@ export function selectNodeText(nodeToCopy) {
 }
 
 // This is dependent on the popup css file being called "index.css" exactly
-const popupCssStyleSheet = [...d.styleSheets].find(s => /index.css$/.test(s.href));
+const popupCssStyleSheet = [...d.styleSheets].find((s) =>
+  /index.css$/.test(s.href)
+);
 
 export function setStyleSheetRule(selectorName, key, value) {
   const rules = popupCssStyleSheet.cssRules;
-  const rule = [...rules].find(r => r.selectorText === selectorName);
+  const rule = [...rules].find((r) => r.selectorText === selectorName);
   if (!rule) {
     console.error(`Can't find CSS Selector ${selectorName}`);
     return;

@@ -11,17 +11,8 @@ import {
   DUPLICATE_TAB_DELETE,
   MUTE_TOGGLE,
 } from 'core/keyboard';
-import {
-  deleteTab,
-  reloadTab,
-  pinTab,
-  queryTab,
-  muteTab,
-} from './browser';
-import {
-  removeHeadTabListNodeSelectedStyle,
-  selectNodeText,
-} from './dom';
+import { deleteTab, reloadTab, pinTab, queryTab, muteTab } from './browser';
+import { removeHeadTabListNodeSelectedStyle, selectNodeText } from './dom';
 import {
   d,
   tabList,
@@ -38,7 +29,8 @@ import {
 
 export function navigateResults(cmdKey, getState) {
   const generalSettings = getState().general;
-  const isNoResult = !!d.getElementById(NO_RESULT_CLASSNAME) || tabList.children.length === 0;
+  const isNoResult =
+    !!d.getElementById(NO_RESULT_CLASSNAME) || tabList.children.length === 0;
   const isSearchActive = d.activeElement === searchInput;
   const selectedTab = !isSearchActive
     ? d.activeElement
@@ -53,7 +45,8 @@ export function navigateResults(cmdKey, getState) {
         selectedTab.focus();
       } else if (selectedTab.nextElementSibling) {
         selectedTab.nextElementSibling.focus();
-      } else { // If no nextElementSibling focus searchbar
+      } else {
+        // If no nextElementSibling focus searchbar
         searchInput.focus();
       }
       break;
@@ -65,7 +58,8 @@ export function navigateResults(cmdKey, getState) {
         prevSibling.focus();
       } else if (document.activeElement !== searchInput) {
         searchInput.focus();
-      } else { // We're at the top but searchInput is focused
+      } else {
+        // We're at the top but searchInput is focused
         tabList.lastChild.focus();
       }
       break;
@@ -89,10 +83,9 @@ export function navigateResults(cmdKey, getState) {
       const originalFavIconSrc = selectedTabImg.src;
       selectedTabImg.setAttribute('src', RELOAD_SVG_PATH);
       reloadTab(id).then(() => {
-        setTimeout(
-          () => { selectedTabImg.setAttribute('src', originalFavIconSrc); },
-          500,
-        );
+        setTimeout(() => {
+          selectedTabImg.setAttribute('src', originalFavIconSrc);
+        }, 500);
       });
       break;
     }
@@ -101,7 +94,8 @@ export function navigateResults(cmdKey, getState) {
         break;
       }
       const togglePinStatus = ({ pinned }) => pinTab(id, !pinned);
-      queryTab(id).then(togglePinStatus)
+      queryTab(id)
+        .then(togglePinStatus)
         .then(({ pinned }) => {
           if (pinned) {
             selectedTab.classList.add(TAB_PIN_CLASSNAME);
@@ -135,28 +129,28 @@ export function navigateResults(cmdKey, getState) {
 
       // Filter the array of tab list's children down
       // to the ones with duplicate tabs
-      const urlToIdObj = [...tabList.children]
-        .reduce((acc, node) => {
-          const { url, type } = node.dataset;
-          if (type === SESSION_TYPE) {
-            return acc;
-          }
-          const hasUrl = !!acc[url];
-          return hasUrl
-            ? Object.assign({}, acc, { [url]: [...acc[url], node] })
-            : Object.assign({ [url]: [node] }, acc);
-        }, {});
+      const urlToIdObj = [...tabList.children].reduce((acc, node) => {
+        const { url, type } = node.dataset;
+        if (type === SESSION_TYPE) {
+          return acc;
+        }
+        const hasUrl = !!acc[url];
+        return hasUrl
+          ? Object.assign({}, acc, { [url]: [...acc[url], node] })
+          : Object.assign({ [url]: [node] }, acc);
+      }, {});
       const sortLastAccessed = (a, b) => a.lastAccessed - b.lastAccessed;
       // Want to sort by last accessed. The most recently used one should be the tab to keep
       const duplicateTabs = Object.keys(urlToIdObj)
-        .filter(k => urlToIdObj[k].length > 1)
+        .filter((k) => urlToIdObj[k].length > 1)
         .reduce(
-          (acc, k) => Object.assign(
-            {},
-            acc,
-            { [k]: urlToIdObj[k].sort(sortLastAccessed) }, // Sort it by lastAccessed here
-          ),
-          {},
+          (acc, k) =>
+            Object.assign(
+              {},
+              acc,
+              { [k]: urlToIdObj[k].sort(sortLastAccessed) } // Sort it by lastAccessed here
+            ),
+          {}
         );
       Object.keys(duplicateTabs).forEach((key) => {
         const domNodes = duplicateTabs[key];
@@ -176,13 +170,15 @@ export function navigateResults(cmdKey, getState) {
         break;
       }
       const toggleMuteStatus = ({ audible }) => muteTab(id, audible);
-      queryTab(id).then(toggleMuteStatus).then(({ mutedInfo }) => {
-        if (mutedInfo.muted) {
-          selectedTab.classList.add(TAB_MUTED_CLASSNAME);
-        } else {
-          selectedTab.classList.remove(TAB_MUTED_CLASSNAME);
-        }
-      });
+      queryTab(id)
+        .then(toggleMuteStatus)
+        .then(({ mutedInfo }) => {
+          if (mutedInfo.muted) {
+            selectedTab.classList.add(TAB_MUTED_CLASSNAME);
+          } else {
+            selectedTab.classList.remove(TAB_MUTED_CLASSNAME);
+          }
+        });
       break;
     }
     case TAB_MOVE:

@@ -28,8 +28,9 @@ function subscribeToBadgeTextState(store) {
     } else {
       stopCountingBadgeTextAndRemoveListeners();
     }
-    const shouldUpdateBadgeColor = nextState.color.popupBadgeColor !== prevState.color.popupBadgeColor
-      && showTabCountBadgeText;
+    const shouldUpdateBadgeColor =
+      nextState.color.popupBadgeColor !== prevState.color.popupBadgeColor &&
+      showTabCountBadgeText;
     if (shouldUpdateBadgeColor) {
       browser.browserAction.setBadgeBackgroundColor({
         color: nextState.color.popupBadgeColor,

@@ -1,9 +1,5 @@
 import { deletedTabsCache } from '../caches';
-import {
-  SESSION_TYPE,
-  OTHER_WINDOW_TAB_TYPE,
-  tabList,
-} from '../constants';
+import { SESSION_TYPE, OTHER_WINDOW_TAB_TYPE, tabList } from '../constants';
 import {
   removeElementFromTabList,
   repaintElementWithType,
@@ -13,10 +9,7 @@ import { decodeUrl } from './url';
 
 export function addTabsToPromiseChain(store) {
   const { getState } = store;
-  const {
-    searchAllWindows,
-    ignorePinnedTabs,
-  } = getState().general;
+  const { searchAllWindows, ignorePinnedTabs } = getState().general;
   const tabQueryOptions = {};
   if (!searchAllWindows) {
     tabQueryOptions.currentWindow = true;
@@ -29,17 +22,17 @@ export function addTabsToPromiseChain(store) {
 }
 
 export function addCurrentWindowIdToPromiseChain(store) {
-  return browser.windows.getCurrent()
-    .then(({ id: currentWindowId }) => Object.assign({}, store, { currentWindowId }));
+  return browser.windows
+    .getCurrent()
+    .then(({ id: currentWindowId }) =>
+      Object.assign({}, store, { currentWindowId })
+    );
 }
 
 export function deleteTab(
   elementToRemove,
-  {
-    showRecentlyClosed,
-    alwaysShowRecentlyClosedAtTheBottom,
-  },
-  wasClicked = false,
+  { showRecentlyClosed, alwaysShowRecentlyClosedAtTheBottom },
+  wasClicked = false
 ) {
   const { id } = elementToRemove.dataset;
   // Cache the deleted tabId since the current store passed into configureSearch
@@ -57,18 +50,22 @@ export function deleteTab(
     // Get the most recently closed tab (should be the one we're deleting rn)
     if (alwaysShowRecentlyClosedAtTheBottom) {
       // Undefined if not found
-      const lastRecentlyClosedNode = findLastElType(SESSION_TYPE, tabList.children);
+      const lastRecentlyClosedNode = findLastElType(
+        SESSION_TYPE,
+        tabList.children
+      );
       elementToRemove.parentElement.insertBefore(
         elementToRemove,
         // Need to pass null explicitly for append
-        lastRecentlyClosedNode || null,
+        lastRecentlyClosedNode || null
       );
     }
   }
   deletedTabsCache().add(tabId);
-  browser.tabs.remove(tabId)
+  browser.tabs
+    .remove(tabId)
     .then(() => getRecentlyClosed(1))
-    .then(sessions => sessions[0].tab.sessionId)
+    .then((sessions) => sessions[0].tab.sessionId)
     .then((sessionId) => {
       elementToRemove.dataset.id = sessionId;
     });
@@ -85,29 +82,21 @@ function getManifest() {
 // Returns the user's shortcut for the extension
 // () -> Promise< shortcut: String >
 export function getOsShortcut() {
-  const isMac = os => os === 'mac';
-  const replaceCtrlWithCmd = shortcut => shortcut.replace(/ctrl/i, 'Cmd');
-  const getManifestSuggestedKey = manifest =>
+  const isMac = (os) => os === 'mac';
+  const replaceCtrlWithCmd = (shortcut) => shortcut.replace(/ctrl/i, 'Cmd');
+  const getManifestSuggestedKey = (manifest) =>
     manifest.commands._execute_browser_action.suggested_key;
-  const getShortcut = ([os, suggestedKey]) => (
-    isMac(os)
-      ? replaceCtrlWithCmd(suggestedKey[os])
-      : suggestedKey.default
-  );
+  const getShortcut = ([os, suggestedKey]) =>
+    isMac(os) ? replaceCtrlWithCmd(suggestedKey[os]) : suggestedKey.default;
   // ---> [ os, manifest ]
   return Promise.all([
     getUserOs(),
     getManifestSuggestedKey(getManifest()),
-  ])
-    .then(getShortcut);
+  ]).then(getShortcut);
 }
 
 export function switchActiveTab(tabDataset) {
-  const {
-    window: windowId,
-    id,
-    type,
-  } = tabDataset;
+  const { window: windowId, id, type } = tabDataset;
   const numId = parseInt(id, 10);
   apiP(browser.tabs, 'update', numId, { active: true });
   if (type === OTHER_WINDOW_TAB_TYPE) {
@@ -117,11 +106,7 @@ export function switchActiveTab(tabDataset) {
 }
 
 export function restoreClosedTab(tabDataset) {
-  const {
-    window: windowId,
-    id,
-    type,
-  } = tabDataset;
+  const { window: windowId, id, type } = tabDataset;
   browser.sessions.restore(id);
   if (type === OTHER_WINDOW_TAB_TYPE) {
     focusWindow(windowId);
@@ -130,13 +115,10 @@ export function restoreClosedTab(tabDataset) {
 }
 
 function focusWindow(windowId) {
-  return browser.windows.update(
-    parseInt(windowId, 10),
-    {
-      drawAttention: true,
-      focused: true,
-    },
-  );
+  return browser.windows.update(parseInt(windowId, 10), {
+    drawAttention: true,
+    focused: true,
+  });
 }
 
 export function queryTab(id) {
@@ -172,16 +154,16 @@ export function openBookmark(dataset) {
   return createTab({
     active: true,
     url: decodeUrl(id),
-  })
-    .then(() => {
-      window.close();
-    });
+  }).then(() => {
+    window.close();
+  });
 }
 
 export function openHistoryItem(dataset) {
   const { url } = dataset;
-  return createTab({ active: true, url: decodeUrl(url) })
-    .then(() => window.close());
+  return createTab({ active: true, url: decodeUrl(url) }).then(() =>
+    window.close()
+  );
 }
 
 // recentlyclosed func
@@ -210,4 +192,3 @@ function apiP(api, method, ...args) {
     }
   });
 }
-

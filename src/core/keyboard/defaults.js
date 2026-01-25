@@ -7,7 +7,8 @@ export const defaultCommands = {
     name: 'Open Tab',
     command: kbdCommand('Enter'),
     secondaryCommand: null,
-    description: 'Changes the active tab to the one selected and closes the popup.',
+    description:
+      'Changes the active tab to the one selected and closes the popup.',
   },
   [c.TAB_NEXT]: {
     key: c.TAB_NEXT,

@@ -6,10 +6,7 @@ import {
   ENTER,
   BACKSPACE,
 } from './__test__/keys';
-import {
-  kbdStringComboRe,
-  kbdStringSingleRe,
-} from './regex';
+import { kbdStringComboRe, kbdStringSingleRe } from './regex';
 
 const single = kbdStringSingleRe;
 const combo = kbdStringComboRe;
@@ -49,7 +46,11 @@ describe('keyboard.regex', function () {
   });
   describe('kbdStringComboRe', function () {
     const allFinalKeys = [].concat(
-      alphanumerics, puncs, arrowKeys, ENTER, BACKSPACE,
+      alphanumerics,
+      puncs,
+      arrowKeys,
+      ENTER,
+      BACKSPACE
     );
     const allKeys = [...allFinalKeys, ...modifiers];
     it('should allow any combination of a single modifier key and alphanumerics/puncs/arrow keys/<Enter>/<Backspace>', function () {

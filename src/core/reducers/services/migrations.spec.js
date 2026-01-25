@@ -15,7 +15,9 @@ describe('reducer migrations', function () {
       const firstMigration = migrations[0](exampleState);
       expect(firstMigration).to.have.property('a', 'hi');
       expect(firstMigration).to.have.property('c', 'world');
-      expect(firstMigration).to.have.property('keyboard').not.deep.equal(oldReducer());
+      expect(firstMigration)
+        .to.have.property('keyboard')
+        .not.deep.equal(oldReducer());
     });
     it('should properly generate the right set of new keyboard command properties', function () {
       for (const value of Object.values(migrations[0](exampleState).keyboard)) {
@@ -24,7 +26,7 @@ describe('reducer migrations', function () {
           'secondaryCommand',
           'key',
           'name',
-          'description',
+          'description'
         );
         if (value.command.ctrlKey) {
           expect(value).to.have.property('secondaryCommand').not.be.null;

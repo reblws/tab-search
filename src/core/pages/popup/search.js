@@ -7,11 +7,7 @@ import {
   BOOKMARK_TYPE,
   HISTORY_TYPE,
 } from './constants';
-import {
-  encodeUrl,
-  parseUrl,
-  hasValidHostname,
-} from './utils/url';
+import { encodeUrl, parseUrl, hasValidHostname } from './utils/url';
 import {
   isActive,
   identity,
@@ -45,7 +41,7 @@ export default function filterResult(
     shouldSortByMostRecentlyUsedAll: sortMruAll,
     shouldSortByMostRecentlyUsedOnPopup: sortMruPopup,
   },
-  currentWindowId,
+  currentWindowId
 ) {
   const { enableFuzzySearch, keys: searchKeys } = options;
   return function promiseSearchResults(loadedTabs) {
@@ -54,13 +50,15 @@ export default function filterResult(
     const isOtherWindowTabType = isOfType(OTHER_WINDOW_TAB_TYPE);
     const tabFilter = ({ id }) => !deletedTabsCache().has(id);
     // First filter any unwanted results
-    const annotatedTabs = loadedTabs.filter(tabFilter).map(
-      annotateTypeConditionally(
-        isOfWindow(currentWindowId),
-        TAB_TYPE,
-        OTHER_WINDOW_TAB_TYPE,
-      ),
-    );
+    const annotatedTabs = loadedTabs
+      .filter(tabFilter)
+      .map(
+        annotateTypeConditionally(
+          isOfWindow(currentWindowId),
+          TAB_TYPE,
+          OTHER_WINDOW_TAB_TYPE
+        )
+      );
     const hasMinQueryLen = query.length > MIN_QUERY_LENGTH;
     // Initialize the search array
     // If we want to move the closed tabs to the botttom filter it
@@ -73,11 +71,12 @@ export default function filterResult(
     //       for the current session
     if (showHistory && hasMinQueryLen) {
       arrayToSearchP.push(
-        searchHistory(query).then(normalizeHistory)
+        searchHistory(query)
+          .then(normalizeHistory)
           .catch((e) => {
             console.error(`Had trouble searching history: ${e}`);
             return [];
-          }),
+          })
       );
     }
     if (showRecentlyClosed) {
@@ -87,7 +86,7 @@ export default function filterResult(
           .catch((e) => {
             console.error(`Had trouble getting recently closed tabs: ${e}`);
             return [];
-          }),
+          })
       );
     }
     if (showBookmarks && hasMinQueryLen) {
@@ -97,10 +96,12 @@ export default function filterResult(
           .catch((e) => {
             console.error(`Had trouble querying bookmarks: ${e}`);
             return [];
-          }),
+          })
       );
     }
-    const arrayToSearch = Promise.all(arrayToSearchP).then(xs => xs.reduce(concat));
+    const arrayToSearch = Promise.all(arrayToSearchP).then((xs) =>
+      xs.reduce(concat)
+    );
     let search;
     if (isQueryEmpty) {
       search = identity;
@@ -110,47 +111,48 @@ export default function filterResult(
       if (sortMruAll) {
         fuseOptions = Object.assign({}, options, { shouldSort: false });
       }
-      search = arr => new Fuse(arr, fuseOptions).search(query);
+      search = (arr) => new Fuse(arr, fuseOptions).search(query);
     } else {
       // If enableFuzzySearch is off
-      const matchedTabs = tab => searchKeys.some(
-        key => tab[key].toLowerCase().includes(query.toLowerCase()),
-      );
-      search = arr => arr.filter(matchedTabs);
+      const matchedTabs = (tab) =>
+        searchKeys.some((key) =>
+          tab[key].toLowerCase().includes(query.toLowerCase())
+        );
+      search = (arr) => arr.filter(matchedTabs);
     }
 
     // Apply any extra transformations to results
-    const shouldMruSort = (sortMruAll && sortMruPopup)
-      || (isQueryEmpty && sortMruPopup);
-    return arrayToSearch
-      .then(search)
-      .then((searchResults) => {
-        // If query is empty then we just need to show them in order of tab
-        // posn, partitioned by tab type
-        if (isQueryEmpty && !shouldMruSort) {
-          return partition(isSessionType, isOtherWindowTabType)(searchResults)
-            .reduceRight(concat);
-        }
-        // Array is ordered by predicates from right-to-left
-        const predicates = [];
-        if (shouldMoveClosedToBottom) {
-          predicates.push(isSessionType);
-        }
-        if (shouldMruSort) {
-          // Whatever the active tabs are will always be the most recently used.
-          // Push them to the bottom if need to sort by most recently used
-          predicates.push(isActive);
-        }
-        if (predicates.length === 0) {
-          return searchResults;
-        }
-        const partitionResults = partition(...predicates);
-        let results = partitionResults(searchResults);
-        if (shouldMruSort) {
-          results = results.map(p => p.sort(mostRecentlyUsed));
-        }
-        return results.reduceRight(concat);
-      });
+    const shouldMruSort =
+      (sortMruAll && sortMruPopup) || (isQueryEmpty && sortMruPopup);
+    return arrayToSearch.then(search).then((searchResults) => {
+      // If query is empty then we just need to show them in order of tab
+      // posn, partitioned by tab type
+      if (isQueryEmpty && !shouldMruSort) {
+        return partition(
+          isSessionType,
+          isOtherWindowTabType
+        )(searchResults).reduceRight(concat);
+      }
+      // Array is ordered by predicates from right-to-left
+      const predicates = [];
+      if (shouldMoveClosedToBottom) {
+        predicates.push(isSessionType);
+      }
+      if (shouldMruSort) {
+        // Whatever the active tabs are will always be the most recently used.
+        // Push them to the bottom if need to sort by most recently used
+        predicates.push(isActive);
+      }
+      if (predicates.length === 0) {
+        return searchResults;
+      }
+      const partitionResults = partition(...predicates);
+      let results = partitionResults(searchResults);
+      if (shouldMruSort) {
+        results = results.map((p) => p.sort(mostRecentlyUsed));
+      }
+      return results.reduceRight(concat);
+    });
   };
 }
 
@@ -177,14 +179,11 @@ function normalizeRecentlyClosedTabs(results) {
   const annotateSession = annotateType(SESSION_TYPE);
   const filterIncognito = ({ incognito }) => !incognito;
   // Don't want to show new tab pages
-  const filterNewTab = x => !isOfUrl('about:newtab')(x);
-  const hasTab = x => 'tab' in x;
-  const filters = composeFilterOr(
-    filterNewTab,
-    filterIncognito,
-  );
-  const normalize = sessionTabs => sessionTabs
-    .reduce((acc, session) => {
+  const filterNewTab = (x) => !isOfUrl('about:newtab')(x);
+  const hasTab = (x) => 'tab' in x;
+  const filters = composeFilterOr(filterNewTab, filterIncognito);
+  const normalize = (sessionTabs) =>
+    sessionTabs.reduce((acc, session) => {
       if (!hasTab(session) || !filters(session.tab)) {
         return acc;
       }
@@ -212,15 +211,16 @@ function normalizeBookmarks(bookmarks) {
 
   // We can't open bookmarks by ID, instead we need to pass the url to
   // browser.tabs.create . Override the id property with the value of the url
-  const urlAsId = tab => Object.assign({}, tab, { id: encodeUrl(tab.url) });
+  const urlAsId = (tab) => Object.assign({}, tab, { id: encodeUrl(tab.url) });
 
   // Type property is only available from bookmarks from FF57+, annotate the
   // bookmarks type for backward compatbility
-  const normalize = bs =>
-    bs.filter(filterFolders)
+  const normalize = (bs) =>
+    bs
+      .filter(filterFolders)
       .map(annotateType(BOOKMARK_TYPE))
       .map(urlAsId)
-      .map(x => Object.assign(x, { lastAccessed: x.dateAdded || 1 }));
+      .map((x) => Object.assign(x, { lastAccessed: x.dateAdded || 1 }));
   // Treat date added bookmark as lastaccessed so we at least have a value
   return normalize(bookmarks);
 }
@@ -229,6 +229,7 @@ function normalizeHistory(historicalRecords) {
   if (!historicalRecords) {
     return [];
   }
-  return historicalRecords.map(annotateType(HISTORY_TYPE))
-    .map(x => Object.assign(x, { lastAccessed: x.lastVisitTime || 1 }));
+  return historicalRecords
+    .map(annotateType(HISTORY_TYPE))
+    .map((x) => Object.assign(x, { lastAccessed: x.lastVisitTime || 1 }));
 }

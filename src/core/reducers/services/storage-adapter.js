@@ -2,7 +2,7 @@
 const storage = browser.storage.local;
 
 export default {
-  getItem: key => storage.get(key).then(obj => obj[key]),
+  getItem: (key) => storage.get(key).then((obj) => obj[key]),
   setItem: (key, item) => storage.set({ [key]: item }),
-  removeItem: key => storage.remove(key),
+  removeItem: (key) => storage.remove(key),
 };

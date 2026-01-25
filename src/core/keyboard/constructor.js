@@ -53,7 +53,7 @@ export function kbdCommand(input) {
     return kbdCommandEvent(input);
   }
   throw new TypeError(
-    "Command input isn't the right type. KbdCommand requires a valid command string or object",
+    "Command input isn't the right type. KbdCommand requires a valid command string or object"
   );
 }
 
@@ -75,7 +75,9 @@ function kbdCommandString(inputString) {
 
 function kbdCommandEvent(event) {
   if (!event.key) {
-    throw new Error(`Received a falsey value for event.key! Expected a string, got ${event.key}`);
+    throw new Error(
+      `Received a falsey value for event.key! Expected a string, got ${event.key}`
+    );
   }
   // If shift is pressed then the value of event.key won't reflect
   // the value of the actual key pressed.
@@ -83,12 +85,7 @@ function kbdCommandEvent(event) {
   //      the key value of kbdCommand should reflect the unshifted value, so
   //      we want to show the '.' when printing the command in the above example
   if (event.code && event.shiftKey && event.code in puncCodeMap) {
-    const {
-      ctrlKey,
-      metaKey,
-      altKey,
-      shiftKey,
-    } = event;
+    const { ctrlKey, metaKey, altKey, shiftKey } = event;
     return makeKbdCommandFromEvent({
       key: puncCodeMap[event.code],
       ctrlKey,
@@ -100,20 +97,15 @@ function kbdCommandEvent(event) {
   return makeKbdCommandFromEvent(event);
 }
 
-const isSingleKey = c => (!c.ctrlKey && !c.shiftKey && !c.altKey && !c.metaKey);
-const isFinalKeyModifier = c => c.key === CONTROL
-  || c.key === CTRL
-  || c.key === META
-  || c.key === ALT
-  || c.key === SHIFT;
+const isSingleKey = (c) => !c.ctrlKey && !c.shiftKey && !c.altKey && !c.metaKey;
+const isFinalKeyModifier = (c) =>
+  c.key === CONTROL ||
+  c.key === CTRL ||
+  c.key === META ||
+  c.key === ALT ||
+  c.key === SHIFT;
 
-function makeKbdCommandFromEvent({
-  key,
-  ctrlKey,
-  metaKey,
-  altKey,
-  shiftKey,
-}) {
+function makeKbdCommandFromEvent({ key, ctrlKey, metaKey, altKey, shiftKey }) {
   const command = {
     key: capitalizeFirstLetter(key),
     ctrlKey,
@@ -134,4 +126,3 @@ function makeKbdCommandFromEvent({
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
-

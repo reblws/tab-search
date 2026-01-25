@@ -6,7 +6,10 @@ import {
 } from '../actions/types';
 import { initialGeneralSettings } from './defaults';
 
-export default function generalSettingsReducer(state = initialGeneralSettings, action) {
+export default function generalSettingsReducer(
+  state = initialGeneralSettings,
+  action
+) {
   // Parse the action type
   const { type } = action;
   switch (type) {

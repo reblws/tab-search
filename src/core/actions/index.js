@@ -58,4 +58,3 @@ export function resetDefaultKeybindings() {
 export function updateColor(a) {
   return action(COLOR_UPDATE, a.payload.key, a.payload.value);
 }
-

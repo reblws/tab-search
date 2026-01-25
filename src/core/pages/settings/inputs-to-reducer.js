@@ -21,14 +21,10 @@ export default Object.keys(skeleton).reduce((acc, keyPrefix) => {
     acc,
     values.reduce((settingAcc, setting) => {
       // In the form showUrls is in charge of changing the 'keys' prop in reducer
-      const settingKey = (setting !== 'keys')
-        ? setting
-        : 'showUrls';
-      return Object.assign(
-        {},
-        settingAcc,
-        { [settingKey]: `${keyPrefix}.${setting}` },
-      );
-    }, {}),
+      const settingKey = setting !== 'keys' ? setting : 'showUrls';
+      return Object.assign({}, settingAcc, {
+        [settingKey]: `${keyPrefix}.${setting}`,
+      });
+    }, {})
   );
 }, {});

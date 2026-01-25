@@ -23,4 +23,3 @@ createUIStore()
     console.error(e);
     throw new Error(`Ran into a problem initializing popup window: ${e.stack}`);
   });
-

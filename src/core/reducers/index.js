@@ -21,7 +21,6 @@ const persistConfig = {
   }),
 };
 
-
 const rootReducer = combineReducers({
   fuzzy: fuzzySettingsReducer,
   general: generalSettingsReducer,

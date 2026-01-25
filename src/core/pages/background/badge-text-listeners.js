@@ -1,4 +1,4 @@
-import debounce from 'debounce';
+import { debounce } from 'core/utils/debounce';
 
 // Shorthand
 // t -> browser.tabs
@@ -24,7 +24,7 @@ const eventListenerMap = {
   onDetached: handleOnDetachedTab,
 };
 
-const doListeners = browserTabObject => method => (listenerMap) => {
+const doListeners = (browserTabObject) => (method) => (listenerMap) => {
   Object.keys(listenerMap).forEach((eventKey) => {
     const handler = listenerMap[eventKey];
     browserTabObject[eventKey][method](handler);
@@ -40,10 +40,11 @@ const WINDOW_OPTIONS = {
   windowTypes: ['normal'],
 };
 
-const updateTabInWindow = windowId => tabId =>
-  browser.windows.get(windowId, WINDOW_OPTIONS)
+const updateTabInWindow = (windowId) => (tabId) =>
+  browser.windows
+    .get(windowId, WINDOW_OPTIONS)
     .then(({ tabs }) => String(tabs.length))
-    .then(text => setBadgeText({ text, tabId }));
+    .then((text) => setBadgeText({ text, tabId }));
 
 export function startCountingBadgeTextAndAddListeners() {
   setInitialBadgeTextInAllWindows();
@@ -57,7 +58,8 @@ export function stopCountingBadgeTextAndRemoveListeners() {
 
 function setInitialBadgeTextInAllWindows() {
   setBadgeText({ text: LOADING_TEXT });
-  browser.windows.getAll(WINDOW_OPTIONS)
+  browser.windows
+    .getAll(WINDOW_OPTIONS)
     .then((windows) => {
       windows.forEach(updateWindowBadgeText);
       return windows;
@@ -68,7 +70,6 @@ function setInitialBadgeTextInAllWindows() {
       `);
     });
 }
-
 
 function updateWindowBadgeText(browserWindow) {
   const { tabs } = browserWindow;
@@ -88,7 +89,7 @@ function clearAllBadgeText() {
   });
 }
 
-const promiseBadgeTextWindowUpdate = windowId =>
+const promiseBadgeTextWindowUpdate = (windowId) =>
   browser.windows.get(windowId, WINDOW_OPTIONS).then(updateWindowBadgeText);
 
 function handleOnCreatedTab({ windowId }) {
@@ -135,13 +136,8 @@ function handleOnDetachedTab(tabId, detachInfo) {
 
 // Badge text gets reset when navigating to a new tab
 function handleOnUpdatedTab(_, __, tab) {
-  const {
-    windowId,
-    id,
-    status,
-  } = tab;
+  const { windowId, id, status } = tab;
   // Wait for completion before updating the text
   if (status !== 'complete') return;
   return updateTabInWindow(windowId)(id);
 }
-

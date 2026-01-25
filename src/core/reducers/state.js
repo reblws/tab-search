@@ -6,11 +6,7 @@ import { LAST_QUERY_UPDATE } from '../actions/types';
 export default function stateReducer(state = initialState, action) {
   const { type, payload } = action;
   if (type === LAST_QUERY_UPDATE) {
-    return Object.assign(
-      {},
-      state,
-      { lastQuery: payload.key },
-    );
+    return Object.assign({}, state, { lastQuery: payload.key });
   }
   return state;
 }

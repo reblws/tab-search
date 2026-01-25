@@ -1,12 +1,6 @@
-import {
-  SHIFT,
-  ALT,
-  CONTROL,
-  CTRL,
-  META,
-} from './constants';
+import { SHIFT, ALT, CONTROL, CTRL, META } from './constants';
 
-const isKeyModifier = m =>
+const isKeyModifier = (m) =>
   m === CONTROL || m === ALT || m === META || m === CTRL || m === SHIFT;
 
 const ARROW_UNICODE_MAP = {

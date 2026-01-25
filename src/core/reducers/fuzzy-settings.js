@@ -8,7 +8,10 @@ import {
 } from '../actions/types';
 import { initialFuzzySettings } from './defaults';
 
-export default function fuzzySettingsReducer(state = initialFuzzySettings, action) {
+export default function fuzzySettingsReducer(
+  state = initialFuzzySettings,
+  action
+) {
   const { type } = action;
   switch (type) {
     case FUZZY + SEARCH_KEY_UPDATE: {

@@ -1,4 +1,4 @@
-import rgb from 'rgb';
+import { hexToRgb as rgb } from 'core/utils/rgb';
 import historySvg from 'static/assets/history-16.svg';
 import bookmarkSvg from 'static/assets/bookmark.svg';
 import { compose } from 'redux';
@@ -45,5 +45,5 @@ function fillAndStroke(svgDataUri, fill, stroke) {
     return svgDataUri;
   }
   stroke = stroke || fill;
-  return compose(x => strokeSvgUri(x, stroke), fillSvgUri)(svgDataUri, fill);
+  return compose((x) => strokeSvgUri(x, stroke), fillSvgUri)(svgDataUri, fill);
 }

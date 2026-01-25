@@ -31,7 +31,6 @@ import {
   HINT_MSG_NEED_FINAL_KEY,
 } from './constants';
 
-
 const d = document;
 
 export function initSettings(store) {
@@ -43,8 +42,9 @@ export function initSettings(store) {
   Object.values(inputs).forEach(attachEventListeners);
 
   // Reset each setting
-  const fieldsetButtons = [...document.querySelectorAll('fieldset')]
-    .map(x => [x, x.querySelector('button')]);
+  const fieldsetButtons = [...document.querySelectorAll('fieldset')].map(
+    (x) => [x, x.querySelector('button')]
+  );
   fieldsetButtons.forEach(([fieldsetNode, btn]) => {
     btn.addEventListener('click', () => {
       fieldsetNode.querySelectorAll('input').forEach(({ name }) => {
@@ -60,7 +60,7 @@ export function initKeybindingTable(store) {
   const stTableBody = d.getElementById(SHORTCUT_TABLE_BODY);
   // Connect to bg-store
   const { subscribe, dispatch, getState } = store;
-  const kbString = x =>
+  const kbString = (x) =>
     keyboard.toString(x, store.os === browser.runtime.PlatformOs.MAC);
   const kbHandlers = keybindInputHandlers(store, kbString);
   const { keyboard: keyboardState } = getState();
@@ -82,44 +82,47 @@ export function initKeybindingTable(store) {
 
   let prevState = keyboardState;
   function keyBindingSubscription() {
-    const compareCommands = (x, y) => keyboard.isEqual(x.command, y.command)
-      && keyboard.isEqual(x.secondaryCommand, y.secondaryCommand);
-    const selectKbd = state => state().keyboard;
+    const compareCommands = (x, y) =>
+      keyboard.isEqual(x.command, y.command) &&
+      keyboard.isEqual(x.secondaryCommand, y.secondaryCommand);
+    const selectKbd = (state) => state().keyboard;
     const newState = selectKbd(store.getState);
-    const not = predicate => (...args) => !predicate(...args);
-    diffStateKeys(prevState, newState, compareCommands)
-      .forEach((key) => {
-        const {
-          command: oldCommand,
-          secondaryCommand: oldSecondaryCommand,
-        } = prevState[key];
-        const {
-          name,
-          command: newCommand,
-          secondaryCommand: newSecondaryCommand,
-        } = newState[key];
-        const msg = (oldC, newC) => `
+    const not =
+      (predicate) =>
+      (...args) =>
+        !predicate(...args);
+    diffStateKeys(prevState, newState, compareCommands).forEach((key) => {
+      const { command: oldCommand, secondaryCommand: oldSecondaryCommand } =
+        prevState[key];
+      const {
+        name,
+        command: newCommand,
+        secondaryCommand: newSecondaryCommand,
+      } = newState[key];
+      const msg = (oldC, newC) => `
           ${name} shortcut updated: <${kbString(oldC)}> changed to <${kbString(newC)}>
         `;
-        const changed = [
-          [oldCommand, newCommand],
-          [oldSecondaryCommand, newSecondaryCommand],
-        ].filter(not(keyboard.isEqual));
-        // Flash each shortcut changed
-        const appendOkFlash = ([prev, next]) => Flash.appendOk(msg(prev, next));
-        changed.forEach(appendOkFlash);
-        updateTableRow(key, kbString(newCommand), kbString(newSecondaryCommand));
-      });
+      const changed = [
+        [oldCommand, newCommand],
+        [oldSecondaryCommand, newSecondaryCommand],
+      ].filter(not(keyboard.isEqual));
+      // Flash each shortcut changed
+      const appendOkFlash = ([prev, next]) => Flash.appendOk(msg(prev, next));
+      changed.forEach(appendOkFlash);
+      updateTableRow(key, kbString(newCommand), kbString(newSecondaryCommand));
+    });
     prevState = newState;
   }
 }
 
 // Object containing input ids and their Handlerscorresponding nodes
 function findInputs() {
-  return [...document.querySelectorAll('input')]
-    // Filter out all inputs who arent in charge of a setting
-    .filter(({ id }) => id in reducerMap)
-    .reduce((acc, node) => Object.assign({}, acc, { [node.id]: node }), {});
+  return (
+    [...document.querySelectorAll('input')]
+      // Filter out all inputs who arent in charge of a setting
+      .filter(({ id }) => id in reducerMap)
+      .reduce((acc, node) => Object.assign({}, acc, { [node.id]: node }), {})
+  );
 }
 // Given the setting object and the location we want to search, return the
 // current setting value
@@ -156,25 +159,19 @@ function getStateSettings(settings) {
       case 'range':
         node.value = stateSettingValue * 10;
         break;
-      default: break;
+      default:
+        break;
     }
     node.dispatchEvent(new Event('change'));
   };
 }
-
 
 // Decides which action to dispatch based on the input that changed
 function configureSettingListeners(dispatch) {
   return function attachEventListeners(node) {
     node.addEventListener('change', (event) => {
       // Figure out which action to dispatch based on the node's props
-      const {
-        id,
-        type,
-        value,
-        checked,
-        validity,
-      } = event.currentTarget;
+      const { id, type, value, checked, validity } = event.currentTarget;
       const settingsLocation = reducerMap[id].split('.');
       const settingKey = settingsLocation[settingsLocation.length - 1];
       switch (type) {
@@ -185,7 +182,8 @@ function configureSettingListeners(dispatch) {
         case 'checkbox': {
           if (settingKey === 'showBookmarks' || settingKey === 'showHistory') {
             const permission = settingKey.slice('show'.length).toLowerCase();
-            browser.permissions.request({ permissions: [permission] })
+            browser.permissions
+              .request({ permissions: [permission] })
               .then((granted) => {
                 // If user declines reset the checkbox to unchecked
                 if (granted) {
@@ -204,17 +202,16 @@ function configureSettingListeners(dispatch) {
           break;
         }
         case 'number': {
-          const {
-            rangeUnderflow,
-            rangeOverflow,
-          } = validity;
+          const { rangeUnderflow, rangeOverflow } = validity;
           if (!rangeUnderflow && !rangeOverflow) {
             dispatch(updateNumber(settingKey, value));
           }
           break;
         }
-        case 'color': dispatch(updateColor(settingKey, value));
-        default: break;
+        case 'color':
+          dispatch(updateColor(settingKey, value));
+        default:
+          break;
       }
     });
   };
@@ -229,16 +226,13 @@ export function clearChildNodes(node) {
 
 // Returns an array of keys showing which keys differed
 function diffStateKeys(obj1, obj2, compare) {
-  return Object.keys(obj2).filter(key => !compare(obj1[key], obj2[key]));
+  return Object.keys(obj2).filter((key) => !compare(obj1[key], obj2[key]));
 }
 
 // Given the entire keyboard-shortcut state, return an array of <tr> nodes
 function stateToTableRows(keyboardState, handlers, kbString) {
-  const toRow = key => commandToTableRow(
-    keyboardState[key],
-    handlers,
-    kbString,
-  );
+  const toRow = (key) =>
+    commandToTableRow(keyboardState[key], handlers, kbString);
   return Object.keys(keyboardState).map(toRow);
 }
 
@@ -251,9 +245,8 @@ function updateTableRow(id, primaryShortcut, secondaryShortcut) {
   inputs.forEach((input) => {
     switch (input.type) {
       case 'text': {
-        const value = input.dataset.key === 'command'
-          ? primaryShortcut
-          : secondaryShortcut;
+        const value =
+          input.dataset.key === 'command' ? primaryShortcut : secondaryShortcut;
         input.defaultValue = value;
         input.value = value;
         break;
@@ -266,7 +259,8 @@ function updateTableRow(id, primaryShortcut, secondaryShortcut) {
         }
         break;
       }
-      default: break;
+      default:
+        break;
     }
   });
 }
@@ -292,7 +286,7 @@ function updateTableRow(id, primaryShortcut, secondaryShortcut) {
 function commandToTableRow(
   { key, name, command, secondaryCommand, description },
   handlers,
-  kbString,
+  kbString
 ) {
   const trNode = d.createElement('tr');
   trNode.setAttribute('id', key);
@@ -394,10 +388,11 @@ function keybindInputHandlers(store, kbString) {
   };
 
   function isDuplicateCommand(state, command) {
-    const key = Object.values(state)
-      .find(k => keyboard.isEqual(k.command, command)
-        || keyboard.isEqual(k.secondaryCommand, command),
-      );
+    const key = Object.values(state).find(
+      (k) =>
+        keyboard.isEqual(k.command, command) ||
+        keyboard.isEqual(k.secondaryCommand, command)
+    );
 
     if (key) {
       return { key, isDuplicate: true };
@@ -419,13 +414,21 @@ function keybindInputHandlers(store, kbString) {
     const isValid = keyboard.isValid(command);
     const { name } = store.getState().keyboard[parentId];
     if (isValid) {
-      const { isDuplicate, key: duplicateKey } =
-        isDuplicateCommand(store.getState().keyboard, command);
+      const { isDuplicate, key: duplicateKey } = isDuplicateCommand(
+        store.getState().keyboard,
+        command
+      );
       if (isDuplicate && duplicateKey === parentId) {
-        Flash.message(`<${kbString(command)}> is already ${name}'s shortcut.`, Flash.WARNING);
+        Flash.message(
+          `<${kbString(command)}> is already ${name}'s shortcut.`,
+          Flash.WARNING
+        );
         event.currentTarget.blur();
       } else if (isDuplicate) {
-        Flash.message(`Duplicate key! <${kbString(command)}> is ${name}'s shortcut.`, Flash.ERROR);
+        Flash.message(
+          `Duplicate key! <${kbString(command)}> is ${name}'s shortcut.`,
+          Flash.ERROR
+        );
       } else {
         // Stop input reset race
         event.currentTarget.blur();
@@ -461,7 +464,7 @@ function keybindInputHandlers(store, kbString) {
       }
       Flash.message(
         `${kbString(command)} is ${lowerCaseSentence(command.error)}`,
-        flashType,
+        flashType
       );
       Flash.append(appendMsg);
     }

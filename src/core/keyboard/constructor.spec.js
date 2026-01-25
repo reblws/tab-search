@@ -1,21 +1,17 @@
-import {
-  alphanumerics,
-  BACKSPACE,
-  modifiers,
-} from './__test__/keys';
-import {
-  kbdCommand,
-  isValidKbdCommand,
-} from './constructor';
-import {
-  defaultCommands,
-} from './defaults';
+import { alphanumerics, BACKSPACE, modifiers } from './__test__/keys';
+import { kbdCommand, isValidKbdCommand } from './constructor';
+import { defaultCommands } from './defaults';
 import { kbdCommandToString } from './to-string';
 import * as constants from './constants';
 import * as e from './__test__/events';
 
-const singleKey = key =>
-  ({ key, ctrlKey: false, altKey: false, shiftKey: false, metaKey: false });
+const singleKey = (key) => ({
+  key,
+  ctrlKey: false,
+  altKey: false,
+  shiftKey: false,
+  metaKey: false,
+});
 describe('keyboard.constructor', function () {
   describe('kbdCommand', function () {
     describe('string inputs', function () {
@@ -76,9 +72,9 @@ describe('keyboard.constructor', function () {
       it('should NOT interpret meta keys as a ctrl', function () {
         const metaZ = kbdCommand('Meta+Z');
         expect(metaZ).to.not.deep.equal(kbdCommand('Ctrl+Z'));
-        expect(
-          kbdCommand('Meta+Ctrl+Z'),
-        ).to.not.deep.equal(kbdCommand('Ctrl+Z'));
+        expect(kbdCommand('Meta+Ctrl+Z')).to.not.deep.equal(
+          kbdCommand('Ctrl+Z')
+        );
         expect(metaZ).to.deep.equal({
           key: 'Z',
           ctrlKey: false,
@@ -89,9 +85,9 @@ describe('keyboard.constructor', function () {
       });
 
       describe('default keybindings', function () {
-        const defaultBindings =
-          Object.values(defaultCommands)
-            .map(x => x.command);
+        const defaultBindings = Object.values(defaultCommands).map(
+          (x) => x.command
+        );
         for (const binding of defaultBindings) {
           it(`should have no errors on ${kbdCommandToString(binding)}`, function () {
             expect(kbdCommand(binding)).to.not.have.property('error');
@@ -101,8 +97,14 @@ describe('keyboard.constructor', function () {
     });
     describe('event inputs', function () {
       it('should return with an error key on an invalid final key <F1>', function () {
-        expect(kbdCommand({ key: 'F1' })).to.have.property('error', constants.ERROR_MSG_NOT_VALID_SINGLE_KEY);
-        expect(kbdCommand({ ctrlKey: true, key: 'F1' })).to.have.property('error', constants.ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY);
+        expect(kbdCommand({ key: 'F1' })).to.have.property(
+          'error',
+          constants.ERROR_MSG_NOT_VALID_SINGLE_KEY
+        );
+        expect(kbdCommand({ ctrlKey: true, key: 'F1' })).to.have.property(
+          'error',
+          constants.ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY
+        );
       });
       it('should handle a Ctrl+Shift+F event', function () {
         expect(kbdCommand(e.eventCtrlShiftF)).to.deep.equal({
@@ -123,8 +125,9 @@ describe('keyboard.constructor', function () {
         });
       });
       it('should NOT treat Meta the same as Ctrl', function () {
-        expect(kbdCommand(e.eventCtrl1))
-          .to.not.deep.equal(kbdCommand(e.eventMeta1));
+        expect(kbdCommand(e.eventCtrl1)).to.not.deep.equal(
+          kbdCommand(e.eventMeta1)
+        );
       });
       it('should not have errors on meta', function () {
         expect(kbdCommand(e.eventMeta1)).to.not.have.property('error');
@@ -169,17 +172,18 @@ describe('keyboard.constructor', function () {
           const altKey = /alt/i.test(m);
           const metaKey = /meta/i.test(m);
           it(`should return false for ${m}`, function () {
-            expect(isValidKbdCommand({
-              key: m,
-              ctrlKey,
-              shiftKey,
-              altKey,
-              metaKey,
-            })).to.be.false;
+            expect(
+              isValidKbdCommand({
+                key: m,
+                ctrlKey,
+                shiftKey,
+                altKey,
+                metaKey,
+              })
+            ).to.be.false;
           });
         }
       });
     });
   });
 });
-

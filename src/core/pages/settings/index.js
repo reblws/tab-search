@@ -8,8 +8,10 @@ addInputBindings();
 document.getElementById('versioning').textContent =
   `v${browser.runtime.getManifest().version}`;
 
-const appendOsToStore = store =>
-  browser.runtime.getPlatformInfo().then(({ os }) => Object.assign({ os }, store));
+const appendOsToStore = (store) =>
+  browser.runtime
+    .getPlatformInfo()
+    .then(({ os }) => Object.assign({ os }, store));
 
 createUIStore()
   .then(appendOsToStore)
@@ -17,7 +19,8 @@ createUIStore()
     initSettings(store);
     initKeybindingTable(store);
     return store;
-  }).catch((e) => {
+  })
+  .catch((e) => {
     console.error(e);
     console.error(e.stack);
     throw e;

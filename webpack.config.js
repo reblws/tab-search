@@ -25,15 +25,6 @@ const plugins = [
   }),
 ];
 
-if (process.env.NODE_ENV === 'production') {
-  // lodash-es/_root.js calls eval, replace it with our own definition here
-  // so we can pass AMO validation tests
-  plugins.push(new webpack.NormalModuleReplacementPlugin(
-    /lodash-es\/_root.js/,
-    join(SRC_PATH, 'patch', 'lodash-es._root.js'),
-  ));
-}
-
 const webpackConfig = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   module: {

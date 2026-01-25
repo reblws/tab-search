@@ -1,9 +1,6 @@
 /* Main DOM event-handlers */
 import keyboard, { TAB_NEXT, TAB_PREV } from 'core/keyboard';
-import {
-  injectTabsInList,
-  addHeadTabListNodeSelectedStyle,
-} from './utils/dom';
+import { injectTabsInList, addHeadTabListNodeSelectedStyle } from './utils/dom';
 import { navigateResults } from './utils/keyboard';
 import {
   switchActiveTab,
@@ -29,7 +26,9 @@ import filterResults from './search';
 export function configureSearch(store) {
   const { getState, tabQueryPromise, currentWindowId } = store;
   const { fuzzy, general } = getState();
-  return function updateSearchResults(event = { currentTarget: { value: '' } }) {
+  return function updateSearchResults(
+    event = { currentTarget: { value: '' } }
+  ) {
     const isSearchEmpty = event.currentTarget.value.length === 0;
     // If input is empty hide the button
     if (isSearchEmpty) {
@@ -63,47 +62,36 @@ export function clearInput(event) {
 
 // Merges maps into the one specified in target
 function mapAssign(target, ...sources) {
-  return sources.reduce(
-    (acc, map) => {
-      for (const [key, value] of map) {
-        acc.set(key, value);
-      }
-      return acc;
-    },
-    target,
-  );
+  return sources.reduce((acc, map) => {
+    for (const [key, value] of map) {
+      acc.set(key, value);
+    }
+    return acc;
+  }, target);
 }
 
 // Given an object returns a Map with the keys and values swapped
-function swapKeyValueMap(obj, f = x => x) {
-  return Object.keys(obj)
-    .reduce(
-      (acc, key) => (f(obj[key]) ? acc.set(f(obj[key]), key) : acc),
-      new Map(),
-    );
+function swapKeyValueMap(obj, f = (x) => x) {
+  return Object.keys(obj).reduce(
+    (acc, key) => (f(obj[key]) ? acc.set(f(obj[key]), key) : acc),
+    new Map()
+  );
 }
 
 function isModifierSingle(event) {
-  const modifiers = [
-    'Control',
-    'Ctrl',
-    'Alt',
-    'Shift',
-    'Meta',
-    'Shift',
-  ];
-  return modifiers.some(m => event.key === m);
+  const modifiers = ['Control', 'Ctrl', 'Alt', 'Shift', 'Meta', 'Shift'];
+  return modifiers.some((m) => event.key === m);
 }
 
 export function keydownHandler(store) {
-  const navigate = cmdKey => navigateResults(cmdKey, store.getState);
+  const navigate = (cmdKey) => navigateResults(cmdKey, store.getState);
   const { keyboard: keyboardControls } = store.getState();
   // The keyboard object is an object with the mapping { [ACTION]: kbdcommand }
   // Mirror the keys and values so we have a Map:
   // {[kbdCommand]: ACTION}
   const kbdControlMap = mapAssign(
-    swapKeyValueMap(keyboardControls, x => x.command),
-    swapKeyValueMap(keyboardControls, x => x.secondaryCommand),
+    swapKeyValueMap(keyboardControls, (x) => x.command),
+    swapKeyValueMap(keyboardControls, (x) => x.secondaryCommand)
   );
   return function handleKeyDown(event) {
     if (isModifierSingle(event)) {
@@ -124,11 +112,14 @@ export function keydownHandler(store) {
       case 'PageUp':
         event.preventDefault();
         break;
-      default: break;
+      default:
+        break;
     }
     if (keyboard.isValid(event)) {
       const cmd = keyboard.command(event);
-      const key = [...kbdControlMap.keys()].find(x => keyboard.isEqual(x, cmd));
+      const key = [...kbdControlMap.keys()].find((x) =>
+        keyboard.isEqual(x, cmd)
+      );
       return navigate(kbdControlMap.get(key));
     }
     // Keys that require special behavior
@@ -154,10 +145,12 @@ export function keydownHandler(store) {
         return navigate(TAB_PREV);
       case 'Tab':
         return navigate(event.shiftKey ? TAB_PREV : TAB_NEXT);
-      default: break;
+      default:
+        break;
     }
-    const shouldJustFocusSearchBar = (event.key === 'Backspace' && !isModifierSingle(event))
-      || (/^([A-Za-z]|\d)$/.test(event.key) && !isModifierSingle(event));
+    const shouldJustFocusSearchBar =
+      (event.key === 'Backspace' && !isModifierSingle(event)) ||
+      (/^([A-Za-z]|\d)$/.test(event.key) && !isModifierSingle(event));
     if (shouldJustFocusSearchBar) {
       searchInput.focus();
     }
@@ -171,8 +164,10 @@ export function handleTabClick(getState) {
   return function doHandleTabClick(event) {
     const generalSettings = getState().general;
     const { currentTarget, ctrlKey, target } = event;
-    if (target.nodeName === 'IMG'
-      && target.classList.contains(TAB_DELETE_BTN_CLASSNAME)) {
+    if (
+      target.nodeName === 'IMG' &&
+      target.classList.contains(TAB_DELETE_BTN_CLASSNAME)
+    ) {
       return deleteTab(currentTarget, generalSettings, true);
     }
     const { dataset } = currentTarget;
@@ -204,7 +199,8 @@ export function handleTabClick(getState) {
         }
         return openHistoryItem(dataset);
       }
-      default: return noop();
+      default:
+        return noop();
     }
   };
 }

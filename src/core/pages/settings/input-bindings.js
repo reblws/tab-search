@@ -11,7 +11,10 @@
 // { [inputId] -> [input ids to disable if false]}
 const d = document;
 const disableBindings = {
-  showRecentlyClosed: ['recentlyClosedLimit', 'alwaysShowRecentlyClosedAtTheBottom'],
+  showRecentlyClosed: [
+    'recentlyClosedLimit',
+    'alwaysShowRecentlyClosedAtTheBottom',
+  ],
   enableFuzzySearch: ['threshold', 'shouldSort'],
   shouldSortByMostRecentlyUsedOnPopup: ['shouldSortByMostRecentlyUsedAll'],
 };
