@@ -32,7 +32,6 @@ const comboFinalKeys = [
 
 // Modifier keys. If a combination has the following keys
 // Don't forget to double escape slashes - /\\+/ -> /\+/
-// eslint-disable-next-line no-useless-escape
 const modifiers = `((?:${CTRL}|${ALT}|${SHIFT}|${META})\\+)+`;
 export const kbdStringComboRe =
   new RegExp(`^${modifiers}(?:${comboFinalKeys.join('|')})$`);

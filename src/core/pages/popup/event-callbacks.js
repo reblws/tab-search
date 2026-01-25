@@ -65,7 +65,6 @@ export function clearInput(event) {
 function mapAssign(target, ...sources) {
   return sources.reduce(
     (acc, map) => {
-      // eslint-disable-next-line no-restricted-syntax
       for (const [key, value] of map) {
         acc.set(key, value);
       }

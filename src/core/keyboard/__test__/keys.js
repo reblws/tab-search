@@ -11,8 +11,6 @@ export const arrowKeys = [
 ];
 export const ENTER = 'Enter';
 export const BACKSPACE = 'Backspace';
-/* eslint-disable quotes */
-/* eslint-disable quote-props */
 export const shiftedValues = {
   '!': {
     code: "Digit1",

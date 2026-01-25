@@ -1,50 +1,31 @@
 const webpack = require('webpack');
-const WebpackShellPlugin = require('webpack-shell-plugin');
+const WebpackShellPluginNext = require('webpack-shell-plugin-next');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-// const FileWatcherPlugin = require('filewatcher-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { join } = require('path');
 
 const SRC_PATH = join(__dirname, 'src');
 const DIST_PATH = join(__dirname, 'dist');
 const PAGES_PATH = join(SRC_PATH, 'core', 'pages');
 
-// https://github.com/reactjs/react-redux/pull/680/files#diff-11e9f7f953edc64ba14b0cc350ae7b9dR20
-// Replace webpack/global.js definition with window
-function applyGlobalVar(compiler) {
-  compiler.plugin('compilation', (compilation, params) => {
-    params.normalModuleFactory.plugin('parser', (parser) => {
-      parser.plugin('expression global', function expressionGlobalPlugin() {
-        this.state.module.addVariable('global', 'window');
-        return false;
-      });
-    });
-  });
-}
-
 const plugins = [
-  new CleanWebpackPlugin(DIST_PATH),
-  new CopyWebpackPlugin([{ from: join(SRC_PATH, 'static'), to: DIST_PATH }]),
-  new WebpackShellPlugin({
-    onBuildEnd: [
-      `node ./scripts/build-manifest.js ${process.env.BROWSER} ${DIST_PATH}`,
-    ],
+  new CopyWebpackPlugin({
+    patterns: [{ from: join(SRC_PATH, 'static'), to: DIST_PATH }],
+  }),
+  new WebpackShellPluginNext({
+    onBuildEnd: {
+      scripts: [
+        `node ./scripts/build-manifest.js ${process.env.BROWSER} ${DIST_PATH}`,
+      ],
+      blocking: true,
+      parallel: false,
+    },
   }),
   new webpack.DefinePlugin({
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
   }),
-  { apply: applyGlobalVar },
 ];
+
 if (process.env.NODE_ENV === 'production') {
-  // web-ext zip strips out sourcemaps, so we need to beautify the output
-  // so destructuring assignments don't break. Need to investigate this more.
-  plugins.push(new UglifyJsPlugin({
-    uglifyOptions: {
-      output: { beautify: true, comments: true },
-      mangle: false,
-    },
-  }));
   // lodash-es/_root.js calls eval, replace it with our own definition here
   // so we can pass AMO validation tests
   plugins.push(new webpack.NormalModuleReplacementPlugin(
@@ -52,18 +33,24 @@ if (process.env.NODE_ENV === 'production') {
     join(SRC_PATH, 'patch', 'lodash-es._root.js'),
   ));
 }
+
 const webpackConfig = {
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   module: {
     rules: [
       {
-        test: /\.svg/,
-        use: {
-          loader: 'svg-url-loader',
-          options: {
-            noquotes: true,
-          },
-        },
+        test: /\.js$/,
         exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+        },
+      },
+      {
+        test: /\.svg/,
+        type: 'asset/inline',
+        generator: {
+          dataUrl: content => content.toString(),
+        },
       },
       {
         test: /\.css$/,
@@ -80,6 +67,7 @@ const webpackConfig = {
   output: {
     path: DIST_PATH,
     filename: '[name]_bundle.js',
+    clean: true,
   },
   target: 'web',
   plugins,
@@ -89,10 +77,29 @@ const webpackConfig = {
       'node_modules',
     ],
   },
+  optimization: {
+    minimize: process.env.NODE_ENV === 'production',
+    minimizer: [
+      (compiler) => {
+        const TerserPlugin = require('terser-webpack-plugin');
+        new TerserPlugin({
+          terserOptions: {
+            // web-ext zip strips out sourcemaps, so we need to beautify the output
+            // so destructuring assignments don't break.
+            format: {
+              beautify: true,
+              comments: true,
+            },
+            mangle: false,
+          },
+        }).apply(compiler);
+      },
+    ],
+  },
 };
 
 if (process.env.NODE_ENV === 'development') {
-  webpackConfig.devtool = 'sourcemap';
+  webpackConfig.devtool = 'source-map';
 }
 
 module.exports = webpackConfig;

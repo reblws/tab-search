@@ -71,7 +71,6 @@ describe('keyboard.regex', function () {
       for (i = 0; i < modifiers.length; i++) {
         const modifier = modifiers[i];
         for (j = 0; j < modifiers.length; j++) {
-          // eslint-disable-next-line no-continue
           const modifier2 = modifiers[j];
           for (k = 0; k < allFinalKeys.length; k++) {
             const finalKey = allFinalKeys[k];

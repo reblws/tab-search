@@ -54,7 +54,6 @@ function clearChildren(node) {
 // Given a string, return true if one string is too long and should apply
 function shouldWordBreak(str) {
   const MAX_LENGTH = 40;
-  // eslint-disable-next-line no-confusing-arrow
   const longestWordLength = (acc, s) => (s.length > acc)
     ? s.length
     : acc;
@@ -374,8 +373,7 @@ export function overrideFontStylesWithSansSerif() {
 }
 
 export function appendSearchInputPlaceholderText(newText) {
-  // eslint-disable-next-line prefer-template
-  searchInput.placeholder += ' ' + newText;
+  searchInput.placeholder += ` ${newText}`;
 }
 
 export function selectNodeText(nodeToCopy) {

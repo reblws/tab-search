@@ -35,7 +35,7 @@ export function isValidKbdCommand(input) {
   let command;
   try {
     command = kbdCommand(input);
-  } catch (e) {
+  } catch {
     return false;
   }
 
