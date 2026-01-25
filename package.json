@@ -1,5 +1,10 @@
 {
   "packageManager": "pnpm@10.27.0",
+  "pnpm": {
+    "overrides": {
+      "diff": ">=8.0.3"
+    }
+  },
   "scripts": {
     "start": "npm run start:firefox",
     "build": "npm run build:firefox",
