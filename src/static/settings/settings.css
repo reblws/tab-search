@@ -495,7 +495,6 @@ input[type="range"]:focus::-moz-range-thumb {
 .shortcut-table td {
   font-size: 14px;
   color: var(--grey-70);
-  position: relative;
 }
 
 .shortcut-table__input {
@@ -594,22 +593,34 @@ input[type="range"]:focus::-moz-range-thumb {
 }
 
 /* ===========================
-   Delete Circle
+   Delete Circle (Acorn Ghost Button)
    =========================== */
 .delete-circle {
-  height: 14px;
-  width: 14px;
+  height: 24px;
+  width: 24px;
+  padding: 4px;
   cursor: pointer;
-  position: absolute;
-  right: var(--space-sm);
-  top: 50%;
-  transform: translateY(-50%);
-  opacity: 0.6;
-  transition: opacity 0.15s ease;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  opacity: 0.5;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+  vertical-align: middle;
 }
 
 .delete-circle:hover {
   opacity: 1;
+  background-color: var(--red-50-a30, rgba(255, 0, 57, 0.15));
+}
+
+.delete-circle:focus {
+  opacity: 1;
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.delete-circle:active {
+  background-color: var(--red-50-a30, rgba(255, 0, 57, 0.25));
 }
 
 .hidden {
@@ -872,5 +883,13 @@ input[type="range"]:focus::-moz-range-thumb {
     background-color: rgba(255, 0, 57, 0.15);
     border-color: var(--red-50);
     color: var(--red-50);
+  }
+
+  .delete-circle {
+    filter: brightness(1.2);
+  }
+
+  .delete-circle:hover {
+    background-color: rgba(255, 77, 106, 0.2);
   }
 }
