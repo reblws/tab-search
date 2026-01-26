@@ -392,4 +392,9 @@ p {
   .tab-object.mute > .tab-img:before {
     filter: invert(0.7);
   }
+
+  /* Invert fallback favicon (file.svg) for visibility on dark background */
+  .tab-img img[src$="file.svg"] {
+    filter: invert(1);
+  }
 }
