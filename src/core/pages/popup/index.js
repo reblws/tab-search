@@ -1,5 +1,5 @@
 /* Popup initialization */
-import { createUIStore } from 'redux-webext';
+import { Store } from 'webext-redux';
 import {
   addEventListeners,
   doFinalSideEffects,
@@ -13,7 +13,10 @@ import {
 
 focusSearchInputWorkaround();
 
-createUIStore()
+const store = new Store();
+store
+  .ready()
+  .then(() => store)
   .then(overrideDomStyleSheets)
   .then(addTabsToPromiseChain)
   .then(addCurrentWindowIdToPromiseChain)

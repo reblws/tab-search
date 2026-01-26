@@ -1,4 +1,4 @@
-import { createUIStore } from 'redux-webext';
+import { Store } from 'webext-redux';
 import addInputBindings from './input-bindings';
 import { initKeybindingTable, initSettings } from './dom';
 
@@ -13,7 +13,10 @@ const appendOsToStore = (store) =>
     .getPlatformInfo()
     .then(({ os }) => Object.assign({ os }, store));
 
-createUIStore()
+const store = new Store();
+store
+  .ready()
+  .then(() => store)
   .then(appendOsToStore)
   .then((store) => {
     initSettings(store);

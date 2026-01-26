@@ -1,10 +1,9 @@
 import { debounce } from 'core/utils/debounce';
+import { setBadgeText } from 'core/utils/action-api';
 
 // Shorthand
 // t -> browser.tabs
-// setBadgeText -> browser.browserAction.setBadgeText
 const { tabs: t } = browser;
-const { setBadgeText } = browser.browserAction;
 
 const ADD_LISTENER = 'addListener';
 const REMOVE_LISTENER = 'removeListener';
@@ -106,16 +105,20 @@ function handleOnRemovedTab(_, removeInfo) {
   if (isWindowClosing) {
     return;
   }
-  // Need to set a short timeout to avoid "Error: Invalid tab ID"
-  // Don't know why that happens since we're not operating on the tabId at all
-  setTimeout(() => {
+  // Retry pattern for service worker compatibility (avoids setTimeout issues)
+  const tryUpdate = (retries = 2) => {
     promiseBadgeTextWindowUpdate(windowId).catch((e) => {
-      throw new Error(`
-        Ran into problem handling removed tab when watching for badge text updates:
-        ${e}
-      `);
+      if (retries > 0) {
+        tryUpdate(retries - 1);
+      } else {
+        throw new Error(`
+          Ran into problem handling removed tab when watching for badge text updates:
+          ${e}
+        `);
+      }
     });
-  }, 100);
+  };
+  tryUpdate();
 }
 
 function handleOnDetachedTab(tabId, detachInfo) {

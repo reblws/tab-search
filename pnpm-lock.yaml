@@ -26,9 +26,9 @@ importers:
       redux-persist:
         specifier: ^6.0.0
         version: 6.0.0(redux@5.0.1)
-      redux-webext:
-        specifier: ^1.1.2
-        version: 1.1.2
+      webext-redux:
+        specifier: ^4.0.0
+        version: 4.0.0(redux@5.0.1)
     devDependencies:
       '@babel/core':
         specifier: ^7.26.0
@@ -2151,6 +2151,12 @@ packages:
     resolution: {integrity: sha512-gvVijfZvn7R+2qyPX8mAuKcFGDf6Nc61GdvGafQsHL0sBIxfKzA+usWn4GFC/bk+QdwPUD4kWFJLhElipq+0VA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
+  lodash.assignin@4.2.0:
+    resolution: {integrity: sha512-yX/rx6d/UTVh7sSVWVSIMjfnz95evAgDFdb1ZozC35I9mSFCkmzptOzevxjgbQUsc78NR44LVHWjsoMQXy9FDg==}
+
+  lodash.clonedeep@4.5.0:
+    resolution: {integrity: sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==}
+
   lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
 
@@ -2510,9 +2516,6 @@ packages:
     peerDependenciesMeta:
       react:
         optional: true
-
-  redux-webext@1.1.2:
-    resolution: {integrity: sha512-48YE+Q2n8bXWl5caEPNTbv6JXTarZWR8gS2KPdYwRzZB7pR8drxDbOax/x3/tsE3dCsR20kRBNJvxzUdNG4bBw==}
 
   redux@5.0.1:
     resolution: {integrity: sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==}
@@ -2969,6 +2972,11 @@ packages:
     resolution: {integrity: sha512-25xjkR/MaP7vbXyAWLYpMO6AnVvsxDXtxhSz9sev+OiM3MkDktnwFZNMq8l/J3gtmc9XAC9lJUgCppBwI/T0tw==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
+
+  webext-redux@4.0.0:
+    resolution: {integrity: sha512-pMyU0mWRz5umC5ISGG4H7src+bwgJUw3lYEtPm5gvJZILC2/ZrEE5mtqi3caSifet684kMtPse0uVyK/9bZMuA==}
+    peerDependencies:
+      redux: '>= 3 <= 5'
 
   webpack-bundle-analyzer@4.10.2:
     resolution: {integrity: sha512-vJptkMm9pk5si4Bv922ZbKLV8UTT4zib4FPgXMhgzUny0bfDDkLXAVQs3ly3fS4/TN9ROFtb0NFrm04UXFE/Vw==}
@@ -5512,6 +5520,10 @@ snapshots:
     dependencies:
       p-locate: 6.0.0
 
+  lodash.assignin@4.2.0: {}
+
+  lodash.clonedeep@4.5.0: {}
+
   lodash.debounce@4.0.8: {}
 
   lodash.merge@4.6.2: {}
@@ -5879,8 +5891,6 @@ snapshots:
   redux-persist@6.0.0(redux@5.0.1):
     dependencies:
       redux: 5.0.1
-
-  redux-webext@1.1.2: {}
 
   redux@5.0.1: {}
 
@@ -6397,6 +6407,12 @@ snapshots:
       - node-fetch
       - safe-compare
       - supports-color
+
+  webext-redux@4.0.0(redux@5.0.1):
+    dependencies:
+      lodash.assignin: 4.2.0
+      lodash.clonedeep: 4.5.0
+      redux: 5.0.1
 
   webpack-bundle-analyzer@4.10.2:
     dependencies:

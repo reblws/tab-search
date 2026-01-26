@@ -84,8 +84,13 @@ function getManifest() {
 export function getOsShortcut() {
   const isMac = (os) => os === 'mac';
   const replaceCtrlWithCmd = (shortcut) => shortcut.replace(/ctrl/i, 'Cmd');
-  const getManifestSuggestedKey = (manifest) =>
-    manifest.commands._execute_browser_action.suggested_key;
+  const getManifestSuggestedKey = (manifest) => {
+    // Handle both MV3 (_execute_action) and MV2 (_execute_browser_action)
+    const cmd =
+      manifest.commands._execute_action ||
+      manifest.commands._execute_browser_action;
+    return cmd.suggested_key;
+  };
   const getShortcut = ([os, suggestedKey]) =>
     isMac(os) ? replaceCtrlWithCmd(suggestedKey[os]) : suggestedKey.default;
   // ---> [ os, manifest ]

@@ -1,5 +1,4 @@
 {
-  "manifest_version": 2,
   "name": "TabSearch",
   "version": "0.4.8",
   "description": "Easy tab search & switching",
@@ -17,26 +16,8 @@
     "48": "icons/logo-48.png",
     "96": "icons/logo-96.png"
   },
-  "browser_action": {
-    "default_icon": "icons/logo-48.png",
-    "default_title": "TabSearch",
-    "default_popup": "popup/index.html"
-  },
-  "background": {
-    "scripts": ["background_bundle.js"]
-  },
   "options_ui": {
     "page": "settings/index.html",
-    "open_in_tab": true,
-    "browser_style": true
-  },
-  "commands": {
-    "_execute_browser_action": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+F",
-        "mac": "Ctrl+Shift+L"
-      },
-      "description": "Execute this browser action"
-    }
+    "open_in_tab": true
   }
 }

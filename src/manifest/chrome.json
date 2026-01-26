@@ -1,3 +1,21 @@
 {
-  "minimum_chrome_version": "59.0.3071"
+  "manifest_version": 3,
+  "minimum_chrome_version": "88",
+  "background": {
+    "service_worker": "background_bundle.js"
+  },
+  "action": {
+    "default_icon": "icons/logo-48.png",
+    "default_title": "TabSearch",
+    "default_popup": "popup/index.html"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F",
+        "mac": "Ctrl+Shift+L"
+      },
+      "description": "Execute this browser action"
+    }
+  }
 }

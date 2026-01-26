@@ -1,4 +1,5 @@
 import { initialColorSettings as initialColors } from 'core/reducers/defaults';
+import { setBadgeBackgroundColor } from 'core/utils/action-api';
 import backgroundStore from './store';
 import {
   startCountingBadgeTextAndAddListeners,
@@ -16,7 +17,7 @@ function subscribeToBadgeTextState(store) {
   // listeners will be handled by the func below anyway
   let prevState = store.getState();
   if (prevState.color.popupBadgeColor !== initialColors.popupBadgeColor) {
-    browser.browserAction.setBadgeBackgroundColor({
+    setBadgeBackgroundColor({
       color: prevState.color.popupBadgeColor,
     });
   }
@@ -32,7 +33,7 @@ function subscribeToBadgeTextState(store) {
       nextState.color.popupBadgeColor !== prevState.color.popupBadgeColor &&
       showTabCountBadgeText;
     if (shouldUpdateBadgeColor) {
-      browser.browserAction.setBadgeBackgroundColor({
+      setBadgeBackgroundColor({
         color: nextState.color.popupBadgeColor,
       });
     }
