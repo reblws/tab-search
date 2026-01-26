@@ -397,4 +397,9 @@ p {
   .tab-img img[src$="file.svg"] {
     filter: invert(1);
   }
+
+  /* Mute the cancel button to fit dark mode aesthetic */
+  .delete-circle {
+    filter: saturate(0.7) brightness(1.1);
+  }
 }
