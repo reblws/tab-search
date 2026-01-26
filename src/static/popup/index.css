@@ -354,7 +354,7 @@ p {
   }
 
   .search::placeholder {
-    color: var(--grey-50);
+    color: var(--grey-40);
   }
 
   .tab-list {
