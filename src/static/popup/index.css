@@ -320,3 +320,76 @@ p {
 .history {
   border-left: 5px var(--purple) solid;
 }
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --whitesmokeBorder: var(--grey-70);
+    --whitesmoke: var(--grey-80);
+    --bgColor: var(--grey-80);
+    --textColor: var(--grey-10);
+    --textColorSecondary: var(--grey-30);
+    --tabListBg: var(--grey-90);
+    --searchBorder: var(--grey-60);
+    /* Brighten accent colors for better visibility on dark backgrounds */
+    --blue: var(--blue-50);
+    --red: var(--red-50);
+    --yellow: var(--yellow-50);
+    --navy: var(--blue-40);
+    --purple: var(--purple-50);
+  }
+
+  body {
+    border-color: var(--grey-70);
+  }
+
+  input[type="search"] {
+    color: var(--textColor);
+  }
+
+  .search {
+    background-color: var(--grey-80);
+    border-color: var(--searchBorder);
+    color: var(--textColor);
+  }
+
+  .search::placeholder {
+    color: var(--grey-50);
+  }
+
+  .tab-list {
+    background-color: var(--tabListBg);
+  }
+
+  .tab-object {
+    color: var(--textColor);
+  }
+
+  .tab-object:focus {
+    outline-color: var(--grey-30);
+  }
+
+  .tab-info > p {
+    color: var(--textColorSecondary);
+  }
+
+  .no-result {
+    color: var(--textColor);
+  }
+
+  #pref-btn {
+    color: var(--grey-40);
+  }
+
+
+  /* Invert "no results" icon for dark mode visibility */
+  .no-result__circle {
+    filter: invert(1);
+  }
+
+  /* Lighten volume/mute icons (they use context-fill which defaults to black) */
+  .tab-object.audible > .tab-img:before,
+  .tab-object.mute > .tab-img:before {
+    filter: invert(0.7);
+  }
+}
