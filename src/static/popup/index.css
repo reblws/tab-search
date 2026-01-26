@@ -13,6 +13,8 @@
   --purple: var(--purple-70);
   --headerHeight: 48px;
   --bodyWidth: 355px;
+  --tabListHeight: 450px;
+  --searchWidth: 300px;
 }
 
 body {
@@ -26,7 +28,7 @@ body {
 input[type="search"] {
   color: var(--grey-90);
   line-height: 2em;
-  width: 300px;
+  width: var(--searchWidth);
   margin: auto;
 }
 
@@ -37,7 +39,7 @@ header {
   align-items: center;
   padding: 0.5em;
   height: var(--headerHeight);
-  width: 355px;
+  width: var(--bodyWidth);
   box-sizing: border-box;
   border-bottom: 1px;
   border-style: solid;
@@ -51,7 +53,7 @@ header {
 }
 
 .search-form {
-  width: 300px;
+  width: var(--searchWidth);
   margin-left: auto;
   margin-right: auto;
   box-sizing: border-box;
@@ -70,7 +72,7 @@ header {
 	flex-direction: column;
 	overflow-y: scroll;
 	overflow-x: hidden;
-	height: 450px;
+	height: var(--tabListHeight);
   background-color: #fff;
   border-color: var(--whitesmokeBorder);
   border-style: solid;
@@ -82,7 +84,7 @@ header {
 .search {
   top: 10px;
   height: 32px;
-  width: 300px;
+  width: var(--searchWidth);
   padding-left: 8px;
   padding-right: 24px;
   line-height: 32px;
@@ -114,12 +116,13 @@ header {
   display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 20rem;
+	width: 100%;
   padding-top: 1rem;
   padding-bottom: 1rem;
   padding-left: 0;
   padding-right: 3rem;
   cursor: pointer;
+  box-sizing: border-box;
   /* For chrome to prevent box shrinking */
   flex-shrink: 0;
 }
@@ -236,8 +239,9 @@ removes the extra space added by the pseudoelement
   align-items: center;
   justify-content: center;
   height: 300px;
-  width: 20rem;
+  width: 100%;
 	padding: 1rem 0.5rem;
+  box-sizing: border-box;
 }
 
 .no-result__circle {
@@ -270,7 +274,7 @@ removes the extra space added by the pseudoelement
 }
 
 .tab-info > p {
-  width: 225px;
+  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

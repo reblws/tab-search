@@ -36,6 +36,7 @@ export const initialGeneralSettings = {
   shouldSortByMostRecentlyUsedAll: false,
   tabUrlSize: 11,
   tabTitleSize: 13,
+  popupSize: 'medium',
 };
 
 export const initialState = {

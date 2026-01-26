@@ -7,6 +7,7 @@ export const SETTINGS_RESET = 'SETTINGS_RESET';
 export const NUMBER_UPDATE = 'NUMBER_UPDATE';
 export const SETTING_RESET = 'SETTING_RESET';
 export const COLOR_UPDATE = 'COLOR_UPDATE';
+export const SELECT_UPDATE = 'SELECT_UPDATE';
 
 // State
 export const LAST_QUERY_UPDATE = 'LAST_QUERY_UPDATE';

@@ -14,6 +14,7 @@ import {
   SECONDARY_KEYBINDING_REMOVE,
   KEYBINDING_DEFAULT_RESET,
   COLOR_UPDATE,
+  SELECT_UPDATE,
 } from 'core/actions/types';
 
 export default createBackgroundStore({
@@ -32,5 +33,6 @@ export default createBackgroundStore({
     [COLOR_UPDATE]: act => Object.assign(act, { type: COLOR_UPDATE }),
     [SECONDARY_KEYBINDING_UPDATE]: act => Object.assign(act, { type: SECONDARY_KEYBINDING_UPDATE }),
     [SECONDARY_KEYBINDING_REMOVE]: act => Object.assign(act, { type: SECONDARY_KEYBINDING_REMOVE }),
+    [SELECT_UPDATE]: act => Object.assign(act, { type: SELECT_UPDATE }),
   },
 });

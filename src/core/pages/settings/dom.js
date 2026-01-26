@@ -13,6 +13,7 @@ import {
   updateColor,
   updateSecondaryKeybinding,
   removeSecondaryKeybinding,
+  updateSelect,
 } from './actions';
 import {
   SHORTCUT_TABLE_BODY,
@@ -43,7 +44,7 @@ export function initSettings(store) {
     .map(x => [x, x.querySelector('button')]);
   fieldsetButtons.forEach(([fieldsetNode, btn]) => {
     btn.addEventListener('click', () => {
-      fieldsetNode.querySelectorAll('input').forEach(({ name }) => {
+      fieldsetNode.querySelectorAll('input, select').forEach(({ name }) => {
         store.dispatch(resetSetting(name));
       });
       location.reload(true);
@@ -93,7 +94,7 @@ export function initKeybindingTable(store) {
 
 // Object containing input ids and their Handlerscorresponding nodes
 function findInputs() {
-  return [...document.querySelectorAll('input')]
+  return [...document.querySelectorAll('input, select')]
     // Filter out all inputs who arent in charge of a setting
     .filter(({ id }) => id in reducerMap)
     .reduce((acc, node) => Object.assign({}, acc, { [node.id]: node }), {});
@@ -132,6 +133,9 @@ function getStateSettings(settings) {
         break;
       case 'range':
         node.value = stateSettingValue * 10;
+        break;
+      case 'select-one':
+        node.value = stateSettingValue;
         break;
       default: break;
     }
@@ -190,7 +194,12 @@ function configureSettingListeners(dispatch) {
           }
           break;
         }
-        case 'color': dispatch(updateColor(settingKey, value));
+        case 'color':
+          dispatch(updateColor(settingKey, value));
+          break;
+        case 'select-one':
+          dispatch(updateSelect(settingKey, value));
+          break;
         default: break;
       }
     });

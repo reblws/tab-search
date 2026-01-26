@@ -46,3 +46,31 @@ export const d = document;
 
 // css ids
 export const TAB_ACTIVE_ID = 'activeTab';
+
+// Popup size presets
+export const POPUP_SIZE_PRESETS = {
+  small: {
+    bodyWidth: '300px',
+    tabListHeight: '380px',
+    searchWidth: '250px',
+    headerHeight: '40px',
+  },
+  medium: {
+    bodyWidth: '355px',
+    tabListHeight: '450px',
+    searchWidth: '300px',
+    headerHeight: '48px',
+  },
+  large: {
+    bodyWidth: '420px',
+    tabListHeight: '520px',
+    searchWidth: '355px',
+    headerHeight: '56px',
+  },
+  xlarge: {
+    bodyWidth: '500px',
+    tabListHeight: '530px',
+    searchWidth: '430px',
+    headerHeight: '64px',
+  },
+};
