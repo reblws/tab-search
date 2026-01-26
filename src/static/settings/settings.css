@@ -845,7 +845,8 @@ input[type="range"]:focus::-moz-range-thumb {
     background-color: var(--grey-50);
   }
 
-  .inputs label {
+  .inputs label,
+  .range-label {
     color: var(--grey-30);
   }
 
