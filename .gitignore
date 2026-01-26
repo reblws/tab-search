@@ -6,3 +6,5 @@ dist/
 releases/
 web-ext-artifacts/
 .envrc
+.nyc_output/
+coverage/
