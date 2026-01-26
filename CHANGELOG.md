@@ -11,6 +11,13 @@
 - Dark theme
 - Vertically centered overlay
 
+## 0.5.0 (2026-01-25)
+
+- Added dark mode support for popup and settings page
+- Added popup scaling options
+- Modernized settings page with card-based design and keycap-style shortcuts
+- Modernized dependencies and fixed security vulnerabilities
+
 ## 0.4.8 (2018-04-04)
 
 - Changed <kbd>Home</kbd>/<kbd>End</kbd> to only scroll to end if input isn't selected
