@@ -5,5 +5,11 @@
         "browsers": ["last 2 versions", "Firefox ESR"]
       }
     }]
+  ],
+  "plugins": [
+    ["module-resolver", {
+      "root": ["./src"],
+      "extensions": [".js"]
+    }]
   ]
 }
