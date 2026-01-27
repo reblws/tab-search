@@ -27,6 +27,7 @@ import {
   ERROR_MSG_FINAL_KEY_IS_MODIFIER,
 } from './constants';
 import * as Toast from './toast';
+import * as browserCommands from './browser-commands';
 
 
 const d = document;
@@ -440,6 +441,132 @@ function keybindInputHandlers(store, kbString) {
           Toast.error(`${keyDisplay} is not a valid shortcut. Try using modifier keys (Ctrl, Alt, Shift) with a letter or number`);
           break;
       }
+    }
+  }
+}
+
+// Format shortcut for display, converting Ctrl to Cmd on Mac
+function formatShortcutForDisplay(shortcut, isMac) {
+  if (!shortcut) return '';
+  return isMac ? shortcut.replace(/Ctrl/g, 'Cmd') : shortcut;
+}
+
+// Initialize browser shortcut section for popup activation
+export async function initBrowserShortcut(os) {
+  const input = d.getElementById('popup-shortcut-input');
+  const resetButton = d.getElementById('browser-shortcut-reset');
+  const hintElement = d.getElementById('browser-shortcut-hint');
+
+  const isMac = os === browser.runtime.PlatformOs.MAC;
+  const supportsUpdate = browserCommands.supportsCommandUpdate();
+
+  // Load current shortcut
+  try {
+    const currentShortcut = await browserCommands.getPopupShortcut();
+    input.value = formatShortcutForDisplay(currentShortcut, isMac) || 'Not set';
+  } catch (err) {
+    console.error('Failed to load popup shortcut:', err);
+    input.value = 'Error loading';
+  }
+
+  function addBrowserSettingsLink(element, text = 'Or manage in browser settings') {
+    const link = d.createElement('a');
+    link.href = '#';
+    link.textContent = text;
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      browser.tabs.create({ url: browserCommands.getBrowserShortcutSettingsUrl() });
+    });
+    element.appendChild(link);
+  }
+
+  async function handleReset() {
+    try {
+      await browserCommands.resetPopupShortcut();
+      const newShortcut = await browserCommands.getPopupShortcut();
+      input.value = formatShortcutForDisplay(newShortcut, isMac);
+      Toast.success('Popup shortcut reset to default');
+    } catch {
+      Toast.error('Failed to reset shortcut');
+    }
+  }
+
+  if (supportsUpdate) {
+    // Firefox: Enable keyboard editing
+    input.removeAttribute('readonly');
+    setupBrowserShortcutInput(input, isMac);
+    resetButton.addEventListener('click', handleReset);
+    hintElement.textContent = 'Click the input and press your desired shortcut. ';
+    addBrowserSettingsLink(hintElement);
+  } else {
+    // Chrome: Read-only with link to browser settings
+    resetButton.style.display = 'none';
+    addBrowserSettingsLink(hintElement, 'Manage shortcuts in browser settings');
+  }
+}
+
+function setupBrowserShortcutInput(input, isMac) {
+  let originalValue = '';
+
+  input.addEventListener('focus', () => {
+    originalValue = input.value;
+    input.value = 'Press shortcut...';
+    input.addEventListener('keydown', handleKeydown);
+  });
+
+  input.addEventListener('blur', () => {
+    input.removeEventListener('keydown', handleKeydown);
+    if (input.value === 'Press shortcut...') {
+      input.value = originalValue;
+    }
+  });
+
+  async function handleKeydown(event) {
+    event.preventDefault();
+
+    if (event.key === 'Escape') {
+      input.blur();
+      return;
+    }
+
+    // Ignore modifier-only presses
+    if (['Control', 'Alt', 'Shift', 'Meta'].includes(event.key)) {
+      return;
+    }
+
+    // Build shortcut string in browser.commands format
+    const parts = [];
+    if (event.ctrlKey || event.metaKey) parts.push('Ctrl');
+    if (event.altKey) parts.push('Alt');
+    if (event.shiftKey) parts.push('Shift');
+
+    // Map key to browser.commands format
+    const keyMap = {
+      ArrowUp: 'Up',
+      ArrowDown: 'Down',
+      ArrowLeft: 'Left',
+      ArrowRight: 'Right',
+    };
+    const key = keyMap[event.key] || event.key.toUpperCase();
+    parts.push(key);
+
+    const shortcut = parts.join('+');
+
+    // Validate: must have Ctrl or Alt modifier
+    if (!event.ctrlKey && !event.metaKey && !event.altKey) {
+      Toast.warning('Shortcut must include Ctrl or Alt');
+      return;
+    }
+
+    try {
+      await browserCommands.updatePopupShortcut(shortcut);
+      const displayShortcut = formatShortcutForDisplay(shortcut, isMac);
+      input.value = displayShortcut;
+      originalValue = displayShortcut;
+      input.blur();
+      Toast.success(`Shortcut updated to ${displayShortcut}`);
+    } catch (e) {
+      Toast.error(`Failed to update: ${e.message}`);
     }
   }
 }

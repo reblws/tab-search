@@ -437,6 +437,68 @@ input[type="range"]:focus::-moz-range-thumb {
   color: var(--grey-70);
 }
 
+/* Browser Shortcut Section */
+.browser-shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin: var(--space-md) 0;
+}
+
+.browser-shortcut-row label {
+  font-size: 14px;
+  color: var(--grey-70);
+}
+
+.shortcut-input {
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+  font-size: 12px;
+  font-weight: 500;
+  padding: var(--space-sm) var(--space-md);
+  min-width: 140px;
+  text-align: center;
+  background: linear-gradient(to bottom, #fafafa 0%, #e8e8e8 100%);
+  border: 1px solid var(--grey-40);
+  border-bottom-width: 3px;
+  border-bottom-color: var(--grey-50);
+  border-radius: var(--radius-sm);
+  color: var(--grey-80);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.1s ease;
+}
+
+.shortcut-input:not([readonly]):hover {
+  background: linear-gradient(to bottom, #ffffff 0%, #f0f0f0 100%);
+  border-color: var(--grey-50);
+}
+
+.shortcut-input:not([readonly]):focus {
+  outline: none;
+  background: linear-gradient(to bottom, #e8e8e8 0%, #d8d8d8 100%);
+  border-bottom-width: 1px;
+  transform: translateY(2px);
+  box-shadow:
+    0 0 0 3px var(--blue-50-a30),
+    0 1px 0 rgba(255, 255, 255, 0.5) inset;
+}
+
+.browser-shortcut-hint {
+  font-size: 13px;
+  color: var(--secondaryTextColor);
+  margin-top: var(--space-sm);
+}
+
+.browser-shortcut-hint a {
+  color: var(--blue-60);
+  text-decoration: none;
+}
+
+.browser-shortcut-hint a:hover {
+  text-decoration: underline;
+}
+
 /* ===========================
    Shortcuts Table
    =========================== */
@@ -896,6 +958,32 @@ input[type="range"]:focus::-moz-range-thumb {
 
   .shortcuts > p strong {
     color: var(--grey-30);
+  }
+
+  .browser-shortcut-row label {
+    color: var(--grey-30);
+  }
+
+  .shortcut-input {
+    background: linear-gradient(to bottom, var(--grey-60) 0%, var(--grey-70) 100%);
+    border-color: var(--grey-80);
+    border-bottom-color: #000;
+    color: var(--grey-10);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.1) inset,
+      0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  .shortcut-input:not([readonly]):hover {
+    background: linear-gradient(to bottom, var(--grey-50) 0%, var(--grey-60) 100%);
+  }
+
+  .shortcut-input:not([readonly]):focus {
+    background: linear-gradient(to bottom, var(--grey-70) 0%, var(--grey-80) 100%);
+  }
+
+  .browser-shortcut-hint a {
+    color: var(--blue-40);
   }
 
   .shortcut-table {

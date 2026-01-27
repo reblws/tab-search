@@ -1,6 +1,6 @@
 import { createUIStore } from 'redux-webext';
 import addInputBindings from './input-bindings';
-import { initKeybindingTable, initSettings } from './dom';
+import { initKeybindingTable, initSettings, initBrowserShortcut } from './dom';
 
 addInputBindings();
 
@@ -16,6 +16,7 @@ createUIStore()
   .then((store) => {
     initSettings(store);
     initKeybindingTable(store);
+    initBrowserShortcut(store.os);
     return store;
   }).catch((e) => {
     console.error(e);
