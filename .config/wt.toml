@@ -1,0 +1,10 @@
+# Worktrunk hooks for TabSearch
+
+# Install dependencies when creating worktrees
+post-create = "pnpm install"
+
+# Validate before merging
+[pre-merge]
+build = "npm run build"
+lint = "npm run lint:eslint"
+test = "npm test"

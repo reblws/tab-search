@@ -4,6 +4,7 @@ import {
   addEventListeners,
   doFinalSideEffects,
   focusSearchInputWorkaround,
+  applyPopupSize,
   overrideDomStyleSheets,
 } from './side-effects';
 import {
@@ -17,6 +18,7 @@ const store = new Store();
 store
   .ready()
   .then(() => store)
+  .then(applyPopupSize)
   .then(overrideDomStyleSheets)
   .then(addTabsToPromiseChain)
   .then(addCurrentWindowIdToPromiseChain)

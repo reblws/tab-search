@@ -6,6 +6,7 @@ import {
   prefsBtn,
   TYPE_COLOR_PROPERTY_MAP,
   COLOR_PROPERTY_TYPE_MAP,
+  POPUP_SIZE_PRESETS,
 } from './constants';
 import {
   scrollIfNeeded,
@@ -28,6 +29,17 @@ function openSettingsPage() {
     url: browser.runtime.getURL('../settings/index.html'),
     active: true,
   }).then(() => window.close());
+}
+
+export function applyPopupSize(store) {
+  const { popupSize } = store.getState().general;
+  const preset = POPUP_SIZE_PRESETS[popupSize] || POPUP_SIZE_PRESETS.medium;
+  const root = document.documentElement;
+  root.style.setProperty('--bodyWidth', preset.bodyWidth);
+  root.style.setProperty('--tabListHeight', preset.tabListHeight);
+  root.style.setProperty('--searchWidth', preset.searchWidth);
+  root.style.setProperty('--headerHeight', preset.headerHeight);
+  return store;
 }
 
 export function overrideDomStyleSheets(store) {

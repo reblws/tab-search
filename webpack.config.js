@@ -59,6 +59,10 @@ const webpackConfig = {
     path: DIST_PATH,
     filename: '[name]_bundle.js',
     clean: true,
+    globalObject: 'self',
+    environment: {
+      globalThis: true,
+    },
   },
   target: 'web',
   plugins,

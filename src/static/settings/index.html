@@ -27,30 +27,39 @@
             <h2>Appearance</h2>
             <button class="browser-style">Reset to Defaults</button>
           </header>
-          <p class="inputs browser-style">
+          <p class="inputs browser-style toggle-row">
             <input type="checkbox" name="showVisualDeleteTabButton" id="showVisualDeleteTabButton">
             <label for="showVisualDeleteTabButton">Show visual delete tab button</label>
           </p>
-          <p class="inputs browser-style">
+          <p class="inputs browser-style toggle-row">
             <input type="checkbox" name="useFallbackFont" id="useFallbackFont">
             <label for="useFallbackFont">Use browser's default font (sans-serif)</label>
           </p>
 
-          <p class="inputs browser-style">
+          <p class="inputs browser-style toggle-row">
             <input type="checkbox" name="showTabCountBadgeText" id="showTabCountBadgeText">
             <label for="showTabCountBadgeText">Display total number of tabs above the popup icon</label>
           </p>
           <p class="inputs browser-style">
-            <input type="number" min="8" max="32" id="tabTitleSize" name="tabTitleSize"> &ensp;
+            <input type="number" min="8" max="32" id="tabTitleSize" name="tabTitleSize">
             <label for="tabTitleSize">px Tab title font size</label>
           </p>
           <p class="inputs browser-style">
-            <input type="number" min="0" max="32" id="tabUrlSize" name="tabUrlSize"> &ensp;
+            <input type="number" min="0" max="32" id="tabUrlSize" name="tabUrlSize">
             <label for="tabUrlSize">px Tab url font size</label>
           </p>
-          <p class="inputs browser-style">
+          <p class="inputs browser-style toggle-row">
             <input type="checkbox" name="oneLineTabTitles" id="oneLineTabTitles">
             <label for="oneLineTabTitles">One line tab titles</label>
+          </p>
+          <p class="inputs browser-style">
+            <label for="popupSize">Popup size: </label>
+            <select name="popupSize" id="popupSize" class="browser-style">
+              <option value="small">Small (300px)</option>
+              <option value="medium">Medium (355px)</option>
+              <option value="large">Large (420px)</option>
+              <option value="xlarge">Extra Large (500px)</option>
+            </select>
           </p>
         </fieldset>
         <fieldset>
@@ -58,27 +67,27 @@
             <h2>Colors</h2>
             <button class="browser-style">Reset to Defaults</button>
           </header>
-          <p class="inputs browser-style">
+          <p class="inputs browser-style color-row">
             <input name="popupBadgeColor" id="popupBadgeColor" type="color">
             <label for="popupBadgeColor">Tab Count Badge Color</label>
           </p>
-          <p class="inputs browser-style">
+          <p class="inputs browser-style color-row">
             <input name="tabColor" id="tabColor" type="color">
             <label for="tabColor">Tab Color</label>
           </p>
-          <p class="inputs browser-style">
+          <p class="inputs browser-style color-row">
             <input name="otherWindowTabColor" id="otherWindowTabColor" type="color">
             <label for="otherWindowTabColor">Other Window Tab Color</label>
           </p>
-          <p class="inputs browser-style">
+          <p class="inputs browser-style color-row">
             <input name="recentlyClosedTabColor" id="recentlyClosedTabColor" type="color">
             <label for="recentlyClosedTabColor">Recently Closed Tab Color</label>
           </p>
-          <p class="inputs browser-style">
+          <p class="inputs browser-style color-row">
             <input name="bookmarkColor" id="bookmarkColor" type="color">
             <label for="bookmarkColor">Bookmark Color</label>
           </p>
-          <p class="inputs browser-style">
+          <p class="inputs browser-style color-row">
             <input name="historyColor" id="historyColor" type="color">
             <label for="historyColor">History Color</label>
           </p>
@@ -90,20 +99,20 @@
           <h2>Results</h2>
           <button class="browser-style">Reset to Defaults</button>
         </header>
-        <p class="inputs">
+        <p class="inputs toggle-row">
           <input type="checkbox" name="searchAllWindows" id="searchAllWindows">
           <label for="searchAllWindows">Show tabs from all windows</label>
         </p>
-        <p class="inputs">
+        <p class="inputs toggle-row">
           <input type="checkbox" name="showBookmarks" id="showBookmarks">
           <label for="showBookmarks">Show Bookmarks in search results</label>
         </p>
-        <p class="inputs">
+        <p class="inputs toggle-row">
           <input type="checkbox" name="showHistory" id="showHistory">
           <label for="showHistory">Show History in search results</label>
         </p>
         <div>
-          <p class="inputs">
+          <p class="inputs toggle-row">
             <input type="checkbox" name="showRecentlyClosed" id="showRecentlyClosed">
             <label for="showRecentlyClosed">Show Recently Closed Tabs</label>
           </p>
@@ -112,34 +121,33 @@
             <input class="number-input" type="number" name="recentlyClosedLimit" id="recentlyClosedLimit" min="0" max="25">
           </p>
         </div>
-        </p>
-        <p class="inputs">
+        <p class="inputs toggle-row">
           <input type="checkbox" name="ignorePinnedTabs" id="ignorePinnedTabs">
           <label for="ignorePinnedTabs">
             Hide pinned tabs from search results
           </label>
         </p>
-        <p class="inputs">
+        <p class="inputs toggle-row">
           <input type="checkbox" name="alwaysShowRecentlyClosedAtTheBottom" id="alwaysShowRecentlyClosedAtTheBottom">
           <label for="alwaysShowRecentlyClosedAtTheBottom">
             Always show Recently Closed Tabs at the bottom of the search list
           </label>
         </p>
-        <p class="inputs">
+        <p class="inputs toggle-row">
           <input type="checkbox" name="showLastQueryOnPopup" id="showLastQueryOnPopup">
           <label for="showLastQueryOnPopup">
             Show the last query's results when opening the popup window
           </label>
         </p>
-        <p class="inputs">
+        <p class="inputs toggle-row">
           <input type="checkbox" name="shouldSortByMostRecentlyUsedOnPopup" id="shouldSortByMostRecentlyUsedOnPopup">
           <label for="shouldSortByMostRecentlyUsedOnPopup">
            Sort tabs by most recently used on when search is empty and on popup
           </label>
         </p>
-        <p class="inputs browser-style">
-<input type="checkbox" name="shouldSortByMostRecentlyUsedAll" id="shouldSortByMostRecentlyUsedAll">
-<label for="shouldSortByMostRecentlyUsedAll">
+        <p class="inputs browser-style toggle-row">
+          <input type="checkbox" name="shouldSortByMostRecentlyUsedAll" id="shouldSortByMostRecentlyUsedAll">
+          <label for="shouldSortByMostRecentlyUsedAll">
             <em>Always</em> sort tabs by most recently used
           </label>
         </p>
@@ -149,33 +157,27 @@
           <h2>Behavior</h2>
           <button class="browser-style">Reset to Defaults</button>
         </header>
-        <p class="inputs browser-style">
+        <p class="inputs browser-style toggle-row">
           <input type="checkbox" name="showUrls" id="showUrls">
           <label for="showUrls">Search by url</label>
         </p>
-        <p class="inputs browser-style">
+        <p class="inputs browser-style toggle-row">
           <input type="checkbox" name="enableFuzzySearch" id="enableFuzzySearch">
           <label for="enableFuzzySearch">Enable fuzzy search</label>
         </p>
-        <p class="inputs browser-style">
+        <p class="inputs browser-style toggle-row">
           <input type="checkbox" name="shouldSort" id="shouldSort">
           <label for="shouldSort">Sort results by how close they match the search query</label>
         </p>
-        <br>
-        <p class="inputs browser-style">
-          <label class="fixed-width" for="threshold">Fuzzy search similarity threshold: </label>
-        </p>
-        <p>
-          <label class="center range-clarification" for="thresholdDisplay">
-            <strong>Strict Search</strong>
-          </label>
-          <input class="input-range" type="range" min="1" max="9" name="threshold" id="threshold">
-          <label class="center range-clarification" for="thresholdDisplay">
-            <strong>Loose Search</strong>
-          </label>
-          &emsp;
-          <input type="number" class="number-input" min="1" max="9" name="thresholdDisplay" id="thresholdDisplay">
-        </p>
+        <div class="range-container">
+          <label class="range-label" for="threshold">Fuzzy search similarity threshold:</label>
+          <div class="range-control">
+            <span class="range-label-text">Strict</span>
+            <input class="input-range" type="range" min="1" max="9" name="threshold" id="threshold">
+            <span class="range-label-text">Loose</span>
+            <input type="number" class="number-input" min="1" max="9" name="thresholdDisplay" id="thresholdDisplay">
+          </div>
+        </div>
       </fieldset>
     </form>
     <div id="shortcuts" class="shortcuts">
@@ -185,8 +187,6 @@
       </header>
       <p>Here is a list of shortcuts you can customize. Click the input in the left and press your desired key-combination.</p>
       <p><strong>If your shortcut overlaps with a browser or system shortcut it will not work.</strong></p>
-      <div id="shortcut-flash" class="shortcut-flash">
-      </div>
       <table id="shortcut-table" class="shortcut-table">
         <thead class="shortcut-table__header">
           <tr>
