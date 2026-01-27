@@ -13,23 +13,20 @@ import {
   updateColor,
   updateSecondaryKeybinding,
   removeSecondaryKeybinding,
+  updateSelect,
 } from './actions';
-import * as Flash from './flash';
 import {
   SHORTCUT_TABLE_BODY,
   SHORTCUT_TABLE_NAME,
   SHORTCUT_TABLE_SHORTCUT,
   SHORTCUT_TABLE_DESCRIPTION,
   SHORTCUT_TABLE_INPUT,
+  SHORTCUT_RESET_BUTTON_ID,
   ERROR_MSG_NOT_VALID_SINGLE_KEY,
   ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY,
   ERROR_MSG_FINAL_KEY_IS_MODIFIER,
-  SHORTCUT_RESET_BUTTON_ID,
-  HINT_MSG_SHOULD_USE_MODIFIERS,
-  HINT_MSG_SINGLE_KEYS,
-  HINT_MSG_TRY_PUNCTUATION,
-  HINT_MSG_NEED_FINAL_KEY,
 } from './constants';
+import * as Toast from './toast';
 
 
 const d = document;
@@ -47,7 +44,7 @@ export function initSettings(store) {
     .map(x => [x, x.querySelector('button')]);
   fieldsetButtons.forEach(([fieldsetNode, btn]) => {
     btn.addEventListener('click', () => {
-      fieldsetNode.querySelectorAll('input').forEach(({ name }) => {
+      fieldsetNode.querySelectorAll('input, select').forEach(({ name }) => {
         store.dispatch(resetSetting(name));
       });
       location.reload(true);
@@ -86,28 +83,9 @@ export function initKeybindingTable(store) {
       && keyboard.isEqual(x.secondaryCommand, y.secondaryCommand);
     const selectKbd = state => state().keyboard;
     const newState = selectKbd(store.getState);
-    const not = predicate => (...args) => !predicate(...args);
     diffStateKeys(prevState, newState, compareCommands)
       .forEach((key) => {
-        const {
-          command: oldCommand,
-          secondaryCommand: oldSecondaryCommand,
-        } = prevState[key];
-        const {
-          name,
-          command: newCommand,
-          secondaryCommand: newSecondaryCommand,
-        } = newState[key];
-        const msg = (oldC, newC) => `
-          ${name} shortcut updated: <${kbString(oldC)}> changed to <${kbString(newC)}>
-        `;
-        const changed = [
-          [oldCommand, newCommand],
-          [oldSecondaryCommand, newSecondaryCommand],
-        ].filter(not(keyboard.isEqual));
-        // Flash each shortcut changed
-        const appendOkFlash = ([prev, next]) => Flash.appendOk(msg(prev, next));
-        changed.forEach(appendOkFlash);
+        const { command: newCommand, secondaryCommand: newSecondaryCommand } = newState[key];
         updateTableRow(key, kbString(newCommand), kbString(newSecondaryCommand));
       });
     prevState = newState;
@@ -116,7 +94,7 @@ export function initKeybindingTable(store) {
 
 // Object containing input ids and their Handlerscorresponding nodes
 function findInputs() {
-  return [...document.querySelectorAll('input')]
+  return [...document.querySelectorAll('input, select')]
     // Filter out all inputs who arent in charge of a setting
     .filter(({ id }) => id in reducerMap)
     .reduce((acc, node) => Object.assign({}, acc, { [node.id]: node }), {});
@@ -155,6 +133,9 @@ function getStateSettings(settings) {
         break;
       case 'range':
         node.value = stateSettingValue * 10;
+        break;
+      case 'select-one':
+        node.value = stateSettingValue;
         break;
       default: break;
     }
@@ -213,7 +194,12 @@ function configureSettingListeners(dispatch) {
           }
           break;
         }
-        case 'color': dispatch(updateColor(settingKey, value));
+        case 'color':
+          dispatch(updateColor(settingKey, value));
+          break;
+        case 'select-one':
+          dispatch(updateSelect(settingKey, value));
+          break;
         default: break;
       }
     });
@@ -418,56 +404,42 @@ function keybindInputHandlers(store, kbString) {
     const command = keyboard.command(event);
     const isValid = keyboard.isValid(command);
     const { name } = store.getState().keyboard[parentId];
+
     if (isValid) {
       const { isDuplicate, key: duplicateKey } =
         isDuplicateCommand(store.getState().keyboard, command);
+
       if (isDuplicate && duplicateKey === parentId) {
-        Flash.message(`<${kbString(command)}> is already ${name}'s shortcut.`, Flash.WARNING);
+        // Already this shortcut's binding
+        Toast.info(`${kbString(command)} is already ${name}'s shortcut`);
         event.currentTarget.blur();
       } else if (isDuplicate) {
-        Flash.message(`Duplicate key! <${kbString(command)}> is ${name}'s shortcut.`, Flash.ERROR);
+        // Duplicate of another shortcut
+        const otherName = store.getState().keyboard[duplicateKey.name]?.name || duplicateKey.name;
+        Toast.error(`${kbString(command)} is already used by ${otherName}`);
       } else {
-        // Stop input reset race
+        // Valid and unique - update the binding
         event.currentTarget.blur();
-        Flash.close();
-        // Actually update the store with the new binding here
         const updateBinding =
           event.currentTarget.dataset.key === 'secondaryCommand'
             ? updateSecondaryKeybinding
             : updateKeybinding;
         store.dispatch(updateBinding(parentId, command));
+        Toast.success(`${name} shortcut updated to ${kbString(command)}`);
       }
     } else {
-      // Then it's an error
-      let flashType;
-      let appendMsg;
+      // Invalid key combination - show appropriate message
+      const keyDisplay = kbString(command);
       switch (command.error) {
-        // Warning
         case ERROR_MSG_FINAL_KEY_IS_MODIFIER:
-          flashType = Flash.WARNING;
-          appendMsg = [HINT_MSG_NEED_FINAL_KEY];
+          Toast.warning(`${keyDisplay} needs a non-modifier key to complete the shortcut`);
           break;
-        // Error
         case ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY:
         case ERROR_MSG_NOT_VALID_SINGLE_KEY:
         default:
-          flashType = Flash.ERROR;
-          appendMsg = [
-            HINT_MSG_SINGLE_KEYS,
-            HINT_MSG_SHOULD_USE_MODIFIERS,
-            HINT_MSG_TRY_PUNCTUATION,
-          ];
+          Toast.error(`${keyDisplay} is not a valid shortcut. Try using modifier keys (Ctrl, Alt, Shift) with a letter or number`);
           break;
       }
-      Flash.message(
-        `${kbString(command)} is ${lowerCaseSentence(command.error)}`,
-        flashType,
-      );
-      Flash.append(appendMsg);
     }
   }
-}
-
-function lowerCaseSentence(s) {
-  return s.charAt(0).toLowerCase() + s.slice(1);
 }

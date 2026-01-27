@@ -9,15 +9,13 @@
   "scripts": {
     "start": "npm run start:firefox",
     "build": "npm run build:firefox",
-    "watch": "npm run watch:firefox",
-    "start:firefox": "BROWSER=firefox NODE_ENV=development webpack --progress --watch",
-    "start:chrome": "BROWSER=chrome NODE_ENV=development webpack --progress --watch",
+    "start:firefox": "concurrently -k -n webpack,web-ext -c blue,green \"BROWSER=firefox NODE_ENV=development webpack --progress --watch\" \"web-ext run -s dist/\"",
+    "start:chrome": "concurrently -k -n webpack,web-ext -c blue,green \"BROWSER=chrome NODE_ENV=development webpack --progress --watch\" \"web-ext run -s dist/ -t chromium\"",
     "build:firefox": "BROWSER=firefox NODE_ENV=production webpack && npm run lint:web-ext",
     "build:chrome": "BROWSER=chrome NODE_ENV=production webpack && npm run lint:web-ext",
     "lint:web-ext": "web-ext lint -s dist/",
     "lint:eslint": "eslint 'src/**'",
     "zip:firefox": "npm run build:firefox && web-ext build -s ./dist --overwrite-dest",
-    "watch:firefox": "web-ext run -s dist/",
     "test": "nyc mocha",
     "test:coverage": "nyc report --reporter=html"
   },
@@ -33,6 +31,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
+    "concurrently": "^9.1.2",
     "@babel/preset-env": "^7.26.0",
     "@babel/register": "^7.25.0",
     "@eslint/js": "^9.18.0",

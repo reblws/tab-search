@@ -3,6 +3,7 @@ import {
   SETTINGS_RESET,
   NUMBER_UPDATE,
   SETTING_RESET,
+  SELECT_UPDATE,
 } from '../actions/types';
 import { initialGeneralSettings } from './defaults';
 
@@ -29,6 +30,10 @@ export default function generalSettingsReducer(state = initialGeneralSettings, a
     case NUMBER_UPDATE: {
       const { key, value } = action.payload;
       return Object.assign({}, state, { [key]: parseInt(value, 10) });
+    }
+    case SELECT_UPDATE: {
+      const { key, value } = action.payload;
+      return Object.assign({}, state, { [key]: value });
     }
     default:
       return state;

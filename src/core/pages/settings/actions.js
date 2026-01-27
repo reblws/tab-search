@@ -12,6 +12,7 @@ import {
   KEYBINDING_DEFAULT_RESET,
   COLOR_UPDATE,
   SECONDARY_KEYBINDING_REMOVE,
+  SELECT_UPDATE,
 } from '../../actions/types';
 import inputReducerMap from './inputs-to-reducer';
 
@@ -40,3 +41,4 @@ export const resetSetting = key => action(
   inputReducerMap[key],
 );
 export const updateColor = (k, v) => action(COLOR_UPDATE, k, v);
+export const updateSelect = (k, v) => action(SELECT_UPDATE, k, v);
