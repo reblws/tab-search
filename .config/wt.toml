@@ -5,6 +5,7 @@ post-create = "pnpm install"
 
 # Validate before merging
 [pre-merge]
-build = "npm run build"
-lint = "npm run lint:eslint"
-test = "npm test"
+install = "pnpm install"
+build = "pnpm run build"
+lint = "pnpm run lint:eslint"
+test = "pnpm test"
