@@ -437,6 +437,40 @@ input[type="range"]:focus::-moz-range-thumb {
   color: var(--grey-70);
 }
 
+/* Shortcut Subsections */
+.shortcut-subsection {
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--grey-20);
+}
+
+.subsection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.subsection-header h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--grey-70);
+}
+
+.popup-shortcuts-header {
+  margin: var(--space-lg) 0 var(--space-md) 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--grey-70);
+}
+
+.shortcut-subsection p {
+  font-size: 14px;
+  color: var(--grey-60);
+  margin: var(--space-sm) 0;
+}
+
 /* Browser Shortcut Section */
 .browser-shortcut-row {
   display: flex;
@@ -950,6 +984,19 @@ input[type="range"]:focus::-moz-range-thumb {
 
   .shortcuts > header {
     border-bottom-color: var(--grey-70);
+  }
+
+  .shortcut-subsection {
+    border-bottom-color: var(--grey-70);
+  }
+
+  .subsection-header h3,
+  .popup-shortcuts-header {
+    color: var(--grey-30);
+  }
+
+  .shortcut-subsection p {
+    color: var(--grey-40);
   }
 
   .shortcuts > p {
