@@ -2,7 +2,8 @@
   "manifest_version": 3,
   "minimum_chrome_version": "88",
   "background": {
-    "service_worker": "background_bundle.js"
+    "service_worker": "background_bundle.js",
+    "type": "module"
   },
   "action": {
     "default_icon": "icons/logo-48.png",
