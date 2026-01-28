@@ -69,6 +69,12 @@
   --color-input-border: light-dark(var(--color-gray-30), var(--color-gray-60));
   --color-input-border-focus: var(--color-blue-50);
 
+  /* Button state tokens - following Acorn guidelines */
+  --color-icon: light-dark(#5b5b66, #cfcfd8);
+  --button-background-color: transparent;
+  --button-background-color-hover: light-dark(rgba(21, 20, 26, 0.07), rgba(251, 251, 254, 0.07));
+  --button-background-color-active: light-dark(rgba(21, 20, 26, 0.14), rgba(251, 251, 254, 0.14));
+
   /* Hint/info background */
   --color-hint-bg: light-dark(var(--color-blue-50-a30), rgba(10, 132, 255, 0.2));
   --color-hint-text: light-dark(var(--color-blue-70), var(--color-blue-40));

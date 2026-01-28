@@ -56,9 +56,11 @@ export function configureSearch(store) {
   };
 }
 
-export function clearInput(event) {
-  event.target.value = '';
-  tabList.childNodes[0].focus();
+export function clearInput() {
+  searchInput.value = '';
+  searchInput.focus();
+  // Trigger input event to update the tab list
+  searchInput.dispatchEvent(new Event('input'));
 }
 
 // Merges maps into the one specified in target

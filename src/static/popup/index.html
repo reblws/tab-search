@@ -9,13 +9,16 @@
   </head>
   <body>
     <header>
+      <label for="search-input" class="visually-hidden">Search for a tab</label>
       <form id="search-form" class="search-form">
-        <input class="search" type="search" placeholder="Search for a tab" autofocus>
-        <input role="button" class="delete-circle hidden" type="image" src="/assets/x-circle.svg">
+        <input id="search-input" class="search" type="search" placeholder="Search for a tab" autofocus>
+        <button type="button" class="clear-button hidden" aria-label="Clear search">
+          <img src="/assets/close-16.svg" alt="" width="16" height="16">
+        </button>
       </form>
-      <a title="TabSearch Settings" id="pref-btn" href="#" tabindex="-1">
-        &#8942;
-      </a>
+      <button type="button" id="pref-btn" class="menu-button" aria-label="Open menu" title="TabSearch Settings">
+        <img src="/assets/app-menu-16.svg" alt="" width="16" height="16">
+      </button>
     </header>
     <div class="tab-list"></div>
     <script src="../popup_bundle.js"></script>
