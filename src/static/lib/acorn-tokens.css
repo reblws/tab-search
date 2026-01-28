@@ -1,0 +1,133 @@
+/* Acorn Design System Tokens for TabSearch
+ * Based on Firefox Acorn Design System
+ * https://acorn.firefox.com/
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* ====== BASE COLOR TOKENS ====== */
+  /* Keep hex values for JS import compatibility */
+  --color-white: #ffffff;
+  --color-blue-40: #45a1ff;
+  --color-blue-50: #0a84ff;
+  --color-blue-50-a30: rgba(10, 132, 255, 0.3);
+  --color-blue-60: #0060df;
+  --color-blue-70: #003eaa;
+  --color-cyan-30: #80ebff;
+  --color-gray-05: #fbfbfe;
+  --color-gray-10: #f9f9fb;
+  --color-gray-20: #ededf0;
+  --color-gray-30: #d7d7db;
+  --color-gray-40: #b1b1b3;
+  --color-gray-50: #737373;
+  --color-gray-60: #4a4a4f;
+  --color-gray-70: #38383d;
+  --color-gray-80: #2a2a2e;
+  --color-gray-90: #15141a;
+  --color-red-30: #ff9aa2;
+  --color-red-50: #ff0039;
+  --color-red-60: #d70022;
+  --color-red-70: #a4000f;
+  --color-green-30: #b3ffe3;
+  --color-green-60: #12bc00;
+  --color-green-70: #058b00;
+  --color-yellow-30: #fff44f;
+  --color-yellow-50: #ffe900;
+  --color-yellow-60: #d7b600;
+  --color-yellow-70: #a47f00;
+  --color-purple-50: #9400ff;
+  --color-purple-70: #6200a4;
+  --color-ink-70: #363959;
+
+  /* ====== APPLICATION TOKENS (with light-dark) ====== */
+  --color-accent-primary: light-dark(var(--color-blue-60), var(--color-cyan-30));
+  --color-accent-primary-hover: light-dark(var(--color-blue-70), var(--color-blue-40));
+  --color-background-primary: light-dark(var(--color-gray-10), var(--color-gray-80));
+  --color-background-secondary: light-dark(var(--color-white), var(--color-gray-90));
+  --color-background-tertiary: light-dark(var(--color-gray-20), var(--color-gray-70));
+  --color-text-primary: light-dark(var(--color-gray-90), var(--color-gray-05));
+  --color-text-secondary: light-dark(var(--color-gray-50), var(--color-gray-40));
+  --color-text-inverted: light-dark(var(--color-white), var(--color-gray-90));
+  --color-border-default: light-dark(var(--color-gray-30), var(--color-gray-70));
+  --color-border-strong: light-dark(var(--color-gray-40), var(--color-gray-60));
+
+  /* Tab type indicators - auto-adjust for dark mode */
+  --color-tab-indicator: light-dark(var(--color-blue-60), var(--color-blue-50));
+  --color-session-indicator: light-dark(var(--color-red-60), var(--color-red-50));
+  --color-other-window-indicator: var(--color-yellow-50);
+  --color-bookmark-indicator: light-dark(var(--color-ink-70), var(--color-blue-40));
+  --color-history-indicator: light-dark(var(--color-purple-70), var(--color-purple-50));
+
+  /* Component-specific tokens */
+  --color-card-bg: light-dark(var(--color-white), var(--color-gray-80));
+  --color-card-border: light-dark(var(--color-gray-30), var(--color-gray-70));
+  --color-toggle-bg: light-dark(var(--color-gray-30), var(--color-gray-60));
+  --color-toggle-bg-checked: var(--color-blue-50);
+  --color-toggle-knob: var(--color-white);
+  --color-input-bg: light-dark(var(--color-white), var(--color-gray-70));
+  --color-input-border: light-dark(var(--color-gray-30), var(--color-gray-60));
+  --color-input-border-focus: var(--color-blue-50);
+
+  /* Hint/info background */
+  --color-hint-bg: light-dark(var(--color-blue-50-a30), rgba(10, 132, 255, 0.2));
+  --color-hint-text: light-dark(var(--color-blue-70), var(--color-blue-40));
+
+  /* Link color */
+  --color-link: light-dark(var(--color-blue-60), var(--color-blue-40));
+
+  /* Keycap styling (for keyboard shortcuts) */
+  --keycap-bg-light: linear-gradient(to bottom, #fafafa 0%, #e8e8e8 100%);
+  --keycap-bg-dark: linear-gradient(to bottom, var(--color-gray-60) 0%, var(--color-gray-70) 100%);
+  --keycap-bg: light-dark(var(--keycap-bg-light), var(--keycap-bg-dark));
+  --keycap-bg-hover-light: linear-gradient(to bottom, #ffffff 0%, #f0f0f0 100%);
+  --keycap-bg-hover-dark: linear-gradient(to bottom, var(--color-gray-50) 0%, var(--color-gray-60) 100%);
+  --keycap-bg-hover: light-dark(var(--keycap-bg-hover-light), var(--keycap-bg-hover-dark));
+  --keycap-bg-active-light: linear-gradient(to bottom, #e8e8e8 0%, #d8d8d8 100%);
+  --keycap-bg-active-dark: linear-gradient(to bottom, var(--color-gray-70) 0%, var(--color-gray-80) 100%);
+  --keycap-bg-active: light-dark(var(--keycap-bg-active-light), var(--keycap-bg-active-dark));
+  --keycap-border: light-dark(var(--color-gray-40), var(--color-gray-80));
+  --keycap-border-bottom: light-dark(var(--color-gray-50), #000);
+  --keycap-text: light-dark(var(--color-gray-80), var(--color-gray-10));
+  --keycap-shadow-light: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 1px 2px rgba(0, 0, 0, 0.1);
+  --keycap-shadow-dark: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 1px 2px rgba(0, 0, 0, 0.3);
+  --keycap-shadow: light-dark(var(--keycap-shadow-light), var(--keycap-shadow-dark));
+
+  /* Toast backgrounds */
+  --color-toast-success: light-dark(var(--color-green-70), var(--color-green-60));
+  --color-toast-warning: light-dark(var(--color-yellow-70), var(--color-yellow-60));
+  --color-toast-error: light-dark(var(--color-red-70), var(--color-red-60));
+  --color-toast-info: light-dark(var(--color-blue-60), var(--color-blue-50));
+
+  /* ====== TYPOGRAPHY ====== */
+  --font-family-system: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  --font-size-root: 15px;
+  --font-size-small: 0.867rem; /* ~13px */
+  --font-size-xsmall: 0.733rem; /* ~11px */
+  --font-weight-default: normal;
+  --font-weight-bold: 600;
+
+  /* ====== SPACING ====== */
+  --space-xsmall: 4px;
+  --space-small: 8px;
+  --space-medium: 16px;
+  --space-large: 24px;
+  --space-xlarge: 32px;
+
+  /* ====== BORDER ====== */
+  --border-radius-small: 4px;
+  --border-radius-medium: 8px;
+  --border-radius-large: 12px;
+  --border-radius-circle: 9999px;
+  --border-width: 1px;
+
+  /* ====== FOCUS ====== */
+  --focus-outline-width: 2px;
+  --focus-outline-offset: 2px;
+  --focus-outline-color: var(--color-accent-primary);
+  --shadow-focus: 0 0 0 3px var(--color-blue-50-a30);
+
+  /* ====== SHADOWS ====== */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+}

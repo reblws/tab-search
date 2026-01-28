@@ -1,53 +1,32 @@
 /* ===========================
-   Design Tokens
+   TabSearch Settings - Acorn Design System
+   =========================== */
+
+/* ===========================
+   Design Tokens (mapped from Acorn)
    =========================== */
 :root {
-  /* Typography */
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  /* Spacing Scale (compatibility aliases) */
+  --space-xs: var(--space-xsmall);
+  --space-sm: var(--space-small);
+  --space-md: var(--space-medium);
+  --space-lg: var(--space-large);
+  --space-xl: var(--space-xlarge);
 
-  /* Colors */
-  --primaryTextColor: var(--grey-90);
-  --secondaryTextColor: var(--grey-50);
-
-  /* Spacing Scale */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
-
-  /* Border Radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-focus: 0 0 0 3px var(--blue-50-a30);
-
-  /* Card Colors */
-  --card-bg: #ffffff;
-  --card-border: var(--grey-30);
-
-  /* Toggle Colors */
-  --toggle-bg: var(--grey-30);
-  --toggle-bg-checked: var(--blue-50);
-  --toggle-knob: #ffffff;
-
-  /* Input Colors */
-  --input-bg: #ffffff;
-  --input-border: var(--grey-30);
-  --input-border-focus: var(--blue-50);
+  /* Border Radius (compatibility aliases) */
+  --radius-sm: var(--border-radius-small);
+  --radius-md: var(--border-radius-medium);
+  --radius-lg: var(--border-radius-large);
 }
 
 /* ===========================
    Base Styles
    =========================== */
 body {
+  font-family: var(--font-family-system);
   font-size: 16px;
-  background-color: #f5f5f7;
-  color: var(--primaryTextColor);
+  background-color: light-dark(#f5f5f7, var(--color-gray-90));
+  color: var(--color-text-primary);
   line-height: 1.5;
   padding: var(--space-lg);
 }
@@ -66,16 +45,16 @@ body {
   font-size: 28px;
   font-weight: 600;
   margin: 0;
-  color: var(--primaryTextColor);
+  color: var(--color-text-primary);
 }
 
 .subheader {
-  color: var(--secondaryTextColor);
+  color: var(--color-text-secondary);
   font-size: 14px;
 }
 
 .subheader a {
-  color: var(--blue-60);
+  color: var(--color-link);
   text-decoration: none;
 }
 
@@ -87,11 +66,11 @@ body {
   margin-top: 0;
   margin-bottom: var(--space-lg);
   padding: var(--space-sm) var(--space-md);
-  background-color: var(--blue-50-a30);
+  background-color: var(--color-hint-bg);
   border-radius: var(--radius-sm);
   display: inline-block;
   font-size: 13px;
-  color: var(--blue-70);
+  color: var(--color-hint-text);
 }
 
 .ralign {
@@ -102,8 +81,8 @@ body {
    Card-Based Sections (Fieldsets)
    =========================== */
 fieldset {
-  background-color: var(--card-bg);
-  border: 1px solid var(--card-border);
+  background-color: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
   margin-bottom: var(--space-lg);
@@ -117,14 +96,14 @@ fieldset > header {
   align-items: center;
   padding-bottom: var(--space-md);
   margin-bottom: var(--space-md);
-  border-bottom: 1px solid var(--grey-20);
+  border-bottom: 1px solid var(--color-border-default);
 }
 
 fieldset > header h2 {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: var(--primaryTextColor);
+  color: var(--color-text-primary);
 }
 
 fieldset > header button {
@@ -144,23 +123,23 @@ legend {
    Reset Buttons
    =========================== */
 button.browser-style {
-  background-color: var(--grey-20);
-  border: 1px solid var(--grey-30);
+  background-color: var(--color-background-tertiary);
+  border: 1px solid var(--color-border-default);
   border-radius: var(--radius-sm);
   padding: var(--space-sm) var(--space-md);
   font-size: 13px;
-  color: var(--grey-70);
+  color: var(--color-text-primary);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 button.browser-style:hover {
-  background-color: var(--grey-30);
-  border-color: var(--grey-40);
+  background-color: var(--color-border-default);
+  border-color: var(--color-border-strong);
 }
 
 button.browser-style:active {
-  background-color: var(--grey-40);
+  background-color: var(--color-border-strong);
   transform: translateY(1px);
 }
 
@@ -180,7 +159,7 @@ button.browser-style:focus {
 
 .inputs label {
   font-size: 14px;
-  color: var(--grey-70);
+  color: light-dark(var(--color-gray-70), var(--color-gray-30));
   cursor: pointer;
 }
 
@@ -214,7 +193,7 @@ button.browser-style:focus {
   transform: translateY(-50%);
   width: 44px;
   height: 24px;
-  background-color: var(--toggle-bg);
+  background-color: var(--color-toggle-bg);
   border-radius: 12px;
   transition: background-color 0.2s ease;
 }
@@ -227,14 +206,14 @@ button.browser-style:focus {
   transform: translateY(-50%);
   width: 20px;
   height: 20px;
-  background-color: var(--toggle-knob);
+  background-color: var(--color-toggle-knob);
   border-radius: 50%;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s ease;
 }
 
 .toggle-row input[type="checkbox"]:checked + label::before {
-  background-color: var(--toggle-bg-checked);
+  background-color: var(--color-toggle-bg-checked);
 }
 
 .toggle-row input[type="checkbox"]:checked + label::after {
@@ -251,26 +230,47 @@ button.browser-style:focus {
 input[type="number"] {
   width: 60px;
   padding: var(--space-sm) var(--space-sm);
-  border: 1px solid var(--input-border);
+  border: 1px solid var(--color-input-border);
   border-radius: var(--radius-sm);
   font-size: 14px;
   text-align: center;
-  background-color: var(--input-bg);
+  background-color: var(--color-input-bg);
+  color: var(--color-text-primary);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 input[type="number"]:hover {
-  border-color: var(--grey-40);
+  border-color: var(--color-border-strong);
 }
 
 input[type="number"]:focus {
   outline: none;
-  border-color: var(--input-border-focus);
+  border-color: var(--color-input-border-focus);
   box-shadow: var(--shadow-focus);
 }
 
 .inputs input[type="number"] {
   margin-right: var(--space-sm);
+}
+
+/* ===========================
+   Text Inputs
+   =========================== */
+input[type="text"] {
+  background-color: var(--color-input-bg);
+  border: 1px solid var(--color-input-border);
+  color: var(--color-text-primary);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input[type="text"]:hover {
+  border-color: var(--color-border-strong);
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--color-input-border-focus);
+  box-shadow: var(--shadow-focus);
 }
 
 /* ===========================
@@ -284,7 +284,7 @@ input[type="number"]:focus {
   width: 36px;
   height: 36px;
   padding: 2px;
-  border: 2px solid var(--input-border);
+  border: 2px solid var(--color-input-border);
   border-radius: var(--radius-md);
   cursor: pointer;
   background-color: transparent;
@@ -292,13 +292,13 @@ input[type="number"]:focus {
 }
 
 .color-row input[type="color"]:hover {
-  border-color: var(--grey-40);
+  border-color: var(--color-border-strong);
   transform: scale(1.05);
 }
 
 .color-row input[type="color"]:focus {
   outline: none;
-  border-color: var(--input-border-focus);
+  border-color: var(--color-input-border-focus);
   box-shadow: var(--shadow-focus);
 }
 
@@ -316,7 +316,7 @@ input[type="number"]:focus {
 .range-label {
   display: block;
   font-size: 14px;
-  color: var(--grey-70);
+  color: light-dark(var(--color-gray-70), var(--color-gray-30));
   margin-bottom: var(--space-sm);
 }
 
@@ -328,7 +328,7 @@ input[type="number"]:focus {
 
 .range-label-text {
   font-size: 12px;
-  color: var(--secondaryTextColor);
+  color: var(--color-text-secondary);
   font-weight: 500;
   white-space: nowrap;
 }
@@ -338,7 +338,7 @@ input[type="range"] {
   appearance: none;
   flex: 1;
   height: 6px;
-  background: var(--grey-30);
+  background: light-dark(var(--color-gray-30), var(--color-gray-60));
   border-radius: 3px;
   outline: none;
   transition: background 0.15s ease;
@@ -349,7 +349,7 @@ input[type="range"]::-webkit-slider-thumb {
   appearance: none;
   width: 18px;
   height: 18px;
-  background: var(--blue-50);
+  background: var(--color-blue-50);
   border-radius: 50%;
   cursor: pointer;
   border: 2px solid #ffffff;
@@ -365,7 +365,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 input[type="range"]::-moz-range-thumb {
   width: 18px;
   height: 18px;
-  background: var(--blue-50);
+  background: var(--color-blue-50);
   border-radius: 50%;
   cursor: pointer;
   border: 2px solid #ffffff;
@@ -380,7 +380,7 @@ input[type="range"]::-moz-range-thumb:hover {
 
 input[type="range"]::-moz-range-track {
   height: 6px;
-  background: var(--grey-30);
+  background: light-dark(var(--color-gray-30), var(--color-gray-60));
   border-radius: 3px;
 }
 
@@ -404,8 +404,8 @@ input[type="range"]:focus::-moz-range-thumb {
    Keyboard Shortcuts Section
    =========================== */
 .shortcuts {
-  background-color: var(--card-bg);
-  border: 1px solid var(--card-border);
+  background-color: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
   margin-top: var(--space-lg);
@@ -418,7 +418,7 @@ input[type="range"]:focus::-moz-range-thumb {
   align-items: center;
   padding-bottom: var(--space-md);
   margin-bottom: var(--space-md);
-  border-bottom: 1px solid var(--grey-20);
+  border-bottom: 1px solid var(--color-border-default);
 }
 
 .shortcuts > header h2 {
@@ -429,19 +429,19 @@ input[type="range"]:focus::-moz-range-thumb {
 
 .shortcuts > p {
   font-size: 14px;
-  color: var(--grey-60);
+  color: var(--color-text-secondary);
   margin: var(--space-sm) 0;
 }
 
 .shortcuts > p strong {
-  color: var(--grey-70);
+  color: light-dark(var(--color-gray-70), var(--color-gray-30));
 }
 
 /* Shortcut Subsections */
 .shortcut-subsection {
   margin-bottom: var(--space-lg);
   padding-bottom: var(--space-lg);
-  border-bottom: 1px solid var(--grey-20);
+  border-bottom: 1px solid var(--color-border-default);
 }
 
 .subsection-header {
@@ -455,19 +455,19 @@ input[type="range"]:focus::-moz-range-thumb {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
-  color: var(--grey-70);
+  color: light-dark(var(--color-gray-70), var(--color-gray-30));
 }
 
 .popup-shortcuts-header {
   margin: var(--space-lg) 0 var(--space-md) 0;
   font-size: 15px;
   font-weight: 600;
-  color: var(--grey-70);
+  color: light-dark(var(--color-gray-70), var(--color-gray-30));
 }
 
 .shortcut-subsection p {
   font-size: 14px;
-  color: var(--grey-60);
+  color: var(--color-text-secondary);
   margin: var(--space-sm) 0;
 }
 
@@ -481,7 +481,7 @@ input[type="range"]:focus::-moz-range-thumb {
 
 .browser-shortcut-row label {
   font-size: 14px;
-  color: var(--grey-70);
+  color: light-dark(var(--color-gray-70), var(--color-gray-30));
 }
 
 .shortcut-input {
@@ -491,41 +491,36 @@ input[type="range"]:focus::-moz-range-thumb {
   padding: var(--space-sm) var(--space-md);
   min-width: 140px;
   text-align: center;
-  background: linear-gradient(to bottom, #fafafa 0%, #e8e8e8 100%);
-  border: 1px solid var(--grey-40);
+  background: var(--keycap-bg);
+  border: 1px solid var(--keycap-border);
   border-bottom-width: 3px;
-  border-bottom-color: var(--grey-50);
+  border-bottom-color: var(--keycap-border-bottom);
   border-radius: var(--radius-sm);
-  color: var(--grey-80);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.8) inset,
-    0 1px 2px rgba(0, 0, 0, 0.1);
+  color: var(--keycap-text);
+  box-shadow: var(--keycap-shadow);
   transition: all 0.1s ease;
 }
 
 .shortcut-input:not([readonly]):hover {
-  background: linear-gradient(to bottom, #ffffff 0%, #f0f0f0 100%);
-  border-color: var(--grey-50);
+  background: var(--keycap-bg-hover);
 }
 
 .shortcut-input:not([readonly]):focus {
   outline: none;
-  background: linear-gradient(to bottom, #e8e8e8 0%, #d8d8d8 100%);
+  background: var(--keycap-bg-active);
   border-bottom-width: 1px;
   transform: translateY(2px);
-  box-shadow:
-    0 0 0 3px var(--blue-50-a30),
-    0 1px 0 rgba(255, 255, 255, 0.5) inset;
+  box-shadow: var(--shadow-focus), light-dark(0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 1px 0 rgba(255, 255, 255, 0.1) inset);
 }
 
 .browser-shortcut-hint {
   font-size: 13px;
-  color: var(--secondaryTextColor);
+  color: var(--color-text-secondary);
   margin-top: var(--space-sm);
 }
 
 .browser-shortcut-hint a {
-  color: var(--blue-60);
+  color: var(--color-link);
   text-decoration: none;
 }
 
@@ -543,11 +538,11 @@ input[type="range"]:focus::-moz-range-thumb {
   margin-top: var(--space-md);
   border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid var(--grey-30);
+  border: 1px solid var(--color-border-default);
 }
 
 .shortcut-table__header {
-  background-color: var(--grey-20);
+  background-color: var(--color-background-tertiary);
 }
 
 .shortcut-table__header > tr > th {
@@ -556,9 +551,9 @@ input[type="range"]:focus::-moz-range-thumb {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--grey-60);
+  color: light-dark(var(--color-gray-60), var(--color-gray-30));
   text-align: left;
-  border-bottom: 1px solid var(--grey-30);
+  border-bottom: 1px solid var(--color-border-default);
 }
 
 .shortcut-table__header > tr > th.lalign {
@@ -571,16 +566,16 @@ input[type="range"]:focus::-moz-range-thumb {
 }
 
 .shortcut-table tbody tr {
-  background-color: var(--card-bg);
+  background-color: var(--color-card-bg);
   transition: background-color 0.15s ease;
 }
 
 .shortcut-table tbody tr:hover {
-  background-color: var(--grey-10);
+  background-color: var(--color-background-primary);
 }
 
 .shortcut-table tbody tr:not(:last-child) td {
-  border-bottom: 1px solid var(--grey-20);
+  border-bottom: 1px solid var(--color-border-default);
 }
 
 .shortcut-table td,
@@ -590,7 +585,7 @@ input[type="range"]:focus::-moz-range-thumb {
 
 .shortcut-table td {
   font-size: 14px;
-  color: var(--grey-70);
+  color: light-dark(var(--color-gray-70), var(--color-gray-30));
 }
 
 .shortcut-table__input,
@@ -611,34 +606,29 @@ input[type="range"]:focus::-moz-range-thumb {
   text-align: center;
 
   /* Keycap appearance */
-  background: linear-gradient(to bottom, #fafafa 0%, #e8e8e8 100%);
-  border: 1px solid var(--grey-40);
+  background: var(--keycap-bg);
+  border: 1px solid var(--keycap-border);
   border-bottom-width: 3px;
-  border-bottom-color: var(--grey-50);
+  border-bottom-color: var(--keycap-border-bottom);
   border-radius: var(--radius-sm);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.8) inset,
-    0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--keycap-shadow);
 
-  color: var(--grey-80);
+  color: var(--keycap-text);
   transition: all 0.1s ease;
 }
 
 .shortcut-table__input input[type="text"]:hover,
 .shortcut-table input[type="text"]:hover {
-  background: linear-gradient(to bottom, #ffffff 0%, #f0f0f0 100%);
-  border-color: var(--grey-50);
+  background: var(--keycap-bg-hover);
 }
 
 .shortcut-table__input input[type="text"]:focus,
 .shortcut-table input[type="text"]:focus {
   outline: none;
-  background: linear-gradient(to bottom, #e8e8e8 0%, #d8d8d8 100%);
+  background: var(--keycap-bg-active);
   border-bottom-width: 1px;
   transform: translateY(2px);
-  box-shadow:
-    0 0 0 3px var(--blue-50-a30),
-    0 1px 0 rgba(255, 255, 255, 0.5) inset;
+  box-shadow: var(--shadow-focus), light-dark(0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 1px 0 rgba(255, 255, 255, 0.1) inset);
 }
 
 /* ===========================
@@ -662,10 +652,10 @@ input[type="range"]:focus::-moz-range-thumb {
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
-  background-color: var(--grey-90);
+  background-color: var(--color-gray-90);
   color: #ffffff;
   font-size: 14px;
-  box-shadow: var(--shadow-md), 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md), light-dark(0 4px 12px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.3));
   pointer-events: auto;
   opacity: 0;
   transform: translateY(10px);
@@ -729,20 +719,20 @@ input[type="range"]:focus::-moz-range-thumb {
 
 /* Toast type variants */
 .toast--success {
-  background-color: var(--green-70);
+  background-color: var(--color-toast-success);
 }
 
 .toast--success .toast__icon {
-  color: var(--green-30);
+  color: var(--color-green-30);
 }
 
 .toast--warning {
-  background-color: var(--yellow-70);
-  color: var(--grey-90);
+  background-color: var(--color-toast-warning);
+  color: var(--color-gray-90);
 }
 
 .toast--warning .toast__icon {
-  color: var(--yellow-30);
+  color: var(--color-yellow-30);
 }
 
 .toast--warning .toast__dismiss:hover {
@@ -750,19 +740,19 @@ input[type="range"]:focus::-moz-range-thumb {
 }
 
 .toast--error {
-  background-color: var(--red-70);
+  background-color: var(--color-toast-error);
 }
 
 .toast--error .toast__icon {
-  color: var(--red-30);
+  color: var(--color-red-30);
 }
 
 .toast--info {
-  background-color: var(--blue-60);
+  background-color: var(--color-toast-info);
 }
 
 .toast--info .toast__icon {
-  color: var(--blue-30);
+  color: light-dark(var(--color-blue-30, #b4d7ff), var(--color-blue-30, #b4d7ff));
 }
 
 /* ===========================
@@ -782,11 +772,12 @@ input[type="range"]:focus::-moz-range-thumb {
   border: none;
   opacity: 0.5;
   transition: opacity 0.15s ease, background-color 0.15s ease;
+  filter: light-dark(none, brightness(1.2));
 }
 
 .delete-circle:hover {
   opacity: 1;
-  background-color: var(--red-50-a30, rgba(255, 0, 57, 0.15));
+  background-color: light-dark(rgba(255, 0, 57, 0.15), rgba(255, 77, 106, 0.2));
 }
 
 .delete-circle:focus {
@@ -796,7 +787,7 @@ input[type="range"]:focus::-moz-range-thumb {
 }
 
 .delete-circle:active {
-  background-color: var(--red-50-a30, rgba(255, 0, 57, 0.25));
+  background-color: rgba(255, 0, 57, 0.25);
 }
 
 .hidden {
@@ -807,7 +798,7 @@ input[type="range"]:focus::-moz-range-thumb {
    Disabled State
    =========================== */
 .disabled-label {
-  color: var(--secondaryTextColor);
+  color: var(--color-text-secondary);
   user-select: none;
   -moz-user-select: none;
 }
@@ -886,229 +877,5 @@ input[type="range"]:focus::-moz-range-thumb {
   .shortcut-table td,
   .shortcut-table th {
     padding: var(--space-sm) var(--space-md);
-  }
-}
-
-/* ===========================
-   Dark Mode
-   =========================== */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primaryTextColor: var(--grey-10);
-    --secondaryTextColor: var(--grey-40);
-
-    --card-bg: var(--grey-80);
-    --card-border: var(--grey-70);
-
-    --toggle-bg: var(--grey-60);
-    --toggle-bg-checked: var(--blue-50);
-    --toggle-knob: #ffffff;
-
-    --input-bg: var(--grey-70);
-    --input-border: var(--grey-60);
-    --input-border-focus: var(--blue-50);
-  }
-
-  body {
-    background-color: var(--grey-90);
-  }
-
-  .subheader.hint {
-    background-color: rgba(10, 132, 255, 0.2);
-    color: var(--blue-40);
-  }
-
-  .subheader a {
-    color: var(--blue-40);
-  }
-
-  fieldset > header {
-    border-bottom-color: var(--grey-70);
-  }
-
-  button.browser-style {
-    background-color: var(--grey-70);
-    border-color: var(--grey-60);
-    color: var(--grey-20);
-  }
-
-  button.browser-style:hover {
-    background-color: var(--grey-60);
-    border-color: var(--grey-50);
-  }
-
-  button.browser-style:active {
-    background-color: var(--grey-50);
-  }
-
-  .inputs label,
-  .range-label {
-    color: var(--grey-30);
-  }
-
-  .toggle-row label::before {
-    background-color: var(--toggle-bg);
-  }
-
-  input[type="number"],
-  input[type="text"] {
-    background-color: var(--input-bg);
-    border-color: var(--input-border);
-    color: var(--grey-10);
-  }
-
-  input[type="number"]:hover,
-  input[type="text"]:hover {
-    border-color: var(--grey-50);
-  }
-
-  .color-row input[type="color"] {
-    border-color: var(--input-border);
-  }
-
-  .color-row input[type="color"]:hover {
-    border-color: var(--grey-50);
-  }
-
-  input[type="range"] {
-    background: var(--grey-60);
-  }
-
-  input[type="range"]::-moz-range-track {
-    background: var(--grey-60);
-  }
-
-  .range-label-text {
-    color: var(--grey-40);
-  }
-
-  .shortcuts > header {
-    border-bottom-color: var(--grey-70);
-  }
-
-  .shortcut-subsection {
-    border-bottom-color: var(--grey-70);
-  }
-
-  .subsection-header h3,
-  .popup-shortcuts-header {
-    color: var(--grey-30);
-  }
-
-  .shortcut-subsection p {
-    color: var(--grey-40);
-  }
-
-  .shortcuts > p {
-    color: var(--grey-40);
-  }
-
-  .shortcuts > p strong {
-    color: var(--grey-30);
-  }
-
-  .browser-shortcut-row label {
-    color: var(--grey-30);
-  }
-
-  .shortcut-input {
-    background: linear-gradient(to bottom, var(--grey-60) 0%, var(--grey-70) 100%);
-    border-color: var(--grey-80);
-    border-bottom-color: #000;
-    color: var(--grey-10);
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.1) inset,
-      0 1px 2px rgba(0, 0, 0, 0.3);
-  }
-
-  .shortcut-input:not([readonly]):hover {
-    background: linear-gradient(to bottom, var(--grey-50) 0%, var(--grey-60) 100%);
-  }
-
-  .shortcut-input:not([readonly]):focus {
-    background: linear-gradient(to bottom, var(--grey-70) 0%, var(--grey-80) 100%);
-  }
-
-  .browser-shortcut-hint a {
-    color: var(--blue-40);
-  }
-
-  .shortcut-table {
-    border-color: var(--grey-70);
-  }
-
-  .shortcut-table__header {
-    background-color: var(--grey-70);
-  }
-
-  .shortcut-table__header > tr > th {
-    color: var(--grey-30);
-    border-bottom-color: var(--grey-60);
-  }
-
-  .shortcut-table tbody tr {
-    background-color: var(--card-bg);
-  }
-
-  .shortcut-table tbody tr:hover {
-    background-color: var(--grey-70);
-  }
-
-  .shortcut-table tbody tr:not(:last-child) td {
-    border-bottom-color: var(--grey-70);
-  }
-
-  .shortcut-table td {
-    color: var(--grey-30);
-  }
-
-  .shortcut-table__input input[type="text"],
-  .shortcut-table input[type="text"] {
-    background: linear-gradient(to bottom, var(--grey-60) 0%, var(--grey-70) 100%);
-    border-color: var(--grey-80);
-    border-bottom-color: #000;
-    color: var(--grey-10);
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.1) inset,
-      0 1px 2px rgba(0, 0, 0, 0.3);
-  }
-
-  .shortcut-table__input input[type="text"]:hover,
-  .shortcut-table input[type="text"]:hover {
-    background: linear-gradient(to bottom, var(--grey-50) 0%, var(--grey-60) 100%);
-  }
-
-  .shortcut-table__input input[type="text"]:focus,
-  .shortcut-table input[type="text"]:focus {
-    background: linear-gradient(to bottom, var(--grey-70) 0%, var(--grey-80) 100%);
-  }
-
-  .delete-circle {
-    filter: brightness(1.2);
-  }
-
-  .delete-circle:hover {
-    background-color: rgba(255, 77, 106, 0.2);
-  }
-
-  /* Toast dark mode - slightly lighter backgrounds for contrast */
-  .toast {
-    box-shadow: var(--shadow-md), 0 4px 16px rgba(0, 0, 0, 0.3);
-  }
-
-  .toast--success {
-    background-color: var(--green-60);
-  }
-
-  .toast--warning {
-    background-color: var(--yellow-60);
-  }
-
-  .toast--error {
-    background-color: var(--red-60);
-  }
-
-  .toast--info {
-    background-color: var(--blue-50);
   }
 }

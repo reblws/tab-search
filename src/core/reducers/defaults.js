@@ -1,12 +1,12 @@
-import PhotonColors from 'static/lib/photon.css';
+import AcornColors from 'static/lib/acorn-tokens.css';
 
 const {
-  blue60: tabColor,
-  yellow50: otherWindowTabColor,
-  red60: recentlyClosedTabColor,
-  ink70: bookmarkColor,
-  purple70: historyColor,
-} = PhotonColors[':root'];
+  colorBlue60: tabColor,
+  colorYellow50: otherWindowTabColor,
+  colorRed60: recentlyClosedTabColor,
+  colorInk70: bookmarkColor,
+  colorPurple70: historyColor,
+} = AcornColors[':root'];
 
 export { defaultCommands } from 'core/keyboard';
 export const initialFuzzySettings = {

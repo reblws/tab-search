@@ -49,7 +49,7 @@ describe('Settings', function () {
     });
 
     it('should show the popup shortcut header', async function () {
-      const header = await $('#browser-shortcut h2');
+      const header = await $('#browser-shortcut h3');
       const headerText = await header.getText();
       expect(headerText).toContain('Popup Shortcut');
     });

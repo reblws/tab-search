@@ -1,16 +1,8 @@
-/* http://clrs.cc/ */
+/* TabSearch Popup Styles - Using Acorn Design System */
 :root {
-  --lightblue: var(--blue-40);
-  --whitesmokeBorder: var(--grey-30);
-  --whitesmoke: var(--grey-10);
-  --bgColor: var(--whitesmoke);
-  --searchBarFocusColor:  var(--lightblue);
-  --blue: var(--blue-60);
-  --tabFocusColor: var(--blue);
-  --red: var(--red-60);
-  --navy: var(--ink-70);
-  --yellow: var(--yellow-50);
-  --purple: var(--purple-70);
+  /* Map semantic tokens to Acorn variables for backward compatibility */
+  --bgColor: var(--color-background-primary);
+  --tabFocusColor: var(--color-accent-primary);
   --headerHeight: 48px;
   --bodyWidth: 355px;
   --tabListHeight: 450px;
@@ -18,15 +10,15 @@
 }
 
 body {
-  border: 1px solid var(--grey-30);
-  background-color: var(--whitesmoke);
-  font-family: 'Inter UI', sans-serif;
+  border: 1px solid var(--color-border-default);
+  background-color: var(--color-background-primary);
+  font-family: var(--font-family-system);
   width: var(--bodyWidth);
 }
 
 
 input[type="search"] {
-  color: var(--grey-90);
+  color: var(--color-text-primary);
   line-height: 2em;
   width: var(--searchWidth);
   margin: auto;
@@ -43,11 +35,11 @@ header {
   box-sizing: border-box;
   border-bottom: 1px;
   border-style: solid;
-  border-color: var(--whitesmokeBorder);
+  border-color: var(--color-border-default);
 }
 
 #pref-btn {
-  color: var(--grey-50);
+  color: var(--color-text-secondary);
   text-decoration: none;
   font-size: 1rem;
 }
@@ -73,8 +65,8 @@ header {
 	overflow-y: scroll;
 	overflow-x: hidden;
 	height: var(--tabListHeight);
-  background-color: #fff;
-  border-color: var(--whitesmokeBorder);
+  background-color: var(--color-background-secondary);
+  border-color: var(--color-border-default);
   border-style: solid;
   border-bottom: 1px;
   border-left: 1px;
@@ -90,21 +82,27 @@ header {
   line-height: 32px;
   text-indent: 20px;
   font-size: 12px;
+  background-color: var(--color-input-bg);
   background-image: url('/assets/search.svg');
   background-repeat: no-repeat;
   background-position-x: 8px;
   background-position-y: center;
   background-size: 16px 16px;
-  border: 1.5px solid rgb(210, 210, 210);;
+  border: 1.5px solid var(--color-border-strong);
   border-radius: 5px;
   transition: all 0.15s ease-in-out;
   outline: none;
-  font-family: "Inter UI";
+  color: var(--color-text-primary);
+  font-family: var(--font-family-system);
+}
+
+.search::placeholder {
+  color: var(--color-text-secondary);
 }
 
 .search:focus {
-  border-color: var(--blue-50);
-  box-shadow: 2px var(--searchBarFocusColor);
+  border-color: var(--color-blue-50);
+  box-shadow: var(--shadow-focus);
 }
 
 .tab-favicon {
@@ -112,7 +110,7 @@ header {
 }
 
 .tab-object {
-  color: var(--grey-90);
+  color: var(--color-text-primary);
   display: flex;
 	align-items: center;
 	justify-content: center;
@@ -128,14 +126,15 @@ header {
 }
 
 .tab-object:focus {
-  outline: 1px dotted black;
+  outline: var(--focus-outline-width) dotted var(--color-text-secondary);
+  outline-offset: var(--focus-outline-offset);
 }
 
 .tab-object--selected,
 .tab-object:hover,
 .tab-object:focus {
   background-color: var(--tabFocusColor);
-  color: white;
+  color: var(--color-text-inverted);
 }
 
 .tab-img {
@@ -242,11 +241,14 @@ removes the extra space added by the pseudoelement
   width: 100%;
 	padding: 1rem 0.5rem;
   box-sizing: border-box;
+  color: var(--color-text-primary);
 }
 
 .no-result__circle {
   height: 50px;
   margin-bottom: 0.8rem;
+  /* Invert for dark mode visibility using color-scheme awareness */
+  filter: light-dark(none, invert(1));
 }
 
 .no-result__msg {
@@ -278,6 +280,7 @@ removes the extra space added by the pseudoelement
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--color-text-secondary);
 }
 
 .tab-info > strong {
@@ -297,6 +300,8 @@ p {
 .delete-circle {
   position: absolute;
   transform: translateY(8px) translateX(-22px);
+  /* Mute the cancel button for dark mode aesthetic */
+  filter: light-dark(none, saturate(0.7) brightness(1.1));
 }
 
 .hidden {
@@ -304,106 +309,34 @@ p {
 }
 
 
-/* tablist types */
+/* tablist types - use Acorn semantic tokens */
 .tab {
-  border-left: 5px var(--blue) solid;
+  border-left: 5px var(--color-tab-indicator) solid;
 }
 
 .session {
-  border-left: 5px var(--red) solid;
+  border-left: 5px var(--color-session-indicator) solid;
 }
 
 .other-window-tab {
-  border-left: 5px var(--yellow) solid;
+  border-left: 5px var(--color-other-window-indicator) solid;
 }
 
 .bookmark {
-  border-left: 5px var(--navy) solid;
+  border-left: 5px var(--color-bookmark-indicator) solid;
 }
 
 .history {
-  border-left: 5px var(--purple) solid;
+  border-left: 5px var(--color-history-indicator) solid;
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --whitesmokeBorder: var(--grey-70);
-    --whitesmoke: var(--grey-80);
-    --bgColor: var(--grey-80);
-    --textColor: var(--grey-10);
-    --textColorSecondary: var(--grey-30);
-    --tabListBg: var(--grey-90);
-    --searchBorder: var(--grey-60);
-    /* Brighten accent colors for better visibility on dark backgrounds */
-    --blue: var(--blue-50);
-    --red: var(--red-50);
-    --yellow: var(--yellow-50);
-    --navy: var(--blue-40);
-    --purple: var(--purple-50);
-  }
+/* Lighten volume/mute icons for dark mode */
+.tab-object.audible > .tab-img:before,
+.tab-object.mute > .tab-img:before {
+  filter: light-dark(none, invert(0.7));
+}
 
-  body {
-    border-color: var(--grey-70);
-  }
-
-  input[type="search"] {
-    color: var(--textColor);
-  }
-
-  .search {
-    background-color: var(--grey-80);
-    border-color: var(--searchBorder);
-    color: var(--textColor);
-  }
-
-  .search::placeholder {
-    color: var(--grey-40);
-  }
-
-  .tab-list {
-    background-color: var(--tabListBg);
-  }
-
-  .tab-object {
-    color: var(--textColor);
-  }
-
-  .tab-object:focus {
-    outline-color: var(--grey-30);
-  }
-
-  .tab-info > p {
-    color: var(--textColorSecondary);
-  }
-
-  .no-result {
-    color: var(--textColor);
-  }
-
-  #pref-btn {
-    color: var(--grey-40);
-  }
-
-
-  /* Invert "no results" icon for dark mode visibility */
-  .no-result__circle {
-    filter: invert(1);
-  }
-
-  /* Lighten volume/mute icons (they use context-fill which defaults to black) */
-  .tab-object.audible > .tab-img:before,
-  .tab-object.mute > .tab-img:before {
-    filter: invert(0.7);
-  }
-
-  /* Invert fallback favicon (file.svg) for visibility on dark background */
-  .tab-img img[src$="file.svg"] {
-    filter: invert(1);
-  }
-
-  /* Mute the cancel button to fit dark mode aesthetic */
-  .delete-circle {
-    filter: saturate(0.7) brightness(1.1);
-  }
+/* Invert fallback favicon (file.svg) for visibility on dark background */
+.tab-img img[src$="file.svg"] {
+  filter: light-dark(none, invert(1));
 }
