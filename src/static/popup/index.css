@@ -101,7 +101,6 @@ header {
 }
 
 .search:focus {
-  border-color: var(--color-blue-50);
   box-shadow: var(--shadow-focus);
 }
 
@@ -281,6 +280,12 @@ removes the extra space added by the pseudoelement
   overflow: hidden;
   text-overflow: ellipsis;
   color: var(--color-text-secondary);
+}
+
+.tab-object--selected > .tab-info > p,
+.tab-object:hover > .tab-info > p,
+.tab-object:focus > .tab-info > p {
+  color: var(--color-text-inverted);
 }
 
 .tab-info > strong {
