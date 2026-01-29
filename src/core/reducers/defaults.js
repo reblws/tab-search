@@ -38,6 +38,7 @@ export const initialGeneralSettings = {
   tabUrlSize: 11,
   tabTitleSize: 13,
   popupSize: 'medium',
+  searchDebounceDelay: 50,
 };
 
 export const initialState = {

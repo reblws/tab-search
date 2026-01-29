@@ -1,5 +1,5 @@
-import Fuse from 'fuse.js';
 import { deletedTabsCache } from './caches';
+import { getCachedFuse } from './fuse-cache';
 import {
   TAB_TYPE,
   OTHER_WINDOW_TAB_TYPE,
@@ -110,7 +110,7 @@ export default function filterResult(
       if (sortMruAll) {
         fuseOptions = Object.assign({}, options, { shouldSort: false });
       }
-      search = arr => new Fuse(arr, fuseOptions).search(query).map(result => result.item);
+      search = arr => getCachedFuse(arr, fuseOptions).search(query).map(result => result.item);
     } else {
       // If enableFuzzySearch is off
       const matchedTabs = tab => searchKeys.some(

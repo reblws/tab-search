@@ -1,4 +1,4 @@
-import { deletedTabsCache } from '../caches';
+import { deletedTabsCache, getCachedTabs, setCachedTabs } from '../caches';
 import {
   SESSION_TYPE,
   OTHER_WINDOW_TAB_TYPE,
@@ -150,7 +150,14 @@ export function muteTab(id, muted) {
 }
 
 function queryTabs(queryOptions) {
-  return apiP(browser.tabs, 'query', queryOptions);
+  const cached = getCachedTabs();
+  if (cached) {
+    return cached;
+  }
+  return apiP(browser.tabs, 'query', queryOptions).then((tabs) => {
+    setCachedTabs(tabs);
+    return tabs;
+  });
 }
 
 export function createTab(createOptions) {

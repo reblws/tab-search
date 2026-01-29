@@ -1,3 +1,4 @@
+import debounce from 'debounce';
 import { initialColorSettings } from 'core/reducers/defaults';
 import {
   searchInput,
@@ -15,6 +16,10 @@ import {
   appendSearchInputPlaceholderText,
   setStyleSheetRule,
 } from './utils/dom';
+import {
+  addTabCacheListeners,
+  removeTabCacheListeners,
+} from './caches';
 import {
   getOsShortcut,
   createTab,
@@ -65,17 +70,42 @@ export function overrideDomStyleSheets(store) {
 }
 
 export function addEventListeners(store) {
-  const { showLastQueryOnPopup } = store.getState().general;
+  const { showLastQueryOnPopup, searchDebounceDelay } = store.getState().general;
   const updateSearchResults = configureSearch(store);
   const handleKeydown = keydownHandler(store);
+
+  // Debounce search for performance, but execute immediately when clearing
+  // Must capture value immediately since event object gets recycled by browser
+  const debouncedSearch = debounce((value) => {
+    updateSearchResults({ currentTarget: { value } });
+  }, searchDebounceDelay);
+  const handleSearchInput = (event) => {
+    const { value } = event.currentTarget;
+    if (value.length === 0) {
+      debouncedSearch.clear();
+      updateSearchResults(event); // Immediate clear
+    } else {
+      debouncedSearch(value);
+    }
+  };
+
   window.addEventListener('keydown', handleKeydown);
   deleteButton.addEventListener('click', clearInput);
-  searchInput.addEventListener('input', updateSearchResults);
+  searchInput.addEventListener('input', handleSearchInput);
   prefsBtn.addEventListener('click', openSettingsPage);
 
   if (showLastQueryOnPopup) {
     searchInput.addEventListener('input', updateLastQueryOnKeydown(store));
   }
+
+  // Add tab cache invalidation listeners
+  addTabCacheListeners();
+
+  // Cleanup on popup close to prevent memory leaks
+  window.addEventListener('unload', () => {
+    debouncedSearch.clear();
+    removeTabCacheListeners();
+  });
 
   // Populate store with current search fn
   return Object.assign(
