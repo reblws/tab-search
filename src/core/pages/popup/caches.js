@@ -23,3 +23,27 @@ export function setCachedTabs(tabs) {
   tabDataCache = tabs;
   tabDataCacheTime = Date.now();
 }
+
+export function invalidateTabCache() {
+  tabDataCache = null;
+  tabDataCacheTime = 0;
+}
+
+// Tab event listeners to invalidate cache when tabs change
+const tabCacheInvalidationListeners = {
+  onCreated: () => invalidateTabCache(),
+  onRemoved: () => invalidateTabCache(),
+  onUpdated: () => invalidateTabCache(),
+};
+
+export function addTabCacheListeners() {
+  browser.tabs.onCreated.addListener(tabCacheInvalidationListeners.onCreated);
+  browser.tabs.onRemoved.addListener(tabCacheInvalidationListeners.onRemoved);
+  browser.tabs.onUpdated.addListener(tabCacheInvalidationListeners.onUpdated);
+}
+
+export function removeTabCacheListeners() {
+  browser.tabs.onCreated.removeListener(tabCacheInvalidationListeners.onCreated);
+  browser.tabs.onRemoved.removeListener(tabCacheInvalidationListeners.onRemoved);
+  browser.tabs.onUpdated.removeListener(tabCacheInvalidationListeners.onUpdated);
+}

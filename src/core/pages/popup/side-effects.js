@@ -17,6 +17,10 @@ import {
   setStyleSheetRule,
 } from './utils/dom';
 import {
+  addTabCacheListeners,
+  removeTabCacheListeners,
+} from './caches';
+import {
   getOsShortcut,
   createTab,
 } from './utils/browser';
@@ -66,7 +70,7 @@ export function overrideDomStyleSheets(store) {
 }
 
 export function addEventListeners(store) {
-  const { showLastQueryOnPopup } = store.getState().general;
+  const { showLastQueryOnPopup, searchDebounceDelay } = store.getState().general;
   const updateSearchResults = configureSearch(store);
   const handleKeydown = keydownHandler(store);
 
@@ -74,7 +78,7 @@ export function addEventListeners(store) {
   // Must capture value immediately since event object gets recycled by browser
   const debouncedSearch = debounce((value) => {
     updateSearchResults({ currentTarget: { value } });
-  }, 50);
+  }, searchDebounceDelay);
   const handleSearchInput = (event) => {
     const { value } = event.currentTarget;
     if (value.length === 0) {
@@ -93,6 +97,15 @@ export function addEventListeners(store) {
   if (showLastQueryOnPopup) {
     searchInput.addEventListener('input', updateLastQueryOnKeydown(store));
   }
+
+  // Add tab cache invalidation listeners
+  addTabCacheListeners();
+
+  // Cleanup on popup close to prevent memory leaks
+  window.addEventListener('unload', () => {
+    debouncedSearch.clear();
+    removeTabCacheListeners();
+  });
 
   // Populate store with current search fn
   return Object.assign(
