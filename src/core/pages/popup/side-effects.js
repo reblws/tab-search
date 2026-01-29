@@ -1,3 +1,4 @@
+import debounce from 'debounce';
 import { initialColorSettings } from 'core/reducers/defaults';
 import {
   searchInput,
@@ -68,9 +69,25 @@ export function addEventListeners(store) {
   const { showLastQueryOnPopup } = store.getState().general;
   const updateSearchResults = configureSearch(store);
   const handleKeydown = keydownHandler(store);
+
+  // Debounce search for performance, but execute immediately when clearing
+  // Must capture value immediately since event object gets recycled by browser
+  const debouncedSearch = debounce((value) => {
+    updateSearchResults({ currentTarget: { value } });
+  }, 50);
+  const handleSearchInput = (event) => {
+    const { value } = event.currentTarget;
+    if (value.length === 0) {
+      debouncedSearch.clear();
+      updateSearchResults(event); // Immediate clear
+    } else {
+      debouncedSearch(value);
+    }
+  };
+
   window.addEventListener('keydown', handleKeydown);
   deleteButton.addEventListener('click', clearInput);
-  searchInput.addEventListener('input', updateSearchResults);
+  searchInput.addEventListener('input', handleSearchInput);
   prefsBtn.addEventListener('click', openSettingsPage);
 
   if (showLastQueryOnPopup) {
