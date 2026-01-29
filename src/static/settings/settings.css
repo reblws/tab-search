@@ -5,6 +5,32 @@
   /* Typography */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 
+  /* Color Aliases (bridge to acorn-tokens.css) */
+  --grey-10: var(--color-gray-10);
+  --grey-20: var(--color-gray-20);
+  --grey-30: var(--color-gray-30);
+  --grey-40: var(--color-gray-40);
+  --grey-50: var(--color-gray-50);
+  --grey-60: var(--color-gray-60);
+  --grey-70: var(--color-gray-70);
+  --grey-80: var(--color-gray-80);
+  --grey-90: var(--color-gray-90);
+  --blue-40: var(--color-blue-40);
+  --blue-50: var(--color-blue-50);
+  --blue-50-a30: var(--color-blue-50-a30);
+  --blue-60: var(--color-blue-60);
+  --blue-70: var(--color-blue-70);
+  --green-30: var(--color-green-30);
+  --green-60: var(--color-green-60);
+  --green-70: var(--color-green-70);
+  --red-30: var(--color-red-30);
+  --red-50: var(--color-red-50);
+  --red-60: var(--color-red-60);
+  --red-70: var(--color-red-70);
+  --yellow-30: var(--color-yellow-30);
+  --yellow-60: var(--color-yellow-60);
+  --yellow-70: var(--color-yellow-70);
+
   /* Colors */
   --primaryTextColor: var(--grey-90);
   --secondaryTextColor: var(--grey-50);
