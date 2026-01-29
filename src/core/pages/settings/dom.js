@@ -496,8 +496,6 @@ export async function initBrowserShortcut(os) {
     input.removeAttribute('readonly');
     setupBrowserShortcutInput(input, isMac);
     resetButton.addEventListener('click', handleReset);
-    hintElement.textContent = 'Click the input and press your desired shortcut. ';
-    addBrowserSettingsLink(hintElement);
   } else {
     // Chrome: Read-only with link to browser settings
     resetButton.style.display = 'none';

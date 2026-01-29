@@ -77,11 +77,6 @@ describe('Settings', function () {
       await expect(hint).toBeDisplayed();
     });
 
-    it('should have a link to browser settings in the hint', async function () {
-      const link = await $('#browser-shortcut-hint a');
-      await expect(link).toBeExisting();
-    });
-
     it('should allow editing the shortcut in Firefox', async function () {
       const input = await $('#popup-shortcut-input');
       const originalValue = await input.getValue();

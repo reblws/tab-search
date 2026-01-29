@@ -78,28 +78,22 @@ function getUserOs() {
   return browser.runtime.getPlatformInfo().then(({ os }) => os);
 }
 
-function getManifest() {
-  return browser.runtime.getManifest();
-}
-
 // Returns the user's shortcut for the extension
 // () -> Promise< shortcut: String >
-export function getOsShortcut() {
-  const isMac = os => os === 'mac';
-  const replaceCtrlWithCmd = shortcut => shortcut.replace(/ctrl/i, 'Cmd');
-  const getManifestSuggestedKey = manifest =>
-    manifest.commands._execute_browser_action.suggested_key;
-  const getShortcut = ([os, suggestedKey]) => (
-    isMac(os)
-      ? replaceCtrlWithCmd(suggestedKey[os])
-      : suggestedKey.default
-  );
-  // ---> [ os, manifest ]
-  return Promise.all([
+export async function getOsShortcut() {
+  const POPUP_COMMAND_NAME = '_execute_browser_action';
+  const [os, commands] = await Promise.all([
     getUserOs(),
-    getManifestSuggestedKey(getManifest()),
-  ])
-    .then(getShortcut);
+    browser.commands.getAll(),
+  ]);
+  const popupCommand = commands.find(cmd => cmd.name === POPUP_COMMAND_NAME);
+  const shortcut = popupCommand?.shortcut || '';
+
+  // Replace Ctrl with Cmd on Mac for display
+  if (os === 'mac') {
+    return shortcut.replace(/ctrl/i, 'Cmd');
+  }
+  return shortcut;
 }
 
 export function switchActiveTab(tabDataset) {

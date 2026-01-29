@@ -19,7 +19,8 @@
     "test:coverage": "nyc report --reporter=html",
     "test:e2e": "wdio run wdio.conf.js",
     "test:e2e:headed": "HEADLESS=false wdio run wdio.conf.js",
-    "test:all": "npm run build:firefox && npm test && npm run test:e2e"
+    "test:all": "npm run build:firefox && npm test && npm run test:e2e",
+    "version": "node scripts/version.js"
   },
   "dependencies": {
     "debounce": "^2.2.0",

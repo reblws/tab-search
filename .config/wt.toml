@@ -6,7 +6,7 @@ post-create = "pnpm install"
 # Validate before merging
 [pre-merge]
 install = "pnpm install"
-build = "pnpm run build"
+build = "pnpm run zip:firefox"
 lint = "pnpm run lint:eslint"
 test = "pnpm test"
-e2e = "pnpm run zip:firefox && pnpm run test:e2e"
+e2e = "pnpm run test:e2e"

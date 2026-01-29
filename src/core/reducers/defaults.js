@@ -15,6 +15,7 @@ export const initialFuzzySettings = {
   threshold: 0.5,
   maxPatternLength: 32,
   minMatchCharLength: 1,
+  ignoreLocation: true,
   keys: ['title', 'url'],
 };
 

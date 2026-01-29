@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [next, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Lint
+        run: pnpm run lint:eslint
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Build Firefox extension
+        run: pnpm run zip:firefox
+
+      - name: E2E tests
+        run: pnpm run test:e2e

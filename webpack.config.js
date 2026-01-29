@@ -103,7 +103,7 @@ const webpackConfig = {
 };
 
 if (process.env.NODE_ENV === 'development') {
-  webpackConfig.devtool = 'source-map';
+  webpackConfig.devtool = 'inline-source-map';
 }
 
 module.exports = webpackConfig;
