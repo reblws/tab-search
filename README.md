@@ -13,54 +13,66 @@ Easy tab search & switching. This WebExtension provides a keyboard-accessible se
 | Shortcut | Description |
 | --- | --- |
 | Win/Linux: <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> / Mac: <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> | Toggle extension |
-| <kbd>Enter</kbd> | Open selected tab or first in list if not selected |
-| <kbd>&#8593;</kbd> | Select previous tab |
-| <kbd>&#8595;</kbd> | Select next tab |
-| <kbd>Ctrl</kbd> + <kbd>Backspace</kbd> | Delete a tab |
-| <kbd>Alt</kbd> + <kbd>R</kbd> | Refresh tab
-| <kbd>Alt</kbd> + <kbd>P</kbd> | Pin tab
-| <kbd>Ctrl</kbd> + <kbd>C</kbd> | Copy Tab URL
-| <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd> | Delete all duplicate tabs
-| <kbd>Alt</kbd> + <kbd>M</kbd> | Mute (only if tab is audible)
+| <kbd>Enter</kbd> | Open selected tab |
+| <kbd>&#8593;</kbd> / <kbd>&#8592;</kbd> | Select previous tab |
+| <kbd>&#8595;</kbd> / <kbd>&#8594;</kbd> | Select next tab |
+| <kbd>Ctrl</kbd> + <kbd>Backspace</kbd> | Delete tab |
+| <kbd>Alt</kbd> + <kbd>R</kbd> | Refresh tab |
+| <kbd>Alt</kbd> + <kbd>P</kbd> | Pin tab |
+| <kbd>Ctrl</kbd> + <kbd>C</kbd> | Copy tab URL |
+| <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd> | Delete duplicate tabs |
+| <kbd>Alt</kbd> + <kbd>M</kbd> | Toggle mute |
 
-## Usage
+## Development
 
-These instructions should get you up to compiling with and/or developing with the source. If you just want to use the extension and are on Firefox, you should get the extension from [AMO](https://addons.mozilla.org/en-US/firefox/addon/tab_search/).
+If you just want to use the extension on Firefox, get it from [AMO](https://addons.mozilla.org/en-US/firefox/addon/tab_search/).
 
-Compiling the source requires [node.js](https://nodejs.org/).
+### Prerequisites
 
-Step 0: If you plan on sending pull-request, you should fork the repository.
+- [Node.js](https://nodejs.org/)
+- [pnpm](https://pnpm.io/)
 
-Step 1: Clone the [TabSearch](https://github.com/reblws/tab-search) repository.
+### Setup
+
+1. Clone the repository (fork first if you plan to submit a pull request):
+   ```
+   git clone https://github.com/reblws/tab-search.git
+   cd tab-search
+   ```
+
+2. Install dependencies:
+   ```
+   pnpm install
+   ```
+
+### Development Commands
+
+```bash
+# Start development with live reload (Firefox)
+pnpm start
+
+# Start development with live reload (Chrome)
+pnpm start:chrome
+
+# Run tests
+pnpm test
+
+# Lint code
+pnpm lint:eslint
 ```
-git clone https://github.com/reblws/tab-search.git
+
+### Production Build
+
+```bash
+# Build for Firefox
+pnpm build:firefox
+
+# Build for Chrome
+pnpm build:chrome
+
+# Build and create distributable zip (Firefox)
+pnpm zip:firefox
 ```
-If you forked the repo, just replace the clone url with your own.
-
-Step 2: Navigate to the root of the directory you cloned and install the required dependencies.
-
-```
-npm install
-```
-
-Step 3: You'll need to compile the changes from `src/` into the `dist/` folder. The following scripts are available to help with this
-
-```
-# Starts a live server watching for changes in `src/` and outputs them to `dist/`
-# NOTE: Need to restart this command if changing one of the manifest files
-npm start
-
-# Opens Firefox with add-on installed from the files in `dist/`, automatically reloads the extension on each change found in `dist/`
-npm run watch:firefox
-```
-
-Step 4: Build for production
-```
-npm run build:firefox
-```
-
-If you want to build or watch for Chrome just use `start:chrome` or `build:chrome` instead. This just changes the manifest.json file so it doesn't raise any errors. There's no `watch` command  for Chrome yet.
-
 
 ## Changelog
 
