@@ -1,15 +1,23 @@
 # Changelog
 
-## Todo
+## 0.6.0 (2026-01-29)
 
-- More mouse controls for tab management
-- Internationalization
-  + In progress
-- Move tabs
-- Focus active tab in list on popup initialization
-- Compact layout
-- Dark theme
-- Vertically centered overlay
+- Migrated from Photon to Acorn Design System
+  + Use `light-dark()` CSS function for automatic theme switching
+  + Remove ~300 lines of dark mode media queries
+  + Switch to system fonts (321KB savings from removing Inter UI)
+  + Add semantic color tokens for better maintainability
+- Redesigned top bar with Acorn components
+  + Replace three-dot menu icon with hamburger menu button
+  + Update search bar layout with balanced spacing
+  + Add clear button inside search input
+- Added popup shortcut customization in settings
+  + Firefox users can edit directly in settings
+  + Chrome users are linked to the browser's native shortcut settings
+- Fixed search failing on keywords late in long tab titles
+- Added E2E tests with WebdriverIO for real browser testing
+- Added GitHub Actions CI pipeline
+- Added comprehensive unit test coverage
 
 ## 0.5.0 (2026-01-25)
 
