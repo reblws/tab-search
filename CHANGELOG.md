@@ -2,7 +2,7 @@
 
 ## 0.6.1 (2026-02-02)
 
-- Tentative fix for settings not persisting for certain users
+- Tentative fix for settings not persisting for certain users (Thanks @54ac !)
 
 ## 0.6.0 (2026-01-29)
 
