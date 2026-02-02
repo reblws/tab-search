@@ -12,7 +12,6 @@ import migrations from './services/migrations';
 const persistConfig = {
   key: 'root',
   storage,
-  serialize: false,
   blacklist: ['state'],
   stateReconciler: autoMergeLevel2,
   version: 0,
