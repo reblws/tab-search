@@ -177,7 +177,7 @@ function configureSettingListeners(dispatch) {
                 }
               });
           } else if (settingsLocation[0] === 'fuzzy' && settingKey !== 'keys') {
-            dispatch(updateFuzzyCheckbox(settingKey));
+            dispatch(updateFuzzyCheckbox(settingKey, checked));
           } else if (settingKey === 'keys') {
             dispatch(updateFuzzySearchKeys(checked));
           } else {

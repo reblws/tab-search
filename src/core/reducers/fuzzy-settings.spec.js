@@ -86,6 +86,22 @@ describe('fuzzySettingsReducer', function () {
       expect(result.enableFuzzySearch).to.equal(false);
     });
 
+    // Regression test for settings persistence bug
+    // When updateFuzzyCheckbox is called without a value parameter,
+    // it should not corrupt the state with undefined
+    it('should not set value to undefined when value parameter is missing', function () {
+      // This simulates the bug in dom.js:180 where updateFuzzyCheckbox(settingKey)
+      // is called without passing the checked value
+      const action = {
+        type: FUZZY + CHECKBOX_UPDATE,
+        payload: { key: 'enableFuzzySearch', value: undefined },
+      };
+      const result = fuzzySettingsReducer(initialFuzzySettings, action);
+      // The bug causes enableFuzzySearch to become undefined, which
+      // corrupts redux-persist serialization and causes settings to reset
+      expect(result.enableFuzzySearch).to.not.equal(undefined);
+    });
+
     it('should update shouldSort to false', function () {
       const action = {
         type: FUZZY + CHECKBOX_UPDATE,

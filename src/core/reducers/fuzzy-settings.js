@@ -24,6 +24,10 @@ export default function fuzzySettingsReducer(state = initialFuzzySettings, actio
     case FUZZY + RANGE_UPDATE:
     case FUZZY + CHECKBOX_UPDATE: {
       const { key, value } = action.payload;
+      // Ignore undefined values to prevent state corruption
+      if (value === undefined) {
+        return state;
+      }
       const newSetting = { [key]: value };
       return Object.assign({}, state, newSetting);
     }
