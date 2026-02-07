@@ -298,22 +298,39 @@ export function createNoResult() {
 
 export function injectTabsInList(getState) {
   return function doInjectTabsInList(tabArray) {
-    const wasNoResult = tabList.querySelectorAll('.tab-object').length === 0;
+    // Build map of existing nodes by id for reuse
+    const existingNodes = new Map();
+    Array.from(tabList.querySelectorAll('.tab-object')).forEach((node) => {
+      existingNodes.set(node.dataset.id, node);
+    });
+
+    const wasNoResult = existingNodes.size === 0;
     const showNoResult = tabArray.length === 0;
+
     // Don't update dom if we're going to show no results again
     if (wasNoResult && showNoResult) return tabArray;
 
-    clearChildren(tabList);
-
-    // Add nodes to tabList & attach event listeners
     if (showNoResult) {
+      clearChildren(tabList);
       tabList.appendChild(createNoResult());
-    } else {
-      tabArray.map(tabToTag(getState)).forEach((tabNode) => {
-        addTabListeners(getState)(tabNode);
-        tabList.appendChild(tabNode);
-      });
+      return tabArray;
     }
+
+    // Build new node list, reusing existing where possible
+    const fragment = d.createDocumentFragment();
+    tabArray.forEach((tab) => {
+      const id = String(tab.sessionId || tab.id);
+      if (existingNodes.has(id)) {
+        fragment.appendChild(existingNodes.get(id));
+      } else {
+        const node = tabToTag(getState)(tab);
+        addTabListeners(getState)(node);
+        fragment.appendChild(node);
+      }
+    });
+
+    clearChildren(tabList);
+    tabList.appendChild(fragment);
     return tabArray;
   };
 }
