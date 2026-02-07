@@ -85,11 +85,9 @@ header {
   outline-offset: var(--focus-outline-offset);
 }
 
-.menu-button img {
+.menu-button svg {
   width: 16px;
   height: 16px;
-  /* Match --color-icon: #5b5b66 in light, light gray in dark */
-  filter: light-dark(opacity(0.55), invert(0.8));
 }
 
 /* Clear button inside search input */
@@ -123,10 +121,9 @@ header {
   outline-offset: -2px;
 }
 
-.clear-button img {
+.clear-button svg {
   width: 16px;
   height: 16px;
-  filter: light-dark(opacity(0.55), invert(0.8));
 }
 
 .container {
