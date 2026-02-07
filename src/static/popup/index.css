@@ -293,16 +293,17 @@ removes the extra space added by the pseudoelement
   font: inherit;
   background: none;
 
-  /* Layout: 24x24 click target, centered content */
+  /* Layout: full-height click target, centered content */
   display: flex;
   align-items: center;
   justify-content: center;
   width: 24px;
-  height: 24px;
   flex-shrink: 0;
+  align-self: stretch;
+  margin: -1rem -0.75rem -1rem 0;
 
   /* Visual */
-  border-radius: var(--border-radius-small);
+  border-radius: 0;
   background-color: transparent;
   color: var(--color-icon);
   cursor: pointer;
