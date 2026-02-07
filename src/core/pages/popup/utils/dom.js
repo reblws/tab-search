@@ -16,7 +16,6 @@ import {
   TAB_ACTIVE_ID,
   OTHER_WINDOW_TAB_TYPE,
   TAB_TYPE,
-  DEL_CIRCLE_SVG_PATH,
   TAB_DELETE_BTN_CLASSNAME,
 } from '../constants';
 import { badFavIconCache } from '../caches';
@@ -227,17 +226,21 @@ function createTabObject({
     tabInfoNode.appendChild(urlNode);
   }
 
-  // Delete this tab!
-  if (showVisualDeleteTabButton && (type === OTHER_WINDOW_TAB_TYPE || type === TAB_TYPE)) {
-    const delBtn = d.createElement('img');
-    delBtn.src = DEL_CIRCLE_SVG_PATH;
-    delBtn.title = 'Delete Tab';
-    delBtn.classList.add(TAB_DELETE_BTN_CLASSNAME);
-    tabObjectNode.appendChild(delBtn);
-  }
-
   tabObjectNode.appendChild(iconContainerNode);
   tabObjectNode.appendChild(tabInfoNode);
+
+  // Close tab button — appended after tabInfoNode so it sits on the right in flex layout
+  if (showVisualDeleteTabButton && (type === OTHER_WINDOW_TAB_TYPE || type === TAB_TYPE)) {
+    const delBtn = d.createElement('button');
+    delBtn.type = 'button';
+    delBtn.title = 'Close Tab';
+    delBtn.setAttribute('aria-label', 'Close Tab');
+    delBtn.classList.add(TAB_DELETE_BTN_CLASSNAME);
+    delBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>`;
+    tabObjectNode.appendChild(delBtn);
+  }
   if (pinned) {
     tabObjectNode.classList.add(TAB_PIN_CLASSNAME);
   }

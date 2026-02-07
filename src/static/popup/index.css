@@ -193,7 +193,7 @@ header {
   padding-top: 1rem;
   padding-bottom: 1rem;
   padding-left: 0;
-  padding-right: 3rem;
+  padding-right: 0.75rem;
   cursor: pointer;
   box-sizing: border-box;
   /* For chrome to prevent box shrinking */
@@ -284,23 +284,89 @@ removes the extra space added by the pseudoelement
   background-repeat: no-repeat;
 }
 
-.tab-object:hover .tab-object__delete-button:hover {
-  filter: grayscale(20%);
+/* ====== Close Tab Button (Ghost on Hover) ====== */
+
+.tab-object__delete-button {
+  /* Reset button defaults */
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  background: none;
+
+  /* Layout: 24x24 click target, centered content */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+
+  /* Visual */
+  border-radius: var(--border-radius-small);
+  background-color: transparent;
+  color: var(--color-icon);
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease, opacity 0.12s ease;
+
+  /* Ghost: invisible by default */
+  opacity: 0;
+  pointer-events: none;
 }
 
+/* Show on row hover */
 .tab-object:hover .tab-object__delete-button {
-  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
 }
 
-.tab-object.pinned:hover .tab-object__delete-button {
-  visibility:hidden;
+/* Button hover state — subtle background appears */
+.tab-object:hover .tab-object__delete-button:hover {
+  background-color: var(--button-background-color-hover);
+  color: var(--color-text-primary);
 }
 
-.tab-object .tab-object__delete-button {
-  position: relative;
-  visibility: hidden;
-  margin-right: -16px;
-  transform: translateX(calc(0.9 * var(--bodyWidth) - 8px));
+/* Button active state — stronger background */
+.tab-object:hover .tab-object__delete-button:active {
+  background-color: var(--button-background-color-active);
+}
+
+/* Focus state for keyboard navigation */
+.tab-object__delete-button:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+}
+
+/* On selected/hovered/focused rows (inverted colors) */
+.tab-object--selected .tab-object__delete-button,
+.tab-object:hover .tab-object__delete-button,
+.tab-object:focus .tab-object__delete-button {
+  opacity: 1;
+  pointer-events: auto;
+  color: var(--color-text-inverted);
+}
+
+/* Hover on the button itself, within a selected/active row */
+.tab-object--selected .tab-object__delete-button:hover,
+.tab-object:hover .tab-object__delete-button:hover,
+.tab-object:focus .tab-object__delete-button:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+  color: var(--color-text-inverted);
+}
+
+.tab-object--selected .tab-object__delete-button:active,
+.tab-object:hover .tab-object__delete-button:active,
+.tab-object:focus .tab-object__delete-button:active {
+  background-color: rgba(255, 255, 255, 0.28);
+}
+
+/* Keep hidden on pinned tabs (no close button for pinned) */
+.tab-object.pin .tab-object__delete-button {
+  display: none;
 }
 
 .tab-object.nowrap .tab-title {
@@ -370,11 +436,6 @@ removes the extra space added by the pseudoelement
 
 p {
   margin: 0;
-}
-
-.tab-object__delete-button {
-  height: 16px;
-  cursor: pointer;
 }
 
 .hidden {

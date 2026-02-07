@@ -173,8 +173,8 @@ export function handleTabClick(getState) {
   return function doHandleTabClick(event) {
     const generalSettings = getState().general;
     const { currentTarget, ctrlKey, target } = event;
-    if (target.nodeName === 'IMG'
-      && target.classList.contains(TAB_DELETE_BTN_CLASSNAME)) {
+    // Check if click landed on the delete button or any of its children (SVG/path)
+    if (currentTarget.querySelector(`.${TAB_DELETE_BTN_CLASSNAME}`)?.contains(target)) {
       return deleteTab(currentTarget, generalSettings, true);
     }
     const { dataset } = currentTarget;
