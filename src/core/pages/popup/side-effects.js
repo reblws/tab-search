@@ -169,7 +169,7 @@ export function focusSearchInputWorkaround() {
 }
 
 function updatePlaceholderTextWithShortcutHint() {
-  const hintText = shortcut => `(${shortcut} opens this)`;
+  const hintText = shortcut => `(${shortcut})`;
   return getOsShortcut()
     .then(hintText)
     .then(appendSearchInputPlaceholderText);
