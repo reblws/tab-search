@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.2 (2026-02-07)
+
+- Fixed fuzzy settings not updating
+
 ## 0.6.1 (2026-02-02)
 
 - Tentative fix for settings not persisting for certain users (Thanks @54ac !)
