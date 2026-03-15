@@ -7,7 +7,8 @@
     "tabs",
     "activeTab",
     "storage",
-    "sessions"
+    "sessions",
+    "tabGroups"
   ],
   "optional_permissions": [
     "bookmarks",

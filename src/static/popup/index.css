@@ -462,6 +462,51 @@ p {
   border-left: 5px var(--color-history-indicator) solid;
 }
 
+/* Tab group colors - muted variants for light/dark mode */
+:root {
+  --tab-group-grey: light-dark(#5f6368, #9aa0a6);
+  --tab-group-blue: light-dark(#4a86c8, #7aacdf);
+  --tab-group-red: light-dark(#c5221f, #e88e8d);
+  --tab-group-yellow: light-dark(#e8a317, #f5c842);
+  --tab-group-green: light-dark(#188038, #5bb974);
+  --tab-group-pink: light-dark(#d01884, #e98abf);
+  --tab-group-purple: light-dark(#7627bb, #af8fe6);
+  --tab-group-cyan: light-dark(#007b83, #4ecdc4);
+  --tab-group-orange: light-dark(#e36d0e, #f5a76c);
+}
+
+/* Tab group badge - dedicated line below URL */
+.tab-group-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  font-size: 0.65rem;
+  line-height: 1.2;
+  color: var(--color-text-secondary);
+  max-width: 100%;
+}
+
+.tab-group-badge__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tab-group-badge__label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Group badge inherits inverted color on selected/hovered/focused rows */
+.tab-object--selected .tab-group-badge,
+.tab-object:hover .tab-group-badge,
+.tab-object:focus .tab-group-badge {
+  color: var(--color-text-inverted);
+}
+
 /* Lighten volume/mute icons for dark mode */
 .tab-object.audible > .tab-img:before,
 .tab-object.mute > .tab-img:before {

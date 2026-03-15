@@ -10,6 +10,7 @@ export const URL_COPY = 'URL_COPY';
 export const TAB_BOOKMARK = 'TAB_BOOKMARK';
 export const DUPLICATE_TAB_DELETE = 'DUPLICATE_TAB_DELETE';
 export const MUTE_TOGGLE = 'MUTE_TOGGLE';
+export const TAB_GROUP_TOGGLE = 'TAB_GROUP_TOGGLE';
 
 // Modifier constants
 export const CONTROL = 'Control';

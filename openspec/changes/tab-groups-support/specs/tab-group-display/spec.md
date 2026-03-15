@@ -1,15 +1,15 @@
 ## ADDED Requirements
 
 ### Requirement: Group indicator is shown on grouped tabs
-The popup SHALL display a group indicator on each tab that belongs to a tab group. The indicator SHALL consist of a colored dot matching the group's color followed by the group's title text. The indicator SHALL be placed inline after the tab title, inside the `.tab-info` container.
+The popup SHALL display a group indicator on each tab that belongs to a tab group. The indicator SHALL consist of a colored dot matching the group's color followed by the group's title text. The indicator SHALL be rendered as a dedicated third line inside `.tab-info`, below the URL.
 
 #### Scenario: Tab belongs to a group with a title
 - **WHEN** a tab has a `groupId` that resolves to a group with color "blue" and title "Work"
-- **THEN** the tab row displays a small blue dot followed by the text "Work" after the tab title
+- **THEN** the tab row displays a small blue dot followed by the text "Work" on a dedicated line below the URL
 
 #### Scenario: Tab belongs to a group without a title
 - **WHEN** a tab has a `groupId` that resolves to a group with color "red" and no title (empty string)
-- **THEN** the tab row displays only a colored red dot after the tab title, with no label text
+- **THEN** the tab row displays only a colored red dot on a dedicated line below the URL, with no label text
 
 #### Scenario: Tab does not belong to any group
 - **WHEN** a tab has no `groupId` or its `groupId` equals `TAB_GROUP_ID_NONE`

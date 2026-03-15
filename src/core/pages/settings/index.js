@@ -17,6 +17,11 @@ createUIStore()
     initSettings(store);
     initKeybindingTable(store);
     initBrowserShortcut(store.os);
+    // Hide tab group shortcut if API is unavailable
+    if (typeof browser.tabGroups === 'undefined') {
+      const groupRow = document.getElementById('TAB_GROUP_TOGGLE');
+      if (groupRow) groupRow.style.display = 'none';
+    }
     return store;
   }).catch((e) => {
     console.error(e);
