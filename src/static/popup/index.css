@@ -502,12 +502,14 @@ p {
   gap: 16px;
 }
 
-.context-menu__item:hover {
+.context-menu__item:hover,
+.context-menu__item--highlighted {
   background-color: var(--tabFocusColor);
   color: var(--color-text-inverted);
 }
 
-.context-menu__item:hover .context-menu__shortcut {
+.context-menu__item:hover .context-menu__shortcut,
+.context-menu__item--highlighted .context-menu__shortcut {
   color: var(--color-text-inverted);
 }
 
@@ -515,12 +517,14 @@ p {
   color: light-dark(#c53030, #fc8181);
 }
 
-.context-menu__item--destructive:hover {
+.context-menu__item--destructive:hover,
+.context-menu__item--destructive.context-menu__item--highlighted {
   background-color: light-dark(#c53030, #9b2c2c);
   color: #fff;
 }
 
-.context-menu__item--destructive:hover .context-menu__shortcut {
+.context-menu__item--destructive:hover .context-menu__shortcut,
+.context-menu__item--destructive.context-menu__item--highlighted .context-menu__shortcut {
   color: #fff;
 }
 

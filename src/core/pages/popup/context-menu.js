@@ -20,10 +20,13 @@ import {
 } from './constants';
 
 const MENU_SELECTOR = '.context-menu';
+const ITEM_SELECTOR = '.context-menu__item';
+const ITEM_HIGHLIGHT_CLASS = 'context-menu__item--highlighted';
 
 let menuEl = null;
 let currentTabNode = null;
 let getStateFn = null;
+let highlightedIndex = -1;
 
 // Returns whether the context menu is currently visible
 export function isContextMenuOpen() {
@@ -141,12 +144,52 @@ function positionMenu(x, y) {
   menuEl.style.top = `${top}px`;
 }
 
+function getMenuItems() {
+  return menuEl ? [...menuEl.querySelectorAll(ITEM_SELECTOR)] : [];
+}
+
+function setHighlight(index) {
+  const items = getMenuItems();
+  if (items.length === 0) return;
+
+  // Clear previous
+  if (highlightedIndex >= 0 && highlightedIndex < items.length) {
+    items[highlightedIndex].classList.remove(ITEM_HIGHLIGHT_CLASS);
+  }
+
+  highlightedIndex = index;
+
+  if (highlightedIndex >= 0 && highlightedIndex < items.length) {
+    items[highlightedIndex].classList.add(ITEM_HIGHLIGHT_CLASS);
+    items[highlightedIndex].scrollIntoView({ block: 'nearest' });
+  }
+}
+
+function highlightNext() {
+  const items = getMenuItems();
+  if (items.length === 0) return;
+  setHighlight(highlightedIndex < items.length - 1 ? highlightedIndex + 1 : 0);
+}
+
+function highlightPrev() {
+  const items = getMenuItems();
+  if (items.length === 0) return;
+  setHighlight(highlightedIndex > 0 ? highlightedIndex - 1 : items.length - 1);
+}
+
+function activateHighlighted() {
+  const items = getMenuItems();
+  if (highlightedIndex < 0 || highlightedIndex >= items.length) return;
+  items[highlightedIndex].click();
+}
+
 function openMenu(tabNode, x, y) {
   const state = getStateFn();
   const actions = getActionsForTab(tabNode, state.keyboard);
   if (actions.length === 0) return;
 
   currentTabNode = tabNode;
+  highlightedIndex = -1;
   // Focus the tab node so keyboard actions target it
   tabNode.focus();
 
@@ -159,6 +202,7 @@ export function closeMenu() {
   menuEl.hidden = true;
   menuEl.innerHTML = '';
   currentTabNode = null;
+  highlightedIndex = -1;
 }
 
 // Execute the action associated with a menu item click
@@ -192,10 +236,38 @@ function handleDocumentClick(event) {
 
 function handleKeyDown(event) {
   if (!isContextMenuOpen()) return;
-  if (event.key === 'Escape') {
-    event.preventDefault();
-    event.stopPropagation();
-    closeMenu();
+  switch (event.key) {
+    case 'Escape':
+      event.preventDefault();
+      event.stopPropagation();
+      closeMenu();
+      break;
+    case 'ArrowDown':
+    case 'Tab':
+      if (event.key === 'Tab' && event.shiftKey) {
+        event.preventDefault();
+        event.stopPropagation();
+        highlightPrev();
+        break;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      highlightNext();
+      break;
+    case 'ArrowUp':
+      event.preventDefault();
+      event.stopPropagation();
+      highlightPrev();
+      break;
+    case 'Enter':
+      event.preventDefault();
+      event.stopPropagation();
+      activateHighlighted();
+      break;
+    default:
+      // Block all other keys from reaching the tab list handler
+      event.stopPropagation();
+      break;
   }
 }
 

@@ -52,13 +52,33 @@ The system SHALL close the context menu when the user interacts outside of it.
 - **WHEN** the user clicks a menu item
 - **THEN** the action is executed and the context menu is closed
 
-### Requirement: Context menu blocks tab keyboard navigation
-While the context menu is open, keyboard shortcuts for tab navigation and tab actions SHALL be suppressed.
+### Requirement: Context menu has its own keyboard navigation
+While the context menu is open, it SHALL capture keyboard input for its own navigation. Tab list navigation and action shortcuts SHALL be suppressed.
 
-#### Scenario: Arrow key while menu open
-- **WHEN** the context menu is open and the user presses an arrow key
-- **THEN** the tab list selection does not change
+#### Scenario: Arrow Down moves to next item
+- **WHEN** the context menu is open and the user presses Arrow Down
+- **THEN** the next menu item is highlighted (skipping separators), and the tab list selection does not change
+
+#### Scenario: Arrow Up moves to previous item
+- **WHEN** the context menu is open and the user presses Arrow Up
+- **THEN** the previous menu item is highlighted (skipping separators), and the tab list selection does not change
+
+#### Scenario: Arrow Down wraps from last to first
+- **WHEN** the last menu item is highlighted and the user presses Arrow Down
+- **THEN** the first menu item is highlighted
+
+#### Scenario: Arrow Up wraps from first to last
+- **WHEN** the first menu item is highlighted and the user presses Arrow Up
+- **THEN** the last menu item is highlighted
+
+#### Scenario: Enter activates highlighted item
+- **WHEN** a menu item is highlighted and the user presses Enter
+- **THEN** the action for that item is executed and the menu is closed
 
 #### Scenario: Tab action shortcut while menu open
 - **WHEN** the context menu is open and the user presses a tab action shortcut (e.g., Ctrl+Backspace)
 - **THEN** the action is not executed
+
+#### Scenario: No item highlighted initially
+- **WHEN** the context menu first opens via right-click
+- **THEN** no item is highlighted until the user presses an arrow key
