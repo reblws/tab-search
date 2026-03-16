@@ -29,28 +29,24 @@ Both browsers now support the `tabGroups` API (Chrome 89+, Firefox 131+), which 
 
 ## Decisions
 
-### 1. Group indicator placement: dedicated row below the URL
+### 1. Group indicator placement: inline badge after the title
 
-**Decision:** Add a third line inside `.tab-info` showing `● Group Name`. Only rendered for grouped tabs, so ungrouped tabs look identical to today. The line uses secondary text styling and a small colored dot.
-
-```
-┌─────────────────────────────────────────────────┐
-│ ▌ [favicon]  A Very Long Tab Title That Goes On │
-│ ▌            https://example.com/some/long/path │
-│ ▌            ● Work                             │
-└─────────────────────────────────────────────────┘
-```
+**Decision:** Add a small colored dot + group name label inline after the tab title, inside `.tab-info`.
 
 **Alternatives considered:**
 - *Replace the left border color:* Conflicts with the existing source-type indicator system which users have learned and can customize.
-- *Background tint on the entire row:* Clashes with the hover/selected background color (`--tabFocusColor`) and the dark mode theme.
-- *Inline badge after the title:* Tab titles are frequently long enough to fill the row, leaving no room for the badge.
-- *Colored dot overlaid on favicon:* Zero layout impact but color-only (no label) creates accessibility issues, and 9 colors are hard to distinguish at 6-8px.
-- *Inline badge on the URL line:* Long URLs squeeze out the badge; needs complex flex rules to guarantee visibility.
-- *Right-aligned fixed column:* Steals ~50-60px from the title on every grouped tab — too costly in narrow popup sizes.
-- *Left border becomes group color:* Breaking change to an established visual system users have customized.
+- *Second left border or right border:* Visually heavy; hard to distinguish two adjacent colored borders.
+- *Background tint on the entire row:* Clashes with the hover/selected background color and the dark mode theme.
 
-**Rationale:** A dedicated row never competes with the title or URL for horizontal space. It provides a consistent scan position (always bottom-left of the info block). The trade-off is increased row height for grouped tabs, meaning fewer visible tabs — but this only affects grouped tabs, and the extra line is small (secondary text size). Ungrouped tabs are unchanged.
+**Rationale:** An inline badge is unobtrusive, doesn't conflict with the existing left-border type indicator, and naturally truncates/hides when space is tight. The group color dot provides scannable visual grouping while the label gives context.
+
+```
+┌─────────────────────────────────────────────────┐
+│ ▌ [favicon]  Tab Title  ● Work                  │
+│ ▌            https://example.com                │
+└─────────────────────────────────────────────────┘
+                          ↑ group dot + label
+```
 
 ### 2. Group color mapping: use muted/pastel variants of the API colors
 

@@ -94,7 +94,6 @@ export function tabToTag(getState) {
       isActive,
       lastAccessed,
       audible,
-      group,
     } = tab;
     const isValidFavIconUrl = favIconUrl
       && !badFavIconCache().has(favIconUrl);
@@ -134,7 +133,6 @@ export function tabToTag(getState) {
       isActive,
       lastAccessed,
       audible,
-      group,
     }, ctoOpts);
   };
 }
@@ -157,7 +155,6 @@ function createTabObject({
   pinned,
   isActive,
   audible,
-  group,
 }, opts) {
   const {
     wordBreak,
@@ -227,32 +224,6 @@ function createTabObject({
   // Don't show the url if user specifies 0 as the url font size
   if (tabUrlSize > 0) {
     tabInfoNode.appendChild(urlNode);
-  }
-
-  // Group indicator badge (dedicated line below URL)
-  if (group) {
-    const badgeNode = d.createElement('div');
-    badgeNode.classList.add('tab-group-badge');
-
-    const dotNode = d.createElement('span');
-    dotNode.classList.add('tab-group-badge__dot');
-    dotNode.style.backgroundColor = `var(--tab-group-${group.color})`;
-    badgeNode.appendChild(dotNode);
-
-    if (group.title) {
-      const labelNode = d.createElement('span');
-      labelNode.classList.add('tab-group-badge__label');
-      labelNode.textContent = group.title;
-      badgeNode.appendChild(labelNode);
-    }
-
-    // Accessible label for screen readers
-    const groupLabel = group.title
-      ? `Group: ${group.title} (${group.color})`
-      : `Group: ${group.color}`;
-    badgeNode.setAttribute('aria-label', groupLabel);
-
-    tabInfoNode.appendChild(badgeNode);
   }
 
   tabObjectNode.appendChild(iconContainerNode);

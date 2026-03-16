@@ -10,7 +10,6 @@ import {
   TAB_BOOKMARK,
   DUPLICATE_TAB_DELETE,
   MUTE_TOGGLE,
-  TAB_GROUP_TOGGLE,
 } from 'core/keyboard';
 import {
   deleteTab,
@@ -18,12 +17,7 @@ import {
   pinTab,
   queryTab,
   muteTab,
-  groupTab,
-  ungroupTab,
-  tabGroupsSupported,
-  queryTabGroups,
 } from './browser';
-import { invalidateGroupCache } from '../caches';
 import {
   removeHeadTabListNodeSelectedStyle,
   selectNodeText,
@@ -188,59 +182,6 @@ export function navigateResults(cmdKey, getState) {
         } else {
           selectedTab.classList.remove(TAB_MUTED_CLASSNAME);
         }
-      });
-      break;
-    }
-    case TAB_GROUP_TOGGLE: {
-      if (!tabGroupsSupported() || !isRegularTab(selectedTab.dataset) || isSearchActive) {
-        break;
-      }
-      const tabId = parseInt(id, 10);
-      queryTab(id).then((tab) => {
-        if (tab.groupId && tab.groupId !== -1) {
-          // Tab is grouped — ungroup it
-          return ungroupTab(tabId).then(() => {
-            invalidateGroupCache();
-            const badge = selectedTab.querySelector('.tab-group-badge');
-            if (badge) badge.remove();
-          });
-        }
-        // Tab is ungrouped — assign to most recent group or create new
-        return queryTabGroups().then((groupMap) => {
-          const groups = [...groupMap.values()];
-          const opts = groups.length > 0
-            ? groupTab(tabId, groups[0].id)
-            : groupTab(tabId);
-          return opts;
-        }).then((groupId) => {
-          invalidateGroupCache();
-          // Re-query to get updated group info and update the DOM
-          return queryTabGroups().then((groupMap) => {
-            const group = groupMap.get(groupId);
-            if (!group) return;
-            // Remove existing badge if any
-            const existing = selectedTab.querySelector('.tab-group-badge');
-            if (existing) existing.remove();
-            // Add new badge
-            const badgeNode = document.createElement('div');
-            badgeNode.classList.add('tab-group-badge');
-            const dotNode = document.createElement('span');
-            dotNode.classList.add('tab-group-badge__dot');
-            dotNode.style.backgroundColor = `var(--tab-group-${group.color})`;
-            badgeNode.appendChild(dotNode);
-            if (group.title) {
-              const labelNode = document.createElement('span');
-              labelNode.classList.add('tab-group-badge__label');
-              labelNode.textContent = group.title;
-              badgeNode.appendChild(labelNode);
-            }
-            const groupLabel = group.title
-              ? `Group: ${group.title} (${group.color})`
-              : `Group: ${group.color}`;
-            badgeNode.setAttribute('aria-label', groupLabel);
-            selectedTab.querySelector('.tab-info').appendChild(badgeNode);
-          });
-        });
       });
       break;
     }

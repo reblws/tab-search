@@ -19,8 +19,6 @@ import {
 import {
   addTabCacheListeners,
   removeTabCacheListeners,
-  addGroupCacheListeners,
-  removeGroupCacheListeners,
 } from './caches';
 import {
   getOsShortcut,
@@ -100,15 +98,13 @@ export function addEventListeners(store) {
     searchInput.addEventListener('input', updateLastQueryOnKeydown(store));
   }
 
-  // Add tab and group cache invalidation listeners
+  // Add tab cache invalidation listeners
   addTabCacheListeners();
-  addGroupCacheListeners();
 
   // Cleanup on popup close to prevent memory leaks
   window.addEventListener('unload', () => {
     debouncedSearch.clear();
     removeTabCacheListeners();
-    removeGroupCacheListeners();
   });
 
   // Populate store with current search fn

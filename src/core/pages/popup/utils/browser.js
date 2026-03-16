@@ -1,10 +1,4 @@
-import {
-  deletedTabsCache,
-  getCachedTabs,
-  setCachedTabs,
-  getCachedGroups,
-  setCachedGroups,
-} from '../caches';
+import { deletedTabsCache, getCachedTabs, setCachedTabs } from '../caches';
 import {
   SESSION_TYPE,
   OTHER_WINDOW_TAB_TYPE,
@@ -155,36 +149,15 @@ export function muteTab(id, muted) {
   return apiP(browser.tabs, 'update', parseInt(id, 10), { muted });
 }
 
-function enrichTabsWithGroups(tabs) {
-  if (!tabGroupsSupported()) {
-    return Promise.resolve(tabs);
-  }
-  const cachedGroups = getCachedGroups();
-  const groupsP = cachedGroups || queryTabGroups().then((groups) => {
-    setCachedGroups(groups);
-    return groups;
-  });
-  return Promise.resolve(groupsP).then(groupMap =>
-    tabs.map((tab) => {
-      if (tab.groupId != null && tab.groupId !== -1 && groupMap.has(tab.groupId)) {
-        return Object.assign({}, tab, { group: groupMap.get(tab.groupId) });
-      }
-      return tab;
-    }),
-  );
-}
-
 function queryTabs(queryOptions) {
   const cached = getCachedTabs();
   if (cached) {
     return cached;
   }
-  return apiP(browser.tabs, 'query', queryOptions)
-    .then(enrichTabsWithGroups)
-    .then((tabs) => {
-      setCachedTabs(tabs);
-      return tabs;
-    });
+  return apiP(browser.tabs, 'query', queryOptions).then((tabs) => {
+    setCachedTabs(tabs);
+    return tabs;
+  });
 }
 
 export function createTab(createOptions) {
@@ -224,32 +197,6 @@ export function searchHistory(query) {
     text: query,
     maxResults: HISTORY_LIMIT,
   });
-}
-
-// Tab Groups support
-export function tabGroupsSupported() {
-  return typeof browser.tabGroups !== 'undefined';
-}
-
-export function queryTabGroups() {
-  if (!tabGroupsSupported()) {
-    return Promise.resolve(new Map());
-  }
-  return browser.tabGroups.query({}).then(groups =>
-    groups.reduce((map, g) => map.set(g.id, { id: g.id, title: g.title, color: g.color }), new Map()),
-  );
-}
-
-export function groupTab(tabIds, groupId) {
-  const opts = { tabIds };
-  if (groupId !== undefined) {
-    opts.groupId = groupId;
-  }
-  return browser.tabs.group(opts);
-}
-
-export function ungroupTab(tabIds) {
-  return browser.tabs.ungroup(tabIds);
 }
 
 // Promise that sends a rejection error if an API is undefined

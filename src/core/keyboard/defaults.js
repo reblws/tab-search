@@ -65,11 +65,4 @@ export const defaultCommands = {
     secondaryCommand: null,
     description: 'Mutes the selected tab.',
   },
-  [c.TAB_GROUP_TOGGLE]: {
-    key: c.TAB_GROUP_TOGGLE,
-    name: 'Toggle Group',
-    command: kbdCommand('Alt+G'),
-    secondaryCommand: null,
-    description: 'Adds the selected tab to a group, or removes it from its group.',
-  },
 };
