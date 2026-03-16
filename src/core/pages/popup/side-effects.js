@@ -31,6 +31,7 @@ import {
   handleTabClick,
   updateLastQueryOnKeydown,
 } from './event-callbacks';
+import { initContextMenu } from './context-menu';
 
 function openSettingsPage() {
   createTab({
@@ -100,6 +101,9 @@ export function addEventListeners(store) {
 
   // Add tab cache invalidation listeners
   addTabCacheListeners();
+
+  // Initialize context menu
+  initContextMenu(store);
 
   // Cleanup on popup close to prevent memory leaks
   window.addEventListener('unload', () => {

@@ -472,3 +472,66 @@ p {
 .tab-img img[src$="file.svg"] {
   filter: light-dark(none, invert(1));
 }
+
+/* ====== Context Menu ====== */
+
+.context-menu {
+  position: fixed;
+  z-index: 1000;
+  min-width: 180px;
+  padding: 4px 0;
+  background-color: var(--color-background-primary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-small);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 12px;
+  color: var(--color-text-primary);
+}
+
+.context-menu[hidden] {
+  display: none;
+}
+
+.context-menu__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  gap: 16px;
+}
+
+.context-menu__item:hover {
+  background-color: var(--tabFocusColor);
+  color: var(--color-text-inverted);
+}
+
+.context-menu__item:hover .context-menu__shortcut {
+  color: var(--color-text-inverted);
+}
+
+.context-menu__item--destructive {
+  color: light-dark(#c53030, #fc8181);
+}
+
+.context-menu__item--destructive:hover {
+  background-color: light-dark(#c53030, #9b2c2c);
+  color: #fff;
+}
+
+.context-menu__item--destructive:hover .context-menu__shortcut {
+  color: #fff;
+}
+
+.context-menu__shortcut {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.context-menu__separator {
+  height: 1px;
+  margin: 4px 0;
+  background-color: var(--color-border-default);
+}

@@ -5,6 +5,7 @@ import {
   addHeadTabListNodeSelectedStyle,
 } from './utils/dom';
 import { navigateResults } from './utils/keyboard';
+import { isContextMenuOpen } from './context-menu';
 import {
   switchActiveTab,
   restoreClosedTab,
@@ -108,6 +109,8 @@ export function keydownHandler(store) {
     swapKeyValueMap(keyboardControls, x => x.secondaryCommand),
   );
   return function handleKeyDown(event) {
+    // Suppress all tab navigation/actions while context menu is open
+    if (isContextMenuOpen()) return;
     if (isModifierSingle(event)) {
       event.preventDefault();
     }
