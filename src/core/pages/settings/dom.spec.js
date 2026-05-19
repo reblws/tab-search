@@ -163,4 +163,40 @@ describe('settings DOM', function () {
       expect(fuzzyAction.payload.value).to.equal(true);
     });
   });
+
+  describe('formatShortcutForDisplay', function () {
+    let formatShortcutForDisplay;
+
+    beforeEach(async function () {
+      const domModule = await import('./dom.js');
+      formatShortcutForDisplay = domModule.formatShortcutForDisplay;
+    });
+
+    it('should correctly format MacCtrl as Ctrl on macOS', function () {
+      expect(formatShortcutForDisplay('MacCtrl+Shift+F', true)).to.equal('Ctrl+Shift+F');
+      expect(formatShortcutForDisplay('MacCtrl+A', true)).to.equal('Ctrl+A');
+    });
+
+    it('should correctly format Command as Cmd on macOS', function () {
+      expect(formatShortcutForDisplay('Command+Shift+F', true)).to.equal('Cmd+Shift+F');
+      expect(formatShortcutForDisplay('Command+A', true)).to.equal('Cmd+A');
+    });
+
+    it('should correctly format default Ctrl as Cmd on macOS', function () {
+      expect(formatShortcutForDisplay('Ctrl+Shift+F', true)).to.equal('Cmd+Shift+F');
+    });
+
+    it('should keep Ctrl and Command unchanged on non-macOS', function () {
+      expect(formatShortcutForDisplay('Ctrl+Shift+F', false)).to.equal('Ctrl+Shift+F');
+      // Even though MacCtrl or Command shouldn't technically appear on non-macOS,
+      // the formatter shouldn't manipulate them if isMac is false.
+      expect(formatShortcutForDisplay('Command+Shift+F', false)).to.equal('Command+Shift+F');
+      expect(formatShortcutForDisplay('MacCtrl+Shift+F', false)).to.equal('MacCtrl+Shift+F');
+    });
+
+    it('should handle empty or null shortcuts', function () {
+      expect(formatShortcutForDisplay(null, true)).to.equal('');
+      expect(formatShortcutForDisplay('', false)).to.equal('');
+    });
+  });
 });

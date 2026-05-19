@@ -445,10 +445,17 @@ function keybindInputHandlers(store, kbString) {
   }
 }
 
-// Format shortcut for display, converting Ctrl to Cmd on Mac
-function formatShortcutForDisplay(shortcut, isMac) {
+// Format shortcut for display, converting browser.commands format to user-friendly format
+export function formatShortcutForDisplay(shortcut, isMac) {
   if (!shortcut) return '';
-  return isMac ? shortcut.replace(/Ctrl/g, 'Cmd') : shortcut;
+  if (isMac) {
+    return shortcut.split('+').map(part => {
+      if (part === 'MacCtrl') return 'Ctrl';
+      if (part === 'Command' || part === 'Ctrl') return 'Cmd';
+      return part;
+    }).join('+');
+  }
+  return shortcut;
 }
 
 // Initialize browser shortcut section for popup activation
@@ -534,7 +541,12 @@ function setupBrowserShortcutInput(input, isMac) {
 
     // Build shortcut string in browser.commands format
     const parts = [];
-    if (event.ctrlKey || event.metaKey) parts.push('Ctrl');
+    if (isMac) {
+      if (event.metaKey) parts.push('Command');
+      if (event.ctrlKey) parts.push('MacCtrl');
+    } else {
+      if (event.ctrlKey || event.metaKey) parts.push('Ctrl');
+    }
     if (event.altKey) parts.push('Alt');
     if (event.shiftKey) parts.push('Shift');
 
@@ -550,9 +562,9 @@ function setupBrowserShortcutInput(input, isMac) {
 
     const shortcut = parts.join('+');
 
-    // Validate: must have Ctrl or Alt modifier
+    // Validate: must have Ctrl, Cmd, or Alt modifier
     if (!event.ctrlKey && !event.metaKey && !event.altKey) {
-      Toast.warning('Shortcut must include Ctrl or Alt');
+      Toast.warning('Shortcut must include a modifier (Cmd, Ctrl, or Alt)');
       return;
     }
 
