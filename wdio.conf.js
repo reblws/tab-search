@@ -39,10 +39,12 @@ export const config = {
   before: async function () {
     // Path to the built extension .xpi file
     // Run `npm run zip:firefox` before running E2E tests to create this
-    const extensionPath = path.resolve(__dirname, './web-ext-artifacts/tabsearch-0.5.0.zip');
+    const fs = await import('fs/promises');
+    const manifest = JSON.parse(await fs.readFile(path.resolve(__dirname, './src/manifest/base.json'), 'utf8'));
+    const version = manifest.version;
+    const extensionPath = path.resolve(__dirname, `./web-ext-artifacts/tabsearch-${version}.zip`);
 
     // Read the .xpi file and convert to base64
-    const fs = await import('fs/promises');
     const extensionBuffer = await fs.readFile(extensionPath);
     const extensionBase64 = extensionBuffer.toString('base64');
 
