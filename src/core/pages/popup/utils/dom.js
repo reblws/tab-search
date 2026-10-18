@@ -1,5 +1,6 @@
 import { initialGeneralSettings, initialColorSettings } from 'core/reducers/defaults';
 import { addTabListeners } from '../side-effects';
+import { shouldWordBreak } from './word-break';
 import {
   favIconFallback,
   alertCircle,
@@ -48,18 +49,6 @@ function clearChildren(node) {
   while (node.firstChild) {
     node.removeChild(node.firstChild);
   }
-}
-
-// Given a string, return true if one string is too long and should apply
-function shouldWordBreak(str) {
-  const MAX_LENGTH = 40;
-  // Some tabs (e.g. unloaded ones on FF 157+) can have an undefined title
-  if (!str) return false;
-  const longestWordLength = (acc, s) => (s.length > acc)
-    ? s.length
-    : acc;
-  const longest = str.split(/\s/).reduce(longestWordLength, 0);
-  return longest > MAX_LENGTH;
 }
 
 function inlineOpts(setting) {
