@@ -22,7 +22,6 @@ createUIStore()
   .then(addEventListeners)
   .then(doFinalSideEffects)
   .catch((e) => {
-    console.error(e);
     throw new Error(`Ran into a problem initializing popup window: ${e.stack}`);
   });
 

@@ -53,6 +53,8 @@ function clearChildren(node) {
 // Given a string, return true if one string is too long and should apply
 function shouldWordBreak(str) {
   const MAX_LENGTH = 40;
+  // Some tabs (e.g. unloaded ones on FF 157+) can have an undefined title
+  if (!str) return false;
   const longestWordLength = (acc, s) => (s.length > acc)
     ? s.length
     : acc;

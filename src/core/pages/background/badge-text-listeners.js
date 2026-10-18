@@ -14,13 +14,17 @@ const LOADING_TEXT = '...';
 // Save the debounced funcs here so we can remove it with the exact same handler
 const debounceHandleOnCreatedTab = debounce(handleOnCreatedTab, 50);
 const debounceHandleOnRemovedTab = debounce(handleOnRemovedTab, 50);
+// onUpdated fires for every loaded page; on FF 157+ (Nova) the resulting
+// windows.get(populate) IPC storm can wedge the background process
+// (reblws/tab-search#117), so coalesce bursts
+const debounceHandleOnUpdatedTab = debounce(handleOnUpdatedTab, 150);
 
 // Mapping from tab events to their handlers
 // { [<event>]: <handler> }
 const eventListenerMap = {
   onCreated: debounceHandleOnCreatedTab,
   onRemoved: debounceHandleOnRemovedTab,
-  onUpdated: handleOnUpdatedTab,
+  onUpdated: debounceHandleOnUpdatedTab,
   onDetached: handleOnDetachedTab,
 };
 

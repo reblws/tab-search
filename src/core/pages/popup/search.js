@@ -65,14 +65,13 @@ export default function filterResult(
     // Initialize the search array
     // If we want to move the closed tabs to the botttom filter it
     const shouldMoveClosedToBottom = showRecentlyClosed && recentAtBottom;
-    const arrayToSearchP = [annotatedTabs];
-
-    // TODO: The error handling should be handled by a function that throws
-    //       in development and logs during production so nothing crashes
-    //       need to set up a section for logs and an option to store error logs
-    //       for the current session
+    // Extra sources (recently closed tabs / history / bookmarks) hit browser
+    // IPCs that can stall indefinitely on FF 157+ (Nova), see
+    // reblws/tab-search#117 — never block the tab list on them. The caller
+    // renders the open tabs right away and merges these in once they settle.
+    const extraSourcesP = [];
     if (showHistory && hasMinQueryLen) {
-      arrayToSearchP.push(
+      extraSourcesP.push(
         searchHistory(query).then(normalizeHistory)
           .catch((e) => {
             console.error(`Had trouble searching history: ${e}`);
@@ -81,7 +80,7 @@ export default function filterResult(
       );
     }
     if (showRecentlyClosed) {
-      arrayToSearchP.push(
+      extraSourcesP.push(
         getRecentlyClosed(recentlyClosedLimit)
           .then(normalizeRecentlyClosedTabs)
           .catch((e) => {
@@ -91,7 +90,7 @@ export default function filterResult(
       );
     }
     if (showBookmarks && hasMinQueryLen) {
-      arrayToSearchP.push(
+      extraSourcesP.push(
         searchBookmarks(query)
           .then(normalizeBookmarks)
           .catch((e) => {
@@ -100,7 +99,6 @@ export default function filterResult(
           }),
       );
     }
-    const arrayToSearch = Promise.all(arrayToSearchP).then(xs => xs.reduce(concat));
     let search;
     if (isQueryEmpty) {
       search = identity;
@@ -122,35 +120,46 @@ export default function filterResult(
     // Apply any extra transformations to results
     const shouldMruSort = (sortMruAll && sortMruPopup)
       || (isQueryEmpty && sortMruPopup);
-    return arrayToSearch
+    const postProcess = (searchResults) => {
+      // If query is empty then we just need to show them in order of tab
+      // posn, partitioned by tab type
+      if (isQueryEmpty && !shouldMruSort) {
+        return partition(isSessionType, isOtherWindowTabType)(searchResults)
+          .reduceRight(concat);
+      }
+      // Array is ordered by predicates from right-to-left
+      const predicates = [];
+      if (shouldMoveClosedToBottom) {
+        predicates.push(isSessionType);
+      }
+      if (shouldMruSort) {
+        // Whatever the active tabs are will always be the most recently used.
+        // Push them to the bottom if need to sort by most recently used
+        predicates.push(isActive);
+      }
+      if (predicates.length === 0) {
+        return searchResults;
+      }
+      const partitionResults = partition(...predicates);
+      let results = partitionResults(searchResults);
+      if (shouldMruSort) {
+        results = results.map(p => p.sort(mostRecentlyUsed));
+      }
+      return results.reduceRight(concat);
+    };
+
+    const initialResultsP = Promise.resolve(annotatedTabs)
       .then(search)
-      .then((searchResults) => {
-        // If query is empty then we just need to show them in order of tab
-        // posn, partitioned by tab type
-        if (isQueryEmpty && !shouldMruSort) {
-          return partition(isSessionType, isOtherWindowTabType)(searchResults)
-            .reduceRight(concat);
-        }
-        // Array is ordered by predicates from right-to-left
-        const predicates = [];
-        if (shouldMoveClosedToBottom) {
-          predicates.push(isSessionType);
-        }
-        if (shouldMruSort) {
-          // Whatever the active tabs are will always be the most recently used.
-          // Push them to the bottom if need to sort by most recently used
-          predicates.push(isActive);
-        }
-        if (predicates.length === 0) {
-          return searchResults;
-        }
-        const partitionResults = partition(...predicates);
-        let results = partitionResults(searchResults);
-        if (shouldMruSort) {
-          results = results.map(p => p.sort(mostRecentlyUsed));
-        }
-        return results.reduceRight(concat);
-      });
+      .then(postProcess);
+    const mergedResultsP = Promise.all(
+      [Promise.resolve(annotatedTabs), ...extraSourcesP],
+    )
+      .then(xs => xs.reduce(concat))
+      .then(search)
+      .then(postProcess);
+    // initial: results from the open tabs alone, ready immediately;
+    // extras: same search re-run with the extra sources merged in
+    return { initial: initialResultsP, extras: mergedResultsP };
   };
 }
 
