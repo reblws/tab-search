@@ -29,6 +29,9 @@ import filterResults from './search';
 export function configureSearch(store) {
   const { getState, tabQueryPromise, currentWindowId } = store;
   const { fuzzy, general } = getState();
+  // Token guarding the two-phase render below: a newer query always wins
+  // over an older query's delayed extra results
+  let renderToken = 0;
   return function updateSearchResults(event = { currentTarget: { value: '' } }) {
     const isSearchEmpty = event.currentTarget.value.length === 0;
     // If input is empty hide the button
@@ -40,19 +43,38 @@ export function configureSearch(store) {
     // isSearchEmpty isn't based on this var so we can show delete button with
     // just spaces
     const query = event.currentTarget.value.trim().toLowerCase();
+    const injectResults = injectTabsInList(getState);
+    const emphasizeHead = (results) => {
+      // Apply the selected style to the head of the tabList to suggest
+      // pressing <Enter> from the search input activates this tab
+      if (results.length > 0 && !isSearchEmpty) {
+        addHeadTabListNodeSelectedStyle();
+        // Scroll to the top
+        tabList.firstElementChild.scrollIntoView(true);
+      }
+      return results;
+    };
+    const token = ++renderToken;
     return Promise.resolve(tabQueryPromise())
       .then(filterResults(query, fuzzy, general, currentWindowId))
-      .then(injectTabsInList(getState))
-      .then((results) => {
-        // Apply the selected style to the head of the tabList to suggest
-        // pressing <Enter> from the search input activates this tab
-        if (results.length > 0 && !isSearchEmpty) {
-          addHeadTabListNodeSelectedStyle();
-          // Scroll to the top
-          tabList.firstElementChild.scrollIntoView(true);
-        }
-        return results;
-      });
+      .then(({ initial, extras }) => initial
+        // Render the open tabs right away; the extra sources (recently
+        // closed tabs / history / bookmarks) can stall for a long time on
+        // FF 157+ (Nova), so they get merged in a second pass further below
+        .then(results => (token === renderToken ? injectResults(results) : results))
+        .then(emphasizeHead)
+        .then((results) => {
+          extras
+            .then((merged) => {
+              if (token !== renderToken) return;
+              injectResults(merged);
+              emphasizeHead(merged);
+            })
+            .catch((e) => {
+              console.error(`Couldn't merge extra search results: ${e}`);
+            });
+          return results;
+        }));
   };
 }
 
