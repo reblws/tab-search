@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.0 (2026-10-19)
+
+- Added a configurable search debounce delay setting
+- Improved search performance
+- Redesigned the close-tab button as an accessible ghost button that spans the full row height
+- Fixed dark mode icons not following the theme color
+- Fixed unloaded tabs or stalled session requests leaving the popup blank (Thanks @googya !)
+- Fixed macOS shortcut setting treating <kbd>Ctrl</kbd> and <kbd>Cmd</kbd> as the same key (Thanks @wilmtang !)
+
 ## 0.6.2 (2026-02-07)
 
 - Fixed fuzzy settings not updating

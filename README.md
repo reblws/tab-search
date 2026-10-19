@@ -78,5 +78,13 @@ pnpm zip:firefox
 
 See [CHANGELOG.md](CHANGELOG.md).
 
+## Contributors
+
+Thanks to everyone who has contributed fixes and improvements:
+
+- [@54ac](https://github.com/54ac)
+- [@googya](https://github.com/googya)
+- [@wilmtang](https://github.com/wilmtang)
+
 ## License
 MIT
