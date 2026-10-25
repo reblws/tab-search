@@ -37,3 +37,42 @@ jobs:
 
       - name: E2E tests
         run: pnpm run test:e2e
+
+  e2e-chrome:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        # stable, and the minimum_chrome_version from src/manifest/chrome.json
+        chrome-version: [stable, '123']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Cache Chrome for Testing
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/wdio-cache
+          key: wdio-chrome-${{ matrix.chrome-version }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: wdio-chrome-${{ matrix.chrome-version }}-${{ runner.os }}-
+
+      - name: Build Chrome extension
+        run: pnpm run build:chrome
+
+      - name: Chrome E2E tests
+        run: pnpm run test:e2e:chrome
+        env:
+          CHROME_VERSION: ${{ matrix.chrome-version }}
+          WDIO_CACHE_DIR: ${{ runner.temp }}/wdio-cache

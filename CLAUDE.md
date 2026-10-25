@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-TabSearch is a WebExtension (browser extension) that provides keyboard-accessible search and management of open browser tabs. It supports both Firefox and Chrome.
+TabSearch is a WebExtension (browser extension) that provides keyboard-accessible search and management of open browser tabs. It supports both Firefox (Manifest V2) and Chrome (Manifest V3).
 
 ## Build Commands
 
@@ -17,8 +17,9 @@ npm run watch:firefox        # Opens Firefox with extension auto-reloading from 
 
 # Production builds
 npm run build:firefox        # Build + lint for Firefox
-npm run build:chrome         # Build + lint for Chrome
+npm run build:chrome         # Build for Chrome (web-ext lint is Firefox-only)
 npm run zip:firefox          # Build and create distributable zip
+npm run zip:chrome           # Build and create Chrome Web Store zip
 
 # Linting
 npm run lint:eslint          # Run ESLint on src/
@@ -26,6 +27,9 @@ npm run lint:web-ext         # Validate extension in dist/
 
 # Testing
 npm test                     # Run all tests with Mocha
+npm run test:e2e             # Firefox E2E (WebdriverIO); run zip:firefox first
+npm run test:e2e:chrome      # Chrome E2E on Chrome for Testing; run build:chrome first
+npm run test:all             # Lint, unit tests and both E2E suites
 ```
 
 ## Architecture
@@ -65,7 +69,23 @@ Redux reducers in `src/core/reducers/`:
 - `firefox.json` - Firefox-specific additions
 - `chrome.json` - Chrome-specific additions
 
-Manifests are merged at build time via `scripts/build-manifest.js`.
+Manifests are merged at build time via `scripts/build-manifest.js`. The merge
+is shallow, so keys that differ per browser (`manifest_version`, `background`,
+`browser_action`/`action`, `commands`, `options_ui`) live only in the browser
+files.
+
+### Chrome (MV3) Notes
+
+- `src/core/polyfill.js` must be the first import of every entry point; it
+  defines `browser` in Chrome.
+- `src/core/utils/action-api.js` picks `browser.action` (MV3) or
+  `browser.browserAction` (MV2) and the matching popup command name.
+- The background is a service worker that Chrome stops when idle.
+  `src/core/store/bridge.js` replaces redux-webext's background store: it adds
+  listeners synchronously and answers the UI only after redux-persist
+  rehydrates. Tab listeners in `background/index.js` are also added at top level.
+- Chrome E2E specs live in `test/e2e-chrome/` (config `wdio.chrome.conf.js`);
+  `helpers/chrome.js` can stop the service worker through CDP.
 
 ### Module Patching
 

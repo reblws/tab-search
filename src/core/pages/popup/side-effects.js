@@ -171,6 +171,8 @@ export function focusSearchInputWorkaround() {
 function updatePlaceholderTextWithShortcutHint() {
   const hintText = shortcut => `(${shortcut})`;
   return getOsShortcut()
-    .then(hintText)
-    .then(appendSearchInputPlaceholderText);
+    .then((shortcut) => {
+      // Chrome leaves the shortcut unset when the suggested key conflicts
+      if (shortcut) appendSearchInputPlaceholderText(hintText(shortcut));
+    });
 }

@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Added Chrome support: the Chrome build now uses Manifest V3 with a service worker background
+  + Settings and the tab count badge stay correct after Chrome stops the idle service worker
+  + Added `pnpm zip:chrome` to build a Chrome Web Store zip
+- Fixed Copy Tab URL (<kbd>Ctrl</kbd>+<kbd>C</kbd>) copying nothing in Chrome
+- Fixed an empty "()" shortcut hint in the search box when no popup shortcut is set
+- Added a Chrome E2E test suite on Chrome for Testing, also run in CI
+- Fixed the Firefox E2E suite on Firefox 158+
+
 ## 0.7.0 (2026-10-19)
 
 - Added a configurable search debounce delay setting

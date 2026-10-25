@@ -186,7 +186,8 @@ function normalizeRecentlyClosedTabs(results) {
   const annotateSession = annotateType(SESSION_TYPE);
   const filterIncognito = ({ incognito }) => !incognito;
   // Don't want to show new tab pages
-  const filterNewTab = x => !isOfUrl('about:newtab')(x);
+  const filterNewTab = x => !isOfUrl('about:newtab')(x)
+    && !isOfUrl('chrome://newtab/')(x);
   const hasTab = x => 'tab' in x;
   const filters = composeFilterOr(
     filterNewTab,

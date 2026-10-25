@@ -390,7 +390,11 @@ export function appendSearchInputPlaceholderText(newText) {
 export function selectNodeText(nodeToCopy) {
   const range = d.createRange();
   range.selectNode(nodeToCopy);
-  window.getSelection().addRange(range);
+  const selection = window.getSelection();
+  // Chrome ignores addRange() while another range (e.g. the search input's)
+  // is selected
+  selection.removeAllRanges();
+  selection.addRange(range);
 }
 
 // This is dependent on the popup css file being called "index.css" exactly

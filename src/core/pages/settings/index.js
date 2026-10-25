@@ -1,3 +1,4 @@
+import 'core/polyfill';
 import { createUIStore } from 'redux-webext';
 import addInputBindings from './input-bindings';
 import { initKeybindingTable, initSettings, initBrowserShortcut } from './dom';

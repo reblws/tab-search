@@ -1,17 +1,13 @@
 import debounce from 'debounce';
+import { setBadgeText } from 'core/utils/action-api';
 
 // Shorthand
 // t -> browser.tabs
-// setBadgeText -> browser.browserAction.setBadgeText
 const { tabs: t } = browser;
-const { setBadgeText } = browser.browserAction;
-
-const ADD_LISTENER = 'addListener';
-const REMOVE_LISTENER = 'removeListener';
 
 const LOADING_TEXT = '...';
 
-// Save the debounced funcs here so we can remove it with the exact same handler
+// Debounce once here so every event of a burst shares the same timer
 const debounceHandleOnCreatedTab = debounce(handleOnCreatedTab, 50);
 const debounceHandleOnRemovedTab = debounce(handleOnRemovedTab, 50);
 // onUpdated fires for every loaded page; on FF 157+ (Nova) the resulting
@@ -28,16 +24,20 @@ const eventListenerMap = {
   onDetached: handleOnDetachedTab,
 };
 
-const doListeners = browserTabObject => method => (listenerMap) => {
-  Object.keys(listenerMap).forEach((eventKey) => {
-    const handler = listenerMap[eventKey];
-    browserTabObject[eventKey][method](handler);
+// MV3 service workers only get woken for events whose listeners were added
+// synchronously on startup, so the listeners stay attached for the worker's
+// lifetime and each event checks whether counting is on instead.
+// isCounting: () -> Promise<Boolean>
+export function addBadgeTextListeners(isCounting) {
+  Object.keys(eventListenerMap).forEach((eventKey) => {
+    const handler = eventListenerMap[eventKey];
+    t[eventKey].addListener((...args) => {
+      isCounting().then((counting) => {
+        if (counting) handler(...args);
+      });
+    });
   });
-};
-
-// listenerMap -> null: applys allevent listeners specified in the listenerMap
-const addBadgeTextListeners = doListeners(t)(ADD_LISTENER);
-const removeBadgeTextListeners = doListeners(t)(REMOVE_LISTENER);
+}
 
 const WINDOW_OPTIONS = {
   populate: true,
@@ -49,14 +49,12 @@ const updateTabInWindow = windowId => tabId =>
     .then(({ tabs }) => String(tabs.length))
     .then(text => setBadgeText({ text, tabId }));
 
-export function startCountingBadgeTextAndAddListeners() {
+export function startCountingBadgeText() {
   setInitialBadgeTextInAllWindows();
-  addBadgeTextListeners(eventListenerMap);
 }
 
-export function stopCountingBadgeTextAndRemoveListeners() {
+export function stopCountingBadgeText() {
   clearAllBadgeText();
-  removeBadgeTextListeners(eventListenerMap);
 }
 
 function setInitialBadgeTextInAllWindows() {
