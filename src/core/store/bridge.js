@@ -1,6 +1,6 @@
-// Background half of redux-webext, rewritten for MV3 service workers.
-// It speaks the same messages, so the popup and settings pages keep using
-// redux-webext's createUIStore() unchanged. Two differences:
+// Background half of the store, written for MV3 service workers. It speaks
+// redux-webext's protocol (constants.js); the popup and settings pages
+// connect with createUIStore() from ui-store.js. Unlike redux-webext:
 //   - listeners are added synchronously, so the message that wakes a stopped
 //     service worker is not lost
 //   - replies wait for redux-persist to rehydrate, so the UI never receives
@@ -9,17 +9,19 @@ import {
   CONNECTION_NAME,
   DISPATCH,
   UPDATE_STATE,
-} from 'redux-webext/lib/constants';
+} from './constants';
 
 export function wrapBackgroundStore({ store, rehydrated, actions = {} }) {
   chrome.runtime.onMessage.addListener((msg, sender, reply) => {
     if (msg.type === DISPATCH) {
       const { type, ...actionData } = msg.action;
-      const action = actions[type];
-      if (!action) {
+      // Own keys only, so "constructor" etc. aren't treated as actions.
+      // Not Object.hasOwn: Firefox's strict_min_version predates it.
+      if (!Object.prototype.hasOwnProperty.call(actions, type)) {
         console.error(`Background store "actions" object doesn't contain "${type}" key.`);
         return undefined;
       }
+      const action = actions[type];
       rehydrated.then(() => {
         // if action doesn't have any data we should pass "undefined"
         store.dispatch(action(Object.keys(actionData).length ? actionData : undefined));

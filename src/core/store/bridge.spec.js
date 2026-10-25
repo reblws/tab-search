@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import { createStore } from 'redux';
-import { DISPATCH, UPDATE_STATE } from 'redux-webext/lib/constants';
+import { CONNECTION_NAME, DISPATCH, UPDATE_STATE } from './constants.js';
 import { wrapBackgroundStore } from './bridge.js';
 
 // Minimal chrome.runtime with the two listeners the bridge adds
@@ -84,9 +84,36 @@ describe('wrapBackgroundStore', function () {
     expect(consoleError.calledOnce).to.equal(true);
   });
 
+  it('should not keep the message channel open for dispatches', function () {
+    const keepOpen = chromeMock.listeners.message({ type: DISPATCH, action: { type: 'SET', value: 'new' } }, {}, () => {});
+    expect(keepOpen).to.not.equal(true);
+  });
+
+  it('should ignore inherited property names as action types', async function () {
+    const consoleError = sinon.stub(console, 'error');
+    chromeMock.listeners.message({ type: DISPATCH, action: { type: 'constructor' } }, {}, () => {});
+    rehydration.resolve();
+    await flush();
+    consoleError.restore();
+    expect(store.getState().value).to.equal('default');
+    expect(consoleError.calledOnce).to.equal(true);
+  });
+
+  it('should ignore ports with another name', function () {
+    const port = {
+      name: 'other',
+      postMessage: sinon.spy(),
+      onDisconnect: { addListener: sinon.spy() },
+    };
+    chromeMock.listeners.connect(port);
+    store.dispatch({ type: 'SET', value: 'changed' });
+    expect(port.postMessage.called).to.equal(false);
+    expect(port.onDisconnect.addListener.called).to.equal(false);
+  });
+
   it('should post every state change to connected pages', function () {
     const port = {
-      name: 'redux-webext',
+      name: CONNECTION_NAME,
       postMessage: sinon.spy(),
       onDisconnect: { addListener: sinon.spy() },
     };
