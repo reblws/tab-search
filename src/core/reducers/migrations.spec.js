@@ -1,4 +1,4 @@
-import oldReducer from '../../keyboard/__test__/reducerstructure0';
+import oldReducer from '../keyboard/__test__/reducerstructure0';
 import migrations from './migrations';
 
 describe('reducer migrations', function () {

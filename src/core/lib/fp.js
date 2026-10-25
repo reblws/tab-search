@@ -2,13 +2,6 @@ export const identity = x => x;
 // ('x -> bool) -> 'x -> bool
 export const not = pred => x => !pred(x);
 
-const isOfProperty =
-  propKey => desiredProp => ({ [propKey]: prop }) => prop === desiredProp;
-export const isOfType = isOfProperty('type');
-export const isOfWindow = isOfProperty('windowId');
-export const isActive = isOfProperty('active')(true);
-export const isOfUrl = isOfProperty('url');
-
 export const annotateType = type => obj => Object.assign({}, obj, { type });
 // Given a variable number of predicates, returns an array of arrays length
 // (length of predicates + 1).

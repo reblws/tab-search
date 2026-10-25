@@ -6,24 +6,26 @@ import {
   SESSION_TYPE,
   BOOKMARK_TYPE,
   HISTORY_TYPE,
-} from '_legacy/tabs/types';
+} from 'core/tabs/types';
 import {
   encodeUrl,
   parseUrl,
   hasValidHostname,
-} from './utils/url';
+} from 'core/lib/url';
 import {
   isActive,
-  identity,
   isOfUrl,
   isOfWindow,
   isOfType,
+} from 'core/tabs/predicates';
+import {
+  identity,
   annotateTypeConditionally,
   annotateType,
   partition,
   concat,
   composeFilterAnd,
-} from './utils/array';
+} from 'core/lib/fp';
 import {
   getRecentlyClosed,
   searchBookmarks,

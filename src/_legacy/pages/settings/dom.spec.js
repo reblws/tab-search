@@ -6,7 +6,7 @@ import {
   NUMBER_UPDATE,
   SELECT_UPDATE,
   SETTING_RESET,
-} from '../../actions/types.js';
+} from 'core/actions/types.js';
 import { initSettings, mruChoice, mruSettings } from './dom.js';
 
 const FIXTURE = `

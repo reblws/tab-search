@@ -8,7 +8,7 @@ const {
   colorPurple70: historyColor,
 } = AcornColors[':root'];
 
-export { defaultCommands } from '_legacy/keyboard';
+export { defaultCommands } from 'core/keyboard';
 export const initialFuzzySettings = {
   enableFuzzySearch: true,
   shouldSort: true,

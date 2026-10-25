@@ -1,6 +1,6 @@
 import debounce from 'debounce';
-import { initialColorSettings } from '_legacy/reducers/defaults';
-import { TYPE_COLOR_PROPERTY_MAP, COLOR_PROPERTY_TYPE_MAP } from '_legacy/tabs/types';
+import { initialColorSettings } from 'core/reducers/defaults';
+import { TYPE_COLOR_PROPERTY_MAP, COLOR_PROPERTY_TYPE_MAP } from 'core/tabs/types';
 import { POPUP_SIZE_PRESETS, OVERLAY_SCROLLBAR_CLASSNAME } from './classnames';
 import {
   searchInput,

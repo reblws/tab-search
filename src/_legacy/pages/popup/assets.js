@@ -2,7 +2,7 @@ import rgb from 'rgb';
 import historySvg from 'static/assets/history-16.svg';
 import bookmarkSvg from 'static/assets/bookmark.svg';
 import { compose } from 'redux';
-import { initialColorSettings } from '_legacy/reducers/defaults';
+import { initialColorSettings } from 'core/reducers/defaults';
 
 const {
   bookmarkColor: defaultBookmarkColor,

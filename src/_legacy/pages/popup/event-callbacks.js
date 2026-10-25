@@ -1,5 +1,5 @@
 /* Main DOM event-handlers */
-import keyboard, { TAB_NEXT, TAB_PREV } from '_legacy/keyboard';
+import keyboard, { TAB_NEXT, TAB_PREV } from 'core/keyboard';
 import {
   injectTabsInList,
   addHeadTabListNodeSelectedStyle,
@@ -18,7 +18,7 @@ import {
   BOOKMARK_TYPE,
   TAB_TYPE,
   OTHER_WINDOW_TAB_TYPE,
-} from '_legacy/tabs/types';
+} from 'core/tabs/types';
 import { TAB_DELETE_BTN_CLASSNAME } from './classnames';
 import {
   deleteButton,

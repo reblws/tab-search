@@ -1,4 +1,4 @@
-import { withFocusTimes } from './tab-recency.js';
+import { withFocusTimes } from './recency.js';
 
 describe('withFocusTimes', function () {
   const times = tabs => tabs.map(t => t.lastAccessed);

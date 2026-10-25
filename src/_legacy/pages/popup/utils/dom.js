@@ -1,12 +1,12 @@
-import { initialGeneralSettings, initialColorSettings } from '_legacy/reducers/defaults';
+import { initialGeneralSettings, initialColorSettings } from 'core/reducers/defaults';
 import { addTabListeners } from '../side-effects';
-import { shouldWordBreak } from './word-break';
+import { shouldWordBreak } from 'core/lib/word-break';
 import {
   BOOKMARK_TYPE,
   HISTORY_TYPE,
   OTHER_WINDOW_TAB_TYPE,
   TAB_TYPE,
-} from '_legacy/tabs/types';
+} from 'core/tabs/types';
 import {
   favIconFallback,
   alertCircle,

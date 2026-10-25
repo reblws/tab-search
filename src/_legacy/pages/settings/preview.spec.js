@@ -3,7 +3,7 @@ import {
   initialGeneralSettings,
   initialColorSettings,
   initialFuzzySettings,
-} from '_legacy/reducers/defaults';
+} from 'core/reducers/defaults';
 import { popupStateChanged, renderToolbar } from './preview.js';
 
 const makeState = (general = {}, extra = {}) => Object.assign({

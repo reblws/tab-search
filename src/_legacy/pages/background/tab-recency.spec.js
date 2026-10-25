@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { GET_FOCUSED_AT } from '../../tab-recency.js';
+import { GET_FOCUSED_AT } from 'core/tabs/recency.js';
 import { addTabRecencyListeners, createFocusRecord } from './tab-recency.js';
 
 function createStorageArea() {

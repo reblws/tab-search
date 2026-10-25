@@ -1,4 +1,4 @@
-import reducerMap from './inputs-to-reducer';
+import reducerMap from 'core/settings/inputs-to-reducer';
 import {
   updateFuzzyThresholdRange,
   updateCheckbox,

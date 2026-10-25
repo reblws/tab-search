@@ -1,4 +1,4 @@
-import keyboard, { defaultCommands } from '_legacy/keyboard';
+import keyboard, { defaultCommands } from 'core/keyboard';
 import {
   updateKeybinding,
   resetKeyboardToDefaults,

@@ -1,5 +1,5 @@
 import Fuse from 'fuse.js';
-import { initialFuzzySettings } from '../../reducers/defaults.js';
+import { initialFuzzySettings } from 'core/reducers/defaults.js';
 import { JSDOM } from 'jsdom';
 
 describe('fuzzy search', function () {

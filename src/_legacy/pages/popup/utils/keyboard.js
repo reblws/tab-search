@@ -10,7 +10,7 @@ import {
   TAB_BOOKMARK,
   DUPLICATE_TAB_DELETE,
   MUTE_TOGGLE,
-} from '_legacy/keyboard';
+} from 'core/keyboard';
 import {
   deleteTab,
   reloadTab,
@@ -26,7 +26,7 @@ import {
   SESSION_TYPE,
   TAB_TYPE,
   OTHER_WINDOW_TAB_TYPE,
-} from '_legacy/tabs/types';
+} from 'core/tabs/types';
 import {
   NO_RESULT_CLASSNAME,
   TAB_URL_CLASSNAME,

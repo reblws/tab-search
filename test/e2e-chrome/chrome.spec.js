@@ -11,7 +11,7 @@ import {
   stopWorker,
   inExtension,
 } from './helpers/chrome.js';
-import { GET_FOCUSED_AT } from '../../src/_legacy/tab-recency.js';
+import { GET_FOCUSED_AT } from '../../src/core/tabs/recency.js';
 
 const pageUrl = title => `data:text/html,<title>${encodeURIComponent(title)}</title><h1>${encodeURIComponent(title)}</h1>`;
 const TEST_TABS = ['Alpha Fixture', 'Beta Fixture', 'Gamma Fixture'];

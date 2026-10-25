@@ -4,7 +4,7 @@ import {
   TAB_TYPE,
   OTHER_WINDOW_TAB_TYPE,
   BOOKMARK_TYPE,
-} from '_legacy/tabs/types';
+} from 'core/tabs/types';
 
 // The result row that the open tab menu belongs to
 let menuRow = null;

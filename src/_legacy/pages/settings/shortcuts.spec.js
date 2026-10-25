@@ -1,11 +1,11 @@
 import sinon from 'sinon';
 import { JSDOM } from 'jsdom';
-import { defaultCommands } from '_legacy/keyboard';
+import { defaultCommands } from 'core/keyboard';
 import {
   KEYBINDING_UPDATE,
   KEYBINDING_DEFAULT_RESET,
   SECONDARY_KEYBINDING_REMOVE,
-} from '../../actions/types.js';
+} from 'core/actions/types.js';
 import {
   formatShortcutForDisplay,
   shortcutParts,

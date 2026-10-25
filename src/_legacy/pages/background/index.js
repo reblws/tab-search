@@ -1,5 +1,5 @@
 import '_legacy/polyfill';
-import { initialColorSettings as initialColors } from '_legacy/reducers/defaults';
+import { initialColorSettings as initialColors } from 'core/reducers/defaults';
 import { rehydrated } from '_legacy/store';
 import { setBadgeBackgroundColor } from '_legacy/utils/action-api';
 import { createTabMenuItems } from '_legacy/tab-menu';

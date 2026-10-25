@@ -1,14 +1,14 @@
 import { deletedTabsCache, getCachedTabs, setCachedTabs } from '../caches';
-import { SESSION_TYPE, OTHER_WINDOW_TAB_TYPE } from '_legacy/tabs/types';
+import { SESSION_TYPE, OTHER_WINDOW_TAB_TYPE } from 'core/tabs/types';
 import { tabList } from '../nodes';
 import {
   removeElementFromTabList,
   repaintElementWithType,
   findLastElType,
 } from './dom';
-import { decodeUrl } from './url';
+import { decodeUrl } from 'core/lib/url';
 import { POPUP_COMMAND } from '_legacy/utils/action-api';
-import { GET_FOCUSED_AT, withFocusTimes } from '_legacy/tab-recency';
+import { GET_FOCUSED_AT, withFocusTimes } from 'core/tabs/recency';
 
 export function addTabsToPromiseChain(store) {
   const { getState } = store;

@@ -41,6 +41,28 @@ module.exports = [
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
   },
+  // Purity rules for core/
+  {
+    files: ['src/core/**/*.js'],
+    ignores: ['src/core/**/*.spec.js', 'src/core/**/__test__/**'],
+    rules: {
+      'no-console': 'error',
+      'no-restricted-globals': ['error',
+        'browser', 'chrome', 'document', 'window', 'navigator', 'location',
+        'localStorage', 'sessionStorage', 'setTimeout', 'setInterval',
+        'requestAnimationFrame', 'fetch'],
+      'no-restricted-properties': ['error',
+        { object: 'Date', property: 'now' },
+        { object: 'Math', property: 'random' }],
+      'no-restricted-syntax': ['error', {
+        selector: 'Program > VariableDeclaration[kind="let"]',
+        message: 'No module-level mutable state in core/. Move it to shell/.',
+      }],
+      'no-restricted-imports': ['error', { paths: [
+        'webextension-polyfill', 'debounce', 'redux-persist', 'redux-logger',
+      ] }],
+    },
+  },
   // Test file overrides
   {
     files: ['src/**/*.spec.js'],

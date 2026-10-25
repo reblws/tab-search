@@ -1,7 +1,7 @@
 // Records when each tab gets focus, for the most recently used sort (see
 // core/tab-recency.js). A tab gets focus when it's activated in the focused
 // window, or when its window gets focus.
-import { GET_FOCUSED_AT } from '_legacy/tab-recency';
+import { GET_FOCUSED_AT } from 'core/tabs/recency';
 
 const FOCUSED_AT_KEY = 'tabFocusedAt';
 const STARTED_AT_KEY = 'tabRecencyStartedAt';

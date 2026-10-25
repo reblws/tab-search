@@ -15,7 +15,7 @@ import {
   KEYBINDING_DEFAULT_RESET,
   COLOR_UPDATE,
   SELECT_UPDATE,
-} from '_legacy/actions/types';
+} from 'core/actions/types';
 
 export default wrapBackgroundStore({
   store,

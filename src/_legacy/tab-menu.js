@@ -3,7 +3,7 @@ import {
   TAB_PIN,
   MUTE_TOGGLE,
   TAB_DELETE,
-} from '_legacy/keyboard/constants';
+} from 'core/keyboard/constants';
 
 // TabSearch's own items in the tab menu that a result opens (Firefox only).
 // Each one runs the popup keyboard command of the same name

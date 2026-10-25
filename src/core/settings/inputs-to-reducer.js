@@ -6,7 +6,7 @@ import {
   initialFuzzySettings,
   initialGeneralSettings,
   initialColorSettings,
-} from '_legacy/reducers/defaults';
+} from 'core/reducers/defaults';
 
 const skeleton = {
   fuzzy: Object.keys(initialFuzzySettings),

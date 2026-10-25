@@ -1,7 +1,7 @@
 import { createStore } from 'redux';
 import { persistStore } from 'redux-persist';
 import { createPersistedReducer } from './persist.js';
-import { LAST_QUERY_UPDATE } from '../actions/types.js';
+import { LAST_QUERY_UPDATE } from 'core/actions/types.js';
 
 // In-memory browser.storage area
 function createStorageArea() {

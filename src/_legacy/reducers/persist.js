@@ -1,9 +1,9 @@
 import { persistReducer, createMigrate } from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
-import { createRootReducer } from './root';
-import stateReducer from './state';
+import { createRootReducer } from 'core/reducers/root';
+import stateReducer from 'core/reducers/state';
 import { createStorageAdapter } from './services/storage-adapter';
-import migrations from './services/migrations';
+import migrations from 'core/reducers/migrations';
 
 // Settings go to storage.local. The transient `state` slice (the last
 // query) never does: it goes to storage.session when there is one, which

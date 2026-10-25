@@ -1,4 +1,4 @@
-import { action } from '_legacy/actions/action';
+import { action } from 'core/actions/action';
 import {
   CHECKBOX_UPDATE,
   RANGE_UPDATE,
@@ -13,8 +13,8 @@ import {
   COLOR_UPDATE,
   SECONDARY_KEYBINDING_REMOVE,
   SELECT_UPDATE,
-} from '../../actions/types';
-import inputReducerMap from './inputs-to-reducer';
+} from 'core/actions/types';
+import inputReducerMap from 'core/settings/inputs-to-reducer';
 
 export const updateNumber =
   (key, value) => action(NUMBER_UPDATE, key, value);

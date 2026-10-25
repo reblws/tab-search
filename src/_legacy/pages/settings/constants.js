@@ -15,4 +15,4 @@ export {
   ERROR_MSG_NOT_VALID_SINGLE_KEY,
   ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY,
   ERROR_MSG_FINAL_KEY_IS_MODIFIER,
-} from '_legacy/keyboard';
+} from 'core/keyboard';

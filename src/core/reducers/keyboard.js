@@ -3,7 +3,7 @@ import {
   KEYBINDING_DEFAULT_RESET,
   SECONDARY_KEYBINDING_REMOVE,
   SECONDARY_KEYBINDING_UPDATE,
-} from '_legacy/actions/types';
+} from 'core/actions/types';
 import { defaultCommands } from './defaults';
 
 export default function keyboardConfigReducer(
