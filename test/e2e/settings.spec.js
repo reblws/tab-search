@@ -43,6 +43,8 @@ describe('Settings', function () {
   });
 
   describe('Browser Shortcut Section', function () {
+    const shortcutOf = async () => (await $('#popup-shortcut')).getAttribute('data-shortcut');
+
     it('should display browser shortcut section', async function () {
       const section = await $('#browser-shortcut');
       await expect(section).toBeDisplayed();
@@ -51,25 +53,14 @@ describe('Settings', function () {
     it('should show the popup shortcut header', async function () {
       const header = await $('#browser-shortcut h3');
       const headerText = await header.getText();
-      expect(headerText).toContain('Popup Shortcut');
+      expect(headerText).toContain('Open TabSearch');
     });
 
-    it('should display the shortcut input', async function () {
-      const input = await $('#popup-shortcut-input');
-      await expect(input).toBeDisplayed();
-    });
-
-    it('should show the current shortcut in the input', async function () {
-      const input = await $('#popup-shortcut-input');
-      const value = await input.getValue();
-      // Should have a shortcut value (not empty, not "Error loading")
-      expect(value).not.toBe('');
-      expect(value).not.toBe('Error loading');
-    });
-
-    it('should have a reset button', async function () {
-      const resetButton = await $('#browser-shortcut-reset');
-      await expect(resetButton).toBeExisting();
+    it('should show the current shortcut as keycaps', async function () {
+      const button = await $('#popup-shortcut');
+      await expect(button).toBeDisplayed();
+      await browser.waitUntil(async () => (await shortcutOf()) !== '');
+      expect((await button.$$('kbd')).length).toBeGreaterThan(0);
     });
 
     it('should display the hint text', async function () {
@@ -78,96 +69,65 @@ describe('Settings', function () {
     });
 
     it('should allow editing the shortcut in Firefox', async function () {
-      const input = await $('#popup-shortcut-input');
-      const originalValue = await input.getValue();
+      const button = await $('#popup-shortcut');
+      await browser.waitUntil(async () => (await shortcutOf()) !== '');
+      const originalValue = await shortcutOf();
 
-      // Click the input to focus it
-      await input.click();
-      await browser.pause(200);
+      await button.click();
+      expect(await button.getText()).toBe('Press keys…');
 
-      // The input should show "Press shortcut..." when focused
-      const focusedValue = await input.getValue();
-      expect(focusedValue).toBe('Press shortcut...');
-
-      // Press Ctrl+Shift+K to set a new shortcut
       await browser.keys(['Control', 'Shift', 'k']);
-      await browser.pause(500);
-
-      // The input should now show the new shortcut
-      const newValue = await input.getValue();
-      expect(newValue).not.toBe('Press shortcut...');
-      expect(newValue).not.toBe(originalValue);
-      // Should contain the key we pressed (K)
-      expect(newValue.toUpperCase()).toContain('K');
+      await browser.waitUntil(async () => (await shortcutOf()) !== originalValue, {
+        timeoutMsg: 'The popup shortcut did not change',
+      });
+      expect((await shortcutOf()).toUpperCase()).toContain('K');
+      expect(await button.getText()).not.toBe('Press keys…');
     });
 
     it('should reset the shortcut to default', async function () {
-      const input = await $('#popup-shortcut-input');
+      const button = await $('#popup-shortcut');
       const resetButton = await $('#browser-shortcut-reset');
 
-      // First change the shortcut to something else
-      await input.click();
-      await browser.pause(200);
+      await button.click();
       await browser.keys(['Control', 'Shift', 'k']);
-      await browser.pause(500);
+      await resetButton.waitForDisplayed({ timeoutMsg: 'Reset did not appear for a changed shortcut' });
 
-      const changedValue = await input.getValue();
-
-      // Click reset button
       await resetButton.click();
-      await browser.pause(500);
-
-      // The shortcut should be reset (likely to default Ctrl+Shift+F or Cmd+Shift+L)
-      const resetValue = await input.getValue();
-      // After reset, it should be different from what we changed it to
-      // (unless by chance the default is the same, which is unlikely)
-      expect(resetValue).toBeTruthy();
-      expect(resetValue).not.toBe('Not set');
+      await browser.waitUntil(async () => !(await shortcutOf()).toUpperCase().endsWith('+K'), {
+        timeoutMsg: 'The shortcut was not reset',
+      });
+      expect(await shortcutOf()).toBeTruthy();
     });
 
     it('should persist the changed shortcut', async function () {
-      const input = await $('#popup-shortcut-input');
-
-      // Change the shortcut
-      await input.click();
-      await browser.pause(200);
+      const button = await $('#popup-shortcut');
+      await button.click();
       await browser.keys(['Control', 'Shift', 'j']);
-      await browser.pause(500);
+      await browser.waitUntil(async () => (await shortcutOf()).toUpperCase().includes('J'));
 
-      const changedValue = await input.getValue();
-      expect(changedValue.toUpperCase()).toContain('J');
-
-      // Reload the settings page
       await browser.refresh();
-      await browser.pause(1000);
-
-      // The shortcut should still be the changed value
-      const inputAfterReload = await $('#popup-shortcut-input');
-      const valueAfterReload = await inputAfterReload.getValue();
-      expect(valueAfterReload.toUpperCase()).toContain('J');
+      await browser.waitUntil(async () => (await shortcutOf()).toUpperCase().includes('J'), {
+        timeoutMsg: 'The changed shortcut was not kept after a reload',
+      });
 
       // Reset back to default for other tests
-      const resetButton = await $('#browser-shortcut-reset');
-      await resetButton.click();
-      await browser.pause(500);
+      await $('#browser-shortcut-reset').click();
+      await browser.waitUntil(async () => !(await shortcutOf()).toUpperCase().includes('J'));
     });
   });
 
   describe('Keyboard Shortcuts Section', function () {
+    const slot = (key, which = 'command') => $(`#${key} .key-slot[data-key="${which}"]`);
+    const shortcutOf = async (key, which) => (await slot(key, which)).getAttribute('data-shortcut');
+
     it('should display keyboard shortcuts section', async function () {
       const shortcutsSection = await $('#shortcuts');
       await expect(shortcutsSection).toBeDisplayed();
     });
 
-    it('should display shortcuts table', async function () {
-      const table = await $('#shortcut-table');
-      await expect(table).toBeDisplayed();
-    });
-
     it('should display shortcut rows', async function () {
-      // Wait for shortcuts to load
-      await browser.pause(1000);
-      const rows = await $$('#shortcut-table tbody tr');
+      await $('#TAB_NEXT').waitForExist();
+      const rows = await $$('#shortcut-list .shortcut-row');
       expect(rows.length).toBeGreaterThan(0);
     });
 
@@ -176,20 +136,46 @@ describe('Settings', function () {
       await expect(resetButton).toBeDisplayed();
     });
 
+    it('should rebind a shortcut and refuse one that is taken', async function () {
+      await $('#shortcut-reset').click();
+      const defaultShortcut = await shortcutOf('TAB_REFRESH');
+      const pinShortcut = await shortcutOf('TAB_PIN');
+
+      await (await slot('TAB_REFRESH')).click();
+      await browser.keys(['Alt', 'p']);
+      const error = await $('#TAB_REFRESH .field-error');
+      await error.waitForDisplayed();
+      expect(await error.getText()).toContain(`${pinShortcut} is already used by Pin Tab`);
+      await browser.keys(['Escape']);
+      expect(await shortcutOf('TAB_REFRESH')).toBe(defaultShortcut);
+
+      await (await slot('TAB_REFRESH')).click();
+      await browser.keys(['Control', 'y']);
+      await browser.waitUntil(async () => (await shortcutOf('TAB_REFRESH')) !== defaultShortcut, {
+        timeoutMsg: 'Refresh Tab was not rebound',
+      });
+      const rowReset = await $('#TAB_REFRESH .shortcut-row__reset button');
+      await rowReset.waitForDisplayed();
+      await rowReset.click();
+      await browser.waitUntil(async () => (await shortcutOf('TAB_REFRESH')) === defaultShortcut, {
+        timeoutMsg: 'Refresh Tab was not reset',
+      });
+      expect(await rowReset.isDisplayed()).toBe(false);
+    });
+
     it('should remove a secondary shortcut with its remove button', async function () {
       // Start from the defaults, where Next Tab has a secondary shortcut
       await $('#shortcut-reset').click();
-      const secondaryInput = await $('#TAB_NEXT input[data-key="secondaryCommand"]');
-      const removeButton = await $('#TAB_NEXT .shortcut-table__remove');
+      const removeButton = await $('#TAB_NEXT .shortcut-row__remove');
       await removeButton.waitForDisplayed();
       expect(await removeButton.getTagName()).toBe('button');
       expect(await removeButton.getAttribute('aria-label'))
         .toBe('Remove secondary shortcut for Next Tab');
-      const emptyShortcut = await $('#TAB_OPEN input[data-key="secondaryCommand"]').getValue();
-      expect(await $('#TAB_OPEN .shortcut-table__remove').isDisplayed()).toBe(false);
+      const emptyShortcut = await shortcutOf('TAB_OPEN', 'secondaryCommand');
+      expect(await $('#TAB_OPEN .shortcut-row__remove').isDisplayed()).toBe(false);
 
       await removeButton.click();
-      await browser.waitUntil(async () => (await secondaryInput.getValue()) === emptyShortcut, {
+      await browser.waitUntil(async () => (await shortcutOf('TAB_NEXT', 'secondaryCommand')) === emptyShortcut, {
         timeoutMsg: 'The secondary shortcut was not removed',
       });
       expect(await removeButton.isDisplayed()).toBe(false);
@@ -233,7 +219,50 @@ describe('Settings', function () {
     });
   });
 
+  describe('Live preview', function () {
+    it('should follow the popup width and title settings', async function () {
+      const popup = await $('#preview-popup');
+      await browser.execute(() => document.getElementById('popupSize-small').click());
+      await browser.waitUntil(async () => (await popup.getCSSProperty('width')).value === '300px', {
+        timeoutMsg: 'The preview did not take the small width',
+      });
+      expect(await $('#popupSize-value').getText()).toBe('300');
+
+      await browser.execute(() => document.getElementById('popupSize-medium').click());
+      await browser.waitUntil(async () => (await popup.getCSSProperty('width')).value === '355px');
+    });
+  });
+
+  describe('Find a setting', function () {
+    it('should show only the settings that match', async function () {
+      await $('#find').setValue('badge');
+      await browser.waitUntil(async () => !(await $('#search').isDisplayed()));
+      await expect($('#showTabCountBadgeText')).toBeDisplayed();
+      await expect($('#popupBadgeColor')).toBeDisplayed();
+      expect(await $('#searchAllWindows').isDisplayed()).toBe(false);
+
+      await $('#find').setValue('no such setting');
+      await expect($('#find-empty')).toBeDisplayed();
+
+      await browser.keys(['Escape']);
+      await expect($('#search')).toBeDisplayed();
+      expect(await $('#find-empty').isDisplayed()).toBe(false);
+    });
+  });
+
   describe('Results Settings', function () {
+    it('should save the most-recently-used sort choice', async function () {
+      await browser.execute(() => document.getElementById('mruSort-always').click());
+      await browser.refresh();
+      await $('#mruSort-always').waitForExist();
+      await browser.waitUntil(async () => $('#mruSort-always').isSelected(), {
+        timeoutMsg: 'The sort choice was not kept after a reload',
+      });
+      await browser.execute(() => document.getElementById('mruSort-never').click());
+      await browser.refresh();
+      await browser.waitUntil(async () => $('#mruSort-never').isSelected());
+    });
+
     it('should display search all windows checkbox', async function () {
       const checkbox = await $('#searchAllWindows');
       await expect(checkbox).toBeExisting();

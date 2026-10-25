@@ -94,17 +94,17 @@ describe('Chrome MV3 build', function () {
       await openSettings();
       const shortcut = await popupShortcut();
       expect(shortcut).not.toBe('');
-      await browser.waitUntil(async () => (await $('#popup-shortcut-input').getValue()) === shortcut, {
+      await browser.waitUntil(async () => (await $('#popup-shortcut').getAttribute('data-shortcut')) === shortcut, {
         timeoutMsg: `The settings page did not show ${shortcut}`,
       });
     });
 
-    it('should open Chrome\'s shortcuts page from the read-only shortcut field', async function () {
+    it('should open Chrome\'s shortcuts page from the shortcut button', async function () {
       await openSettings();
-      const input = await $('#popup-shortcut-input');
-      await browser.waitUntil(async () => (await input.getValue()) !== '');
-      const before = await input.getValue();
-      expect(await input.getAttribute('readonly')).not.toBe(null);
+      const input = await $('#popup-shortcut');
+      const shortcutOf = () => input.getAttribute('data-shortcut');
+      await browser.waitUntil(async () => Boolean(await shortcutOf()));
+      const before = await shortcutOf();
       expect(await $('#browser-shortcut-reset').isDisplayed()).toBe(false);
       expect(await $('#browser-shortcut-hint').getText()).toContain('Keyboard shortcuts');
 
@@ -114,19 +114,19 @@ describe('Chrome MV3 build', function () {
       const settingsHandle = await browser.getWindowHandle();
       await input.click();
       await browser.waitUntil(async () => (await shortcutsTargets()).length === 1, {
-        timeoutMsg: 'Clicking the shortcut field did not open chrome://extensions/shortcuts',
+        timeoutMsg: 'Clicking the shortcut button did not open chrome://extensions/shortcuts',
       });
       await browser.switchToWindow(settingsHandle);
-      // Typing a shortcut doesn't change the field
+      // Typing a shortcut doesn't change it
       await browser.keys([Key.Control, Key.Shift, 'k']);
-      expect(await input.getValue()).toBe(before);
+      expect(await shortcutOf()).toBe(before);
 
       // Keyboard users can open it too
       await closeTab((await shortcutsTargets())[0].targetId);
       await browser.execute(el => el.focus(), input);
       await browser.keys([Key.Enter]);
       await browser.waitUntil(async () => (await shortcutsTargets()).length === 1, {
-        timeoutMsg: 'Enter on the shortcut field did not open chrome://extensions/shortcuts',
+        timeoutMsg: 'Enter on the shortcut button did not open chrome://extensions/shortcuts',
       });
       await closeTab((await shortcutsTargets())[0].targetId);
       await browser.switchToWindow(settingsHandle);
@@ -280,23 +280,23 @@ describe('Chrome MV3 build', function () {
 
     it('should keep an open settings page in sync after the worker stops', async function () {
       await openSettings();
-      const refreshInput = () => $('#TAB_REFRESH input[data-key="command"]');
+      const refreshInput = () => $('#TAB_REFRESH .key-slot[data-key="command"]');
       await (await refreshInput()).waitForExist();
-      const defaultShortcut = await (await refreshInput()).getValue();
-      const valueIsNot = (...values) => async () => !values.includes(await (await refreshInput()).getValue());
+      const defaultShortcut = await (await refreshInput()).getAttribute('data-shortcut');
+      const valueIsNot = (...values) => async () => !values.includes(await (await refreshInput()).getAttribute('data-shortcut'));
 
       // Rebind Refresh Tab; the row only changes when the worker pushes the new state
       await (await refreshInput()).click();
       // Key.Ctrl is Cmd on macOS; TabSearch binds the literal Control key
       await browser.keys([Key.Control, 'y']);
-      await browser.waitUntil(valueIsNot(defaultShortcut, 'Enter your shortcut...'), {
+      await browser.waitUntil(valueIsNot(defaultShortcut), {
         timeoutMsg: 'Refresh Tab was not rebound',
       });
 
       // The page stays open while the worker stops, which disconnects its port
       await stopWorker();
       await $('#shortcut-reset').click();
-      await browser.waitUntil(async () => (await (await refreshInput()).getValue()) === defaultShortcut, {
+      await browser.waitUntil(async () => (await (await refreshInput()).getAttribute('data-shortcut')) === defaultShortcut, {
         timeoutMsg: 'The open settings page did not show the reset shortcut after a worker restart',
       });
 
@@ -304,30 +304,30 @@ describe('Chrome MV3 build', function () {
       await stopWorker();
       await (await refreshInput()).click();
       await browser.keys([Key.Control, 'y']);
-      await browser.waitUntil(valueIsNot(defaultShortcut, 'Enter your shortcut...'), {
+      await browser.waitUntil(valueIsNot(defaultShortcut), {
         timeoutMsg: 'Refresh Tab was not rebound after a second worker restart',
       });
       await $('#shortcut-reset').click();
-      await browser.waitUntil(async () => (await (await refreshInput()).getValue()) === defaultShortcut);
+      await browser.waitUntil(async () => (await (await refreshInput()).getAttribute('data-shortcut')) === defaultShortcut);
     });
 
     it('should remove a secondary shortcut with its button after the worker stops', async function () {
       await openSettings();
       // Start from the defaults, where Next Tab has a secondary shortcut
       await $('#shortcut-reset').click();
-      const secondaryInput = () => $('#TAB_NEXT input[data-key="secondaryCommand"]');
-      const removeButton = () => $('#TAB_NEXT .shortcut-table__remove');
+      const secondaryInput = () => $('#TAB_NEXT .key-slot[data-key="secondaryCommand"]');
+      const removeButton = () => $('#TAB_NEXT .shortcut-row__remove');
       await (await removeButton()).waitForDisplayed();
       expect(await (await removeButton()).getTagName()).toBe('button');
       expect(await (await removeButton()).getAttribute('aria-label'))
         .toBe('Remove secondary shortcut for Next Tab');
       // Rows without a secondary shortcut keep the button's space but hide it
-      const emptyShortcut = await $('#TAB_OPEN input[data-key="secondaryCommand"]').getValue();
-      expect(await $('#TAB_OPEN .shortcut-table__remove').isDisplayed()).toBe(false);
+      const emptyShortcut = await $('#TAB_OPEN .key-slot[data-key="secondaryCommand"]').getAttribute('data-shortcut');
+      expect(await $('#TAB_OPEN .shortcut-row__remove').isDisplayed()).toBe(false);
 
       await stopWorker();
       await (await removeButton()).click();
-      await browser.waitUntil(async () => (await (await secondaryInput()).getValue()) === emptyShortcut, {
+      await browser.waitUntil(async () => (await (await secondaryInput()).getAttribute('data-shortcut')) === emptyShortcut, {
         timeoutMsg: 'The secondary shortcut was not removed',
       });
       expect(await (await removeButton()).isDisplayed()).toBe(false);
@@ -338,13 +338,12 @@ describe('Chrome MV3 build', function () {
 
     it('should catch up on changes made elsewhere when a disconnected settings page is focused', async function () {
       await openSettings();
-      const refreshInput = () => $('#TAB_REFRESH input[data-key="command"]');
+      const refreshInput = () => $('#TAB_REFRESH .key-slot[data-key="command"]');
       await (await refreshInput()).waitForExist();
-      const defaultShortcut = await (await refreshInput()).getValue();
+      const defaultShortcut = await (await refreshInput()).getAttribute('data-shortcut');
       await (await refreshInput()).click();
       await browser.keys([Key.Control, 'y']);
-      await browser.waitUntil(async () => !([defaultShortcut, 'Enter your shortcut...']
-        .includes(await (await refreshInput()).getValue())));
+      await browser.waitUntil(async () => (await (await refreshInput()).getAttribute('data-shortcut')) !== defaultShortcut);
 
       await stopWorker();
       // Another page resets the shortcuts: send the message outside this page's store
@@ -354,11 +353,11 @@ describe('Chrome MV3 build', function () {
       }));
       await browser.pause(500);
       // Nothing pushes the change to this page while its port is down
-      expect(await (await refreshInput()).getValue()).not.toBe(defaultShortcut);
+      expect(await (await refreshInput()).getAttribute('data-shortcut')).not.toBe(defaultShortcut);
 
       // Headless windows don't get real focus changes
       await browser.execute(() => window.dispatchEvent(new Event('focus')));
-      await browser.waitUntil(async () => (await (await refreshInput()).getValue()) === defaultShortcut, {
+      await browser.waitUntil(async () => (await (await refreshInput()).getAttribute('data-shortcut')) === defaultShortcut, {
         timeoutMsg: 'The settings page did not catch up when it was focused',
       });
     });
