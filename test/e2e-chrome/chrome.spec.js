@@ -11,6 +11,7 @@ import {
   stopWorker,
   inExtension,
 } from './helpers/chrome.js';
+import { GET_FOCUSED_AT } from '../../src/core/tab-recency.js';
 
 const pageUrl = title => `data:text/html,<title>${encodeURIComponent(title)}</title><h1>${encodeURIComponent(title)}</h1>`;
 const TEST_TABS = ['Alpha Fixture', 'Beta Fixture', 'Gamma Fixture'];
@@ -245,6 +246,27 @@ describe('Chrome MV3 build', function () {
       // Restore
       await browser.execute(el => el.click(), await $('#searchAllWindows'));
       await browser.waitUntil(async () => (await readSavedGeneralSettings())?.searchAllWindows === original);
+    });
+
+    it('should keep the tab focus times after the worker stops', async function () {
+      const focusTimes = () => inExtension(type => chrome.runtime.sendMessage({ type }), GET_FOCUSED_AT);
+      await openPopup();
+      // Activate a new tab, then come back to the page's own tab
+      const tabId = await inExtension(() => chrome.tabs.getCurrent()
+        .then(self => chrome.tabs.create({ url: 'about:blank', active: true })
+          .then(tab => chrome.tabs.update(self.id, { active: true }).then(() => tab.id))));
+      try {
+        await browser.waitUntil(async () => (await focusTimes()).focusedAt?.[tabId] > 0, {
+          timeoutMsg: 'The background did not record the activated tab',
+        });
+        const before = await focusTimes();
+
+        await stopWorker();
+        // The message wakes the worker; it must answer from storage.session
+        expect(await focusTimes()).toEqual(before);
+      } finally {
+        await inExtension(id => chrome.tabs.remove(id), tabId);
+      }
     });
 
     it('should show the last query in the popup after the worker stops', async function () {

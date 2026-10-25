@@ -11,6 +11,7 @@ import {
 } from './dom';
 import { decodeUrl } from './url';
 import { POPUP_COMMAND } from 'core/utils/action-api';
+import { GET_FOCUSED_AT, withFocusTimes } from 'core/tab-recency';
 
 export function addTabsToPromiseChain(store) {
   const { getState } = store;
@@ -154,7 +155,15 @@ function queryTabs(queryOptions) {
   if (cached) {
     return cached;
   }
-  return apiP(browser.tabs, 'query', queryOptions).then((tabs) => {
+  return Promise.all([
+    apiP(browser.tabs, 'query', queryOptions),
+    // Without the background's focus times the sort falls back to the
+    // browser's lastAccessed
+    browser.runtime.sendMessage({ type: GET_FOCUSED_AT }).catch((e) => {
+      console.error(`Couldn't get tab focus times: ${e}`);
+    }),
+  ]).then(([queriedTabs, recency]) => {
+    const tabs = withFocusTimes(queriedTabs, recency);
     setCachedTabs(tabs);
     return tabs;
   });

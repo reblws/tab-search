@@ -10,6 +10,7 @@ import {
   stopCountingBadgeText,
 } from './badge-text-listeners';
 import { createSessionFlag, watchBadgeTextSetting } from './badge-text-state';
+import { addTabRecencyListeners, createFocusRecord } from './tab-recency';
 
 // Init background
 // Tab listeners must be added in the first turn so a stopped MV3 service
@@ -26,6 +27,9 @@ watchBadgeTextSetting({
   setBadgeBackgroundColor,
   defaultColor: initialColors.popupBadgeColor,
 });
+
+// Tab focus times for the most recently used sort (reblws/tab-search#114)
+addTabRecencyListeners(createFocusRecord());
 
 // Firefox only: TabSearch's items in the tab menu of a result
 createTabMenuItems();
