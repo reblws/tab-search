@@ -1,5 +1,5 @@
-import store, { rehydrated } from '_legacy/store';
-import { wrapBackgroundStore } from '_legacy/store/bridge';
+import store, { rehydrated } from 'shell/store/create-store';
+import { wrapBackgroundStore } from 'shell/store/bridge';
 import {
   CHECKBOX_UPDATE,
   RANGE_UPDATE,

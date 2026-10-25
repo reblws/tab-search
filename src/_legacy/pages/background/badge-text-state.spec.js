@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import { createStore } from 'redux';
-import { createSessionFlag, watchBadgeTextSetting } from './badge-text-state.js';
+import { watchBadgeTextSetting } from './badge-text-state.js';
 
 const DEFAULT_COLOR = '#default';
 
@@ -16,17 +16,6 @@ function reducer(state = {
     default: return state;
   }
 }
-
-function createStorageArea() {
-  const items = {};
-  return {
-    items,
-    get: key => Promise.resolve(key in items ? { [key]: items[key] } : {}),
-    set: obj => Promise.resolve(Object.assign(items, obj)),
-  };
-}
-
-const flush = () => new Promise(r => setTimeout(r, 0));
 
 describe('watchBadgeTextSetting', function () {
   let store;
@@ -98,22 +87,5 @@ describe('watchBadgeTextSetting', function () {
   it('should leave the default badge color alone on startup', async function () {
     await watch(true);
     expect(deps.setBadgeBackgroundColor.called).to.equal(false);
-  });
-});
-
-describe('createSessionFlag', function () {
-  it('should keep the flag in session storage', async function () {
-    const area = createStorageArea();
-    await createSessionFlag('flag', area).set(true);
-    // A restarted worker creates the flag again
-    expect(await createSessionFlag('flag', area).get()).to.equal(true);
-  });
-
-  it('should keep the flag in memory without session storage', async function () {
-    const flag = createSessionFlag('flag', undefined);
-    expect(await flag.get()).to.equal(false);
-    await flag.set(true);
-    expect(await flag.get()).to.equal(true);
-    await flush();
   });
 });

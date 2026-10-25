@@ -1,5 +1,5 @@
-import { deletedTabsCache } from './caches';
-import { getCachedFuse } from './fuse-cache';
+import { deletedTabsCache } from 'shell/cache/seen-sets';
+import { getCachedFuse } from 'shell/cache/fuse-cache';
 import {
   TAB_TYPE,
   OTHER_WINDOW_TAB_TYPE,
@@ -26,11 +26,9 @@ import {
   concat,
   composeFilterAnd,
 } from 'core/lib/fp';
-import {
-  getRecentlyClosed,
-  searchBookmarks,
-  searchHistory,
-} from './utils/browser';
+import { getRecentlyClosed } from 'shell/platform/sessions';
+import { searchBookmarks } from 'shell/platform/bookmarks';
+import { searchHistory } from 'shell/platform/history';
 
 // Minimum query length required to search extra browser apis (history and bookmarks)
 const MIN_QUERY_LENGTH = 3;

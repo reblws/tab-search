@@ -9,7 +9,7 @@ import {
   CONNECTION_NAME,
   DISPATCH,
   UPDATE_STATE,
-} from './constants';
+} from './protocol';
 
 export function wrapBackgroundStore({ store, rehydrated, actions = {} }) {
   chrome.runtime.onMessage.addListener((msg, sender, reply) => {

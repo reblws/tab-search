@@ -13,17 +13,3 @@ export const TAB_MENU_ITEMS = [
   { id: 'tab-mute', title: 'Mute Tab', command: MUTE_TOGGLE },
   { id: 'tab-close', title: 'Close Tab', command: TAB_DELETE },
 ];
-
-// Persistent MV2 background pages don't keep menu items, so this runs on
-// every start. viewTypes keeps the items off the real tab strip
-export function createTabMenuItems() {
-  if (!browser.menus) return;
-  TAB_MENU_ITEMS.forEach(({ id, title }) => {
-    browser.menus.create({
-      id,
-      title,
-      contexts: ['tab'],
-      viewTypes: ['popup'],
-    });
-  });
-}

@@ -19,7 +19,7 @@ import {
   TAB_DELETE_BTN_CLASSNAME,
 } from '../classnames';
 import { tabList, searchInput } from '../nodes';
-import { badFavIconCache } from '../caches';
+import { badFavIconCache } from 'shell/cache/seen-sets';
 import { configureSvg } from '../assets';
 
 const changeHeadTabListNodeSelectedStyle = method => () => {

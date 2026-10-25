@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { CONNECTION_NAME, DISPATCH, UPDATE_STATE } from './constants.js';
+import { CONNECTION_NAME, DISPATCH, UPDATE_STATE } from './protocol.js';
 import { createUIStore } from './ui-store.js';
 
 function createPort(name) {

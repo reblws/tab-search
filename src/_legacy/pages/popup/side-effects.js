@@ -18,11 +18,9 @@ import {
 import {
   addTabCacheListeners,
   removeTabCacheListeners,
-} from './caches';
-import {
-  getOsShortcut,
-  createTab,
-} from './utils/browser';
+} from 'shell/cache/tab-cache';
+import { getOsShortcut } from 'shell/platform/os';
+import { createTab } from 'shell/platform/tabs';
 import {
   keydownHandler,
   configureSearch,

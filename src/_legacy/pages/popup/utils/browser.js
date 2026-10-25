@@ -1,14 +1,23 @@
-import { deletedTabsCache, getCachedTabs, setCachedTabs } from '../caches';
+import { deletedTabsCache } from 'shell/cache/seen-sets';
+import { getCachedTabs, setCachedTabs } from 'shell/cache/tab-cache';
+import {
+  queryTabs as queryBrowserTabs,
+  activateTab,
+  removeTab,
+  createTab,
+} from 'shell/platform/tabs';
+import { getCurrentWindowId, focusWindow } from 'shell/platform/windows';
+import { getRecentlyClosed, restoreSession } from 'shell/platform/sessions';
+import { fetchFocusTimes } from 'shell/platform/recency';
 import { SESSION_TYPE, OTHER_WINDOW_TAB_TYPE } from 'core/tabs/types';
+import { decodeUrl } from 'core/lib/url';
+import { withFocusTimes } from 'core/tabs/recency';
 import { tabList } from '../nodes';
 import {
   removeElementFromTabList,
   repaintElementWithType,
   findLastElType,
 } from './dom';
-import { decodeUrl } from 'core/lib/url';
-import { POPUP_COMMAND } from '_legacy/utils/action-api';
-import { GET_FOCUSED_AT, withFocusTimes } from 'core/tabs/recency';
 
 export function addTabsToPromiseChain(store) {
   const { getState } = store;
@@ -28,8 +37,8 @@ export function addTabsToPromiseChain(store) {
 }
 
 export function addCurrentWindowIdToPromiseChain(store) {
-  return browser.windows.getCurrent()
-    .then(({ id: currentWindowId }) => Object.assign({}, store, { currentWindowId }));
+  return getCurrentWindowId()
+    .then(currentWindowId => Object.assign({}, store, { currentWindowId }));
 }
 
 export function deleteTab(
@@ -65,33 +74,12 @@ export function deleteTab(
     }
   }
   deletedTabsCache().add(tabId);
-  browser.tabs.remove(tabId)
+  removeTab(tabId)
     .then(() => getRecentlyClosed(1))
     .then(sessions => sessions[0].tab.sessionId)
     .then((sessionId) => {
       elementToRemove.dataset.id = sessionId;
     });
-}
-
-function getUserOs() {
-  return browser.runtime.getPlatformInfo().then(({ os }) => os);
-}
-
-// Returns the user's shortcut for the extension
-// () -> Promise< shortcut: String >
-export async function getOsShortcut() {
-  const [os, commands] = await Promise.all([
-    getUserOs(),
-    browser.commands.getAll(),
-  ]);
-  const popupCommand = commands.find(cmd => cmd.name === POPUP_COMMAND);
-  const shortcut = popupCommand?.shortcut || '';
-
-  // Replace Ctrl with Cmd on Mac for display
-  if (os === 'mac') {
-    return shortcut.replace(/ctrl/i, 'Cmd');
-  }
-  return shortcut;
 }
 
 export function switchActiveTab(tabDataset) {
@@ -100,8 +88,7 @@ export function switchActiveTab(tabDataset) {
     id,
     type,
   } = tabDataset;
-  const numId = parseInt(id, 10);
-  apiP(browser.tabs, 'update', numId, { active: true });
+  activateTab(id);
   if (type === OTHER_WINDOW_TAB_TYPE) {
     focusWindow(windowId);
   }
@@ -114,37 +101,11 @@ export function restoreClosedTab(tabDataset) {
     id,
     type,
   } = tabDataset;
-  browser.sessions.restore(id);
+  restoreSession(id);
   if (type === OTHER_WINDOW_TAB_TYPE) {
     focusWindow(windowId);
   }
   window.close();
-}
-
-function focusWindow(windowId) {
-  return browser.windows.update(
-    parseInt(windowId, 10),
-    {
-      drawAttention: true,
-      focused: true,
-    },
-  );
-}
-
-export function queryTab(id) {
-  return apiP(browser.tabs, 'get', parseInt(id, 10));
-}
-
-export function reloadTab(id) {
-  return apiP(browser.tabs, 'reload', parseInt(id, 10));
-}
-
-export function pinTab(id, pinned) {
-  return apiP(browser.tabs, 'update', parseInt(id, 10), { pinned });
-}
-
-export function muteTab(id, muted) {
-  return apiP(browser.tabs, 'update', parseInt(id, 10), { muted });
 }
 
 function queryTabs(queryOptions) {
@@ -153,25 +114,13 @@ function queryTabs(queryOptions) {
     return cached;
   }
   return Promise.all([
-    apiP(browser.tabs, 'query', queryOptions),
-    // Without the background's focus times the sort falls back to the
-    // browser's lastAccessed
-    browser.runtime.sendMessage({ type: GET_FOCUSED_AT }).catch((e) => {
-      console.error(`Couldn't get tab focus times: ${e}`);
-    }),
+    queryBrowserTabs(queryOptions),
+    fetchFocusTimes(),
   ]).then(([queriedTabs, recency]) => {
     const tabs = withFocusTimes(queriedTabs, recency);
     setCachedTabs(tabs);
     return tabs;
   });
-}
-
-export function createTab(createOptions) {
-  return apiP(browser.tabs, 'create', createOptions);
-}
-
-export function searchBookmarks(query) {
-  return apiP(browser.bookmarks, 'search', query);
 }
 
 export function openBookmark(dataset) {
@@ -190,31 +139,3 @@ export function openHistoryItem(dataset) {
   return createTab({ active: true, url: decodeUrl(url) })
     .then(() => window.close());
 }
-
-// recentlyclosed func
-export function getRecentlyClosed(maxResults) {
-  return apiP(browser.sessions, 'getRecentlyClosed', { maxResults });
-}
-
-// TODO: HISTORY_LIMIT should be a pref
-const HISTORY_LIMIT = 25;
-export function searchHistory(query) {
-  return apiP(browser.history, 'search', {
-    text: query,
-    maxResults: HISTORY_LIMIT,
-  });
-}
-
-// Promise that sends a rejection error if an API is undefined
-function apiP(api, method, ...args) {
-  return new Promise((resolve, reject) => {
-    if (api) {
-      resolve(api[method](...args));
-    } else if (!api[method]) {
-      reject(new Error(`Method ${method} doesn't exist on ${api}!`));
-    } else {
-      reject(new Error(`${api} API not available!`));
-    }
-  });
-}
-

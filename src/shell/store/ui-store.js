@@ -19,7 +19,7 @@
 // (e.g. a window beside the one you're using) doesn't follow changes made
 // elsewhere until you focus it. Nothing can be changed on it without
 // focusing it first, so it never acts on stale state.
-import { CONNECTION_NAME, DISPATCH, UPDATE_STATE } from './constants';
+import { CONNECTION_NAME, DISPATCH, UPDATE_STATE } from './protocol';
 
 export function createUIStore() {
   let state;

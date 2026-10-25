@@ -1,5 +1,5 @@
-import '_legacy/polyfill';
-import { createUIStore } from '_legacy/store/ui-store';
+import 'shell/platform/polyfill';
+import { createUIStore } from 'shell/store/ui-store';
 import { initSettings } from './dom';
 import { initKeybindingTable, initBrowserShortcut } from './shortcuts';
 import { initPreview } from './preview';

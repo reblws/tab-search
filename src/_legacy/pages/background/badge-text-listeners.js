@@ -1,5 +1,5 @@
 import debounce from 'debounce';
-import { setBadgeText } from '_legacy/utils/action-api';
+import { setBadgeText } from 'shell/platform/action-api';
 
 const LOADING_TEXT = '...';
 

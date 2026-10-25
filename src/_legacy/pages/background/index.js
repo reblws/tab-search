@@ -1,15 +1,16 @@
-import '_legacy/polyfill';
+import 'shell/platform/polyfill';
 import { initialColorSettings as initialColors } from 'core/reducers/defaults';
-import { rehydrated } from '_legacy/store';
-import { setBadgeBackgroundColor } from '_legacy/utils/action-api';
-import { createTabMenuItems } from '_legacy/tab-menu';
+import { rehydrated } from 'shell/store/create-store';
+import { setBadgeBackgroundColor } from 'shell/platform/action-api';
+import { createTabMenuItems } from 'shell/platform/tab-menu';
 import backgroundStore from './store';
 import {
   addBadgeTextListeners,
   startCountingBadgeText,
   stopCountingBadgeText,
 } from './badge-text-listeners';
-import { createSessionFlag, watchBadgeTextSetting } from './badge-text-state';
+import { createSessionFlag } from 'shell/storage/session-flag';
+import { watchBadgeTextSetting } from './badge-text-state';
 import { addTabRecencyListeners, createFocusRecord } from './tab-recency';
 
 // Init background

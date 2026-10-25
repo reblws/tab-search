@@ -1,4 +1,4 @@
-import { POPUP_COMMAND as POPUP_COMMAND_NAME } from '_legacy/utils/action-api';
+import { POPUP_COMMAND as POPUP_COMMAND_NAME } from 'shell/platform/action-api';
 
 // Feature detection for Firefox vs Chrome
 export function supportsCommandUpdate() {

@@ -1,7 +1,7 @@
 // Live preview: the real popup page in a frame, reloaded when a setting it
 // reads changes. The popup reads its settings once, when it opens.
 import debounce from 'debounce';
-import { el, clearChildNodes } from './element';
+import { el, clearChildNodes } from 'shell/dom/element';
 
 export const PREVIEW_URL = '../popup/index.html?preview';
 const RELOAD_DELAY = 150;

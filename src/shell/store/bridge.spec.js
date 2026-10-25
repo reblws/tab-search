@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import { createStore } from 'redux';
-import { CONNECTION_NAME, DISPATCH, UPDATE_STATE } from './constants.js';
+import { CONNECTION_NAME, DISPATCH, UPDATE_STATE } from './protocol.js';
 import { wrapBackgroundStore } from './bridge.js';
 
 // Minimal chrome.runtime with the two listeners the bridge adds

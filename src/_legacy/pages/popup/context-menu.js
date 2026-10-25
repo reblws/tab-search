@@ -1,4 +1,4 @@
-import { TAB_MENU_ITEMS } from '_legacy/tab-menu';
+import { TAB_MENU_ITEMS } from 'core/tabs/menu-items';
 import { navigateResults } from './utils/keyboard';
 import {
   TAB_TYPE,

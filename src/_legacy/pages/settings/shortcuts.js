@@ -11,8 +11,8 @@ import {
   RECORDING_TEXT,
   ERROR_MSG_FINAL_KEY_IS_MODIFIER,
 } from './constants';
-import { el, icon, clearChildNodes, CLOSE_ICON } from './element';
-import * as browserCommands from './browser-commands';
+import { el, icon, clearChildNodes, CLOSE_ICON } from 'shell/dom/element';
+import * as browserCommands from 'shell/platform/commands';
 
 const MODIFIER_KEYS = ['Control', 'Alt', 'Shift', 'Meta'];
 const SLOT_LABELS = { command: 'primary', secondaryCommand: 'secondary' };

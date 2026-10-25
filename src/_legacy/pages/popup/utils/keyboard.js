@@ -12,12 +12,12 @@ import {
   MUTE_TOGGLE,
 } from 'core/keyboard';
 import {
-  deleteTab,
   reloadTab,
   pinTab,
   queryTab,
   muteTab,
-} from './browser';
+} from 'shell/platform/tabs';
+import { deleteTab } from './browser';
 import {
   removeHeadTabListNodeSelectedStyle,
   selectNodeText,
