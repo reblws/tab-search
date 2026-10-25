@@ -64,6 +64,20 @@ describe('Chrome MV3 build', function () {
       await openPopup();
       expect(await inExtension(() => chrome.runtime.getManifest().manifest_version)).toBe(3);
     });
+
+    it('should use the Chrome store name and ship a 128px icon', async function () {
+      await openPopup();
+      expect(await inExtension(() => chrome.runtime.getManifest().name))
+        .toBe('TabSearch: Fuzzy Tab Switcher');
+      // The Chrome Web Store requires a 128x128 icon in the package
+      const size = await inExtension(() => new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve([img.naturalWidth, img.naturalHeight]);
+        img.onerror = () => reject(new Error('icon failed to load'));
+        img.src = chrome.runtime.getURL(chrome.runtime.getManifest().icons['128']);
+      }));
+      expect(size).toEqual([128, 128]);
+    });
   });
 
   describe('Popup shortcut', function () {

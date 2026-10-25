@@ -20,7 +20,8 @@ export async function getExtensionInfo() {
   const infos = await browser.executeAsync((done) => {
     chrome.developerPrivate.getExtensionsInfo(done);
   });
-  const info = infos.find(e => e.name === 'TabSearch');
+  // The Chrome manifest adds a suffix to the name (TabSearch: ...)
+  const info = infos.find(e => e.name.startsWith('TabSearch'));
   if (!info) {
     throw new Error(`TabSearch is not loaded: ${JSON.stringify(infos)}`);
   }

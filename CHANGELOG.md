@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Added Chrome support: the Chrome build now uses Manifest V3 with a service worker background
+  + Listed on Chrome as "TabSearch: Fuzzy Tab Switcher", because other Chrome Web Store listings already use the TabSearch name
+  + Added a 128px icon, which the Chrome Web Store requires
   + Settings, open settings pages, the last query and the tab count badge stay correct after Chrome stops the idle service worker
   + The tab count badge is counted once per browser session instead of every time the service worker wakes up
   + Added `pnpm zip:chrome` to build a Chrome Web Store zip
