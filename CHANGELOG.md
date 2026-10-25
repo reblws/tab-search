@@ -15,7 +15,18 @@
   + Right-clicking a bookmark result opens the bookmark context menu of other add-ons
 - Fixed the most recently used sort with several windows: the tab used last now comes first, even when it's the active tab of another window (#114)
   + Firefox 64 is now the minimum version
-- Redesigned the button that removes a secondary shortcut in settings as an accessible ghost button beside the shortcut
+- Redesigned the settings page
+  + The section menu and "Find a setting" stay pinned to the top of the window. The version and the bug, changelog and source links are in the header
+  + A live preview: the real popup, with your tabs, reloaded as you change settings
+  + The header shows the TabSearch logo
+  + Switches, segmented controls and − / + steppers replace the checkboxes, the popup size dropdown and the number boxes
+  + The two "sort by most recently used" checkboxes are one choice: Never, Before typing or Always
+  + Settings that depend on another one are indented and greyed out while it's off, and keep their values. Turning off fuzzy search used to also turn off sorting by closeness, and turning off recently closed tabs turned off keeping them at the bottom
+  + A section's Reset button no longer reloads the page, and open settings pages follow changes made in other windows
+  + Shortcuts show as keycaps. A taken or invalid combination is explained beside the shortcut instead of in a toast, and each changed shortcut can be reset on its own
+  + The secondary shortcut's remove button is an accessible ghost button beside it
+  + Follows the system's dark mode
+- Fixed pressing a shortcut's own keys again in settings saying it's already used
 - Fixed the mute shortcut not unmuting a muted tab that is playing sound
 - Fixed two clear buttons showing in the Chrome search box
 - Fixed overlay scrollbars covering the popup's close button, e.g. on macOS

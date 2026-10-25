@@ -1,230 +1,387 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>TabSearch Settings</title>
   <link rel="icon" type="image/x-icon" href="../icons/logo-48.png">
   <link href="../lib/acorn-tokens.css" rel="stylesheet">
   <link href="settings.css" rel="stylesheet">
 </head>
 <body>
-    <header class="section-header">
-      <h1>TabSearch Settings</h1>
-      <p class="subheader ralign">
-        Current version: <span id="versioning"></span>
-        <br>
-        <a href="https://github.com/reblws/tab-search/issues">Found a bug?</a> / <a href="https://github.com/reblws/tab-search/blob/main/CHANGELOG.md">Changelog</a> / <a href="https://github.com/reblws/tab-search/">Source</a>
-      </p>
-    </header>
-    <p class="subheader hint">
-      Settings are saved after every change
-    </p>
-    <form>
-      <div>
-        <fieldset>
-          <header>
-            <h2>Appearance</h2>
-            <button class="browser-style">Reset to Defaults</button>
-          </header>
-          <p class="inputs browser-style toggle-row">
-            <input type="checkbox" name="showVisualDeleteTabButton" id="showVisualDeleteTabButton">
-            <label for="showVisualDeleteTabButton">Show visual delete tab button</label>
-          </p>
-          <p class="inputs browser-style toggle-row">
-            <input type="checkbox" name="useFallbackFont" id="useFallbackFont">
-            <label for="useFallbackFont">Use browser's default font (sans-serif)</label>
-          </p>
-
-          <p class="inputs browser-style toggle-row">
-            <input type="checkbox" name="showTabCountBadgeText" id="showTabCountBadgeText">
-            <label for="showTabCountBadgeText">Display total number of tabs above the popup icon</label>
-          </p>
-          <p class="inputs browser-style">
-            <input type="number" min="8" max="32" id="tabTitleSize" name="tabTitleSize">
-            <label for="tabTitleSize">px Tab title font size</label>
-          </p>
-          <p class="inputs browser-style">
-            <input type="number" min="0" max="32" id="tabUrlSize" name="tabUrlSize">
-            <label for="tabUrlSize">px Tab url font size</label>
-          </p>
-          <p class="inputs browser-style toggle-row">
-            <input type="checkbox" name="oneLineTabTitles" id="oneLineTabTitles">
-            <label for="oneLineTabTitles">One line tab titles</label>
-          </p>
-          <p class="inputs browser-style">
-            <label for="popupSize">Popup size: </label>
-            <select name="popupSize" id="popupSize" class="browser-style">
-              <option value="small">Small (300px)</option>
-              <option value="medium">Medium (355px)</option>
-              <option value="large">Large (420px)</option>
-              <option value="xlarge">Extra Large (500px)</option>
-            </select>
-          </p>
-        </fieldset>
-        <fieldset>
-          <header>
-            <h2>Colors</h2>
-            <button class="browser-style">Reset to Defaults</button>
-          </header>
-          <p class="inputs browser-style color-row">
-            <input name="popupBadgeColor" id="popupBadgeColor" type="color">
-            <label for="popupBadgeColor">Tab Count Badge Color</label>
-          </p>
-          <p class="inputs browser-style color-row">
-            <input name="tabColor" id="tabColor" type="color">
-            <label for="tabColor">Tab Color</label>
-          </p>
-          <p class="inputs browser-style color-row">
-            <input name="otherWindowTabColor" id="otherWindowTabColor" type="color">
-            <label for="otherWindowTabColor">Other Window Tab Color</label>
-          </p>
-          <p class="inputs browser-style color-row">
-            <input name="recentlyClosedTabColor" id="recentlyClosedTabColor" type="color">
-            <label for="recentlyClosedTabColor">Recently Closed Tab Color</label>
-          </p>
-          <p class="inputs browser-style color-row">
-            <input name="bookmarkColor" id="bookmarkColor" type="color">
-            <label for="bookmarkColor">Bookmark Color</label>
-          </p>
-          <p class="inputs browser-style color-row">
-            <input name="historyColor" id="historyColor" type="color">
-            <label for="historyColor">History Color</label>
-          </p>
-        </fieldset>
-      </div>
-
-      <fieldset>
-        <header>
-          <h2>Results</h2>
-          <button class="browser-style">Reset to Defaults</button>
-        </header>
-        <p class="inputs toggle-row">
-          <input type="checkbox" name="searchAllWindows" id="searchAllWindows">
-          <label for="searchAllWindows">Show tabs from all windows</label>
-        </p>
-        <p class="inputs toggle-row">
-          <input type="checkbox" name="showBookmarks" id="showBookmarks">
-          <label for="showBookmarks">Show Bookmarks in search results</label>
-        </p>
-        <p class="inputs toggle-row">
-          <input type="checkbox" name="showHistory" id="showHistory">
-          <label for="showHistory">Show History in search results</label>
-        </p>
+  <header class="page-header">
+    <div class="page-header__inner">
+      <div class="brand">
+        <img class="brand__logo" src="../icons/logo-128.png" width="36" height="36" alt="">
         <div>
-          <p class="inputs toggle-row">
-            <input type="checkbox" name="showRecentlyClosed" id="showRecentlyClosed">
-            <label for="showRecentlyClosed">Show Recently Closed Tabs</label>
-          </p>
-          <p class="inputs">
-            <label for="recentlyClosedLimit">Recently closed tabs limit (max. 25): &nbsp;</label>
-            <input class="number-input" type="number" name="recentlyClosedLimit" id="recentlyClosedLimit" min="0" max="25">
-          </p>
-        </div>
-        <p class="inputs toggle-row">
-          <input type="checkbox" name="ignorePinnedTabs" id="ignorePinnedTabs">
-          <label for="ignorePinnedTabs">
-            Hide pinned tabs from search results
-          </label>
-        </p>
-        <p class="inputs toggle-row">
-          <input type="checkbox" name="alwaysShowRecentlyClosedAtTheBottom" id="alwaysShowRecentlyClosedAtTheBottom">
-          <label for="alwaysShowRecentlyClosedAtTheBottom">
-            Always show Recently Closed Tabs at the bottom of the search list
-          </label>
-        </p>
-        <p class="inputs toggle-row">
-          <input type="checkbox" name="showLastQueryOnPopup" id="showLastQueryOnPopup">
-          <label for="showLastQueryOnPopup">
-            Show the last query's results when opening the popup window
-          </label>
-        </p>
-        <p class="inputs toggle-row">
-          <input type="checkbox" name="shouldSortByMostRecentlyUsedOnPopup" id="shouldSortByMostRecentlyUsedOnPopup">
-          <label for="shouldSortByMostRecentlyUsedOnPopup">
-           Sort tabs by most recently used on when search is empty and on popup
-          </label>
-        </p>
-        <p class="inputs browser-style toggle-row">
-          <input type="checkbox" name="shouldSortByMostRecentlyUsedAll" id="shouldSortByMostRecentlyUsedAll">
-          <label for="shouldSortByMostRecentlyUsedAll">
-            <em>Always</em> sort tabs by most recently used
-          </label>
-        </p>
-      </fieldset>
-      <fieldset>
-        <header>
-          <h2>Behavior</h2>
-          <button class="browser-style">Reset to Defaults</button>
-        </header>
-        <p class="inputs browser-style toggle-row">
-          <input type="checkbox" name="showUrls" id="showUrls">
-          <label for="showUrls">Search by url</label>
-        </p>
-        <p class="inputs browser-style toggle-row">
-          <input type="checkbox" name="enableFuzzySearch" id="enableFuzzySearch">
-          <label for="enableFuzzySearch">Enable fuzzy search</label>
-        </p>
-        <p class="inputs browser-style toggle-row">
-          <input type="checkbox" name="shouldSort" id="shouldSort">
-          <label for="shouldSort">Sort results by how close they match the search query</label>
-        </p>
-        <div class="range-container">
-          <label class="range-label" for="threshold">Fuzzy search similarity threshold:</label>
-          <div class="range-control">
-            <span class="range-label-text">Strict</span>
-            <input class="input-range" type="range" min="1" max="9" name="threshold" id="threshold">
-            <span class="range-label-text">Loose</span>
-            <input type="number" class="number-input" min="1" max="9" name="thresholdDisplay" id="thresholdDisplay">
+          <h1>TabSearch Settings</h1>
+          <div class="brand__status">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg>
+            <span>Changes save automatically</span>
           </div>
         </div>
-        <p class="inputs browser-style">
-          <input type="number" min="0" max="150" id="searchDebounceDelay" name="searchDebounceDelay">
-          <label for="searchDebounceDelay">ms delay before searching (lower = faster, higher = smoother)</label>
-        </p>
-      </fieldset>
-    </form>
-    <div id="shortcuts" class="shortcuts">
-      <header>
-        <h2>Keyboard Shortcuts</h2>
-        <button class="browser-style" id="shortcut-reset">Reset to Defaults</button>
-      </header>
-      <p>Here is a list of shortcuts you can customize. Click the input in the left and press your desired key-combination.</p>
-      <p><strong>If your shortcut overlaps with a browser or system shortcut it will not work.</strong></p>
-
-      <div id="browser-shortcut" class="shortcut-subsection">
-        <h3>Popup Shortcut</h3>
-        <p>The keyboard shortcut that opens the TabSearch popup.</p>
-        <div class="browser-shortcut-row">
-          <label for="popup-shortcut-input">Current shortcut:</label>
-          <input type="text" id="popup-shortcut-input" class="shortcut-input" readonly>
-          <button type="button" class="reset-icon" id="browser-shortcut-reset" title="Reset to default">&#x21ba;</button>
-        </div>
-        <p class="browser-shortcut-hint" id="browser-shortcut-hint"></p>
       </div>
-
-      <h3 class="popup-shortcuts-header">Popup Shortcuts</h3>
-      <table id="shortcut-table" class="shortcut-table">
-        <thead class="shortcut-table__header">
-          <tr>
-            <th class="lalign">Name</th>
-            <th class="calign">Primary Shortcut</th>
-            <th class="calign">Secondary Shortcut</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody id="shortcut-table__body" class=" shortcut-table__body ">
-          <!-- filled in with JS -->
-          <tr>
-            <td class="shortcut-table__shortcut">
-              <input type="text" class="shortcut-table__shortcut--input">
-            </td>
-            <td class="shortcut-table__name">Loading....</td>
-            <td class="shortcut-table__description">If you see this there's a problem loading the page.</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="page-meta">
+        <span id="versioning"></span>
+        <a href="https://github.com/reblws/tab-search/issues">Report a bug</a>
+        <a href="https://github.com/reblws/tab-search/blob/main/CHANGELOG.md">Changelog</a>
+        <a href="https://github.com/reblws/tab-search/">Source</a>
+      </div>
     </div>
+  </header>
+
+  <div class="page-nav">
+    <div class="page-nav__inner">
+      <nav class="nav" aria-label="Settings sections">
+        <a class="nav__link" href="#search">Search</a>
+        <a class="nav__link" href="#results">Results</a>
+        <a class="nav__link" href="#appearance">Appearance</a>
+        <a class="nav__link" href="#colors">Colors</a>
+        <a class="nav__link" href="#shortcuts">Keyboard shortcuts</a>
+      </nav>
+      <div class="find">
+        <label for="find" class="visually-hidden">Find a setting</label>
+        <svg class="find__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+        <input id="find" class="find__input" type="search" placeholder="Find a setting" autocomplete="off">
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <main class="main">
+      <p id="find-empty" class="find-empty" hidden>No settings match “<span id="find-empty-query"></span>”.</p>
+
+      <form id="settings-form" class="sections">
+        <section class="card" id="search" aria-labelledby="search-title">
+          <div class="card__header">
+            <div>
+              <h2 id="search-title">Search</h2>
+              <p>How your query is matched against open tabs.</p>
+            </div>
+            <button type="button" class="button" data-reset>Reset</button>
+          </div>
+          <div class="setting">
+            <div class="setting__text">
+              <label for="enableFuzzySearch">Fuzzy search</label>
+              <p id="enableFuzzySearch-desc">Match typos and partial words, so “gthb” still finds GitHub.</p>
+            </div>
+            <input class="switch" type="checkbox" role="switch" id="enableFuzzySearch" name="enableFuzzySearch" aria-describedby="enableFuzzySearch-desc">
+          </div>
+          <div class="setting setting--child setting--wrap" data-depends-on="enableFuzzySearch" data-keywords="threshold similarity">
+            <div class="setting__text">
+              <label for="threshold">Match strictness</label>
+              <p id="threshold-desc">Looser finds more, with more noise.</p>
+            </div>
+            <div class="range">
+              <span class="range__end" aria-hidden="true">Strict</span>
+              <input type="range" min="1" max="9" id="threshold" name="threshold" aria-describedby="threshold-desc">
+              <span class="range__end" aria-hidden="true">Loose</span>
+              <output id="threshold-value" class="range__value" for="threshold"></output>
+            </div>
+          </div>
+          <div class="setting setting--child" data-depends-on="enableFuzzySearch">
+            <div class="setting__text">
+              <label for="shouldSort">Rank by closeness</label>
+              <p id="shouldSort-desc">Put the best matches first instead of keeping tab order.</p>
+            </div>
+            <input class="switch" type="checkbox" role="switch" id="shouldSort" name="shouldSort" aria-describedby="shouldSort-desc">
+          </div>
+          <div class="setting">
+            <div class="setting__text">
+              <label for="showUrls">Search URLs too</label>
+              <p id="showUrls-desc">Match the address as well as the page title.</p>
+            </div>
+            <input class="switch" type="checkbox" role="switch" id="showUrls" name="showUrls" aria-describedby="showUrls-desc">
+          </div>
+          <div class="setting" data-keywords="debounce speed">
+            <div class="setting__text">
+              <label for="searchDebounceDelay">Typing delay</label>
+              <p id="searchDebounceDelay-desc">Milliseconds to wait after a keystroke before searching. Lower feels faster, higher is smoother with many tabs.</p>
+            </div>
+            <div class="stepper">
+              <button type="button" class="stepper__button" data-step="-1" aria-label="Decrease typing delay">−</button>
+              <input class="stepper__input" type="number" min="0" max="150" step="10" id="searchDebounceDelay" name="searchDebounceDelay" aria-describedby="searchDebounceDelay-desc">
+              <span class="stepper__unit" aria-hidden="true">ms</span>
+              <button type="button" class="stepper__button" data-step="1" aria-label="Increase typing delay">+</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="results" aria-labelledby="results-title">
+          <div class="card__header">
+            <div>
+              <h2 id="results-title">Results</h2>
+              <p>What shows up in the list, and in what order.</p>
+            </div>
+            <button type="button" class="button" data-reset>Reset</button>
+          </div>
+          <h3 class="group-label">Sources</h3>
+          <div class="setting">
+            <div class="setting__text">
+              <label for="searchAllWindows">Tabs from all windows</label>
+              <p id="searchAllWindows-desc">Off shows only tabs in the current window.</p>
+            </div>
+            <input class="switch" type="checkbox" role="switch" id="searchAllWindows" name="searchAllWindows" aria-describedby="searchAllWindows-desc">
+          </div>
+          <div class="setting">
+            <div class="setting__text">
+              <label for="showBookmarks">Bookmarks</label>
+              <p id="showBookmarks-desc">Asks for bookmark access the first time you turn it on.</p>
+            </div>
+            <input class="switch" type="checkbox" role="switch" id="showBookmarks" name="showBookmarks" aria-describedby="showBookmarks-desc">
+          </div>
+          <div class="setting">
+            <div class="setting__text">
+              <label for="showHistory">History</label>
+              <p id="showHistory-desc">Asks for history access the first time you turn it on.</p>
+            </div>
+            <input class="switch" type="checkbox" role="switch" id="showHistory" name="showHistory" aria-describedby="showHistory-desc">
+          </div>
+          <div class="setting" data-keywords="sessions">
+            <div class="setting__text">
+              <label for="showRecentlyClosed">Recently closed tabs</label>
+              <p id="showRecentlyClosed-desc">Reopen a tab you just closed straight from the list.</p>
+            </div>
+            <input class="switch" type="checkbox" role="switch" id="showRecentlyClosed" name="showRecentlyClosed" aria-describedby="showRecentlyClosed-desc">
+          </div>
+          <div class="setting setting--child" data-depends-on="showRecentlyClosed">
+            <div class="setting__text">
+              <label for="recentlyClosedLimit">How many to show</label>
+              <p id="recentlyClosedLimit-desc">Up to 25.</p>
+            </div>
+            <div class="stepper">
+              <button type="button" class="stepper__button" data-step="-1" aria-label="Show fewer recently closed tabs">−</button>
+              <input class="stepper__input" type="number" min="0" max="25" id="recentlyClosedLimit" name="recentlyClosedLimit" aria-describedby="recentlyClosedLimit-desc">
+              <button type="button" class="stepper__button" data-step="1" aria-label="Show more recently closed tabs">+</button>
+            </div>
+          </div>
+          <div class="setting setting--child" data-depends-on="showRecentlyClosed">
+            <div class="setting__text">
+              <label for="alwaysShowRecentlyClosedAtTheBottom">Keep them at the bottom</label>
+              <p id="alwaysShowRecentlyClosedAtTheBottom-desc">Even when they match your query better than open tabs.</p>
+            </div>
+            <input class="switch" type="checkbox" role="switch" id="alwaysShowRecentlyClosedAtTheBottom" name="alwaysShowRecentlyClosedAtTheBottom" aria-describedby="alwaysShowRecentlyClosedAtTheBottom-desc">
+          </div>
+          <h3 class="group-label">Order and filtering</h3>
+          <div class="setting setting--wrap" data-keywords="mru recent order">
+            <div class="setting__text">
+              <div class="setting__label" id="mruSort-label">Sort by most recently used</div>
+              <p id="mruSort-desc">“Before typing” sorts the list when the popup opens, then switches to match order.</p>
+            </div>
+            <div class="segmented" role="radiogroup" aria-labelledby="mruSort-label" aria-describedby="mruSort-desc">
+              <input type="radio" name="mruSort" id="mruSort-never" value="never"><label for="mruSort-never">Never</label>
+              <input type="radio" name="mruSort" id="mruSort-popup" value="popup"><label for="mruSort-popup">Before typing</label>
+              <input type="radio" name="mruSort" id="mruSort-always" value="always"><label for="mruSort-always">Always</label>
+            </div>
+          </div>
+          <div class="setting">
+            <div class="setting__text">
+              <label for="ignorePinnedTabs">Hide pinned tabs</label>
+              <p id="ignorePinnedTabs-desc">Leave pinned tabs out of the results.</p>
+            </div>
+            <input class="switch" type="checkbox" role="switch" id="ignorePinnedTabs" name="ignorePinnedTabs" aria-describedby="ignorePinnedTabs-desc">
+          </div>
+          <div class="setting">
+            <div class="setting__text">
+              <label for="showLastQueryOnPopup">Reopen with your last search</label>
+              <p id="showLastQueryOnPopup-desc">The popup opens with the previous query and its results. Cleared when the browser restarts.</p>
+            </div>
+            <input class="switch" type="checkbox" role="switch" id="showLastQueryOnPopup" name="showLastQueryOnPopup" aria-describedby="showLastQueryOnPopup-desc">
+          </div>
+        </section>
+
+        <section class="card" id="appearance" aria-labelledby="appearance-title">
+          <div class="card__header">
+            <div>
+              <h2 id="appearance-title">Appearance</h2>
+              <p>Size and density of the popup. The preview updates as you go.</p>
+            </div>
+            <button type="button" class="button" data-reset>Reset</button>
+          </div>
+          <div class="setting setting--wrap" data-keywords="size">
+            <div class="setting__text">
+              <div class="setting__label" id="popupSize-label">Popup width</div>
+              <p id="popupSize-desc"><span id="popupSize-value"></span> pixels wide.</p>
+            </div>
+            <div class="segmented" role="radiogroup" aria-labelledby="popupSize-label" aria-describedby="popupSize-desc">
+              <input type="radio" name="popupSize" id="popupSize-small" value="small" data-width="300"><label for="popupSize-small">Small</label>
+              <input type="radio" name="popupSize" id="popupSize-medium" value="medium" data-width="355"><label for="popupSize-medium">Medium</label>
+              <input type="radio" name="popupSize" id="popupSize-large" value="large" data-width="420"><label for="popupSize-large">Large</label>
+              <input type="radio" name="popupSize" id="popupSize-xlarge" value="xlarge" data-width="500"><label for="popupSize-xlarge">Extra large</label>
+            </div>
+          </div>
+          <div class="setting">
+            <div class="setting__text">
+              <label for="tabTitleSize">Title size</label>
+              <p id="tabTitleSize-desc">8 to 32 pixels.</p>
+            </div>
+            <div class="stepper">
+              <button type="button" class="stepper__button" data-step="-1" aria-label="Decrease title size">−</button>
+              <input class="stepper__input" type="number" min="8" max="32" id="tabTitleSize" name="tabTitleSize" aria-describedby="tabTitleSize-desc">
+              <span class="stepper__unit" aria-hidden="true">px</span>
+              <button type="button" class="stepper__button" data-step="1" aria-label="Increase title size">+</button>
+            </div>
+          </div>
+          <div class="setting">
+            <div class="setting__text">
+              <label for="tabUrlSize">URL size</label>
+              <p id="tabUrlSize-desc">Set to 0 to hide URLs.</p>
+            </div>
+            <div class="stepper">
+              <button type="button" class="stepper__button" data-step="-1" aria-label="Decrease URL size">−</button>
+              <input class="stepper__input" type="number" min="0" max="32" id="tabUrlSize" name="tabUrlSize" aria-describedby="tabUrlSize-desc">
+              <span class="stepper__unit" aria-hidden="true">px</span>
+              <button type="button" class="stepper__button" data-step="1" aria-label="Increase URL size">+</button>
+            </div>
+          </div>
+          <div class="setting">
+            <div class="setting__text">
+              <label for="oneLineTabTitles">One-line titles</label>
+              <p id="oneLineTabTitles-desc">Cut long titles off instead of wrapping them.</p>
+            </div>
+            <input class="switch" type="checkbox" role="switch" id="oneLineTabTitles" name="oneLineTabTitles" aria-describedby="oneLineTabTitles-desc">
+          </div>
+          <div class="setting" data-keywords="delete x">
+            <div class="setting__text">
+              <label for="showVisualDeleteTabButton">Close button on each tab</label>
+              <p id="showVisualDeleteTabButton-desc">The keyboard shortcut works either way.</p>
+            </div>
+            <input class="switch" type="checkbox" role="switch" id="showVisualDeleteTabButton" name="showVisualDeleteTabButton" aria-describedby="showVisualDeleteTabButton-desc">
+          </div>
+          <div class="setting" data-keywords="typeface sans-serif">
+            <div class="setting__text">
+              <label for="useFallbackFont">Use the browser’s default font</label>
+              <p id="useFallbackFont-desc">Your browser’s sans-serif instead of the system font.</p>
+            </div>
+            <input class="switch" type="checkbox" role="switch" id="useFallbackFont" name="useFallbackFont" aria-describedby="useFallbackFont-desc">
+          </div>
+          <div class="setting" data-keywords="badge number">
+            <div class="setting__text">
+              <label for="showTabCountBadgeText">Tab count on the toolbar icon</label>
+              <p id="showTabCountBadgeText-desc">Shows how many tabs are open.</p>
+            </div>
+            <input class="switch" type="checkbox" role="switch" id="showTabCountBadgeText" name="showTabCountBadgeText" aria-describedby="showTabCountBadgeText-desc">
+          </div>
+        </section>
+
+        <section class="card" id="colors" aria-labelledby="colors-title">
+          <div class="card__header">
+            <div>
+              <h2 id="colors-title">Colors</h2>
+              <p>The stripe beside each result tells you where it comes from.</p>
+            </div>
+            <button type="button" class="button" data-reset>Reset</button>
+          </div>
+          <div class="color-grid">
+            <div class="setting color-setting">
+              <input class="swatch" type="color" id="tabColor" name="tabColor">
+              <div class="setting__text">
+                <label for="tabColor">Open tab</label>
+                <p class="hex" data-hex-for="tabColor"></p>
+              </div>
+            </div>
+            <div class="setting color-setting">
+              <input class="swatch" type="color" id="otherWindowTabColor" name="otherWindowTabColor">
+              <div class="setting__text">
+                <label for="otherWindowTabColor">Tab in another window</label>
+                <p class="hex" data-hex-for="otherWindowTabColor"></p>
+              </div>
+            </div>
+            <div class="setting color-setting">
+              <input class="swatch" type="color" id="recentlyClosedTabColor" name="recentlyClosedTabColor">
+              <div class="setting__text">
+                <label for="recentlyClosedTabColor">Recently closed</label>
+                <p class="hex" data-hex-for="recentlyClosedTabColor"></p>
+              </div>
+            </div>
+            <div class="setting color-setting">
+              <input class="swatch" type="color" id="bookmarkColor" name="bookmarkColor">
+              <div class="setting__text">
+                <label for="bookmarkColor">Bookmark</label>
+                <p class="hex" data-hex-for="bookmarkColor"></p>
+              </div>
+            </div>
+            <div class="setting color-setting">
+              <input class="swatch" type="color" id="historyColor" name="historyColor">
+              <div class="setting__text">
+                <label for="historyColor">History</label>
+                <p class="hex" data-hex-for="historyColor"></p>
+              </div>
+            </div>
+            <div class="setting color-setting">
+              <input class="swatch" type="color" id="popupBadgeColor" name="popupBadgeColor">
+              <div class="setting__text">
+                <label for="popupBadgeColor">Toolbar badge</label>
+                <p class="hex" data-hex-for="popupBadgeColor"></p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </form>
+
+      <section class="sections" id="shortcuts" aria-labelledby="shortcuts-title">
+        <div class="section-intro">
+          <h2 id="shortcuts-title">Keyboard shortcuts</h2>
+          <p>Click a shortcut, then press the keys you want. Press Esc to cancel.</p>
+        </div>
+
+        <div class="card card--padded setting setting--wrap" id="browser-shortcut">
+          <div class="setting__text">
+            <h3 class="card__title" id="popup-shortcut-label">Open TabSearch</h3>
+            <p id="browser-shortcut-hint" class="browser-shortcut-hint">Works from any page.</p>
+          </div>
+          <div class="shortcut-controls">
+            <button type="button" class="key-slot" id="popup-shortcut" aria-describedby="browser-shortcut-hint"></button>
+            <button type="button" class="link-button" id="browser-shortcut-reset">Reset</button>
+          </div>
+          <p class="field-error" id="browser-shortcut-error" role="alert" hidden></p>
+        </div>
+
+        <div class="card">
+          <div class="card__header">
+            <div>
+              <h3 class="card__title">Inside the popup</h3>
+              <p>Each action can have a primary and a secondary shortcut.</p>
+            </div>
+            <button type="button" class="button" id="shortcut-reset">Reset all</button>
+          </div>
+          <div class="shortcut-head" aria-hidden="true">
+            <span class="shortcut-head__name">Action</span>
+            <span class="shortcut-head__slot">Primary</span>
+            <span class="shortcut-head__slot">Secondary</span>
+            <span class="shortcut-head__reset"></span>
+          </div>
+          <div id="shortcut-list" class="shortcut-list"></div>
+        </div>
+
+        <div class="callout">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+          <p>A shortcut that your browser or operating system already uses will not reach TabSearch. If one stops working, pick a different combination.</p>
+        </div>
+      </section>
+
+    </main>
+
+    <aside class="preview" aria-labelledby="preview-title">
+      <div class="preview__head">
+        <h2 id="preview-title">Live preview</h2>
+        <span id="preview-width"></span>
+      </div>
+      <p class="visually-hidden">The popup as it opens with these settings, showing your open tabs.</p>
+      <div class="preview__stage">
+        <div class="preview__toolbar">
+          <div class="preview__urlbar" aria-hidden="true"></div>
+          <div class="preview__icon">
+            <img src="../icons/logo-48.png" width="16" height="16" alt="">
+            <span class="preview__badge" id="preview-badge"></span>
+          </div>
+        </div>
+        <div class="preview__anchor" id="preview-anchor"></div>
+      </div>
+      <ul class="preview__legend" id="preview-legend" aria-label="Result colors"></ul>
+    </aside>
+  </div>
   <script src="../settings_bundle.js"></script>
 </body>
 
