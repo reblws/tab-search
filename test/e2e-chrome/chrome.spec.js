@@ -171,6 +171,66 @@ describe('Chrome MV3 build', function () {
       await browser.waitUntil(async () => (await readSavedGeneralSettings())?.searchAllWindows === original);
     });
 
+    it('should keep an open settings page in sync after the worker stops', async function () {
+      await openSettings();
+      const refreshInput = () => $('#TAB_REFRESH input[data-key="command"]');
+      await (await refreshInput()).waitForExist();
+      const defaultShortcut = await (await refreshInput()).getValue();
+      const valueIsNot = (...values) => async () => !values.includes(await (await refreshInput()).getValue());
+
+      // Rebind Refresh Tab; the row only changes when the worker pushes the new state
+      await (await refreshInput()).click();
+      // Key.Ctrl is Cmd on macOS; TabSearch binds the literal Control key
+      await browser.keys([Key.Control, 'y']);
+      await browser.waitUntil(valueIsNot(defaultShortcut, 'Enter your shortcut...'), {
+        timeoutMsg: 'Refresh Tab was not rebound',
+      });
+
+      // The page stays open while the worker stops, which disconnects its port
+      await stopWorker();
+      await $('#shortcut-reset').click();
+      await browser.waitUntil(async () => (await (await refreshInput()).getValue()) === defaultShortcut, {
+        timeoutMsg: 'The open settings page did not show the reset shortcut after a worker restart',
+      });
+
+      // A second change goes over the new connection
+      await stopWorker();
+      await (await refreshInput()).click();
+      await browser.keys([Key.Control, 'y']);
+      await browser.waitUntil(valueIsNot(defaultShortcut, 'Enter your shortcut...'), {
+        timeoutMsg: 'Refresh Tab was not rebound after a second worker restart',
+      });
+      await $('#shortcut-reset').click();
+      await browser.waitUntil(async () => (await (await refreshInput()).getValue()) === defaultShortcut);
+    });
+
+    it('should catch up on changes made elsewhere when a disconnected settings page is focused', async function () {
+      await openSettings();
+      const refreshInput = () => $('#TAB_REFRESH input[data-key="command"]');
+      await (await refreshInput()).waitForExist();
+      const defaultShortcut = await (await refreshInput()).getValue();
+      await (await refreshInput()).click();
+      await browser.keys([Key.Control, 'y']);
+      await browser.waitUntil(async () => !([defaultShortcut, 'Enter your shortcut...']
+        .includes(await (await refreshInput()).getValue())));
+
+      await stopWorker();
+      // Another page resets the shortcuts: send the message outside this page's store
+      await inExtension(() => chrome.runtime.sendMessage({
+        type: '@@STORE_DISPATCH',
+        action: { type: 'KEYBINDING_DEFAULT_RESET', payload: {} },
+      }));
+      await browser.pause(500);
+      // Nothing pushes the change to this page while its port is down
+      expect(await (await refreshInput()).getValue()).not.toBe(defaultShortcut);
+
+      // Headless windows don't get real focus changes
+      await browser.execute(() => window.dispatchEvent(new Event('focus')));
+      await browser.waitUntil(async () => (await (await refreshInput()).getValue()) === defaultShortcut, {
+        timeoutMsg: 'The settings page did not catch up when it was focused',
+      });
+    });
+
     it('should update the tab count badge when a tab opens while the worker is stopped', async function () {
       await openPopup();
       const tabCount = () => inExtension(() => chrome.tabs.query({ currentWindow: true }).then(t => t.length));

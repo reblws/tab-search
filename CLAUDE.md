@@ -43,7 +43,11 @@ The extension has three webpack entry points in `src/core/pages/`:
 
 ### State Management
 
-Uses Redux with `redux-webext` for cross-context state sharing between popup and background scripts. State is persisted via `redux-persist` with browser storage.
+The Redux store lives in the background. Popup and settings pages mirror it
+through `src/core/store/ui-store.js` (UI side) and `src/core/store/bridge.js`
+(background side), which speak redux-webext's original message protocol
+(`src/core/store/constants.js`). State is persisted via `redux-persist` with
+browser storage.
 
 Redux reducers in `src/core/reducers/`:
 - `fuzzy` - Fuse.js search configuration
@@ -81,9 +85,11 @@ files.
 - `src/core/utils/action-api.js` picks `browser.action` (MV3) or
   `browser.browserAction` (MV2) and the matching popup command name.
 - The background is a service worker that Chrome stops when idle.
-  `src/core/store/bridge.js` replaces redux-webext's background store: it adds
-  listeners synchronously and answers the UI only after redux-persist
-  rehydrates. Tab listeners in `background/index.js` are also added at top level.
+  `src/core/store/bridge.js` adds its listeners synchronously and answers the
+  UI only after redux-persist rehydrates. Tab listeners in
+  `background/index.js` are also added at top level.
+- A stopped worker disconnects every page's port. `ui-store.js` reconnects
+  lazily: before its next dispatch, or when the page is focused or shown.
 - Chrome E2E specs live in `test/e2e-chrome/` (config `wdio.chrome.conf.js`);
   `helpers/chrome.js` can stop the service worker through CDP.
 

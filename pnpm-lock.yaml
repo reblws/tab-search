@@ -29,9 +29,6 @@ importers:
       redux-persist:
         specifier: ^6.0.0
         version: 6.0.0(redux@5.0.1)
-      redux-webext:
-        specifier: ^1.1.2
-        version: 1.1.2
       rgb:
         specifier: ^0.1.0
         version: 0.1.0
@@ -3850,9 +3847,6 @@ packages:
     peerDependenciesMeta:
       react:
         optional: true
-
-  redux-webext@1.1.2:
-    resolution: {integrity: sha512-48YE+Q2n8bXWl5caEPNTbv6JXTarZWR8gS2KPdYwRzZB7pR8drxDbOax/x3/tsE3dCsR20kRBNJvxzUdNG4bBw==}
 
   redux@5.0.1:
     resolution: {integrity: sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==}
@@ -9075,8 +9069,6 @@ snapshots:
   redux-persist@6.0.0(redux@5.0.1):
     dependencies:
       redux: 5.0.1
-
-  redux-webext@1.1.2: {}
 
   redux@5.0.1: {}
 

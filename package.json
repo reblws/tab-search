@@ -32,7 +32,6 @@
     "redux": "^5.0.1",
     "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
-    "redux-webext": "^1.1.2",
     "rgb": "^0.1.0",
     "webextension-polyfill": "^0.12.0"
   },

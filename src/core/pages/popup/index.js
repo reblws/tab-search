@@ -1,6 +1,6 @@
 /* Popup initialization */
 import 'core/polyfill';
-import { createUIStore } from 'redux-webext';
+import { createUIStore } from 'core/store/ui-store';
 import {
   addEventListeners,
   doFinalSideEffects,
