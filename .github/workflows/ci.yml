@@ -2,7 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [next, master]
+    branches: [main, next, master]
+  pull_request:
 
 jobs:
   test:
@@ -17,7 +18,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # 22.4+ for the global WebSocket that evaluateInWorker() uses
+          node-version: 24
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -55,13 +57,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # 22.4+ for the global WebSocket that evaluateInWorker() uses
+          node-version: 24
           cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install
 
+      # Only the pinned version: "stable" moves, and an exact cache hit would
+      # never be re-saved with the new build wdio downloads
       - name: Cache Chrome for Testing
+        if: matrix.chrome-version != 'stable'
         uses: actions/cache@v4
         with:
           path: ${{ runner.temp }}/wdio-cache
