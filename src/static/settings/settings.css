@@ -543,6 +543,20 @@ input[type="range"]:focus::-moz-range-thumb {
     0 1px 0 rgba(255, 255, 255, 0.5) inset;
 }
 
+/* Read-only field that opens the browser's shortcut settings (Chrome) */
+.shortcut-input--external {
+  cursor: pointer;
+}
+
+.shortcut-input--external:hover {
+  border-color: var(--grey-50);
+}
+
+.shortcut-input--external:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--blue-50-a30);
+}
+
 .browser-shortcut-hint {
   font-size: 13px;
   color: var(--secondaryTextColor);

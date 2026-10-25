@@ -5,6 +5,8 @@
 - Added Chrome support: the Chrome build now uses Manifest V3 with a service worker background
   + Settings and the tab count badge stay correct after Chrome stops the idle service worker
   + Added `pnpm zip:chrome` to build a Chrome Web Store zip
+- Changed the Chrome popup shortcut on Mac to <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>L</kbd>: Chrome left <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>L</kbd> unassigned because it conflicts with a browser shortcut
+  + In Chrome, the settings page's popup shortcut field now opens Chrome's Keyboard shortcuts page, the only place it can be changed, and explains when no shortcut is assigned
 - Fixed Copy Tab URL (<kbd>Ctrl</kbd>+<kbd>C</kbd>) copying nothing in Chrome
 - Fixed an empty "()" shortcut hint in the search box when no popup shortcut is set
 - Added a Chrome E2E test suite on Chrome for Testing, also run in CI

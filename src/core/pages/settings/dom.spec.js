@@ -1,3 +1,4 @@
+import sinon from 'sinon';
 import { JSDOM } from 'jsdom';
 import {
   FUZZY,
@@ -12,9 +13,15 @@ describe('settings DOM', function () {
   let dom;
   let document;
 
-  beforeEach(function () {
+  // One document for the whole suite: dom.js keeps the document it was
+  // first imported with
+  before(function () {
     dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+  });
+
+  beforeEach(function () {
     document = dom.window.document;
+    document.body.innerHTML = '';
     global.document = document;
     global.Event = dom.window.Event;
     global.DOMParser = dom.window.DOMParser;
@@ -197,6 +204,52 @@ describe('settings DOM', function () {
     it('should handle empty or null shortcuts', function () {
       expect(formatShortcutForDisplay(null, true)).to.equal('');
       expect(formatShortcutForDisplay('', false)).to.equal('');
+    });
+  });
+
+  describe('initBrowserShortcut without commands.update (Chrome)', function () {
+    function setup(shortcut) {
+      document.body.innerHTML = `
+        <input type="text" id="popup-shortcut-input" readonly>
+        <button id="browser-shortcut-reset"></button>
+        <p id="browser-shortcut-hint"></p>`;
+      browser.runtime.PlatformOs = { MAC: 'mac' };
+      // Both names: action-api.js picks one from the manifest when first imported
+      browser.commands = {
+        getAll: sinon.stub().resolves([
+          { name: '_execute_action', shortcut },
+          { name: '_execute_browser_action', shortcut },
+        ]),
+      };
+    }
+
+    it('should explain where to change an assigned shortcut', async function () {
+      setup('⌃⇧L');
+      const { initBrowserShortcut } = await import('./dom.js');
+      await initBrowserShortcut('mac');
+      expect(document.getElementById('popup-shortcut-input').value).to.equal('⌃⇧L');
+      expect(document.getElementById('browser-shortcut-hint').textContent)
+        .to.equal('Chrome only lets you change this shortcut on its Keyboard shortcuts page.');
+    });
+
+    it('should explain an unassigned shortcut', async function () {
+      setup('');
+      const { initBrowserShortcut } = await import('./dom.js');
+      await initBrowserShortcut('mac');
+      expect(document.getElementById('popup-shortcut-input').value).to.equal('Not set');
+      expect(document.getElementById('browser-shortcut-hint').textContent)
+        .to.match(/^No shortcut is assigned.*Keyboard shortcuts page\.$/);
+    });
+
+    it('should open the browser shortcut settings from the field', async function () {
+      setup('⌃⇧L');
+      const { initBrowserShortcut } = await import('./dom.js');
+      await initBrowserShortcut('mac');
+      const input = document.getElementById('popup-shortcut-input');
+      input.dispatchEvent(new dom.window.MouseEvent('click'));
+      input.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Enter' }));
+      expect(browser.tabs.create.callCount).to.equal(2);
+      expect(browser.tabs.create.firstCall.args[0]).to.deep.equal({ url: 'chrome://extensions/shortcuts' });
     });
   });
 });

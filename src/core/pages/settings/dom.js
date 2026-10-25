@@ -468,13 +468,17 @@ export async function initBrowserShortcut(os) {
   const supportsUpdate = browserCommands.supportsCommandUpdate();
 
   // Load current shortcut
+  let currentShortcut = '';
   try {
-    const currentShortcut = await browserCommands.getPopupShortcut();
+    currentShortcut = await browserCommands.getPopupShortcut();
     input.value = formatShortcutForDisplay(currentShortcut, isMac) || 'Not set';
   } catch (err) {
     console.error('Failed to load popup shortcut:', err);
     input.value = 'Error loading';
   }
+
+  const openBrowserShortcutSettings = () =>
+    browser.tabs.create({ url: browserCommands.getBrowserShortcutSettingsUrl() });
 
   function addBrowserSettingsLink(element, text = 'Or manage in browser settings') {
     const link = d.createElement('a');
@@ -482,7 +486,7 @@ export async function initBrowserShortcut(os) {
     link.textContent = text;
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      browser.tabs.create({ url: browserCommands.getBrowserShortcutSettingsUrl() });
+      openBrowserShortcutSettings();
     });
     element.appendChild(link);
   }
@@ -504,9 +508,26 @@ export async function initBrowserShortcut(os) {
     setupBrowserShortcutInput(input, isMac);
     resetButton.addEventListener('click', handleReset);
   } else {
-    // Chrome: Read-only with link to browser settings
+    // Chrome: commands.update() doesn't exist, so the field can only take
+    // you to Chrome's own shortcuts page
     resetButton.style.display = 'none';
-    addBrowserSettingsLink(hintElement, 'Manage shortcuts in browser settings');
+    input.classList.add('shortcut-input--external');
+    input.title = 'Change on Chrome\'s Keyboard shortcuts page';
+    input.setAttribute('aria-describedby', hintElement.id);
+    input.addEventListener('click', openBrowserShortcutSettings);
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openBrowserShortcutSettings();
+      }
+    });
+    // Chrome leaves a suggested key unassigned if it collides with another
+    // shortcut
+    hintElement.textContent = currentShortcut
+      ? 'Chrome only lets you change this shortcut on its '
+      : 'No shortcut is assigned, maybe because the default conflicts with another shortcut. Set one on Chrome\'s ';
+    addBrowserSettingsLink(hintElement, 'Keyboard shortcuts page');
+    hintElement.append('.');
   }
 }
 

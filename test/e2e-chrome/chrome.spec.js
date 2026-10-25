@@ -21,6 +21,12 @@ function readSavedGeneralSettings() {
     .then(({ 'persist:root': root }) => (root ? JSON.parse(JSON.parse(root).general) : null)));
 }
 
+// The popup shortcut as chrome.commands reports it ('' when not assigned)
+function popupShortcut() {
+  return inExtension(() => chrome.commands.getAll()
+    .then(cmds => cmds.find(c => c.name === '_execute_action').shortcut));
+}
+
 function visibleTabTitles() {
   return browser.execute(() => Array.from(document.querySelectorAll('.tab-list .tab-object'))
     .filter(el => el.offsetParent !== null)
@@ -50,6 +56,59 @@ describe('Chrome MV3 build', function () {
     it('should use Manifest V3', async function () {
       await openPopup();
       expect(await inExtension(() => chrome.runtime.getManifest().manifest_version)).toBe(3);
+    });
+  });
+
+  describe('Popup shortcut', function () {
+    it('should assign the suggested popup shortcut as an active binding', async function () {
+      // Chrome lists a suggested key that collides with a browser shortcut on
+      // chrome://extensions/shortcuts, but leaves it inactive
+      const { commands } = await getExtensionInfo();
+      const command = commands.find(c => c.name === '_execute_action');
+      expect(command.keybinding).not.toBe('');
+      expect(command.isActive).toBe(true);
+    });
+
+    it('should show the popup shortcut on the settings page', async function () {
+      await openSettings();
+      const shortcut = await popupShortcut();
+      expect(shortcut).not.toBe('');
+      await browser.waitUntil(async () => (await $('#popup-shortcut-input').getValue()) === shortcut, {
+        timeoutMsg: `The settings page did not show ${shortcut}`,
+      });
+    });
+
+    it('should open Chrome\'s shortcuts page from the read-only shortcut field', async function () {
+      await openSettings();
+      const input = await $('#popup-shortcut-input');
+      await browser.waitUntil(async () => (await input.getValue()) !== '');
+      const before = await input.getValue();
+      expect(await input.getAttribute('readonly')).not.toBe(null);
+      expect(await $('#browser-shortcut-reset').isDisplayed()).toBe(false);
+      expect(await $('#browser-shortcut-hint').getText()).toContain('Keyboard shortcuts');
+
+      const shortcutsTargets = async () => (await browser.sendCommandAndGetResult('Target.getTargets', {}))
+        .targetInfos.filter(t => t.url.startsWith('chrome://extensions/shortcuts'));
+      expect(await shortcutsTargets()).toEqual([]);
+      const settingsHandle = await browser.getWindowHandle();
+      await input.click();
+      await browser.waitUntil(async () => (await shortcutsTargets()).length === 1, {
+        timeoutMsg: 'Clicking the shortcut field did not open chrome://extensions/shortcuts',
+      });
+      await browser.switchToWindow(settingsHandle);
+      // Typing a shortcut doesn't change the field
+      await browser.keys([Key.Control, Key.Shift, 'k']);
+      expect(await input.getValue()).toBe(before);
+
+      // Keyboard users can open it too
+      await closeTab((await shortcutsTargets())[0].targetId);
+      await browser.execute(el => el.focus(), input);
+      await browser.keys([Key.Enter]);
+      await browser.waitUntil(async () => (await shortcutsTargets()).length === 1, {
+        timeoutMsg: 'Enter on the shortcut field did not open chrome://extensions/shortcuts',
+      });
+      await closeTab((await shortcutsTargets())[0].targetId);
+      await browser.switchToWindow(settingsHandle);
     });
   });
 
@@ -97,17 +156,13 @@ describe('Chrome MV3 build', function () {
       }, { timeoutMsg: 'Search did not put Beta Fixture first' });
     });
 
-    it('should show the MV3 shortcut in the search placeholder only when set', async function () {
-      const shortcut = await inExtension(() => chrome.commands.getAll()
-        .then(cmds => cmds.find(c => c.name === '_execute_action').shortcut));
-      await browser.pause(500);
-      const placeholder = await $('input.search').getAttribute('placeholder');
-      if (shortcut) {
-        expect(placeholder).toContain('(');
-      } else {
-        // Chrome leaves suggested keys unset for command-line loaded extensions
-        expect(placeholder).toBe('Search for a tab');
-      }
+    it('should show the popup shortcut in the search placeholder', async function () {
+      const shortcut = await popupShortcut();
+      expect(shortcut).not.toBe('');
+      await browser.waitUntil(async () => (await $('input.search').getAttribute('placeholder'))
+        === `Search for a tab (${shortcut})`, {
+        timeoutMsg: `The placeholder did not show ${shortcut}`,
+      });
     });
 
     it('should copy the selected tab URL with Ctrl+C', async function () {
