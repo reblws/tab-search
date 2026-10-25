@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.0 (2026-10-25)
 
 - Added Chrome support: the Chrome build now uses Manifest V3 with a service worker background
   + Listed on Chrome as "TabSearch: Fuzzy Tab Switcher", because other Chrome Web Store listings already use the TabSearch name
