@@ -75,8 +75,8 @@ Redux reducers in `src/core/reducers/`:
 
 Manifests are merged at build time via `scripts/build-manifest.js`. The merge
 is shallow, so keys that differ per browser (`manifest_version`, `background`,
-`browser_action`/`action`, `commands`, `options_ui`) live only in the browser
-files.
+`browser_action`/`action`, `commands`, `options_ui`, `permissions`) live only
+in the browser files.
 
 ### Chrome (MV3) Notes
 

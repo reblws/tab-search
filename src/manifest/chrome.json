@@ -2,6 +2,12 @@
   "manifest_version": 3,
   "name": "TabSearch: Fuzzy Tab Switcher",
   "minimum_chrome_version": "123",
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "storage",
+    "sessions"
+  ],
   "action": {
     "default_icon": "icons/logo-48.png",
     "default_title": "TabSearch",

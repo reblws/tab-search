@@ -5,6 +5,7 @@ import {
   deleteButton,
   d,
   prefsBtn,
+  tabList,
   TYPE_COLOR_PROPERTY_MAP,
   COLOR_PROPERTY_TYPE_MAP,
   POPUP_SIZE_PRESETS,
@@ -31,6 +32,11 @@ import {
   handleTabClick,
   updateLastQueryOnKeydown,
 } from './event-callbacks';
+import {
+  overrideResultContextMenu,
+  updateMenuTitles,
+  runMenuItem,
+} from './context-menu';
 
 function openSettingsPage() {
   createTab({
@@ -93,6 +99,12 @@ export function addEventListeners(store) {
   deleteButton.addEventListener('click', clearInput);
   searchInput.addEventListener('input', handleSearchInput);
   prefsBtn.addEventListener('click', openSettingsPage);
+  // Firefox only: right-clicking a result opens its tab menu
+  tabList.addEventListener('contextmenu', overrideResultContextMenu, true);
+  if (browser.menus) {
+    browser.menus.onShown.addListener(updateMenuTitles);
+    browser.menus.onClicked.addListener(info => runMenuItem(info, store.getState));
+  }
 
   if (showLastQueryOnPopup) {
     searchInput.addEventListener('input', updateLastQueryOnKeydown(store));

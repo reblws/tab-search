@@ -21,6 +21,13 @@ input[type="search"] {
   color: var(--color-text-primary);
 }
 
+/* Chrome draws its own clear button next to ours */
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
 header {
   display: flex;
   flex: 0 0 auto;

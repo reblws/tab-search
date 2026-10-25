@@ -2,6 +2,7 @@ import 'core/polyfill';
 import { initialColorSettings as initialColors } from 'core/reducers/defaults';
 import { rehydrated } from 'core/store';
 import { setBadgeBackgroundColor } from 'core/utils/action-api';
+import { createTabMenuItems } from 'core/tab-menu';
 import backgroundStore from './store';
 import {
   addBadgeTextListeners,
@@ -25,3 +26,6 @@ watchBadgeTextSetting({
   setBadgeBackgroundColor,
   defaultColor: initialColors.popupBadgeColor,
 });
+
+// Firefox only: TabSearch's items in the tab menu of a result
+createTabMenuItems();
