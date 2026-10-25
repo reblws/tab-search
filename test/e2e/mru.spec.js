@@ -8,10 +8,11 @@ describe('Most recently used order', function () {
 
   before(async function () {
     await openSettings();
-    const checkbox = await $('#shouldSortByMostRecentlyUsedOnPopup');
-    await checkbox.waitForExist({ timeout: 5000 });
-    if (!(await checkbox.isSelected())) {
-      await browser.execute(() => document.getElementById('shouldSortByMostRecentlyUsedOnPopup').click());
+    // "Before typing" and "Always" both sort the list when the popup opens
+    const beforeTyping = await $('#mruSort-popup');
+    await beforeTyping.waitForExist({ timeout: 5000 });
+    if (!(await beforeTyping.isSelected()) && !(await $('#mruSort-always').isSelected())) {
+      await browser.execute(() => document.getElementById('mruSort-popup').click());
     }
     // Let the setting reach the background store
     await browser.pause(500);
