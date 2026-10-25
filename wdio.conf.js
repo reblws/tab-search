@@ -28,6 +28,9 @@ export const config = {
         args: process.env.HEADLESS !== 'false' ? ['-headless'] : [],
         prefs: {
           'extensions.webextensions.uuids': JSON.stringify({ [GECKO_ID]: EXTENSION_UUID }),
+          // Overlay scrollbars, as on macOS, drawn even when not scrolling
+          'ui.useOverlayScrollbars': 1,
+          'layout.testing.overlay-scrollbars.always-visible': true,
         },
       },
     },

@@ -9,6 +9,7 @@ import {
   TYPE_COLOR_PROPERTY_MAP,
   COLOR_PROPERTY_TYPE_MAP,
   POPUP_SIZE_PRESETS,
+  OVERLAY_SCROLLBAR_CLASSNAME,
 } from './constants';
 import {
   scrollIfNeeded,
@@ -53,7 +54,17 @@ export function applyPopupSize(store) {
   root.style.setProperty('--tabListHeight', preset.tabListHeight);
   root.style.setProperty('--searchWidth', preset.searchWidth);
   root.style.setProperty('--headerHeight', preset.headerHeight);
+  markOverlayScrollbar();
   return store;
+}
+
+// Overlay scrollbars (macOS, GTK) take no layout space and draw over the
+// right edge of the list, on top of the close buttons
+function markOverlayScrollbar() {
+  const style = getComputedStyle(tabList);
+  const borders = parseFloat(style.borderLeftWidth) + parseFloat(style.borderRightWidth);
+  const scrollbarWidth = tabList.offsetWidth - tabList.clientWidth - borders;
+  tabList.classList.toggle(OVERLAY_SCROLLBAR_CLASSNAME, scrollbarWidth === 0);
 }
 
 export function overrideDomStyleSheets(store) {

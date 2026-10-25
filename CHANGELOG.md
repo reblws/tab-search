@@ -17,6 +17,7 @@
 - Redesigned the button that removes a secondary shortcut in settings as an accessible ghost button beside the shortcut
 - Fixed the mute shortcut not unmuting a muted tab that is playing sound
 - Fixed two clear buttons showing in the Chrome search box
+- Fixed overlay scrollbars covering the popup's close button, e.g. on macOS
 - Fixed Copy Tab URL (<kbd>Ctrl</kbd>+<kbd>C</kbd>) copying nothing in Chrome
 - Fixed an empty "()" shortcut hint in the search box when no popup shortcut is set
 - Fixed new tab pages and private tabs showing up in recently closed tabs
