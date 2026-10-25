@@ -15,7 +15,8 @@
   + Right-clicking a bookmark result opens the bookmark context menu of other add-ons
   + Firefox 64 is now the minimum version
 - Redesigned the settings page
-  + A side menu with "Find a setting", and a live preview of the popup that follows your changes
+  + A side menu with "Find a setting", and a live preview: the real popup, with your tabs, reloaded as you change settings
+  + The header shows the TabSearch logo
   + Switches, segmented controls and − / + steppers replace the checkboxes, the popup size dropdown and the number boxes
   + The two "sort by most recently used" checkboxes are one choice: Never, Before typing or Always
   + Settings that depend on another one are indented and greyed out while it's off, and keep their values. Turning off fuzzy search used to also turn off sorting by closeness, and turning off recently closed tabs turned off keeping them at the bottom

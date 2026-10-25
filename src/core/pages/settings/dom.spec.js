@@ -35,8 +35,9 @@ const FIXTURE = `
     <input type="radio" name="mruSort" id="mruSort-always" value="always">
   </section>
   <section id="appearance">
-    <input type="radio" name="popupSize" id="popupSize-small" value="small">
-    <input type="radio" name="popupSize" id="popupSize-medium" value="medium">
+    <input type="radio" name="popupSize" id="popupSize-small" value="small" data-width="300">
+    <input type="radio" name="popupSize" id="popupSize-medium" value="medium" data-width="355">
+    <span id="popupSize-value"></span>
     <input type="color" id="tabColor" name="tabColor"><p data-hex-for="tabColor"></p>
   </section>`;
 
@@ -121,6 +122,7 @@ describe('settings form', function () {
       expect($('recentlyClosedLimit').value).to.equal('5');
       expect($('mruSort-popup').checked).to.equal(true);
       expect($('popupSize-medium').checked).to.equal(true);
+      expect($('popupSize-value').textContent).to.equal('355');
       expect(document.querySelector('[data-hex-for]').textContent).to.equal('#0060df');
       expect(dispatched).to.deep.equal([]);
     });

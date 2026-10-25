@@ -1,140 +1,133 @@
-// A sample of the popup, redrawn from the settings whenever they change
-import { el, icon, clearChildNodes, CLOSE_ICON } from './element';
+// Live preview: the real popup page in a frame, reloaded when a setting it
+// reads changes. The popup reads its settings once, when it opens.
+import debounce from 'debounce';
+import { el, clearChildNodes } from './element';
 
-// Popup widths, as in POPUP_SIZE_PRESETS (popup/constants.js)
-export const POPUP_WIDTHS = {
-  small: 300,
-  medium: 355,
-  large: 420,
-  xlarge: 500,
-};
+export const PREVIEW_URL = '../popup/index.html?preview';
+const RELOAD_DELAY = 150;
+const READY_TIMEOUT = 2000;
 
-const TYPES = [
-  ['tab', 'tabColor', 'Open tab'],
-  ['other', 'otherWindowTabColor', 'Tab in another window'],
-  ['recent', 'recentlyClosedTabColor', 'Recently closed'],
-  ['bookmark', 'bookmarkColor', 'Bookmark'],
-  ['history', 'historyColor', 'History'],
+const LEGEND = [
+  ['tabColor', 'Open tab'],
+  ['otherWindowTabColor', 'Tab in another window'],
+  ['recentlyClosedTabColor', 'Recently closed'],
+  ['bookmarkColor', 'Bookmark'],
+  ['historyColor', 'History'],
 ];
 
-const sample = (title, url, letter, favicon, type, pinned = false) => ({
-  title, url, letter, favicon, type, pinned,
-});
+// The parts of the state the popup reads; keyboard shortcuts don't show
+const popupState = ({ general, fuzzy, color, state }) =>
+  JSON.stringify({ general, fuzzy, color, state });
 
-const OPEN_TABS = [
-  sample('Pull requests · reblws/tab-search', 'github.com/reblws/tab-search/pulls', 'G', '#24292f', 'tab', true),
-  sample(
-    'tabs.query() – WebExtensions JavaScript APIs reference and examples | MDN',
-    'developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query',
-    'M', '#15141a', 'tab',
-  ),
-  sample('Team calendar — week of Oct 26', 'calendar.example.com/week', 'C', '#0b7a75', 'other'),
-  sample('Fuse.js | Lightweight fuzzy-search library with zero dependencies', 'fusejs.io', 'F', '#b54708', 'tab'),
-];
-const BOOKMARK = sample('Add-on Developer Hub', 'addons.mozilla.org/developers', 'A', '#0060df', 'bookmark');
-const HISTORY = sample('Migrate to Manifest V3', 'developer.chrome.com/docs/extensions/develop/migrate', 'C', '#1a56db', 'history');
-const CLOSED = sample('Release notes draft', 'docs.example.com/release-notes', 'D', '#5b5b66', 'recent');
-
-// The sample results the popup would list for these settings
-export function previewItems(general) {
-  const items = OPEN_TABS
-    .filter(({ pinned }) => !(pinned && general.ignorePinnedTabs))
-    .filter(({ type }) => type !== 'other' || general.searchAllWindows);
-  if (general.showBookmarks) items.push(BOOKMARK);
-  if (general.showHistory) items.push(HISTORY);
-  if (general.showRecentlyClosed && general.recentlyClosedLimit > 0) {
-    if (general.alwaysShowRecentlyClosedAtTheBottom) {
-      items.push(CLOSED);
-    } else {
-      items.splice(1, 0, CLOSED);
-    }
-  }
-  return items;
+export function popupStateChanged(prev, next) {
+  return popupState(prev) !== popupState(next);
 }
 
-function itemNode(item, index, { general, color }) {
-  const stripe = TYPES.find(([type]) => type === item.type)[1];
-  const node = el(
-    'li',
-    { className: index === 0 ? 'preview__item is-selected' : 'preview__item' },
-    el('span', { className: 'preview__favicon', 'aria-hidden': 'true' }, item.letter),
-    el(
-      'div',
-      { className: 'preview__text' },
-      el('div', { className: 'preview__title' }, item.title),
-      general.tabUrlSize > 0 ? el('div', { className: 'preview__url' }, item.url) : null,
-    ),
-    general.showVisualDeleteTabButton
-      ? el('span', { className: 'preview__close', 'aria-hidden': 'true' }, icon(CLOSE_ICON, 12, 2.6))
-      : null,
-  );
-  node.style.borderLeftColor = color[stripe];
-  node.firstChild.style.backgroundColor = item.favicon;
-  return node;
-}
-
-export function renderPreview(state, tabCount) {
+// Toolbar badge and color legend beside the popup
+export function renderToolbar(state, tabCount) {
   const { general, color } = state;
-  const width = POPUP_WIDTHS[general.popupSize] || POPUP_WIDTHS.medium;
-  const popup = document.getElementById('preview-popup');
-  const list = document.getElementById('preview-list');
   const badge = document.getElementById('preview-badge');
-  const legend = document.getElementById('preview-legend');
-  if (!popup) return;
-
-  popup.style.width = `${width}px`;
-  popup.style.fontFamily = general.useFallbackFont ? 'sans-serif' : '';
-  popup.style.setProperty('--title-size', `${general.tabTitleSize}px`);
-  popup.style.setProperty('--url-size', `${general.tabUrlSize}px`);
-  popup.classList.toggle('is-one-line', general.oneLineTabTitles);
-  const sizeValue = document.getElementById('popupSize-value');
-  if (sizeValue) sizeValue.textContent = width;
-
-  clearChildNodes(list);
-  previewItems(general).forEach((item, i) => list.append(itemNode(item, i, state)));
-
   badge.hidden = !general.showTabCountBadgeText || tabCount === '';
   badge.textContent = tabCount;
   badge.style.backgroundColor = color.popupBadgeColor;
 
+  const legend = document.getElementById('preview-legend');
   clearChildNodes(legend);
-  TYPES.forEach(([, key, label]) => {
+  LEGEND.forEach(([key, label]) => {
     const swatch = el('span', { className: 'preview__legend-swatch', 'aria-hidden': 'true' });
     swatch.style.backgroundColor = color[key];
     legend.append(el('li', {}, swatch, label));
   });
-  fitPopup(width);
 }
 
-// Shrinks the sample popup when it's wider than the preview column
-export function fitPopup(width) {
-  const popup = document.getElementById('preview-popup');
-  const anchor = popup.parentElement;
+// Shrinks the popup when it's wider than the preview column
+export function fitFrame(frame, width, popupWidth = width) {
+  const anchor = document.getElementById('preview-anchor');
   const label = document.getElementById('preview-width');
   const style = window.getComputedStyle(anchor);
   const room = anchor.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
-  const scale = room > 0 ? Math.min(1, room / width) : 1;
-  // Measure the popup at its natural height
-  anchor.style.height = '';
-  popup.style.transform = scale < 1 ? `scale(${scale})` : '';
+  const scale = room > 0 && width > 0 ? Math.min(1, room / width) : 1;
+  frame.style.transform = scale < 1 ? `scale(${scale})` : '';
   anchor.style.height = scale < 1
-    ? `${popup.offsetHeight * scale + parseFloat(style.paddingTop)}px`
+    ? `${frame.offsetHeight * scale + parseFloat(style.paddingTop)}px`
     : '';
   label.textContent = scale < 1
-    ? `${width} px wide, shown at ${Math.floor(scale * 100)}%`
-    : `${width} px wide`;
+    ? `${popupWidth} px wide, shown at ${Math.floor(scale * 100)}%`
+    : `${popupWidth} px wide`;
+}
+
+// Resolves once the popup has drawn its list (or gives up after a while)
+function whenListDrawn(frame) {
+  const started = Date.now();
+  return new Promise((resolve) => {
+    (function check() {
+      const list = frame.contentDocument?.querySelector('.tab-list');
+      if (list?.firstElementChild || Date.now() - started > READY_TIMEOUT) {
+        resolve();
+      } else {
+        setTimeout(check, 30);
+      }
+    }());
+  });
+}
+
+function createFrame() {
+  return el('iframe', {
+    className: 'preview__frame',
+    src: PREVIEW_URL,
+    title: 'Popup preview',
+    inert: true,
+    tabindex: '-1',
+  });
 }
 
 export function initPreview(store) {
+  const anchor = document.getElementById('preview-anchor');
+  let frame = null;
+  // Frame width (the popup's body and its border) and the popup's own width
+  let frameWidth = 0;
+  let popupWidth = 0;
   let tabCount = '';
-  const render = () => renderPreview(store.getState(), tabCount);
-  render();
-  store.subscribe(render);
+  let prevState = store.getState();
+
+  // Loads the popup in a new frame over the current one and swaps them once
+  // it has drawn, so the preview doesn't flash
+  function load() {
+    const next = createFrame();
+    next.classList.add('is-loading');
+    anchor.append(next);
+    next.addEventListener('load', () => {
+      whenListDrawn(next).then(() => {
+        // The popup's body box; the frame's scroll size is at least its
+        // current size, so it can't tell a smaller popup
+        const { body } = next.contentDocument;
+        const box = body.getBoundingClientRect();
+        frameWidth = Math.ceil(box.right);
+        popupWidth = parseFloat(window.getComputedStyle(body).width);
+        next.style.width = `${frameWidth}px`;
+        next.style.height = `${Math.ceil(box.bottom)}px`;
+        if (frame) frame.remove();
+        frame = next;
+        frame.classList.remove('is-loading');
+        fitFrame(frame, frameWidth, popupWidth);
+      });
+    }, { once: true });
+  }
+  const reload = debounce(load, RELOAD_DELAY);
+
+  renderToolbar(prevState, tabCount);
+  load();
+  store.subscribe(() => {
+    const state = store.getState();
+    renderToolbar(state, tabCount);
+    if (popupStateChanged(prevState, state)) reload();
+    prevState = state;
+  });
   window.addEventListener('resize', () => {
-    fitPopup(POPUP_WIDTHS[store.getState().general.popupSize] || POPUP_WIDTHS.medium);
+    if (frame) fitFrame(frame, frameWidth, popupWidth);
   });
   browser.tabs.query({}).then((tabs) => {
     tabCount = tabs.length;
-    render();
+    renderToolbar(store.getState(), tabCount);
   }).catch(() => {});
 }

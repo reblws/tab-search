@@ -220,16 +220,36 @@ describe('Settings', function () {
   });
 
   describe('Live preview', function () {
-    it('should follow the popup width and title settings', async function () {
-      const popup = await $('#preview-popup');
-      await browser.execute(() => document.getElementById('popupSize-small').click());
-      await browser.waitUntil(async () => (await popup.getCSSProperty('width')).value === '300px', {
-        timeoutMsg: 'The preview did not take the small width',
+    // The popup page in the preview frame, once it has drawn its list
+    const popupInFrame = () => browser.execute(() => {
+      const frame = document.querySelector('.preview__frame:not(.is-loading)');
+      const doc = frame?.contentDocument;
+      if (!doc?.querySelector('.tab-list .tab-object')) return null;
+      return {
+        url: frame.contentWindow.location.pathname,
+        bodyWidth: doc.body.offsetWidth,
+        frameWidth: frame.offsetWidth,
+        hasFocus: doc.hasFocus(),
+      };
+    });
+
+    it('should show the real popup with the current settings', async function () {
+      await browser.waitUntil(async () => (await popupInFrame()) !== null, {
+        timeoutMsg: 'The preview did not show the popup',
       });
+      const popup = await popupInFrame();
+      expect(popup.url).toBe('/popup/index.html');
+      expect(popup.hasFocus).toBe(false);
+
+      await browser.execute(() => document.getElementById('popupSize-small').click());
+      await browser.waitUntil(async () => (await popupInFrame())?.bodyWidth === 302, {
+        timeoutMsg: 'The preview did not reload with the small popup',
+      });
+      expect((await popupInFrame()).frameWidth).toBe(302);
       expect(await $('#popupSize-value').getText()).toBe('300');
 
       await browser.execute(() => document.getElementById('popupSize-medium').click());
-      await browser.waitUntil(async () => (await popup.getCSSProperty('width')).value === '355px');
+      await browser.waitUntil(async () => (await popupInFrame())?.bodyWidth === 357);
     });
   });
 

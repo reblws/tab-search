@@ -13,9 +13,7 @@
   <header class="page-header">
     <div class="page-header__inner">
       <div class="brand">
-        <div class="brand__mark" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
-        </div>
+        <img class="brand__logo" src="../icons/logo-128.png" width="36" height="36" alt="">
         <div>
           <h1>TabSearch Settings</h1>
           <div class="brand__version">Version <span id="versioning"></span></div>
@@ -206,10 +204,10 @@
               <p id="popupSize-desc"><span id="popupSize-value"></span> pixels wide.</p>
             </div>
             <div class="segmented" role="radiogroup" aria-labelledby="popupSize-label" aria-describedby="popupSize-desc">
-              <input type="radio" name="popupSize" id="popupSize-small" value="small"><label for="popupSize-small">Small</label>
-              <input type="radio" name="popupSize" id="popupSize-medium" value="medium"><label for="popupSize-medium">Medium</label>
-              <input type="radio" name="popupSize" id="popupSize-large" value="large"><label for="popupSize-large">Large</label>
-              <input type="radio" name="popupSize" id="popupSize-xlarge" value="xlarge"><label for="popupSize-xlarge">Extra large</label>
+              <input type="radio" name="popupSize" id="popupSize-small" value="small" data-width="300"><label for="popupSize-small">Small</label>
+              <input type="radio" name="popupSize" id="popupSize-medium" value="medium" data-width="355"><label for="popupSize-medium">Medium</label>
+              <input type="radio" name="popupSize" id="popupSize-large" value="large" data-width="420"><label for="popupSize-large">Large</label>
+              <input type="radio" name="popupSize" id="popupSize-xlarge" value="xlarge" data-width="500"><label for="popupSize-xlarge">Extra large</label>
             </div>
           </div>
           <div class="setting">
@@ -377,23 +375,16 @@
         <h2 id="preview-title">Live preview</h2>
         <span id="preview-width"></span>
       </div>
+      <p class="visually-hidden">The popup as it opens with these settings, showing your open tabs.</p>
       <div class="preview__stage">
         <div class="preview__toolbar">
           <div class="preview__urlbar" aria-hidden="true"></div>
           <div class="preview__icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+            <img src="../icons/logo-48.png" width="16" height="16" alt="">
             <span class="preview__badge" id="preview-badge"></span>
           </div>
         </div>
-        <div class="preview__anchor">
-          <div class="preview__popup" id="preview-popup">
-            <div class="preview__search">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
-              <span>Search tabs</span>
-            </div>
-            <ul class="preview__list" id="preview-list" aria-label="Sample results"></ul>
-          </div>
-        </div>
+        <div class="preview__anchor" id="preview-anchor"></div>
       </div>
       <ul class="preview__legend" id="preview-legend" aria-label="Result colors"></ul>
     </aside>

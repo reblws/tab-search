@@ -166,6 +166,11 @@ function updateDerivedText(root) {
   if (threshold && output) {
     output.textContent = (threshold.value / 10).toFixed(1);
   }
+  const size = root.querySelector('input[name="popupSize"]:checked');
+  const sizeValue = root.querySelector('#popupSize-value');
+  if (size && sizeValue) {
+    sizeValue.textContent = size.dataset.width;
+  }
   root.querySelectorAll('[data-hex-for]').forEach((node) => {
     const input = document.getElementById(node.dataset.hexFor);
     if (input) node.textContent = input.value;
