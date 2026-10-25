@@ -11,6 +11,7 @@
 - Changed the Chrome popup shortcut on Mac to <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>L</kbd>: Chrome left <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>L</kbd> unassigned because it conflicts with a browser shortcut
   + In Chrome, the settings page's popup shortcut field now opens Chrome's Keyboard shortcuts page, the only place it can be changed, and explains when no shortcut is assigned
 - Redesigned the button that removes a secondary shortcut in settings as an accessible ghost button beside the shortcut
+- Fixed two clear buttons showing in the Chrome search box
 - Fixed Copy Tab URL (<kbd>Ctrl</kbd>+<kbd>C</kbd>) copying nothing in Chrome
 - Fixed an empty "()" shortcut hint in the search box when no popup shortcut is set
 - Fixed new tab pages and private tabs showing up in recently closed tabs
