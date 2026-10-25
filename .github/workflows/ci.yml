@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           # 22.4+ for the global WebSocket that evaluateInWorker() uses
-          node-version: 24
+          node-version: 22
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -58,7 +58,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           # 22.4+ for the global WebSocket that evaluateInWorker() uses
-          node-version: 24
+          node-version: 22
           cache: 'pnpm'
 
       - name: Install dependencies
