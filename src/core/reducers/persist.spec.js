@@ -1,6 +1,6 @@
 import { createStore } from 'redux';
 import { persistStore } from 'redux-persist';
-import { createRootReducer } from './index.js';
+import { createPersistedReducer } from './persist.js';
 import { LAST_QUERY_UPDATE } from '../actions/types.js';
 
 // In-memory browser.storage area
@@ -18,7 +18,7 @@ function createStorageArea() {
 }
 
 function startStore(areas) {
-  const store = createStore(createRootReducer(areas));
+  const store = createStore(createPersistedReducer(areas));
   return new Promise((resolve) => {
     persistStore(store, null, () => resolve(store));
   });
@@ -27,7 +27,7 @@ function startStore(areas) {
 const flush = () => new Promise(r => setTimeout(r, 20));
 const updateLastQuery = key => ({ type: LAST_QUERY_UPDATE, payload: { key } });
 
-describe('root reducer persistence', function () {
+describe('persisted reducer', function () {
   it('should keep the last query in session storage across restarts', async function () {
     const local = createStorageArea();
     const session = createStorageArea();

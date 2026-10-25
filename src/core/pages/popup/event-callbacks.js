@@ -13,16 +13,18 @@ import {
   openHistoryItem,
 } from './utils/browser';
 import {
-  deleteButton,
-  searchInput,
-  tabList,
   SESSION_TYPE,
   HISTORY_TYPE,
   BOOKMARK_TYPE,
   TAB_TYPE,
   OTHER_WINDOW_TAB_TYPE,
-  TAB_DELETE_BTN_CLASSNAME,
-} from './constants';
+} from 'core/tabs/types';
+import { TAB_DELETE_BTN_CLASSNAME } from './classnames';
+import {
+  deleteButton,
+  searchInput,
+  tabList,
+} from './nodes';
 import { updateLastQuery } from './actions';
 import filterResults from './search';
 
@@ -36,9 +38,9 @@ export function configureSearch(store) {
     const isSearchEmpty = event.currentTarget.value.length === 0;
     // If input is empty hide the button
     if (isSearchEmpty) {
-      deleteButton.classList.add('hidden');
+      deleteButton().classList.add('hidden');
     } else {
-      deleteButton.classList.remove('hidden');
+      deleteButton().classList.remove('hidden');
     }
     // isSearchEmpty isn't based on this var so we can show delete button with
     // just spaces
@@ -50,7 +52,7 @@ export function configureSearch(store) {
       if (results.length > 0 && !isSearchEmpty) {
         addHeadTabListNodeSelectedStyle();
         // Scroll to the top
-        tabList.firstElementChild.scrollIntoView(true);
+        tabList().firstElementChild.scrollIntoView(true);
       }
       return results;
     };
@@ -79,10 +81,10 @@ export function configureSearch(store) {
 }
 
 export function clearInput() {
-  searchInput.value = '';
-  searchInput.focus();
+  searchInput().value = '';
+  searchInput().focus();
   // Trigger input event to update the tab list
-  searchInput.dispatchEvent(new Event('input'));
+  searchInput().dispatchEvent(new Event('input'));
 }
 
 // Merges maps into the one specified in target
@@ -161,15 +163,15 @@ export function keydownHandler(store) {
     // Maybe we should only focus if the searchInput isn't active?
     switch (event.key) {
       case 'End':
-        if (document.activeElement !== searchInput) {
+        if (document.activeElement !== searchInput()) {
           event.preventDefault();
-          tabList.lastChild.focus();
+          tabList().lastChild.focus();
         }
         break;
       case 'Home':
-        if (document.activeElement !== searchInput) {
+        if (document.activeElement !== searchInput()) {
           event.preventDefault();
-          tabList.firstChild.focus();
+          tabList().firstChild.focus();
         }
         break;
       case 'PageDown':
@@ -183,7 +185,7 @@ export function keydownHandler(store) {
     const shouldJustFocusSearchBar = (event.key === 'Backspace' && !isModifierSingle(event))
       || (/^([A-Za-z]|\d)$/.test(event.key) && !isModifierSingle(event));
     if (shouldJustFocusSearchBar) {
-      searchInput.focus();
+      searchInput().focus();
     }
     return noop();
   };

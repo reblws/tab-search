@@ -2,28 +2,28 @@ import { initialGeneralSettings, initialColorSettings } from 'core/reducers/defa
 import { addTabListeners } from '../side-effects';
 import { shouldWordBreak } from './word-break';
 import {
+  BOOKMARK_TYPE,
+  HISTORY_TYPE,
+  OTHER_WINDOW_TAB_TYPE,
+  TAB_TYPE,
+} from 'core/tabs/types';
+import {
   favIconFallback,
   alertCircle,
-  tabList,
-  searchInput,
-  d,
   AUDIBLE_CLASSNAME,
   WORDBREAK_ALL_CLASSNAME,
   SELECTED_TAB_CLASSNAME,
-  BOOKMARK_TYPE,
-  HISTORY_TYPE,
   TAB_PIN_CLASSNAME,
   TAB_MUTED_CLASSNAME,
   TAB_ACTIVE_ID,
-  OTHER_WINDOW_TAB_TYPE,
-  TAB_TYPE,
   TAB_DELETE_BTN_CLASSNAME,
-} from '../constants';
+} from '../classnames';
+import { tabList, searchInput } from '../nodes';
 import { badFavIconCache } from '../caches';
 import { configureSvg } from '../assets';
 
 const changeHeadTabListNodeSelectedStyle = method => () => {
-  tabList.firstElementChild.classList[method](SELECTED_TAB_CLASSNAME);
+  tabList().firstElementChild.classList[method](SELECTED_TAB_CLASSNAME);
 };
 
 export const removeHeadTabListNodeSelectedStyle =
@@ -33,7 +33,7 @@ export const addHeadTabListNodeSelectedStyle =
   changeHeadTabListNodeSelectedStyle('add');
 
 export function isTabListEmpty() {
-  return !tabList.firstElementChild.classList.contains('tab-object');
+  return !tabList().firstElementChild.classList.contains('tab-object');
 }
 
 // Save the default values for font sizes so we know when to inline the font
@@ -157,7 +157,7 @@ function createTabObject({
   const dataId = sessionId || id;
   // Create the parent div
   // <div class="tab-object" data-id="${id}" tabIndex="0" data-type="tab" data-window="1">
-  const tabObjectNode = d.createElement('div');
+  const tabObjectNode = document.createElement('div');
   tabObjectNode.setAttribute('tabindex', '0');
   tabObjectNode.classList.add('tab-object');
   tabObjectNode.classList.add(type);
@@ -173,10 +173,10 @@ function createTabObject({
   tabObjectNode.setAttribute('data-last-accessed', lastAccessed);
 
   // <img src="${favIconLink}">
-  const iconContainerNode = d.createElement('div');
+  const iconContainerNode = document.createElement('div');
   iconContainerNode.classList.add('tab-img');
 
-  const favIconNode = d.createElement('img');
+  const favIconNode = document.createElement('img');
   favIconNode.setAttribute('src', favIconLink);
   favIconNode.addEventListener('error', handleBadSvg);
 
@@ -184,28 +184,28 @@ function createTabObject({
 
   // tab-info
   //    <div class="tab-info">
-  const tabInfoNode = d.createElement('div');
+  const tabInfoNode = document.createElement('div');
   tabInfoNode.setAttribute('class', 'tab-info');
 
   //      <strong>${title}</strong>
   // INLINE tabTitleSize HERE
-  const titleNode = d.createElement('div');
+  const titleNode = document.createElement('div');
   titleNode.classList.add('tab-title');
   if (wordBreak && !oneLineTabTitles) {
     titleNode.classList.add(WORDBREAK_ALL_CLASSNAME);
   } else if (oneLineTabTitles) {
     titleNode.classList.add('nowrap');
   }
-  titleNode.appendChild(d.createTextNode(title));
+  titleNode.appendChild(document.createTextNode(title));
   if (tabTitleSize !== defaultTabTitleSize) {
     titleNode.style = `font-size: ${tabTitleSize}px`;
   }
 
   //      <p>${url}</p>
   // INLINE tabUrlSize HERE
-  const urlNode = d.createElement('p');
+  const urlNode = document.createElement('p');
   urlNode.classList.add('tab-url');
-  urlNode.appendChild(d.createTextNode(url));
+  urlNode.appendChild(document.createTextNode(url));
   if (tabUrlSize !== defaultTabUrlSize) {
     urlNode.style = `font-size: ${tabUrlSize}px`;
   }
@@ -222,7 +222,7 @@ function createTabObject({
 
   // Close tab button — appended after tabInfoNode so it sits on the right in flex layout
   if (showVisualDeleteTabButton && (type === OTHER_WINDOW_TAB_TYPE || type === TAB_TYPE)) {
-    const delBtn = d.createElement('button');
+    const delBtn = document.createElement('button');
     delBtn.type = 'button';
     delBtn.title = 'Close Tab';
     delBtn.setAttribute('aria-label', 'Close Tab');
@@ -272,17 +272,17 @@ export function createNoResult() {
   //   <object type="image/svg+xml" data="/assets/alert-circle.svg"></object>
   //   <strong>No tabs found</strong>
   // </div>
-  const noResultNode = d.createElement('div');
+  const noResultNode = document.createElement('div');
   noResultNode.classList.add('no-result');
 
-  const alertCircleNode = d.createElement('object');
+  const alertCircleNode = document.createElement('object');
   alertCircleNode.classList.add('no-result__circle');
   alertCircleNode.setAttribute('type', 'image/svg+xml');
   alertCircleNode.setAttribute('data', alertCircle);
 
-  const strongMsgNode = d.createElement('strong');
+  const strongMsgNode = document.createElement('strong');
   strongMsgNode.classList.add('no-result__msg');
-  strongMsgNode.appendChild(d.createTextNode('No tabs found'));
+  strongMsgNode.appendChild(document.createTextNode('No tabs found'));
 
   noResultNode.appendChild(alertCircleNode);
   noResultNode.appendChild(strongMsgNode);
@@ -294,7 +294,7 @@ export function injectTabsInList(getState) {
   return function doInjectTabsInList(tabArray) {
     // Build map of existing nodes by id for reuse
     const existingNodes = new Map();
-    Array.from(tabList.querySelectorAll('.tab-object')).forEach((node) => {
+    Array.from(tabList().querySelectorAll('.tab-object')).forEach((node) => {
       existingNodes.set(node.dataset.id, node);
     });
 
@@ -305,13 +305,13 @@ export function injectTabsInList(getState) {
     if (wasNoResult && showNoResult) return tabArray;
 
     if (showNoResult) {
-      clearChildren(tabList);
-      tabList.appendChild(createNoResult());
+      clearChildren(tabList());
+      tabList().appendChild(createNoResult());
       return tabArray;
     }
 
     // Build new node list, reusing existing where possible
-    const fragment = d.createDocumentFragment();
+    const fragment = document.createDocumentFragment();
     tabArray.forEach((tab) => {
       const id = String(tab.sessionId || tab.id);
       if (existingNodes.has(id)) {
@@ -323,8 +323,8 @@ export function injectTabsInList(getState) {
       }
     });
 
-    clearChildren(tabList);
-    tabList.appendChild(fragment);
+    clearChildren(tabList());
+    tabList().appendChild(fragment);
     return tabArray;
   };
 }
@@ -353,7 +353,7 @@ export function removeElementFromTabList(element, wasClicked) {
   const nextElementToFocus = element.nextSibling
     ? element.nextSibling
     : element.previousSibling;
-  tabList.removeChild(element);
+  tabList().removeChild(element);
   if (!wasClicked) {
     nextElementToFocus.focus();
   }
@@ -375,8 +375,8 @@ export function populateTabList(search) {
 
 export function overrideFontStylesWithSansSerif() {
   const elementStylesToOverride = [
-    d.body,
-    d.querySelector('.search'),
+    document.body,
+    document.querySelector('.search'),
   ];
   elementStylesToOverride.forEach((element) => {
     element.style = 'font-family: sans-serif;';
@@ -384,11 +384,11 @@ export function overrideFontStylesWithSansSerif() {
 }
 
 export function appendSearchInputPlaceholderText(newText) {
-  searchInput.placeholder += ` ${newText}`;
+  searchInput().placeholder += ` ${newText}`;
 }
 
 export function selectNodeText(nodeToCopy) {
-  const range = d.createRange();
+  const range = document.createRange();
   range.selectNode(nodeToCopy);
   const selection = window.getSelection();
   // Chrome ignores addRange() while another range (e.g. the search input's)
@@ -398,10 +398,11 @@ export function selectNodeText(nodeToCopy) {
 }
 
 // This is dependent on the popup css file being called "index.css" exactly
-const popupCssStyleSheet = [...d.styleSheets].find(s => /index.css$/.test(s.href));
+const popupCssStyleSheet = () =>
+  [...document.styleSheets].find(s => /index.css$/.test(s.href));
 
 export function setStyleSheetRule(selectorName, key, value) {
-  const rules = popupCssStyleSheet.cssRules;
+  const rules = popupCssStyleSheet().cssRules;
   const rule = [...rules].find(r => r.selectorText === selectorName);
   if (!rule) {
     console.error(`Can't find CSS Selector ${selectorName}`);

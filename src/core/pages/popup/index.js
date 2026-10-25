@@ -12,13 +12,13 @@ import {
   addTabsToPromiseChain,
   addCurrentWindowIdToPromiseChain,
 } from './utils/browser';
-import { searchInput } from './constants';
+import { searchInput } from './nodes';
 
 // The settings page shows the popup in a frame as a live preview; it must
 // not take the focus from the settings
 const isPreview = new URLSearchParams(window.location.search).has('preview');
 if (isPreview) {
-  searchInput.removeAttribute('autofocus');
+  searchInput().removeAttribute('autofocus');
 } else {
   focusSearchInputWorkaround();
 }

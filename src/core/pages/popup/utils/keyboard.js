@@ -23,26 +23,26 @@ import {
   selectNodeText,
 } from './dom';
 import {
-  d,
-  tabList,
-  searchInput,
-  NO_RESULT_CLASSNAME,
-  TAB_URL_CLASSNAME,
   SESSION_TYPE,
-  TAB_MUTED_CLASSNAME,
-  TAB_PIN_CLASSNAME,
   TAB_TYPE,
   OTHER_WINDOW_TAB_TYPE,
+} from 'core/tabs/types';
+import {
+  NO_RESULT_CLASSNAME,
+  TAB_URL_CLASSNAME,
+  TAB_MUTED_CLASSNAME,
+  TAB_PIN_CLASSNAME,
   RELOAD_SVG_PATH,
-} from '../constants';
+} from '../classnames';
+import { tabList, searchInput } from '../nodes';
 
 export function navigateResults(cmdKey, getState) {
   const generalSettings = getState().general;
-  const isNoResult = !!d.getElementById(NO_RESULT_CLASSNAME) || tabList.children.length === 0;
-  const isSearchActive = d.activeElement === searchInput;
+  const isNoResult = !!document.getElementById(NO_RESULT_CLASSNAME) || tabList().children.length === 0;
+  const isSearchActive = document.activeElement === searchInput();
   const selectedTab = !isSearchActive
-    ? d.activeElement
-    : tabList.firstElementChild;
+    ? document.activeElement
+    : tabList().firstElementChild;
   const isRegularTab = ({ type }) =>
     type === OTHER_WINDOW_TAB_TYPE || type === TAB_TYPE;
   const { id } = selectedTab.dataset;
@@ -54,7 +54,7 @@ export function navigateResults(cmdKey, getState) {
       } else if (selectedTab.nextElementSibling) {
         selectedTab.nextElementSibling.focus();
       } else { // If no nextElementSibling focus searchbar
-        searchInput.focus();
+        searchInput().focus();
       }
       break;
     }
@@ -63,10 +63,10 @@ export function navigateResults(cmdKey, getState) {
       const prevSibling = selectedTab.previousElementSibling;
       if (prevSibling) {
         prevSibling.focus();
-      } else if (document.activeElement !== searchInput) {
-        searchInput.focus();
+      } else if (document.activeElement !== searchInput()) {
+        searchInput().focus();
       } else { // We're at the top but searchInput is focused
-        tabList.lastChild.focus();
+        tabList().lastChild.focus();
       }
       break;
     }
@@ -115,7 +115,7 @@ export function navigateResults(cmdKey, getState) {
     case URL_COPY: {
       const copyNode = selectedTab.querySelector(`.${TAB_URL_CLASSNAME}`);
       selectNodeText(copyNode);
-      d.execCommand('copy');
+      document.execCommand('copy');
       break;
     }
     case TAB_BOOKMARK: {

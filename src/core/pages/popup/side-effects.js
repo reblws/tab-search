@@ -1,16 +1,13 @@
 import debounce from 'debounce';
 import { initialColorSettings } from 'core/reducers/defaults';
+import { TYPE_COLOR_PROPERTY_MAP, COLOR_PROPERTY_TYPE_MAP } from 'core/tabs/types';
+import { POPUP_SIZE_PRESETS, OVERLAY_SCROLLBAR_CLASSNAME } from './classnames';
 import {
   searchInput,
   deleteButton,
-  d,
   prefsBtn,
   tabList,
-  TYPE_COLOR_PROPERTY_MAP,
-  COLOR_PROPERTY_TYPE_MAP,
-  POPUP_SIZE_PRESETS,
-  OVERLAY_SCROLLBAR_CLASSNAME,
-} from './constants';
+} from './nodes';
 import {
   scrollIfNeeded,
   populateTabList,
@@ -61,10 +58,11 @@ export function applyPopupSize(store) {
 // Overlay scrollbars (macOS, GTK) take no layout space and draw over the
 // right edge of the list, on top of the close buttons
 function markOverlayScrollbar() {
-  const style = getComputedStyle(tabList);
+  const list = tabList();
+  const style = getComputedStyle(list);
   const borders = parseFloat(style.borderLeftWidth) + parseFloat(style.borderRightWidth);
-  const scrollbarWidth = tabList.offsetWidth - tabList.clientWidth - borders;
-  tabList.classList.toggle(OVERLAY_SCROLLBAR_CLASSNAME, scrollbarWidth === 0);
+  const scrollbarWidth = list.offsetWidth - list.clientWidth - borders;
+  list.classList.toggle(OVERLAY_SCROLLBAR_CLASSNAME, scrollbarWidth === 0);
 }
 
 export function overrideDomStyleSheets(store) {
@@ -107,18 +105,18 @@ export function addEventListeners(store) {
   };
 
   window.addEventListener('keydown', handleKeydown);
-  deleteButton.addEventListener('click', clearInput);
-  searchInput.addEventListener('input', handleSearchInput);
-  prefsBtn.addEventListener('click', openSettingsPage);
+  deleteButton().addEventListener('click', clearInput);
+  searchInput().addEventListener('input', handleSearchInput);
+  prefsBtn().addEventListener('click', openSettingsPage);
   // Firefox only: right-clicking a result opens its tab menu
-  tabList.addEventListener('contextmenu', overrideResultContextMenu, true);
+  tabList().addEventListener('contextmenu', overrideResultContextMenu, true);
   if (browser.menus) {
     browser.menus.onShown.addListener(updateMenuTitles);
     browser.menus.onClicked.addListener(info => runMenuItem(info, store.getState));
   }
 
   if (showLastQueryOnPopup) {
-    searchInput.addEventListener('input', updateLastQueryOnKeydown(store));
+    searchInput().addEventListener('input', updateLastQueryOnKeydown(store));
   }
 
   // Add tab cache invalidation listeners
@@ -154,7 +152,7 @@ export function doFinalSideEffects(store) {
 
   if (showLastQueryOnPopup) {
     const { lastQuery } = store.getState().state;
-    searchInput.value = lastQuery;
+    searchInput().value = lastQuery;
   }
   // Give a shortcut hint
   updatePlaceholderTextWithShortcutHint()
@@ -183,11 +181,11 @@ export function doFinalSideEffects(store) {
 export function focusSearchInputWorkaround() {
   window.addEventListener('load', () => {
     setTimeout(() => {
-      searchInput.focus();
+      searchInput().focus();
     }, 100);
   });
-  d.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => searchInput.focus(), 150);
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => searchInput().focus(), 150);
   });
 }
 

@@ -6,7 +6,7 @@ import {
   SESSION_TYPE,
   BOOKMARK_TYPE,
   HISTORY_TYPE,
-} from './constants';
+} from 'core/tabs/types';
 import {
   encodeUrl,
   parseUrl,

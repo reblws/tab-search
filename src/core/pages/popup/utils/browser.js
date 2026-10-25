@@ -1,9 +1,6 @@
 import { deletedTabsCache, getCachedTabs, setCachedTabs } from '../caches';
-import {
-  SESSION_TYPE,
-  OTHER_WINDOW_TAB_TYPE,
-  tabList,
-} from '../constants';
+import { SESSION_TYPE, OTHER_WINDOW_TAB_TYPE } from 'core/tabs/types';
+import { tabList } from '../nodes';
 import {
   removeElementFromTabList,
   repaintElementWithType,
@@ -59,7 +56,7 @@ export function deleteTab(
     // Get the most recently closed tab (should be the one we're deleting rn)
     if (alwaysShowRecentlyClosedAtTheBottom) {
       // Undefined if not found
-      const lastRecentlyClosedNode = findLastElType(SESSION_TYPE, tabList.children);
+      const lastRecentlyClosedNode = findLastElType(SESSION_TYPE, tabList().children);
       elementToRemove.parentElement.insertBefore(
         elementToRemove,
         // Need to pass null explicitly for append
