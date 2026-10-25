@@ -21,6 +21,13 @@ function readSavedGeneralSettings() {
     .then(({ 'persist:root': root }) => (root ? JSON.parse(JSON.parse(root).general) : null)));
 }
 
+// From an extension page: tab count of its window, and its own tab's badge
+const tabCount = () => inExtension(() => chrome.tabs.query({ currentWindow: true }).then(t => t.length));
+const badgeText = () => inExtension(() => chrome.tabs.getCurrent()
+  .then(tab => chrome.action.getBadgeText({ tabId: tab.id })));
+const setBadgeText = text => inExtension(t => chrome.tabs.getCurrent()
+  .then(tab => chrome.action.setBadgeText({ tabId: tab.id, text: t })), text);
+
 // The popup shortcut as chrome.commands reports it ('' when not assigned)
 function popupShortcut() {
   return inExtension(() => chrome.commands.getAll()
@@ -342,11 +349,27 @@ describe('Chrome MV3 build', function () {
       });
     });
 
+    it('should not recount the tab count badge when the worker wakes', async function () {
+      await openPopup();
+      await browser.waitUntil(async () => (await badgeText()) === String(await tabCount()), {
+        timeoutMsg: 'Badge never matched the tab count',
+      });
+      const count = await tabCount();
+      // A recount would overwrite this
+      await setBadgeText('mark');
+
+      await stopWorker();
+      // Wake the worker with a message, as an open page would
+      await inExtension(() => chrome.runtime.sendMessage({ type: '@@STORE_UPDATE_STATE' }));
+      expect(await isWorkerRunning()).toBe(true);
+      await browser.pause(1000);
+      expect(await badgeText()).toBe('mark');
+
+      await setBadgeText(String(count));
+    });
+
     it('should update the tab count badge when a tab opens while the worker is stopped', async function () {
       await openPopup();
-      const tabCount = () => inExtension(() => chrome.tabs.query({ currentWindow: true }).then(t => t.length));
-      const badgeText = () => inExtension(() => chrome.tabs.getCurrent()
-        .then(tab => chrome.action.getBadgeText({ tabId: tab.id })));
       await browser.waitUntil(async () => (await badgeText()) === String(await tabCount()), {
         timeoutMsg: 'Badge never matched the tab count',
       });
@@ -358,6 +381,7 @@ describe('Chrome MV3 build', function () {
       const newTab = await openTab('about:blank');
       await browser.waitUntil(isWorkerRunning, { timeoutMsg: 'tabs.onCreated did not wake the worker' });
       expect(await tabCount()).toBe(countBefore + 1);
+      // A wake doesn't recount (see above), so only the onCreated handler can do this
       await browser.waitUntil(async () => (await badgeText()) === String(countBefore + 1), {
         timeoutMsg: 'Badge did not follow the new tab after a worker restart',
       });

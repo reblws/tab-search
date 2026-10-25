@@ -88,6 +88,9 @@ files.
   `src/core/store/bridge.js` adds its listeners synchronously and answers the
   UI only after redux-persist rehydrates. Tab listeners in
   `background/index.js` are also added at top level.
+- `background/badge-text-state.js` recounts the tab badge only when the
+  setting turns on or once per browser session (a flag in
+  `storage.session`), not on every worker wake.
 - A stopped worker disconnects every page's port. `ui-store.js` reconnects
   lazily: before its next dispatch, or when the page is focused or shown.
 - Chrome E2E specs live in `test/e2e-chrome/` (config `wdio.chrome.conf.js`);
