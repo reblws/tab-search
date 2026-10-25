@@ -5,9 +5,8 @@ import { initKeybindingTable, initBrowserShortcut } from './shortcuts';
 import { initPreview } from './preview';
 import { initNav } from './nav';
 
-const version = `v${browser.runtime.getManifest().version}`;
-document.getElementById('versioning').textContent = version;
-document.getElementById('about-version').textContent = version;
+document.getElementById('versioning').textContent =
+  `v${browser.runtime.getManifest().version}`;
 initNav();
 
 const appendOsToStore = store =>

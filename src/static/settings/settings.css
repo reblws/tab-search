@@ -42,7 +42,8 @@
 }
 
 html {
-  scroll-padding-top: 24px;
+  /* Keeps jumped-to sections clear of the pinned menu; nav.js measures it */
+  scroll-padding-top: calc(var(--nav-height, 64px) + 16px);
 }
 
 body {
@@ -88,22 +89,22 @@ a:hover {
 }
 
 /* ===========================
-   Header
+   Header and menu
    =========================== */
 .page-header {
   background: var(--surface);
-  border-bottom: 1px solid var(--border);
 }
 
-.page-header__inner {
+.page-header__inner,
+.page-nav__inner {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 16px 32px;
+  padding: 16px 32px 4px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px 24px;
 }
 
 .brand {
@@ -123,21 +124,100 @@ a:hover {
   letter-spacing: -0.01em;
 }
 
-.brand__version {
-  font-size: 12px;
-  color: var(--text-2);
-  margin-top: 2px;
-}
-
-.saved-pill {
+.brand__status {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
+  gap: 4px;
+  margin-top: 2px;
+  font-size: 12px;
   color: var(--ok-text);
-  background: var(--ok-bg);
-  padding: 6px 12px;
-  border-radius: 999px;
+}
+
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+/* The menu row stays at the top of the window */
+.page-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.page-nav__inner {
+  padding-top: 8px;
+  padding-bottom: 10px;
+  flex-wrap: nowrap;
+}
+
+.nav {
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* Room for the focus ring */
+  margin: -4px;
+  padding: 4px;
+}
+
+.nav__link {
+  display: flex;
+  align-items: center;
+  flex: none;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: var(--text-2);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav__link:hover {
+  background: var(--surface-sunken);
+  color: var(--text);
+}
+
+.nav__link[aria-current="true"] {
+  background: var(--accent-soft);
+  color: var(--accent-soft-text);
+  font-weight: 600;
+}
+
+.find {
+  position: relative;
+  flex: 0 1 260px;
+  min-width: 160px;
+}
+
+.find__icon {
+  position: absolute;
+  left: 12px;
+  top: 10px;
+  color: var(--text-2);
+  pointer-events: none;
+}
+
+.find__input {
+  width: 100%;
+  height: 36px;
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  padding: 0 12px 0 36px;
+  font: inherit;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.find__input::placeholder {
+  color: var(--text-3);
 }
 
 /* ===========================
@@ -153,16 +233,6 @@ a:hover {
   align-items: flex-start;
 }
 
-.nav {
-  flex: 1 1 200px;
-  max-width: 240px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  position: sticky;
-  top: 24px;
-}
-
 .main {
   flex: 999 1 520px;
   min-width: 0;
@@ -176,72 +246,13 @@ a:hover {
   max-width: 540px;
   min-width: 0;
   position: sticky;
-  top: 24px;
+  top: calc(var(--nav-height, 64px) + 24px);
 }
 
 .sections {
   display: flex;
   flex-direction: column;
   gap: 24px;
-}
-
-/* ===========================
-   Navigation
-   =========================== */
-.find {
-  position: relative;
-  margin-bottom: 12px;
-}
-
-.find__icon {
-  position: absolute;
-  left: 12px;
-  top: 12px;
-  color: var(--text-2);
-  pointer-events: none;
-}
-
-.find__input {
-  width: 100%;
-  height: 40px;
-  border: 1px solid var(--control-border);
-  border-radius: 8px;
-  padding: 0 12px 0 36px;
-  font: inherit;
-  background: var(--surface);
-  color: var(--text);
-}
-
-.find__input::placeholder {
-  color: var(--text-3);
-}
-
-.nav__link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 40px;
-  padding: 0 12px;
-  border-radius: 8px;
-  color: var(--text-2);
-  text-decoration: none;
-}
-
-.nav__link:hover {
-  background: var(--surface-sunken);
-  color: var(--text);
-}
-
-.nav__link[aria-current="true"] {
-  background: var(--accent-soft);
-  color: var(--accent-soft-text);
-  font-weight: 600;
-}
-
-.nav__divider {
-  height: 1px;
-  background: var(--border);
-  margin: 8px 12px;
 }
 
 .find-empty {
@@ -807,25 +818,6 @@ a:hover {
 }
 
 /* ===========================
-   About
-   =========================== */
-.about {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 0 4px 16px;
-  font-size: 13px;
-  color: var(--text-2);
-}
-
-.about__links {
-  display: flex;
-  gap: 16px;
-}
-
-/* ===========================
    Live preview
    =========================== */
 .preview__head {
@@ -949,27 +941,6 @@ a:hover {
 /* ===========================
    Responsive
    =========================== */
-/* The side menu moves to a row on top so the preview keeps its column */
-@media (max-width: 1240px) {
-  .nav {
-    flex-basis: 100%;
-    max-width: none;
-    position: static;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .find {
-    flex: 0 1 260px;
-    margin: 0 8px 0 0;
-  }
-
-  .nav__divider {
-    display: none;
-  }
-}
-
 @media (max-width: 1000px) {
   .preview {
     position: static;
@@ -979,23 +950,24 @@ a:hover {
 
 @media (max-width: 800px) {
   .layout,
-  .page-header__inner {
+  .page-header__inner,
+  .page-nav__inner {
     padding-left: 16px;
     padding-right: 16px;
+  }
+
+  .page-nav__inner {
+    flex-wrap: wrap;
+  }
+
+  .find {
+    flex: 1 1 100%;
+    order: -1;
   }
 
   .layout {
     padding-top: 20px;
     gap: 20px;
-  }
-
-  .find {
-    flex-basis: 100%;
-    margin: 0 0 4px;
-  }
-
-  .nav__link svg {
-    display: none;
   }
 
   .setting--child {

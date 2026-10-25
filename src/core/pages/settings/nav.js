@@ -1,4 +1,4 @@
-// Side menu: highlights the section in view and filters settings by text
+// Menu: highlights the section in view and filters settings by text
 
 const normalize = text => text.toLowerCase().replace(/\s+/g, ' ').trim();
 
@@ -43,6 +43,8 @@ function initFind() {
     const visible = filterSettings(input.value);
     empty.hidden = visible > 0;
     emptyQuery.textContent = input.value.trim();
+    // The matches are at the top of a shorter page
+    window.scrollTo(0, 0);
   };
   input.addEventListener('input', run);
   input.addEventListener('keydown', (event) => {
@@ -54,19 +56,46 @@ function initFind() {
   });
 }
 
+const navHeight = () => document.querySelector('.page-nav').offsetHeight;
+
+// The pinned menu's height, for scroll-padding-top and the sticky preview
+function trackNavHeight() {
+  const update = () => {
+    document.documentElement.style.setProperty('--nav-height', `${navHeight()}px`);
+  };
+  update();
+  window.addEventListener('resize', update);
+}
+
+// Scrolls a menu that overflows sideways (narrow windows) to show the link
+function revealLink(nav, link) {
+  const start = link.offsetLeft - nav.offsetLeft;
+  const end = start + link.offsetWidth;
+  if (start < nav.scrollLeft) {
+    nav.scrollLeft = start;
+  } else if (end > nav.scrollLeft + nav.clientWidth) {
+    nav.scrollLeft = end - nav.clientWidth;
+  }
+}
+
 function initScrollSpy() {
-  const links = [...document.querySelectorAll('.nav__link')];
+  const nav = document.querySelector('.nav');
+  const links = [...nav.querySelectorAll('.nav__link')];
   const targets = links.map(link => document.querySelector(link.getAttribute('href')));
   let scheduled = false;
+  let current = -1;
 
   function update() {
     scheduled = false;
     const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
-    let current = 0;
+    const line = navHeight() + 40;
+    let next = 0;
     targets.forEach((target, i) => {
       if (!target || target.hidden) return;
-      if (atBottom || target.getBoundingClientRect().top <= 120) current = i;
+      if (atBottom || target.getBoundingClientRect().top <= line) next = i;
     });
+    if (next === current) return;
+    current = next;
     links.forEach((link, i) => {
       if (i === current) {
         link.setAttribute('aria-current', 'true');
@@ -74,6 +103,7 @@ function initScrollSpy() {
         link.removeAttribute('aria-current');
       }
     });
+    revealLink(nav, links[current]);
   }
 
   const schedule = () => {
@@ -87,6 +117,7 @@ function initScrollSpy() {
 }
 
 export function initNav() {
+  trackNavHeight();
   initFind();
   initScrollSpy();
 }

@@ -16,38 +16,39 @@
         <img class="brand__logo" src="../icons/logo-128.png" width="36" height="36" alt="">
         <div>
           <h1>TabSearch Settings</h1>
-          <div class="brand__version">Version <span id="versioning"></span></div>
+          <div class="brand__status">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg>
+            <span>Changes save automatically</span>
+          </div>
         </div>
       </div>
-      <div class="saved-pill">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg>
-        <span>Changes save automatically</span>
+      <div class="page-meta">
+        <span id="versioning"></span>
+        <a href="https://github.com/reblws/tab-search/issues">Report a bug</a>
+        <a href="https://github.com/reblws/tab-search/blob/main/CHANGELOG.md">Changelog</a>
+        <a href="https://github.com/reblws/tab-search/">Source</a>
       </div>
     </div>
   </header>
 
-  <div class="layout">
-    <nav class="nav" aria-label="Settings sections">
+  <div class="page-nav">
+    <div class="page-nav__inner">
+      <nav class="nav" aria-label="Settings sections">
+        <a class="nav__link" href="#search">Search</a>
+        <a class="nav__link" href="#results">Results</a>
+        <a class="nav__link" href="#appearance">Appearance</a>
+        <a class="nav__link" href="#colors">Colors</a>
+        <a class="nav__link" href="#shortcuts">Keyboard shortcuts</a>
+      </nav>
       <div class="find">
         <label for="find" class="visually-hidden">Find a setting</label>
         <svg class="find__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
         <input id="find" class="find__input" type="search" placeholder="Find a setting" autocomplete="off">
       </div>
-      <a class="nav__link" href="#search">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>Search</a>
-      <a class="nav__link" href="#results">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>Results</a>
-      <a class="nav__link" href="#appearance">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Appearance</a>
-      <a class="nav__link" href="#colors">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5c3.5 4 6 7.2 6 10.3a6 6 0 0 1-12 0c0-3.1 2.5-6.3 6-10.3Z"/></svg>Colors</a>
-      <div class="nav__divider"></div>
-      <a class="nav__link" href="#shortcuts">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6.5 10h.01M10 10h.01M13.5 10h.01M17 10h.01M8 14h8"/></svg>Keyboard shortcuts</a>
-      <a class="nav__link" href="#about">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>About</a>
-    </nav>
+    </div>
+  </div>
 
+  <div class="layout">
     <main class="main">
       <p id="find-empty" class="find-empty" hidden>No settings match “<span id="find-empty-query"></span>”.</p>
 
@@ -360,14 +361,6 @@
         </div>
       </section>
 
-      <footer class="about" id="about">
-        <span>TabSearch <span id="about-version"></span></span>
-        <span class="about__links">
-          <a href="https://github.com/reblws/tab-search/issues">Report a bug</a>
-          <a href="https://github.com/reblws/tab-search/blob/main/CHANGELOG.md">Changelog</a>
-          <a href="https://github.com/reblws/tab-search/">Source</a>
-        </span>
-      </footer>
     </main>
 
     <aside class="preview" aria-labelledby="preview-title">
