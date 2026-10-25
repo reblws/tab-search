@@ -169,13 +169,11 @@ export function navigateResults(cmdKey, getState) {
       break;
     }
     case MUTE_TOGGLE: {
-      // Issue: Successive mutes only works up till it's
-      //        pressed twice. After that it doesn't
-      //        toggle anymore.
       if (!isRegularTab(selectedTab.dataset)) {
         break;
       }
-      const toggleMuteStatus = ({ audible }) => muteTab(id, audible);
+      // A muted tab that plays sound is still audible, so toggle mutedInfo
+      const toggleMuteStatus = ({ mutedInfo }) => muteTab(id, !mutedInfo.muted);
       queryTab(id).then(toggleMuteStatus).then(({ mutedInfo }) => {
         if (mutedInfo.muted) {
           selectedTab.classList.add(TAB_MUTED_CLASSNAME);
