@@ -22,7 +22,7 @@ import {
   annotateType,
   partition,
   concat,
-  composeFilterOr,
+  composeFilterAnd,
 } from './utils/array';
 import {
   getRecentlyClosed,
@@ -181,7 +181,7 @@ function mostRecentlyUsed(a, b) {
 // Should normalize results to match a tabs.Tab object as closely as possible
 // https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/tabs/Tab
 
-function normalizeRecentlyClosedTabs(results) {
+export function normalizeRecentlyClosedTabs(results) {
   // No incognito please
   const annotateSession = annotateType(SESSION_TYPE);
   const filterIncognito = ({ incognito }) => !incognito;
@@ -189,7 +189,8 @@ function normalizeRecentlyClosedTabs(results) {
   const filterNewTab = x => !isOfUrl('about:newtab')(x)
     && !isOfUrl('chrome://newtab/')(x);
   const hasTab = x => 'tab' in x;
-  const filters = composeFilterOr(
+  // Keep a tab only if it passes every filter
+  const filters = composeFilterAnd(
     filterNewTab,
     filterIncognito,
   );

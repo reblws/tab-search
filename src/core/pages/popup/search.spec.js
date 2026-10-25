@@ -1,5 +1,6 @@
 import Fuse from 'fuse.js';
 import { initialFuzzySettings } from '../../reducers/defaults.js';
+import { JSDOM } from 'jsdom';
 
 describe('fuzzy search', function () {
   describe('long title search', function () {
@@ -58,5 +59,46 @@ describe('fuzzy search', function () {
       expect(results.length).to.equal(1);
       expect(results[0].item.id).to.equal(1);
     });
+  });
+});
+
+describe('normalizeRecentlyClosedTabs', function () {
+  const session = tab => ({ lastModified: 0, tab: Object.assign({ incognito: false }, tab) });
+  let normalizeRecentlyClosedTabs;
+
+  before(async function () {
+    // search.js looks up popup elements when it loads
+    global.document = new JSDOM('<!DOCTYPE html><html><body></body></html>').window.document;
+    ({ normalizeRecentlyClosedTabs } = await import('./search.js'));
+  });
+
+  after(function () {
+    delete global.document;
+  });
+
+  it('should hide new tab pages', function () {
+    const results = normalizeRecentlyClosedTabs([
+      session({ url: 'about:newtab' }),
+      session({ url: 'chrome://newtab/' }),
+      session({ url: 'https://example.com/' }),
+    ]);
+    expect(results.map(t => t.url)).to.deep.equal(['https://example.com/']);
+  });
+
+  it('should hide incognito tabs', function () {
+    const results = normalizeRecentlyClosedTabs([
+      session({ url: 'https://private.example/', incognito: true }),
+      session({ url: 'https://example.com/' }),
+    ]);
+    expect(results.map(t => t.url)).to.deep.equal(['https://example.com/']);
+  });
+
+  it('should skip closed windows and annotate tabs as sessions', function () {
+    const results = normalizeRecentlyClosedTabs([
+      { lastModified: 0, window: { tabs: [] } },
+      session({ url: 'https://example.com/' }),
+    ]);
+    expect(results).to.have.length(1);
+    expect(results[0].type).to.equal('session');
   });
 });
