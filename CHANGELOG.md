@@ -8,6 +8,7 @@
   + Settings, open settings pages, the last query and the tab count badge stay correct after Chrome stops the idle service worker
   + The tab count badge is counted once per browser session instead of every time the service worker wakes up
   + Added `pnpm zip:chrome` to build a Chrome Web Store zip
+  + The Chrome build doesn't request the unused `activeTab` permission
 - Changed the Chrome popup shortcut on Mac to <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>L</kbd>: Chrome left <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>L</kbd> unassigned because it conflicts with a browser shortcut
   + In Chrome, the settings page's popup shortcut field now opens Chrome's Keyboard shortcuts page, the only place it can be changed, and explains when no shortcut is assigned
 - Right-clicking a tab result in Firefox now opens the tab's context menu, with the tab items of other add-ons, plus Reload, Pin, Mute and Close (#102)
