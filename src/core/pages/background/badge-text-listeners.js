@@ -1,10 +1,6 @@
 import debounce from 'debounce';
 import { setBadgeText } from 'core/utils/action-api';
 
-// Shorthand
-// t -> browser.tabs
-const { tabs: t } = browser;
-
 const LOADING_TEXT = '...';
 
 // Debounce once here so every event of a burst shares the same timer
@@ -28,10 +24,20 @@ const eventListenerMap = {
 // synchronously on startup, so the listeners stay attached for the worker's
 // lifetime and each event checks whether counting is on instead.
 // isCounting: () -> Promise<Boolean>
+let isCountingNow = () => Promise.resolve(false);
+
+// Handlers run up to ~250ms after their event (debounce, plus a timeout for
+// removals), so check again right before writing the badge: counting may
+// have been turned off meanwhile.
+const ifStillCounting = fn => (...args) => isCountingNow().then((counting) => {
+  if (counting) fn(...args);
+});
+
 export function addBadgeTextListeners(isCounting) {
+  isCountingNow = isCounting;
   Object.keys(eventListenerMap).forEach((eventKey) => {
     const handler = eventListenerMap[eventKey];
-    t[eventKey].addListener((...args) => {
+    browser.tabs[eventKey].addListener((...args) => {
       isCounting().then((counting) => {
         if (counting) handler(...args);
       });
@@ -47,13 +53,17 @@ const WINDOW_OPTIONS = {
 const updateTabInWindow = windowId => tabId =>
   browser.windows.get(windowId, WINDOW_OPTIONS)
     .then(({ tabs }) => String(tabs.length))
-    .then(text => setBadgeText({ text, tabId }));
+    .then(ifStillCounting(text => setBadgeText({ text, tabId })));
 
 export function startCountingBadgeText() {
   setInitialBadgeTextInAllWindows();
 }
 
 export function stopCountingBadgeText() {
+  // Drop updates still waiting on their debounce timer
+  debounceHandleOnCreatedTab.clear();
+  debounceHandleOnRemovedTab.clear();
+  debounceHandleOnUpdatedTab.clear();
   clearAllBadgeText();
 }
 
@@ -80,7 +90,7 @@ function updateWindowBadgeText(browserWindow) {
 
 function clearAllBadgeText() {
   setBadgeText({ text: '' });
-  t.query({}).then((tabs) => {
+  browser.tabs.query({}).then((tabs) => {
     tabs.forEach(({ id: tabId }) => {
       setBadgeText({
         text: '',
@@ -91,7 +101,7 @@ function clearAllBadgeText() {
 }
 
 const promiseBadgeTextWindowUpdate = windowId =>
-  browser.windows.get(windowId, WINDOW_OPTIONS).then(updateWindowBadgeText);
+  browser.windows.get(windowId, WINDOW_OPTIONS).then(ifStillCounting(updateWindowBadgeText));
 
 function handleOnCreatedTab({ windowId }) {
   // TODO: debounce
@@ -122,7 +132,7 @@ function handleOnRemovedTab(_, removeInfo) {
 function handleOnDetachedTab(tabId, detachInfo) {
   const { oldWindowId } = detachInfo;
   promiseBadgeTextWindowUpdate(oldWindowId);
-  t.get(tabId)
+  browser.tabs.get(tabId)
     .then((detachedTabDetails) => {
       const { windowId } = detachedTabDetails;
       return promiseBadgeTextWindowUpdate(windowId);
