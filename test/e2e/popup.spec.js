@@ -52,6 +52,25 @@ describe('Popup', function () {
     });
   });
 
+  describe('Overlay scrollbar', function () {
+    it('should keep the close button clear of an overlay scrollbar', async function () {
+      await $('.tab-list .tab-object__delete-button').waitForExist();
+      const { overlay, listRight, buttonRight } = await browser.execute(() => {
+        const list = document.querySelector('.tab-list');
+        const button = document.querySelector('.tab-list .tab-object__delete-button');
+        return {
+          overlay: list.classList.contains('tab-list--overlay-scrollbar'),
+          listRight: list.getBoundingClientRect().right,
+          buttonRight: button.getBoundingClientRect().right,
+        };
+      });
+      // wdio.conf.js forces overlay scrollbars, which draw over the list's
+      // right edge; a hovered thumb is approximately 15px wide
+      expect(overlay).toBe(true);
+      expect(listRight - buttonRight).toBeGreaterThanOrEqual(16);
+    });
+  });
+
   describe('UI Elements', function () {
     it('should have a settings button', async function () {
       const prefBtn = await $('#pref-btn');

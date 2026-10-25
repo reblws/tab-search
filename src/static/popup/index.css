@@ -321,6 +321,12 @@ removes the extra space added by the pseudoelement
   pointer-events: none;
 }
 
+/* Keep clear of an overlay scrollbar, which draws over the list's right
+   edge; its thumb is approximately 15px wide while the pointer is on it */
+.tab-list--overlay-scrollbar .tab-object__delete-button {
+  margin-right: calc(-0.75rem + 16px);
+}
+
 /* Show on row hover */
 .tab-object:hover .tab-object__delete-button {
   opacity: 1;
