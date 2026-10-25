@@ -259,6 +259,31 @@ describe('Chrome MV3 build', function () {
       await browser.waitUntil(async () => (await (await refreshInput()).getValue()) === defaultShortcut);
     });
 
+    it('should remove a secondary shortcut with its button after the worker stops', async function () {
+      await openSettings();
+      // Start from the defaults, where Next Tab has a secondary shortcut
+      await $('#shortcut-reset').click();
+      const secondaryInput = () => $('#TAB_NEXT input[data-key="secondaryCommand"]');
+      const removeButton = () => $('#TAB_NEXT .shortcut-table__remove');
+      await (await removeButton()).waitForDisplayed();
+      expect(await (await removeButton()).getTagName()).toBe('button');
+      expect(await (await removeButton()).getAttribute('aria-label'))
+        .toBe('Remove secondary shortcut for Next Tab');
+      // Rows without a secondary shortcut keep the button's space but hide it
+      const emptyShortcut = await $('#TAB_OPEN input[data-key="secondaryCommand"]').getValue();
+      expect(await $('#TAB_OPEN .shortcut-table__remove').isDisplayed()).toBe(false);
+
+      await stopWorker();
+      await (await removeButton()).click();
+      await browser.waitUntil(async () => (await (await secondaryInput()).getValue()) === emptyShortcut, {
+        timeoutMsg: 'The secondary shortcut was not removed',
+      });
+      expect(await (await removeButton()).isDisplayed()).toBe(false);
+
+      await $('#shortcut-reset').click();
+      await (await removeButton()).waitForDisplayed();
+    });
+
     it('should catch up on changes made elsewhere when a disconnected settings page is focused', async function () {
       await openSettings();
       const refreshInput = () => $('#TAB_REFRESH input[data-key="command"]');

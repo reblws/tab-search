@@ -1,5 +1,4 @@
 import keyboard from 'core/keyboard';
-import { DEL_CIRCLE_SVG_PATH } from 'core/pages/popup/constants';
 import reducerMap from './inputs-to-reducer';
 import {
   updateKeybinding,
@@ -21,6 +20,8 @@ import {
   SHORTCUT_TABLE_SHORTCUT,
   SHORTCUT_TABLE_DESCRIPTION,
   SHORTCUT_TABLE_INPUT,
+  SHORTCUT_TABLE_SECONDARY,
+  SHORTCUT_TABLE_REMOVE,
   SHORTCUT_RESET_BUTTON_ID,
   ERROR_MSG_NOT_VALID_SINGLE_KEY,
   ERROR_MSG_NOT_VALID_FINAL_COMBO_KEY,
@@ -233,29 +234,18 @@ function stateToTableRows(keyboardState, handlers, kbString) {
 // display the given value
 function updateTableRow(id, primaryShortcut, secondaryShortcut) {
   // Update both values at a time, even if one doesn't change
-  // This selector works as long as there are exactly 2 inputs
-  const inputs = d.getElementById(id).querySelectorAll('input');
-  inputs.forEach((input) => {
-    switch (input.type) {
-      case 'text': {
-        const value = input.dataset.key === 'command'
-          ? primaryShortcut
-          : secondaryShortcut;
-        input.defaultValue = value;
-        input.value = value;
-        break;
-      }
-      case 'image': {
-        if (secondaryShortcut === keyboard.toString(null)) {
-          input.classList.add('hidden');
-        } else {
-          input.classList.remove('hidden');
-        }
-        break;
-      }
-      default: break;
-    }
+  const row = d.getElementById(id);
+  row.querySelectorAll('input').forEach((input) => {
+    const value = input.dataset.key === 'command'
+      ? primaryShortcut
+      : secondaryShortcut;
+    input.defaultValue = value;
+    input.value = value;
   });
+  setRemoveButtonVisible(
+    row.querySelector(`.${SHORTCUT_TABLE_REMOVE}`),
+    secondaryShortcut !== keyboard.toString(null),
+  );
 }
 
 /* Output:
@@ -267,7 +257,10 @@ function updateTableRow(id, primaryShortcut, secondaryShortcut) {
     <input type="text" value={string(command)} data-key="command">
   </td>
   <td>
-    <input type="text" value={string(command)} data-key="secondaryCommand">
+    <div class="shortcut-table__secondary">
+      <input type="text" value={string(command)} data-key="secondaryCommand">
+      <button type="button" class="shortcut-table__remove" aria-label="Remove ...">
+    </div>
   </td>
   <td>
     {description}
@@ -322,18 +315,15 @@ function commandToTableRow(
     if (isPrimary) {
       tdShortcutNode.appendChild(node);
     } else {
-      tdSecondaryShortcutNode.append(node);
-      // Reset secondary shortcuts
-      const secondaryResetButton = d.createElement('input');
-      secondaryResetButton.classList.add('delete-circle');
-      if (kbString(secondaryCommand) === keyboard.toString(null)) {
-        secondaryResetButton.classList.add('hidden');
-      }
-      secondaryResetButton.type = 'image';
-      secondaryResetButton.role = 'button';
-      secondaryResetButton.src = DEL_CIRCLE_SVG_PATH;
-      secondaryResetButton.addEventListener('click', handlers.onSecondaryReset);
-      tdSecondaryShortcutNode.append(secondaryResetButton);
+      // Keycap and its remove button side by side
+      const secondaryNode = d.createElement('div');
+      secondaryNode.classList.add(SHORTCUT_TABLE_SECONDARY);
+      secondaryNode.append(node, createRemoveButton(name, handlers.onSecondaryReset));
+      tdSecondaryShortcutNode.append(secondaryNode);
+      setRemoveButtonVisible(
+        secondaryNode.lastChild,
+        kbString(secondaryCommand) !== keyboard.toString(null),
+      );
     }
   });
 
@@ -354,6 +344,43 @@ function commandToTableRow(
   return trNode;
 }
 
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+// Ghost icon button that removes a secondary shortcut. The × is inline so
+// it takes the button's currentColor (same glyph as the popup's close-tab
+// button).
+function createRemoveButton(shortcutName, onClick) {
+  const button = d.createElement('button');
+  button.type = 'button';
+  button.classList.add(SHORTCUT_TABLE_REMOVE);
+  const label = `Remove secondary shortcut for ${shortcutName}`;
+  button.title = label;
+  button.setAttribute('aria-label', label);
+
+  const svg = d.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('width', '14');
+  svg.setAttribute('height', '14');
+  svg.setAttribute('viewBox', '0 0 14 14');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('aria-hidden', 'true');
+  const path = d.createElementNS(SVG_NS, 'path');
+  path.setAttribute('d', 'M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5');
+  path.setAttribute('stroke', 'currentColor');
+  path.setAttribute('stroke-width', '1.8');
+  path.setAttribute('stroke-linecap', 'round');
+  svg.append(path);
+  button.append(svg);
+
+  button.addEventListener('click', onClick);
+  return button;
+}
+
+// Hidden buttons keep their space so the keycaps stay aligned;
+// visibility: hidden also takes them out of the tab order and a11y tree
+function setRemoveButtonVisible(button, visible) {
+  button.classList.toggle('hidden', !visible);
+}
+
 function keybindInputHandlers(store, kbString) {
   const onInputFocus = (event) => {
     event.currentTarget.value = 'Enter your shortcut...';
@@ -368,7 +395,7 @@ function keybindInputHandlers(store, kbString) {
   };
 
   const onSecondaryReset = (event) => {
-    const { id: key } = event.currentTarget.parentElement.parentElement;
+    const { id: key } = event.currentTarget.closest('tr');
     if (key in store.getState().keyboard) {
       store.dispatch(removeSecondaryKeybinding(key));
     }
@@ -401,7 +428,7 @@ function keybindInputHandlers(store, kbString) {
       event.currentTarget.blur();
       return;
     }
-    const { id: parentId } = event.currentTarget.parentElement.parentElement;
+    const { id: parentId } = event.currentTarget.closest('tr');
     const command = keyboard.command(event);
     const isValid = keyboard.isValid(command);
     const { name } = store.getState().keyboard[parentId];
