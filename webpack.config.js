@@ -5,7 +5,7 @@ const { join } = require('path');
 
 const SRC_PATH = join(__dirname, 'src');
 const DIST_PATH = join(__dirname, 'dist');
-const PAGES_PATH = join(SRC_PATH, 'core', 'pages');
+const PAGES_PATH = join(SRC_PATH, '_legacy', 'pages');
 
 const plugins = [
   new CopyWebpackPlugin({

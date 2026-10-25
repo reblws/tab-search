@@ -34,7 +34,7 @@ module.exports = [
 
       // Import rules
       'import/prefer-default-export': 'off',
-      'import/no-unresolved': ['error', { ignore: ['^core/', '^static/'] }],
+      'import/no-unresolved': ['error', { ignore: ['^core/', '^_legacy/', '^static/'] }],
 
       // General style rules
       'no-console': 'off',
