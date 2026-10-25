@@ -12,6 +12,10 @@ export const config = {
   exclude: [],
 
   maxInstances: 1,
+  // The browsers run headless, so skip wdio's xvfb-run worker wrapper: on
+  // Ubuntu 26.04 it drops the worker IPC fd and every worker dies with
+  // "write EINVAL" (webdriverio/webdriverio#15685)
+  autoXvfb: false,
   // Where Chrome for Testing and chromedriver are downloaded (CI caches it)
   ...(process.env.WDIO_CACHE_DIR ? { cacheDir: process.env.WDIO_CACHE_DIR } : {}),
 
