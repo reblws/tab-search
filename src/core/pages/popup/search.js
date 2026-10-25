@@ -133,9 +133,9 @@ export default function filterResult(
         predicates.push(isSessionType);
       }
       if (shouldMruSort) {
-        // Whatever the active tabs are will always be the most recently used.
-        // Push them to the bottom if need to sort by most recently used
-        predicates.push(isActive);
+        // The current tab is always the most recently used, so push it to
+        // the bottom. Active tabs of other windows sort by time like the rest
+        predicates.push(composeFilterAnd(isActive, isOfWindow(currentWindowId)));
       }
       if (predicates.length === 0) {
         return searchResults;

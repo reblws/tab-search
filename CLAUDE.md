@@ -91,6 +91,10 @@ in the browser files.
 - `background/badge-text-state.js` recounts the tab badge only when the
   setting turns on or once per browser session (a flag in
   `storage.session`), not on every worker wake.
+- `background/tab-recency.js` records when each tab gets focus (in
+  `storage.session`) for the most recently used sort; the popup asks for it
+  with `GET_FOCUSED_AT` from `core/tab-recency.js`. `tab.lastAccessed` alone
+  can't order tabs across windows.
 - A stopped worker disconnects every page's port. `ui-store.js` reconnects
   lazily: before its next dispatch, or when the page is focused or shown.
 - Chrome E2E specs live in `test/e2e-chrome/` (config `wdio.chrome.conf.js`);

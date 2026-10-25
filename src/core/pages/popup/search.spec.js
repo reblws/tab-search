@@ -102,3 +102,42 @@ describe('normalizeRecentlyClosedTabs', function () {
     expect(results[0].type).to.equal('session');
   });
 });
+
+describe('most recently used sort', function () {
+  const CURRENT_WINDOW = 2;
+  const mruSettings = { shouldSortByMostRecentlyUsedOnPopup: true };
+  const tab = (id, windowId, active, lastAccessed) => ({
+    id, windowId, active, lastAccessed, title: `Tab ${id}`, url: `https://${id}.example/`,
+  });
+  let filterResult;
+
+  before(async function () {
+    // search.js looks up popup elements when it loads
+    global.document = new JSDOM('<!DOCTYPE html><html><body></body></html>').window.document;
+    ({ default: filterResult } = await import('./search.js'));
+  });
+
+  after(function () {
+    delete global.document;
+  });
+
+  const order = tabs => filterResult('', initialFuzzySettings, mruSettings, CURRENT_WINDOW)(tabs)
+    .initial.then(results => results.map(t => t.id));
+
+  it('should keep the active tab of another window in time order (#114)', async function () {
+    expect(await order([
+      tab(1, 1, false, 100),
+      tab(2, 1, true, 200),
+      tab(3, CURRENT_WINDOW, true, 300),
+    ])).to.deep.equal([2, 1, 3]);
+  });
+
+  it('should push only the current tab to the bottom', async function () {
+    expect(await order([
+      tab(1, CURRENT_WINDOW, true, 400),
+      tab(2, 1, true, 100),
+      tab(3, 3, true, 300),
+      tab(4, CURRENT_WINDOW, false, 200),
+    ])).to.deep.equal([3, 4, 2, 1]);
+  });
+});

@@ -13,6 +13,7 @@
   + In Chrome, the settings page's popup shortcut field now opens Chrome's Keyboard shortcuts page, the only place it can be changed, and explains when no shortcut is assigned
 - Right-clicking a tab result in Firefox now opens the tab's context menu, with the tab items of other add-ons, plus Reload, Pin, Mute and Close (#102)
   + Right-clicking a bookmark result opens the bookmark context menu of other add-ons
+- Fixed the most recently used sort with several windows: the tab used last now comes first, even when it's the active tab of another window (#114)
   + Firefox 64 is now the minimum version
 - Redesigned the button that removes a secondary shortcut in settings as an accessible ghost button beside the shortcut
 - Fixed the mute shortcut not unmuting a muted tab that is playing sound
