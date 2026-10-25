@@ -1,8 +1,33 @@
 {
+  "manifest_version": 2,
   "browser_specific_settings": {
     "gecko": {
       "strict_min_version": "58.0",
       "id": "{11a68c03-baa3-41fb-869c-5172c4c4dd2e}"
+    }
+  },
+  "browser_action": {
+    "default_icon": "icons/logo-48.png",
+    "default_title": "TabSearch",
+    "default_popup": "popup/index.html"
+  },
+  "background": {
+    "scripts": [
+      "background_bundle.js"
+    ]
+  },
+  "options_ui": {
+    "page": "settings/index.html",
+    "open_in_tab": true,
+    "browser_style": true
+  },
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F",
+        "mac": "Ctrl+Shift+L"
+      },
+      "description": "Execute this browser action"
     }
   }
 }

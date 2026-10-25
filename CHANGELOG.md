@@ -1,5 +1,25 @@
 # Changelog
 
+## Unreleased
+
+- Added Chrome support: the Chrome build now uses Manifest V3 with a service worker background
+  + Listed on Chrome as "TabSearch: Fuzzy Tab Switcher", because other Chrome Web Store listings already use the TabSearch name
+  + Added a 128px icon, which the Chrome Web Store requires
+  + Settings, open settings pages, the last query and the tab count badge stay correct after Chrome stops the idle service worker
+  + The tab count badge is counted once per browser session instead of every time the service worker wakes up
+  + Added `pnpm zip:chrome` to build a Chrome Web Store zip
+- Changed the Chrome popup shortcut on Mac to <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>L</kbd>: Chrome left <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>L</kbd> unassigned because it conflicts with a browser shortcut
+  + In Chrome, the settings page's popup shortcut field now opens Chrome's Keyboard shortcuts page, the only place it can be changed, and explains when no shortcut is assigned
+- Redesigned the button that removes a secondary shortcut in settings as an accessible ghost button beside the shortcut
+- Fixed Copy Tab URL (<kbd>Ctrl</kbd>+<kbd>C</kbd>) copying nothing in Chrome
+- Fixed an empty "()" shortcut hint in the search box when no popup shortcut is set
+- Fixed new tab pages and private tabs showing up in recently closed tabs
+- Fixed every tab's badge being recounted on each keystroke in the popup when "Show last query on popup" is on
+- Fixed a tab count badge reappearing right after turning the badge off
+- Fixed the settings page's Changelog link pointing at an outdated branch
+- Added a Chrome E2E test suite on Chrome for Testing, also run in CI
+- Fixed the Firefox E2E suite on Firefox 158+
+
 ## 0.7.0 (2026-10-19)
 
 - Added a configurable search debounce delay setting

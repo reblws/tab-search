@@ -3,7 +3,6 @@ export const alertCircle = '/assets/alert-circle.svg';
 export const BOOKMARKS_SVG_PATH = '/assets/bookmark.svg';
 export const HISTORY_SVG_PATH = '/assets/book.svg';
 export const RELOAD_SVG_PATH = '/assets/reload.svg';
-export const DEL_CIRCLE_SVG_PATH = '/assets/x-circle.svg';
 export const deleteButton = document.querySelector('.clear-button');
 export const searchInput = document.querySelector('.search');
 export const tabList = document.querySelector('.tab-list');

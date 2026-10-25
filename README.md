@@ -12,7 +12,7 @@ Easy tab search & switching. This WebExtension provides a keyboard-accessible se
 
 | Shortcut | Description |
 | --- | --- |
-| Win/Linux: <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> / Mac: <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> | Toggle extension |
+| Win/Linux: <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> / Mac: <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> (Firefox), <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> (Chrome) | Toggle extension |
 | <kbd>Enter</kbd> | Open selected tab |
 | <kbd>&#8593;</kbd> / <kbd>&#8592;</kbd> | Select previous tab |
 | <kbd>&#8595;</kbd> / <kbd>&#8594;</kbd> | Select next tab |
@@ -54,8 +54,18 @@ pnpm start
 # Start development with live reload (Chrome)
 pnpm start:chrome
 
-# Run tests
+# Run unit tests
 pnpm test
+
+# Run E2E tests (Firefox needs `pnpm zip:firefox` first, Chrome needs `pnpm build:chrome`)
+pnpm test:e2e
+pnpm test:e2e:chrome
+
+# Run the Chrome E2E tests on the oldest supported Chrome
+CHROME_VERSION=123 pnpm test:e2e:chrome
+
+# Run every check: lint, unit tests and both E2E suites
+pnpm test:all
 
 # Lint code
 pnpm lint:eslint
@@ -72,7 +82,15 @@ pnpm build:chrome
 
 # Build and create distributable zip (Firefox)
 pnpm zip:firefox
+
+# Build and create Chrome Web Store zip
+pnpm zip:chrome
 ```
+
+The Chrome build uses Manifest V3 with a service worker background. The
+Firefox build stays on Manifest V2. The Chrome E2E suite downloads Chrome for
+Testing on its first run, because branded Chrome doesn't load unpacked
+extensions from the command line.
 
 ## Changelog
 

@@ -1,17 +1,9 @@
 import debounce from 'debounce';
-
-// Shorthand
-// t -> browser.tabs
-// setBadgeText -> browser.browserAction.setBadgeText
-const { tabs: t } = browser;
-const { setBadgeText } = browser.browserAction;
-
-const ADD_LISTENER = 'addListener';
-const REMOVE_LISTENER = 'removeListener';
+import { setBadgeText } from 'core/utils/action-api';
 
 const LOADING_TEXT = '...';
 
-// Save the debounced funcs here so we can remove it with the exact same handler
+// Debounce once here so every event of a burst shares the same timer
 const debounceHandleOnCreatedTab = debounce(handleOnCreatedTab, 50);
 const debounceHandleOnRemovedTab = debounce(handleOnRemovedTab, 50);
 // onUpdated fires for every loaded page; on FF 157+ (Nova) the resulting
@@ -28,16 +20,30 @@ const eventListenerMap = {
   onDetached: handleOnDetachedTab,
 };
 
-const doListeners = browserTabObject => method => (listenerMap) => {
-  Object.keys(listenerMap).forEach((eventKey) => {
-    const handler = listenerMap[eventKey];
-    browserTabObject[eventKey][method](handler);
-  });
-};
+// MV3 service workers only get woken for events whose listeners were added
+// synchronously on startup, so the listeners stay attached for the worker's
+// lifetime and each event checks whether counting is on instead.
+// isCounting: () -> Promise<Boolean>
+let isCountingNow = () => Promise.resolve(false);
 
-// listenerMap -> null: applys allevent listeners specified in the listenerMap
-const addBadgeTextListeners = doListeners(t)(ADD_LISTENER);
-const removeBadgeTextListeners = doListeners(t)(REMOVE_LISTENER);
+// Handlers run up to ~250ms after their event (debounce, plus a timeout for
+// removals), so check again right before writing the badge: counting may
+// have been turned off meanwhile.
+const ifStillCounting = fn => (...args) => isCountingNow().then((counting) => {
+  if (counting) fn(...args);
+});
+
+export function addBadgeTextListeners(isCounting) {
+  isCountingNow = isCounting;
+  Object.keys(eventListenerMap).forEach((eventKey) => {
+    const handler = eventListenerMap[eventKey];
+    browser.tabs[eventKey].addListener((...args) => {
+      isCounting().then((counting) => {
+        if (counting) handler(...args);
+      });
+    });
+  });
+}
 
 const WINDOW_OPTIONS = {
   populate: true,
@@ -47,16 +53,18 @@ const WINDOW_OPTIONS = {
 const updateTabInWindow = windowId => tabId =>
   browser.windows.get(windowId, WINDOW_OPTIONS)
     .then(({ tabs }) => String(tabs.length))
-    .then(text => setBadgeText({ text, tabId }));
+    .then(ifStillCounting(text => setBadgeText({ text, tabId })));
 
-export function startCountingBadgeTextAndAddListeners() {
+export function startCountingBadgeText() {
   setInitialBadgeTextInAllWindows();
-  addBadgeTextListeners(eventListenerMap);
 }
 
-export function stopCountingBadgeTextAndRemoveListeners() {
+export function stopCountingBadgeText() {
+  // Drop updates still waiting on their debounce timer
+  debounceHandleOnCreatedTab.clear();
+  debounceHandleOnRemovedTab.clear();
+  debounceHandleOnUpdatedTab.clear();
   clearAllBadgeText();
-  removeBadgeTextListeners(eventListenerMap);
 }
 
 function setInitialBadgeTextInAllWindows() {
@@ -82,7 +90,7 @@ function updateWindowBadgeText(browserWindow) {
 
 function clearAllBadgeText() {
   setBadgeText({ text: '' });
-  t.query({}).then((tabs) => {
+  browser.tabs.query({}).then((tabs) => {
     tabs.forEach(({ id: tabId }) => {
       setBadgeText({
         text: '',
@@ -93,7 +101,7 @@ function clearAllBadgeText() {
 }
 
 const promiseBadgeTextWindowUpdate = windowId =>
-  browser.windows.get(windowId, WINDOW_OPTIONS).then(updateWindowBadgeText);
+  browser.windows.get(windowId, WINDOW_OPTIONS).then(ifStillCounting(updateWindowBadgeText));
 
 function handleOnCreatedTab({ windowId }) {
   // TODO: debounce
@@ -124,7 +132,7 @@ function handleOnRemovedTab(_, removeInfo) {
 function handleOnDetachedTab(tabId, detachInfo) {
   const { oldWindowId } = detachInfo;
   promiseBadgeTextWindowUpdate(oldWindowId);
-  t.get(tabId)
+  browser.tabs.get(tabId)
     .then((detachedTabDetails) => {
       const { windowId } = detachedTabDetails;
       return promiseBadgeTextWindowUpdate(windowId);

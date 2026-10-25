@@ -175,6 +175,28 @@ describe('Settings', function () {
       const resetButton = await $('#shortcut-reset');
       await expect(resetButton).toBeDisplayed();
     });
+
+    it('should remove a secondary shortcut with its remove button', async function () {
+      // Start from the defaults, where Next Tab has a secondary shortcut
+      await $('#shortcut-reset').click();
+      const secondaryInput = await $('#TAB_NEXT input[data-key="secondaryCommand"]');
+      const removeButton = await $('#TAB_NEXT .shortcut-table__remove');
+      await removeButton.waitForDisplayed();
+      expect(await removeButton.getTagName()).toBe('button');
+      expect(await removeButton.getAttribute('aria-label'))
+        .toBe('Remove secondary shortcut for Next Tab');
+      const emptyShortcut = await $('#TAB_OPEN input[data-key="secondaryCommand"]').getValue();
+      expect(await $('#TAB_OPEN .shortcut-table__remove').isDisplayed()).toBe(false);
+
+      await removeButton.click();
+      await browser.waitUntil(async () => (await secondaryInput.getValue()) === emptyShortcut, {
+        timeoutMsg: 'The secondary shortcut was not removed',
+      });
+      expect(await removeButton.isDisplayed()).toBe(false);
+
+      await $('#shortcut-reset').click();
+      await removeButton.waitForDisplayed();
+    });
   });
 
   describe('Color Settings', function () {

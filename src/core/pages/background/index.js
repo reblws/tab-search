@@ -1,40 +1,27 @@
+import 'core/polyfill';
 import { initialColorSettings as initialColors } from 'core/reducers/defaults';
+import { rehydrated } from 'core/store';
+import { setBadgeBackgroundColor } from 'core/utils/action-api';
 import backgroundStore from './store';
 import {
-  startCountingBadgeTextAndAddListeners,
-  stopCountingBadgeTextAndRemoveListeners,
+  addBadgeTextListeners,
+  startCountingBadgeText,
+  stopCountingBadgeText,
 } from './badge-text-listeners';
+import { createSessionFlag, watchBadgeTextSetting } from './badge-text-state';
 
 // Init background
-// First check if we even want to check for badge text, if true then start a
-// timeout to wait for the browser to start up and add call startCounting...
-backgroundStore.subscribe(subscribeToBadgeTextState(backgroundStore));
+// Tab listeners must be added in the first turn so a stopped MV3 service
+// worker is woken for them; they wait for the saved setting before counting.
+addBadgeTextListeners(() => rehydrated
+  .then(() => backgroundStore.getState().general.showTabCountBadgeText));
 
-function subscribeToBadgeTextState(store) {
-  // Don't need to set anything initially, a REHYDRATE action will be dispatched
-  // initially to grab the saved setting, which means the initial adding of
-  // listeners will be handled by the func below anyway
-  let prevState = store.getState();
-  if (prevState.color.popupBadgeColor !== initialColors.popupBadgeColor) {
-    browser.browserAction.setBadgeBackgroundColor({
-      color: prevState.color.popupBadgeColor,
-    });
-  }
-  return () => {
-    const nextState = store.getState();
-    const { showTabCountBadgeText } = nextState.general;
-    if (showTabCountBadgeText) {
-      startCountingBadgeTextAndAddListeners();
-    } else {
-      stopCountingBadgeTextAndRemoveListeners();
-    }
-    const shouldUpdateBadgeColor = nextState.color.popupBadgeColor !== prevState.color.popupBadgeColor
-      && showTabCountBadgeText;
-    if (shouldUpdateBadgeColor) {
-      browser.browserAction.setBadgeBackgroundColor({
-        color: nextState.color.popupBadgeColor,
-      });
-    }
-    prevState = nextState;
-  };
-}
+watchBadgeTextSetting({
+  store: backgroundStore,
+  rehydrated,
+  countedThisSession: createSessionFlag('badgeTextCounted'),
+  startCounting: startCountingBadgeText,
+  stopCounting: stopCountingBadgeText,
+  setBadgeBackgroundColor,
+  defaultColor: initialColors.popupBadgeColor,
+});

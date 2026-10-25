@@ -9,6 +9,9 @@ const store = createStore(
   applyMiddleware(...middleware),
 );
 
-persistStore(store);
+// Resolves once redux-persist has loaded the saved settings into the store
+export const rehydrated = new Promise((resolve) => {
+  persistStore(store, null, resolve);
+});
 
 export default store;

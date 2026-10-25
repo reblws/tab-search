@@ -10,6 +10,7 @@ import {
   findLastElType,
 } from './dom';
 import { decodeUrl } from './url';
+import { POPUP_COMMAND } from 'core/utils/action-api';
 
 export function addTabsToPromiseChain(store) {
   const { getState } = store;
@@ -81,12 +82,11 @@ function getUserOs() {
 // Returns the user's shortcut for the extension
 // () -> Promise< shortcut: String >
 export async function getOsShortcut() {
-  const POPUP_COMMAND_NAME = '_execute_browser_action';
   const [os, commands] = await Promise.all([
     getUserOs(),
     browser.commands.getAll(),
   ]);
-  const popupCommand = commands.find(cmd => cmd.name === POPUP_COMMAND_NAME);
+  const popupCommand = commands.find(cmd => cmd.name === POPUP_COMMAND);
   const shortcut = popupCommand?.shortcut || '';
 
   // Replace Ctrl with Cmd on Mac for display

@@ -1,4 +1,4 @@
-const POPUP_COMMAND_NAME = '_execute_browser_action';
+import { POPUP_COMMAND as POPUP_COMMAND_NAME } from 'core/utils/action-api';
 
 // Feature detection for Firefox vs Chrome
 export function supportsCommandUpdate() {

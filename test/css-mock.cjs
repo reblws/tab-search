@@ -23,9 +23,12 @@ const acornColors = {
   },
 };
 
-// Register custom handler for CSS files that returns mock object
-hook.default(['.css'], (module, filename) => {
-  if (filename.includes('photon.css')) {
+// Register custom handler for CSS files that returns mock object, and for
+// SVGs, which webpack's svg-url-loader turns into data URL strings
+hook.default(['.css', '.svg'], (module, filename) => {
+  if (filename.endsWith('.svg')) {
+    module.exports = '';
+  } else if (filename.includes('photon.css')) {
     module.exports = photonColors;
   } else if (filename.includes('acorn-tokens.css')) {
     module.exports = acornColors;

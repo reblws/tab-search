@@ -1,3 +1,26 @@
 {
-  "minimum_chrome_version": "59.0.3071"
+  "manifest_version": 3,
+  "name": "TabSearch: Fuzzy Tab Switcher",
+  "minimum_chrome_version": "123",
+  "action": {
+    "default_icon": "icons/logo-48.png",
+    "default_title": "TabSearch",
+    "default_popup": "popup/index.html"
+  },
+  "background": {
+    "service_worker": "background_bundle.js"
+  },
+  "options_ui": {
+    "page": "settings/index.html",
+    "open_in_tab": true
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F",
+        "mac": "MacCtrl+Shift+L"
+      },
+      "description": "Open TabSearch"
+    }
+  }
 }

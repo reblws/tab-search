@@ -11,15 +11,18 @@
     "start:firefox": "concurrently -k -n webpack,web-ext -c blue,green \"BROWSER=firefox NODE_ENV=development webpack --progress --watch\" \"web-ext run -s dist/\"",
     "start:chrome": "concurrently -k -n webpack,web-ext -c blue,green \"BROWSER=chrome NODE_ENV=development webpack --progress --watch\" \"web-ext run -s dist/ -t chromium\"",
     "build:firefox": "BROWSER=firefox NODE_ENV=production webpack && npm run lint:web-ext",
-    "build:chrome": "BROWSER=chrome NODE_ENV=production webpack && npm run lint:web-ext",
+    "build:chrome": "BROWSER=chrome NODE_ENV=production webpack",
     "lint:web-ext": "web-ext lint -s dist/",
     "lint:eslint": "eslint 'src/**'",
     "zip:firefox": "npm run build:firefox && web-ext build -s ./dist --overwrite-dest",
+    "zip:chrome": "npm run build:chrome && web-ext build -s ./dist --overwrite-dest --filename 'tabsearch-chrome-{version}.zip'",
     "test": "nyc mocha",
     "test:coverage": "nyc report --reporter=html",
     "test:e2e": "wdio run wdio.conf.js",
     "test:e2e:headed": "HEADLESS=false wdio run wdio.conf.js",
-    "test:all": "npm run build:firefox && npm test && npm run test:e2e",
+    "test:e2e:chrome": "wdio run wdio.chrome.conf.js",
+    "test:e2e:chrome:headed": "HEADLESS=false wdio run wdio.chrome.conf.js",
+    "test:all": "npm run lint:eslint && npm test && npm run build:chrome && npm run test:e2e:chrome && npm run zip:firefox && npm run test:e2e",
     "version": "node scripts/version.js"
   },
   "dependencies": {
@@ -29,8 +32,8 @@
     "redux": "^5.0.1",
     "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
-    "redux-webext": "^1.1.2",
-    "rgb": "^0.1.0"
+    "rgb": "^0.1.0",
+    "webextension-polyfill": "^0.12.0"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
@@ -58,7 +61,6 @@
     "nyc": "^17.1.0",
     "sinon": "^19.0.0",
     "svg-url-loader": "^8.0.0",
-    "wdio-geckodriver-service": "^5.0.2",
     "web-ext": "^9.2.0",
     "webpack": "^5.97.1",
     "webpack-bundle-analyzer": "^4.10.2",

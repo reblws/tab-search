@@ -1,5 +1,5 @@
-import { createBackgroundStore } from 'redux-webext';
-import store from 'core/store';
+import store, { rehydrated } from 'core/store';
+import { wrapBackgroundStore } from 'core/store/bridge';
 import {
   CHECKBOX_UPDATE,
   RANGE_UPDATE,
@@ -17,8 +17,9 @@ import {
   SELECT_UPDATE,
 } from 'core/actions/types';
 
-export default createBackgroundStore({
+export default wrapBackgroundStore({
   store,
+  rehydrated,
   actions: {
     [FUZZY + CHECKBOX_UPDATE]: act => Object.assign(act, { type: FUZZY + CHECKBOX_UPDATE }),
     [FUZZY + RANGE_UPDATE]: act => Object.assign(act, { type: FUZZY + RANGE_UPDATE }),
