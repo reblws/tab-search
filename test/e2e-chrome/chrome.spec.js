@@ -226,6 +226,37 @@ describe('Chrome MV3 build', function () {
       await browser.waitUntil(async () => (await readSavedGeneralSettings())?.searchAllWindows === original);
     });
 
+    it('should show the last query in the popup after the worker stops', async function () {
+      const setShowLastQuery = async (enabled) => {
+        await openSettings();
+        const checkbox = await $('#showLastQueryOnPopup');
+        await checkbox.waitForExist();
+        if ((await checkbox.isSelected()) !== enabled) {
+          await browser.execute(el => el.click(), checkbox);
+        }
+        await browser.waitUntil(async () => (await readSavedGeneralSettings())?.showLastQueryOnPopup === enabled);
+      };
+      await setShowLastQuery(true);
+
+      await openPopup();
+      await $('input.search').setValue('fixture query');
+      await browser.waitUntil(() => inExtension(() => chrome.storage.session.get('persist:state')
+        .then(items => JSON.stringify(items).includes('fixture query'))), {
+        timeoutMsg: 'The last query was not saved to storage.session',
+      });
+
+      // Chrome discards the worker ~30s after the popup closes
+      await stopWorker();
+      await openPopup();
+      await browser.waitUntil(async () => (await $('input.search').getValue()) === 'fixture query', {
+        timeoutMsg: 'The popup did not show the last query after a worker restart',
+      });
+
+      // Restore
+      await $('input.search').clearValue();
+      await setShowLastQuery(false);
+    });
+
     it('should keep an open settings page in sync after the worker stops', async function () {
       await openSettings();
       const refreshInput = () => $('#TAB_REFRESH input[data-key="command"]');

@@ -1,8 +1,7 @@
-// Redux-persist storage adapter for storage.local WebExtension API compatibility
-const storage = browser.storage.local;
-
-export default {
-  getItem: key => storage.get(key).then(obj => obj[key]),
-  setItem: (key, item) => storage.set({ [key]: item }),
-  removeItem: key => storage.remove(key),
-};
+// Redux-persist storage adapter for a WebExtension storage area
+// (storage.local, storage.session)
+export const createStorageAdapter = area => ({
+  getItem: key => area.get(key).then(obj => obj[key]),
+  setItem: (key, item) => area.set({ [key]: item }),
+  removeItem: key => area.remove(key),
+});

@@ -54,7 +54,7 @@ Redux reducers in `src/core/reducers/`:
 - `general` - General settings (badge text, etc.)
 - `keyboard` - Keyboard shortcut bindings
 - `color` - UI color settings
-- `state` - Transient runtime state (not persisted)
+- `state` - Transient runtime state (the last query), kept in `storage.session` when available, never in `storage.local`
 
 ### Key Modules
 
