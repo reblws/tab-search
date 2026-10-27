@@ -11,7 +11,8 @@ import {
 } from './badge-text-listeners';
 import { createSessionFlag } from 'shell/storage/session-flag';
 import { watchBadgeTextSetting } from './badge-text-state';
-import { addTabRecencyListeners, createFocusRecord } from './tab-recency';
+import { createFocusRecord } from 'shell/storage/focus-record';
+import { addTabRecencyListeners } from './tab-recency';
 
 // Init background
 // Tab listeners must be added in the first turn so a stopped MV3 service

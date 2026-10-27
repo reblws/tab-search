@@ -1,3 +1,4 @@
+import sinon from 'sinon';
 import { createFocusRecord } from './focus-record.js';
 
 function createStorageArea() {
