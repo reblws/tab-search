@@ -9,13 +9,21 @@ import {
   SHORTCUT_LIST_ID,
   SHORTCUT_RESET_BUTTON_ID,
   RECORDING_TEXT,
-  ERROR_MSG_FINAL_KEY_IS_MODIFIER,
 } from './constants';
+import {
+  SLOT_LABELS,
+  isSameBinding,
+  findBinding,
+  invalidMessage,
+  formatShortcutForDisplay,
+  shortcutParts,
+  commandsShortcut,
+  suggestedShortcut,
+} from 'core/settings/shortcuts';
 import { el, icon, clearChildNodes, CLOSE_ICON } from 'shell/dom/element';
 import * as browserCommands from 'shell/platform/commands';
 
 const MODIFIER_KEYS = ['Control', 'Alt', 'Shift', 'Meta'];
-const SLOT_LABELS = { command: 'primary', secondaryCommand: 'secondary' };
 
 // Shows a shortcut as keycaps inside a key slot button
 export function setSlotKeys(button, parts, emptyText) {
@@ -87,33 +95,6 @@ function showError(node, message) {
 // Popup shortcuts ----------------------------------------------------------
 
 const kbParts = text => (text === keyboard.toString(null) ? [] : text.split(' + '));
-
-const isSameBinding = (x, y) => keyboard.isEqual(x.command, y.command)
-  && keyboard.isEqual(x.secondaryCommand, y.secondaryCommand);
-
-// Which action and slot already use a command, if any
-export function findBinding(keyboardState, command, except = {}) {
-  const keys = Object.keys(keyboardState);
-  for (let i = 0; i < keys.length; i += 1) {
-    const key = keys[i];
-    const slots = Object.keys(SLOT_LABELS);
-    for (let j = 0; j < slots.length; j += 1) {
-      const slot = slots[j];
-      const isExcepted = except.key === key && (!except.slot || except.slot === slot);
-      if (!isExcepted && keyboard.isEqual(keyboardState[key][slot], command)) {
-        return { key, slot };
-      }
-    }
-  }
-  return null;
-}
-
-function invalidMessage(command, text) {
-  if (command.error === ERROR_MSG_FINAL_KEY_IS_MODIFIER) {
-    return `${text} needs a key that isn't Ctrl, Alt, Shift or Cmd to finish it.`;
-  }
-  return `${text} can't be a shortcut. Try a letter or number with Ctrl, Alt or Shift.`;
-}
 
 // Display copy comes from the code so it can change; older stored state may
 // carry outdated names and descriptions
@@ -267,55 +248,6 @@ export function initKeybindingTable(store) {
 
 // Shortcut that opens the popup ---------------------------------------------
 
-// Format shortcut for display, converting browser.commands format to user-friendly format
-export function formatShortcutForDisplay(shortcut, isMac) {
-  if (!shortcut) return '';
-  if (isMac) {
-    return shortcut.split('+').map((part) => {
-      if (part === 'MacCtrl') return 'Ctrl';
-      if (part === 'Command' || part === 'Ctrl') return 'Cmd';
-      return part;
-    }).join('+');
-  }
-  return shortcut;
-}
-
-// 'Ctrl+Shift+F' -> ['Ctrl', 'Shift', 'F']; Chrome on macOS reports '⌃⇧L'
-export function shortcutParts(display) {
-  if (!display) return [];
-  if (display.includes('+')) return display.split('+');
-  const symbols = display.match(/^([⌃⌥⇧⌘]+)(.+)$/u);
-  return symbols ? [...symbols[1], symbols[2]] : [display];
-}
-
-// Builds a shortcut in browser.commands format from a keydown
-function commandsShortcut(event, isMac) {
-  const parts = [];
-  if (isMac) {
-    if (event.metaKey) parts.push('Command');
-    if (event.ctrlKey) parts.push('MacCtrl');
-  } else if (event.ctrlKey || event.metaKey) {
-    parts.push('Ctrl');
-  }
-  if (event.altKey) parts.push('Alt');
-  if (event.shiftKey) parts.push('Shift');
-  const keyMap = {
-    ArrowUp: 'Up',
-    ArrowDown: 'Down',
-    ArrowLeft: 'Left',
-    ArrowRight: 'Right',
-    ' ': 'Space',
-  };
-  parts.push(keyMap[event.key] || event.key.toUpperCase());
-  return parts.join('+');
-}
-
-function suggestedShortcut(isMac) {
-  const commands = browser.runtime.getManifest?.()?.commands || {};
-  const suggested = Object.values(commands)[0]?.suggested_key || {};
-  return (isMac && suggested.mac) || suggested.default || '';
-}
-
 export async function initBrowserShortcut(os) {
   const button = document.getElementById('popup-shortcut');
   const resetButton = document.getElementById('browser-shortcut-reset');
@@ -339,7 +271,7 @@ export async function initBrowserShortcut(os) {
     button.dataset.shortcut = current;
     const action = supportsUpdate ? 'Activate to change.' : 'Opens the browser’s shortcut settings.';
     button.setAttribute('aria-label', `Open TabSearch shortcut: ${display || 'not set'}. ${action}`);
-    resetButton.hidden = !supportsUpdate || current === suggestedShortcut(isMac);
+    resetButton.hidden = !supportsUpdate || current === suggestedShortcut(browserCommands.getManifestCommands(), isMac);
   }
 
   const openBrowserShortcutSettings = () =>

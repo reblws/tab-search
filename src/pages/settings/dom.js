@@ -11,40 +11,17 @@ import {
 } from './actions';
 import {
   MRU_SORT,
-  MRU_NEVER,
-  MRU_POPUP,
-  MRU_ALWAYS,
   MRU_POPUP_KEY,
   MRU_ALL_KEY,
-} from './constants';
-
-// The two most-recently-used booleans are one three-way choice on the page.
-// The popup sorts by MRU before typing when only the first is on, and always
-// when both are.
-export function mruChoice({ [MRU_POPUP_KEY]: onPopup, [MRU_ALL_KEY]: all }) {
-  if (onPopup && all) return MRU_ALWAYS;
-  if (onPopup) return MRU_POPUP;
-  return MRU_NEVER;
-}
-
-export function mruSettings(choice) {
-  return {
-    [MRU_POPUP_KEY]: choice !== MRU_NEVER,
-    [MRU_ALL_KEY]: choice === MRU_ALWAYS,
-  };
-}
+  mruChoice,
+  mruSettings,
+} from 'core/settings/mru';
+import { findSetting } from 'core/settings/lookup';
 
 // Setting inputs on the page, grouped by name (radio groups share one)
 function findInputs(root) {
   return [...root.querySelectorAll('input[name]')]
     .filter(({ name }) => name in reducerMap || name === MRU_SORT);
-}
-
-// Given the setting object and the location we want to search, return the
-// current setting value
-// e.g. 'fuzzy.enableFuzzySearch' -> settings.fuzzy.enableFuzzySearch
-function findSetting(settings, location) {
-  return location.split('.').reduce((acc, key) => acc?.[key], settings);
 }
 
 // Shows a setting's stored value in its input without dispatching anything

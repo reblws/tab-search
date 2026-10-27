@@ -2,6 +2,7 @@
 // reads changes. The popup reads its settings once, when it opens.
 import debounce from 'debounce';
 import { el, clearChildNodes } from 'shell/dom/element';
+import { popupStateChanged } from 'core/settings/lookup';
 
 export const PREVIEW_URL = '../popup/index.html?preview';
 const RELOAD_DELAY = 150;
@@ -14,14 +15,6 @@ const LEGEND = [
   ['bookmarkColor', 'Bookmark'],
   ['historyColor', 'History'],
 ];
-
-// The parts of the state the popup reads; keyboard shortcuts don't show
-const popupState = ({ general, fuzzy, color, state }) =>
-  JSON.stringify({ general, fuzzy, color, state });
-
-export function popupStateChanged(prev, next) {
-  return popupState(prev) !== popupState(next);
-}
 
 // Toolbar badge and color legend beside the popup
 export function renderToolbar(state, tabCount) {

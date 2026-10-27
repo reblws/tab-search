@@ -4,7 +4,7 @@ import {
   initialColorSettings,
   initialFuzzySettings,
 } from 'core/reducers/defaults';
-import { popupStateChanged, renderToolbar } from './preview.js';
+import { renderToolbar } from './preview.js';
 
 const makeState = (general = {}, extra = {}) => Object.assign({
   general: Object.assign({}, initialGeneralSettings, general),
@@ -15,20 +15,6 @@ const makeState = (general = {}, extra = {}) => Object.assign({
 }, extra);
 
 describe('settings preview', function () {
-  describe('popupStateChanged', function () {
-    it('should reload the popup for settings it reads', function () {
-      expect(popupStateChanged(makeState(), makeState())).to.equal(false);
-      expect(popupStateChanged(makeState(), makeState({ popupSize: 'small' }))).to.equal(true);
-      expect(popupStateChanged(
-        makeState(),
-        makeState({}, { color: Object.assign({}, initialColorSettings, { tabColor: '#123456' }) }),
-      )).to.equal(true);
-    });
-
-    it('should not reload it for keyboard shortcuts', function () {
-      expect(popupStateChanged(makeState(), makeState({}, { keyboard: { TAB_OPEN: {} } }))).to.equal(false);
-    });
-  });
 
   describe('renderToolbar', function () {
     let document;

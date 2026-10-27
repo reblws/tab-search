@@ -7,6 +7,11 @@ export function supportsCommandUpdate() {
     && typeof browser.commands.update === 'function';
 }
 
+// The manifest's commands, with their suggested keys
+export function getManifestCommands() {
+  return browser.runtime.getManifest?.()?.commands || {};
+}
+
 // Get current popup shortcut
 export async function getPopupShortcut() {
   const commands = await browser.commands.getAll();

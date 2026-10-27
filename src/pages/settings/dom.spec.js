@@ -7,7 +7,7 @@ import {
   SELECT_UPDATE,
   SETTING_RESET,
 } from 'core/actions/types.js';
-import { initSettings, mruChoice, mruSettings } from './dom.js';
+import { initSettings } from './dom.js';
 
 const FIXTURE = `
   <section id="search">
@@ -86,31 +86,6 @@ describe('settings form', function () {
   const change = (node) => {
     node.dispatchEvent(new dom.window.Event('change'));
   };
-
-  describe('mruChoice / mruSettings', function () {
-    it('should map the two booleans to one choice and back', function () {
-      const cases = [
-        ['never', false, false],
-        ['popup', true, false],
-        ['always', true, true],
-      ];
-      cases.forEach(([choice, onPopup, all]) => {
-        const settings = {
-          shouldSortByMostRecentlyUsedOnPopup: onPopup,
-          shouldSortByMostRecentlyUsedAll: all,
-        };
-        expect(mruChoice(settings)).to.equal(choice);
-        expect(mruSettings(choice)).to.deep.equal(settings);
-      });
-    });
-
-    it('should treat "all" without "on popup" as never, like the popup does', function () {
-      expect(mruChoice({
-        shouldSortByMostRecentlyUsedOnPopup: false,
-        shouldSortByMostRecentlyUsedAll: true,
-      })).to.equal('never');
-    });
-  });
 
   describe('filling inputs', function () {
     it('should show the stored values without dispatching', function () {
