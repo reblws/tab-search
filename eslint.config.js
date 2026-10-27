@@ -63,6 +63,20 @@ module.exports = [
       ] }],
     },
   },
+  // Layer direction: pages -> shell -> core, and no page imports another
+  {
+    files: ['src/**/*.js'],
+    rules: {
+      'import/no-restricted-paths': ['error', { zones: [
+        { target: './src/core', from: './src/shell', message: 'core/ must stay pure' },
+        { target: './src/core', from: './src/pages', message: 'core/ must stay pure' },
+        { target: './src/shell', from: './src/pages', message: 'shell/ must not depend on a page' },
+        { target: './src/pages/popup', from: ['./src/pages/settings', './src/pages/background'] },
+        { target: './src/pages/settings', from: ['./src/pages/popup', './src/pages/background'] },
+        { target: './src/pages/background', from: ['./src/pages/popup', './src/pages/settings'] },
+      ] }],
+    },
+  },
   // Test file overrides
   {
     files: ['src/**/*.spec.js'],
