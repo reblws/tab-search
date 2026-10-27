@@ -1,5 +1,5 @@
 import { initialGeneralSettings, initialColorSettings } from 'core/reducers/defaults';
-import { addTabListeners } from '../side-effects';
+import { addTabListeners } from './side-effects';
 import { shouldWordBreak } from 'core/lib/word-break';
 import {
   BOOKMARK_TYPE,
@@ -17,10 +17,10 @@ import {
   TAB_MUTED_CLASSNAME,
   TAB_ACTIVE_ID,
   TAB_DELETE_BTN_CLASSNAME,
-} from '../classnames';
-import { tabList, searchInput } from '../nodes';
+} from './classnames';
+import { tabList, searchInput } from './nodes';
 import { badFavIconCache } from 'shell/cache/seen-sets';
-import { configureSvg } from '../assets';
+import { configureSvg } from './assets';
 
 const changeHeadTabListNodeSelectedStyle = method => () => {
   tabList().firstElementChild.classList[method](SELECTED_TAB_CLASSNAME);

@@ -14,7 +14,7 @@ import {
   overrideFontStylesWithSansSerif,
   appendSearchInputPlaceholderText,
   setStyleSheetRule,
-} from './utils/dom';
+} from './render';
 import {
   addTabCacheListeners,
   removeTabCacheListeners,
@@ -27,7 +27,7 @@ import {
   clearInput,
   handleTabClick,
   updateLastQueryOnKeydown,
-} from './event-callbacks';
+} from './events';
 import {
   overrideResultContextMenu,
   updateMenuTitles,

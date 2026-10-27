@@ -17,11 +17,11 @@ import {
   queryTab,
   muteTab,
 } from 'shell/platform/tabs';
-import { deleteTab } from './browser';
+import { deleteTab } from './tab-actions';
 import {
   removeHeadTabListNodeSelectedStyle,
   selectNodeText,
-} from './dom';
+} from './render';
 import {
   SESSION_TYPE,
   TAB_TYPE,
@@ -33,8 +33,8 @@ import {
   TAB_MUTED_CLASSNAME,
   TAB_PIN_CLASSNAME,
   RELOAD_SVG_PATH,
-} from '../classnames';
-import { tabList, searchInput } from '../nodes';
+} from './classnames';
+import { tabList, searchInput } from './nodes';
 
 export function navigateResults(cmdKey, getState) {
   const generalSettings = getState().general;

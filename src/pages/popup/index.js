@@ -11,7 +11,7 @@ import {
 import {
   addTabsToPromiseChain,
   addCurrentWindowIdToPromiseChain,
-} from './utils/browser';
+} from './tab-actions';
 import { searchInput } from './nodes';
 
 // The settings page shows the popup in a frame as a live preview; it must

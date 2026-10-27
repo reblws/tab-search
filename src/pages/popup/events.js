@@ -3,15 +3,15 @@ import keyboard, { TAB_NEXT, TAB_PREV } from 'core/keyboard';
 import {
   injectTabsInList,
   addHeadTabListNodeSelectedStyle,
-} from './utils/dom';
-import { navigateResults } from './utils/keyboard';
+} from './render';
+import { navigateResults } from './commands';
 import {
   switchActiveTab,
   restoreClosedTab,
   deleteTab,
   openBookmark,
   openHistoryItem,
-} from './utils/browser';
+} from './tab-actions';
 import {
   SESSION_TYPE,
   HISTORY_TYPE,

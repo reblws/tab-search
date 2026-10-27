@@ -12,12 +12,12 @@ import { fetchFocusTimes } from 'shell/platform/recency';
 import { SESSION_TYPE, OTHER_WINDOW_TAB_TYPE } from 'core/tabs/types';
 import { decodeUrl } from 'core/lib/url';
 import { withFocusTimes } from 'core/tabs/recency';
-import { tabList } from '../nodes';
+import { tabList } from './nodes';
 import {
   removeElementFromTabList,
   repaintElementWithType,
   findLastElType,
-} from './dom';
+} from './render';
 
 export function addTabsToPromiseChain(store) {
   const { getState } = store;

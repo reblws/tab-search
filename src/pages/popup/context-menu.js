@@ -1,5 +1,5 @@
 import { TAB_MENU_ITEMS } from 'core/tabs/menu-items';
-import { navigateResults } from './utils/keyboard';
+import { navigateResults } from './commands';
 import {
   TAB_TYPE,
   OTHER_WINDOW_TAB_TYPE,
