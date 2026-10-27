@@ -26,7 +26,9 @@ npm run lint:eslint          # Run ESLint on src/
 npm run lint:web-ext         # Validate extension in dist/
 
 # Testing
-npm test                     # Run all tests with Mocha
+npm test                     # Run all unit tests (test:core + test:shell) under nyc
+npm run test:core            # src/core specs, without the browser mock
+npm run test:shell           # src/shell and src/pages specs, with the browser mock
 npm run test:e2e             # Firefox E2E (WebdriverIO); run zip:firefox first
 npm run test:e2e:chrome      # Chrome E2E on Chrome for Testing; run build:chrome first
 npm run test:all             # Lint, unit tests and both E2E suites
@@ -34,20 +36,66 @@ npm run test:all             # Lint, unit tests and both E2E suites
 
 ## Architecture
 
+### Layers
+
+Source is split into three layers. A file's path says whether it may have
+side effects, and ESLint (`eslint.config.js`) fails the build when a file
+crosses the line.
+
+| Layer | May | May not | May import |
+|---|---|---|---|
+| `src/core/` | Take data, return data. Use pure libraries (Fuse.js, `redux`'s `combineReducers`). Throw on invalid input. | Touch `browser`, `chrome`, `document`, `window`, `navigator`, storage, `console`, timers, `Date.now()`, `Math.random()`. Hold module-level `let`. Run anything at import time except defining constants and functions. | `core/`, `static/` and pure npm packages |
+| `src/shell/` | Wrap one external system each (a browser API, storage, the store, a cache). Hold state. Log. Catch and translate errors. | Know about a specific page's DOM. | `core/`, `shell/`, npm packages |
+| `src/pages/` | Be a webpack entry point. Query and mutate the DOM. Wire core functions to shell adapters. | Contain logic that could be a pure function (move it to `core/`), or import another page. | Everything except other pages |
+
+Imports flow one way: `pages/` → `shell/` → `core/`. Babel's
+`module-resolver` roots at `src/`, so imports read `core/search`,
+`shell/platform/tabs`, `pages/popup/nodes`. Spec files sit next to the
+module they test. `npm run test:core` runs `src/core` specs without the
+`browser` mock (`test/core-setup.cjs`); `npm run test:shell` runs the rest
+with it (`test/setup.cjs`). A core spec that needs `browser` means the code
+under test belongs in `shell/`.
+
+```
+src/
+├── core/          # pure: data in, data out
+│   ├── actions/   action creators, types, the background action map
+│   ├── keyboard/  shortcut parsing, comparison and defaults
+│   ├── reducers/  slices, defaults, migrations, root.js (combineReducers)
+│   ├── search/    normalize, match, order; searchTabs() is the entry
+│   ├── tabs/      types, predicates, recency (withFocusTimes), menu items
+│   ├── settings/  input map, setting lookup, MRU choice, shortcut helpers
+│   └── lib/       fp, url, word-break
+├── shell/         # side effects behind small functions
+│   ├── platform/  polyfill, action-api, tabs, windows, sessions, bookmarks,
+│   │              history, commands, os, recency, tab-menu
+│   ├── storage/   storage-adapter, persist, session-flag, focus-record,
+│   │              memory-area
+│   ├── store/     create-store, bridge, ui-store, protocol
+│   ├── cache/     tab-cache, fuse-cache, seen-sets
+│   └── dom/       element (el, icon, clearChildNodes)
+└── pages/         # entry points: DOM + wiring
+    ├── popup/     index (entry), nodes (lazy DOM lookups), classnames,
+    │              render, events, commands, search, gather, tab-actions, ...
+    ├── settings/  index (entry), dom, shortcuts, preview, nav, ...
+    └── background/ index (entry), store, badge text, tab-recency
+```
+
 ### Webpack Entry Points
 
-The extension has three webpack entry points in `src/core/pages/`:
+The extension has three webpack entry points in `src/pages/`:
 - **popup/** - Main search UI shown when clicking the extension icon
 - **background/** - Background script for persistent state and badge management
 - **settings/** - Options page for configuring the extension
 
 ### State Management
 
-The Redux store lives in the background. Popup and settings pages mirror it
-through `src/core/store/ui-store.js` (UI side) and `src/core/store/bridge.js`
-(background side), which speak redux-webext's original message protocol
-(`src/core/store/constants.js`). State is persisted via `redux-persist` with
-browser storage.
+The Redux store lives in the background (`src/shell/store/create-store.js`).
+Popup and settings pages mirror it through `src/shell/store/ui-store.js` (UI
+side) and `src/shell/store/bridge.js` (background side), which speak
+redux-webext's original message protocol (`src/shell/store/protocol.js`).
+State is persisted via `redux-persist` with browser storage
+(`src/shell/storage/persist.js` wraps the pure `src/core/reducers/root.js`).
 
 Redux reducers in `src/core/reducers/`:
 - `fuzzy` - Fuse.js search configuration
@@ -55,12 +103,6 @@ Redux reducers in `src/core/reducers/`:
 - `keyboard` - Keyboard shortcut bindings
 - `color` - UI color settings
 - `state` - Transient runtime state (the last query), kept in `storage.session` when available, never in `storage.local`
-
-### Key Modules
-
-- `src/core/keyboard/` - Keyboard shortcut parsing, comparison, and defaults
-- `src/core/actions/` - Redux action creators and action types
-- `src/core/store/` - Redux store configuration
 
 ### Static Assets
 
@@ -80,21 +122,23 @@ in the browser files.
 
 ### Chrome (MV3) Notes
 
-- `src/core/polyfill.js` must be the first import of every entry point; it
-  defines `browser` in Chrome.
-- `src/core/utils/action-api.js` picks `browser.action` (MV3) or
+- `src/shell/platform/polyfill.js` must be the first import of every entry
+  point; it defines `browser` in Chrome.
+- `src/shell/platform/action-api.js` picks `browser.action` (MV3) or
   `browser.browserAction` (MV2) and the matching popup command name.
 - The background is a service worker that Chrome stops when idle.
-  `src/core/store/bridge.js` adds its listeners synchronously and answers the
+  `src/shell/store/bridge.js` adds its listeners synchronously and answers the
   UI only after redux-persist rehydrates. Tab listeners in
   `background/index.js` are also added at top level.
 - `background/badge-text-state.js` recounts the tab badge only when the
   setting turns on or once per browser session (a flag in
-  `storage.session`), not on every worker wake.
+  `storage.session`, `shell/storage/session-flag.js`), not on every worker
+  wake.
 - `background/tab-recency.js` records when each tab gets focus (in
-  `storage.session`) for the most recently used sort; the popup asks for it
-  with `GET_FOCUSED_AT` from `core/tab-recency.js`. `tab.lastAccessed` alone
-  can't order tabs across windows.
+  `storage.session`, `shell/storage/focus-record.js`) for the most recently
+  used sort; the popup asks for it with `GET_FOCUSED_AT` from
+  `core/tabs/recency.js`. `tab.lastAccessed` alone can't order tabs across
+  windows.
 - A stopped worker disconnects every page's port. `ui-store.js` reconnects
   lazily: before its next dispatch, or when the page is focused or shown.
 - Chrome E2E specs live in `test/e2e-chrome/` (config `wdio.chrome.conf.js`);
