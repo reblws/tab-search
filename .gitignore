@@ -8,3 +8,4 @@ web-ext-artifacts/
 .envrc
 .nyc_output/
 coverage/
+.e2e/
