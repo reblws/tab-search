@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Added an experimental overlay, off by default: with Settings › Experimental › Open over the page on, the toolbar button and its shortcut open TabSearch centered over the page you're on, like a command palette
+  + Type, move with the arrow keys and press Enter as in the popup; the bottom row shows your own shortcuts. Escape or a click outside closes it, and pressing the shortcut again does too
+  + The page never sees what you type, and its styles don't reach TabSearch
+  + Its width follows the popup width setting
+  + On the new tab page and the browser's own pages, which extensions can't draw on, the toolbar popup opens as before
+  + Needs no new permissions in Firefox; Chrome asks for `activeTab` and `scripting`, which show no warning
+- The popup is unchanged while the overlay is off
+
 ## 0.8.0 (2026-10-25)
 
 - Added Chrome support: the Chrome build now uses Manifest V3 with a service worker background
