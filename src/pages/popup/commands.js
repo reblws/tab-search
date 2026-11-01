@@ -22,8 +22,8 @@ import {
   removeHeadTabListNodeSelectedStyle,
   selectNodeText,
 } from './render';
+import { findDuplicateTabs } from 'core/tabs/duplicates';
 import {
-  SESSION_TYPE,
   TAB_TYPE,
   OTHER_WINDOW_TAB_TYPE,
 } from 'core/tabs/types';
@@ -125,47 +125,13 @@ export function navigateResults(cmdKey, getState) {
       break;
     }
     case DUPLICATE_TAB_DELETE: {
-      // Delete all duplicate tabs
-      // Gather all datasets and hash each url
-      // and each id that contains such url
-      // Only deletes tabs that are inside the classlist
+      // Only closes duplicates among the listed results
       if (isNoResult) {
         break;
       }
-
-      // Filter the array of tab list's children down
-      // to the ones with duplicate tabs
-      const urlToIdObj = [...tabList.children]
-        .reduce((acc, node) => {
-          const { url, type } = node.dataset;
-          if (type === SESSION_TYPE) {
-            return acc;
-          }
-          const hasUrl = !!acc[url];
-          return hasUrl
-            ? Object.assign({}, acc, { [url]: [...acc[url], node] })
-            : Object.assign({ [url]: [node] }, acc);
-        }, {});
-      const sortLastAccessed = (a, b) => a.lastAccessed - b.lastAccessed;
-      // Want to sort by last accessed. The most recently used one should be the tab to keep
-      const duplicateTabs = Object.keys(urlToIdObj)
-        .filter(k => urlToIdObj[k].length > 1)
-        .reduce(
-          (acc, k) => Object.assign(
-            {},
-            acc,
-            { [k]: urlToIdObj[k].sort(sortLastAccessed) }, // Sort it by lastAccessed here
-          ),
-          {},
-        );
-      Object.keys(duplicateTabs).forEach((key) => {
-        const domNodes = duplicateTabs[key];
-        domNodes.forEach((domNode, index) => {
-          if (index !== 0) {
-            deleteTab(domNode, generalSettings);
-          }
-        });
-      });
+      const nodes = [...tabList().children];
+      findDuplicateTabs(nodes.map(node => node.dataset))
+        .forEach(index => deleteTab(nodes[index], generalSettings));
       break;
     }
     case MUTE_TOGGLE: {
