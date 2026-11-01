@@ -11,3 +11,12 @@ export function focusWindow(windowId) {
     },
   );
 }
+
+export function getWindow(windowId) {
+  return browser.windows.get(windowId);
+}
+
+// A small window without tabs or an address bar
+export function createPopupWindow(url, bounds) {
+  return browser.windows.create(Object.assign({ url, type: 'popup' }, bounds));
+}

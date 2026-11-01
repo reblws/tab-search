@@ -22,6 +22,8 @@ const plugins = [
   }),
   new webpack.DefinePlugin({
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    // 'firefox' or 'chrome', so a build can leave out the other's API calls
+    'process.env.BROWSER': JSON.stringify(process.env.BROWSER),
   }),
 ];
 
@@ -63,6 +65,8 @@ const webpackConfig = {
     popup: join(PAGES_PATH, 'popup', 'index.js'),
     background: join(PAGES_PATH, 'background', 'index.js'),
     settings: join(PAGES_PATH, 'settings', 'index.js'),
+    // Injected into a tab for the experimental overlay
+    overlay: join(PAGES_PATH, 'overlay', 'index.js'),
   },
   output: {
     path: DIST_PATH,
