@@ -56,15 +56,30 @@ module they test. `npm run test:core` runs `src/core` specs without the
 with it (`test/setup.cjs`). A core spec that needs `browser` means the code
 under test belongs in `shell/`.
 
+Decisions go in `core/`. A page handler gathers plain values
+(event fields, row datasets, store state), passes them to a core function
+that returns a plan as a value (`{ focus: 2 }`, `{ close: [1, 4] }`,
+`{ dispatch: [...] }`, `{ error }`), then applies the plan with few branches
+of its own. Examples: `core/navigation/plan.js` for popup commands,
+`core/results/row.js` for what a result row shows, `core/settings/inputs.js`
+for what a setting change dispatches, `core/badge/plan.js` for the badge.
+Test the rules as core specs without test doubles; shell and page specs
+only check the wiring.
+
 ```
 src/
 ├── core/          # pure: data in, data out
 │   ├── actions/   action creators, types, the background action map
 │   ├── keyboard/  shortcut parsing, comparison and defaults
 │   ├── reducers/  slices, defaults, migrations, root.js (combineReducers)
-│   ├── search/    normalize, match, order; searchTabs() is the entry
-│   ├── tabs/      types, predicates, recency (withFocusTimes), menu items
-│   ├── settings/  input map, setting lookup, MRU choice, shortcut helpers
+│   ├── search/    normalize, match, order, extra sources; searchTabs()
+│   ├── tabs/      types, predicates, recency (withFocusTimes), menu items,
+│   │              duplicates, query options
+│   ├── navigation/ popup command plan, key and click intents
+│   ├── results/   result row view, list placement and scroll, colors
+│   ├── badge/     tab count badge changes and texts
+│   ├── settings/  input map, setting lookup, MRU choice, actions, input
+│   │              display and changes, shortcut changes, find, layout
 │   └── lib/       fp, url, word-break
 ├── shell/         # side effects behind small functions
 │   ├── platform/  polyfill, action-api, tabs, windows, sessions, bookmarks,

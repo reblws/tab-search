@@ -48,10 +48,6 @@ function inlineOpts(setting) {
 
 const TITLE_WRAP_CLASSNAMES = { breakAll: WORDBREAK_ALL_CLASSNAME, nowrap: 'nowrap' };
 
-const DELETE_BUTTON_SVG = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-      <path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-    </svg>`;
-
 export function tabToTag(getState) {
   const { color: colorSettings, general } = getState();
   const assets = configureSvg(inlineOpts(colorSettings));
@@ -102,7 +98,10 @@ function createTabObject(view) {
     delBtn.title = 'Close Tab';
     delBtn.setAttribute('aria-label', 'Close Tab');
     delBtn.classList.add(TAB_DELETE_BTN_CLASSNAME);
-    delBtn.innerHTML = DELETE_BUTTON_SVG;
+    // A literal, so AMO's linter doesn't flag the innerHTML assignment
+    delBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>`;
     tabObjectNode.appendChild(delBtn);
   }
   tabObjectNode.classList.toggle(TAB_PIN_CLASSNAME, view.pinned);
