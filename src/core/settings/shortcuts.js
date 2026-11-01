@@ -1,4 +1,9 @@
-import keyboard, { ERROR_MSG_FINAL_KEY_IS_MODIFIER } from 'core/keyboard';
+import keyboard, { ERROR_MSG_FINAL_KEY_IS_MODIFIER, defaultCommands } from '../keyboard';
+import {
+  updateKeybinding,
+  updateSecondaryKeybinding,
+  removeSecondaryKeybinding,
+} from './actions';
 
 export const SLOT_LABELS = { command: 'primary', secondaryCommand: 'secondary' };
 
@@ -31,7 +36,66 @@ export function invalidMessage(command, text) {
   return `${text} can't be a shortcut. Try a letter or number with Ctrl, Alt or Shift.`;
 }
 
+// Display copy comes from the code so it can change; older stored state may
+// carry outdated names and descriptions
+export function commandInfo(keyboardState, key) {
+  const info = defaultCommands[key] || keyboardState[key];
+  return { name: info.name, description: info.description };
+}
+
+// What a combination recorded into an action's shortcut slot does:
+// { dispatch: [action, ...] } to save it and stop recording, or { error }
+// to keep recording
+export function recordShortcut(keyboardState, { key, slot, command, isMac }) {
+  const text = keyboard.toString(command, isMac);
+  if (!keyboard.isValid(command)) return { error: invalidMessage(command, text) };
+  const taken = findBinding(keyboardState, command);
+  // Pressing the slot's own shortcut again changes nothing
+  if (taken && taken.key === key && taken.slot === slot) return { dispatch: [] };
+  if (taken) {
+    const owner = taken.key === key
+      ? `${commandInfo(keyboardState, key).name}'s ${SLOT_LABELS[taken.slot]} shortcut`
+      : commandInfo(keyboardState, taken.key).name;
+    return { error: `${text} is already used by ${owner}. Press a different combination.` };
+  }
+  const update = slot === 'command' ? updateKeybinding : updateSecondaryKeybinding;
+  return { dispatch: [update(key, command)] };
+}
+
+// Resetting an action to its default shortcuts: { dispatch: [action, ...] },
+// or { error } when another action uses one of them
+export function resetShortcut(keyboardState, key, isMac) {
+  const defaults = defaultCommands[key];
+  const clash = Object.keys(SLOT_LABELS)
+    .map(slot => defaults[slot])
+    .filter(Boolean)
+    .map(command => [command, findBinding(keyboardState, command, { key })])
+    .find(([, taken]) => taken);
+  if (clash) {
+    const [command, taken] = clash;
+    const owner = commandInfo(keyboardState, taken.key).name;
+    return { error: `Can't reset: ${keyboard.toString(command, isMac)} is used by ${owner}.` };
+  }
+  return {
+    dispatch: [
+      updateKeybinding(key, defaults.command),
+      defaults.secondaryCommand
+        ? updateSecondaryKeybinding(key, defaults.secondaryCommand)
+        : removeSecondaryKeybinding(key),
+    ],
+  };
+}
+
 // Shortcut that opens the popup ---------------------------------------------
+
+// The browser.commands shortcut for a keydown: { shortcut }, or { error }
+// when it lacks the modifier browsers require
+export function popupShortcut(key, isMac) {
+  if (!key.ctrlKey && !key.metaKey && !key.altKey) {
+    return { error: `Include ${isMac ? 'Cmd, Ctrl' : 'Ctrl'} or Alt in the shortcut.` };
+  }
+  return { shortcut: commandsShortcut(key, isMac) };
+}
 
 // Format shortcut for display, converting browser.commands format to user-friendly format
 export function formatShortcutForDisplay(shortcut, isMac) {

@@ -1,8 +1,6 @@
 import keyboard, { defaultCommands } from 'core/keyboard';
 import {
-  updateKeybinding,
   resetKeyboardToDefaults,
-  updateSecondaryKeybinding,
   removeSecondaryKeybinding,
 } from 'core/settings/actions';
 import {
@@ -13,11 +11,12 @@ import {
 import {
   SLOT_LABELS,
   isSameBinding,
-  findBinding,
-  invalidMessage,
+  commandInfo,
+  recordShortcut,
+  resetShortcut,
   formatShortcutForDisplay,
   shortcutParts,
-  commandsShortcut,
+  popupShortcut,
   suggestedShortcut,
 } from 'core/settings/shortcuts';
 import { el, icon, clearChildNodes, CLOSE_ICON } from 'shell/dom/element';
@@ -96,14 +95,8 @@ function showError(node, message) {
 
 const kbParts = text => (text === keyboard.toString(null) ? [] : text.split(' + '));
 
-// Display copy comes from the code so it can change; older stored state may
-// carry outdated names and descriptions
-function commandInfo(keyboardState, key) {
-  const info = defaultCommands[key] || keyboardState[key];
-  return { name: info.name, description: info.description };
-}
-
-function createShortcutRow(key, store, kbString) {
+function createShortcutRow(key, store, isMac) {
+  const kbString = x => keyboard.toString(x, isMac);
   const { getState, dispatch } = store;
   const { name, description } = commandInfo(getState().keyboard, key);
   const error = el('p', { className: 'field-error', role: 'alert', hidden: true });
@@ -161,28 +154,16 @@ function createShortcutRow(key, store, kbString) {
         render();
       },
       onKey(event, { stop, fail }) {
-        const command = keyboard.command(event);
-        const text = kbString(command);
-        if (!keyboard.isValid(command)) {
+        const result = recordShortcut(getState().keyboard, {
+          key, slot, command: keyboard.command(event), isMac,
+        });
+        if (result.error) {
           fail();
-          showError(error, invalidMessage(command, text));
+          showError(error, result.error);
           return;
         }
-        const keyboardState = getState().keyboard;
-        const taken = findBinding(keyboardState, command);
-        if (taken && taken.key === key && taken.slot === slot) {
-          stop();
-        } else if (taken) {
-          fail();
-          const owner = taken.key === key
-            ? `${name}'s ${SLOT_LABELS[taken.slot]} shortcut`
-            : commandInfo(keyboardState, taken.key).name;
-          showError(error, `${text} is already used by ${owner}. Press a different combination.`);
-        } else {
-          const update = slot === 'command' ? updateKeybinding : updateSecondaryKeybinding;
-          dispatch(update(key, command));
-          stop();
-        }
+        result.dispatch.forEach(dispatch);
+        stop();
       },
     });
   });
@@ -192,23 +173,9 @@ function createShortcutRow(key, store, kbString) {
   });
 
   resetButton.addEventListener('click', () => {
-    const keyboardState = getState().keyboard;
-    const defaults = defaultCommands[key];
-    const clash = Object.keys(SLOT_LABELS)
-      .map(slot => defaults[slot])
-      .filter(Boolean)
-      .map(command => [command, findBinding(keyboardState, command, { key })])
-      .find(([, taken]) => taken);
-    if (clash) {
-      const [command, taken] = clash;
-      showError(error, `Can't reset: ${kbString(command)} is used by ${commandInfo(keyboardState, taken.key).name}.`);
-      return;
-    }
-    showError(error, '');
-    dispatch(updateKeybinding(key, defaults.command));
-    dispatch(defaults.secondaryCommand
-      ? updateSecondaryKeybinding(key, defaults.secondaryCommand)
-      : removeSecondaryKeybinding(key));
+    const result = resetShortcut(getState().keyboard, key, isMac);
+    showError(error, result.error || '');
+    if (!result.error) result.dispatch.forEach(dispatch);
   });
 
   const row = el(
@@ -232,10 +199,9 @@ function createShortcutRow(key, store, kbString) {
 // Fills in the popup shortcuts list and keeps it in sync with the store
 export function initKeybindingTable(store) {
   const isMac = store.os === browser.runtime.PlatformOs.MAC;
-  const kbString = x => keyboard.toString(x, isMac);
   const list = document.getElementById(SHORTCUT_LIST_ID);
   const rows = Object.keys(store.getState().keyboard)
-    .map(key => createShortcutRow(key, store, kbString));
+    .map(key => createShortcutRow(key, store, isMac));
 
   clearChildNodes(list);
   rows.forEach(({ row }) => list.append(row));
@@ -288,12 +254,12 @@ export async function initBrowserShortcut(os) {
         render();
       },
       async onKey(event, { stop, fail }) {
-        if (!event.ctrlKey && !event.metaKey && !event.altKey) {
+        const { error: keyError, shortcut } = popupShortcut(event, isMac);
+        if (keyError) {
           fail();
-          showError(error, `Include ${isMac ? 'Cmd, Ctrl' : 'Ctrl'} or Alt in the shortcut.`);
+          showError(error, keyError);
           return;
         }
-        const shortcut = commandsShortcut(event, isMac);
         try {
           await browserCommands.updatePopupShortcut(shortcut);
           current = shortcut;
