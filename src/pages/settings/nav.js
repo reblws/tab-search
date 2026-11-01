@@ -1,38 +1,37 @@
 // Menu: highlights the section in view and filters settings by text
+import { matchSettings, normalizeText } from 'core/settings/find';
+import { activeSection, revealScrollLeft } from 'core/settings/layout';
 
-const normalize = text => text.toLowerCase().replace(/\s+/g, ' ').trim();
+// A setting's text plus any data-keywords it lists for words it doesn't say
+const searchText = row => normalizeText(`${row.textContent} ${row.dataset.keywords || ''}`);
 
 function cardTitle(card) {
   const title = card.querySelector('h2, h3');
-  return title ? normalize(title.textContent) : '';
+  return title ? normalizeText(title.textContent) : '';
 }
 
-// A setting's text plus any data-keywords it lists for words it doesn't say
-const searchText = row => normalize(`${row.textContent} ${row.dataset.keywords || ''}`);
-
-// Hides the settings that don't mention the query. A card whose title
-// matches shows all its settings. Returns how many settings are visible.
+// Hides the settings that don't mention the query, as core/settings/find.js
+// decides. Returns how many settings are visible.
 export function filterSettings(query, root = document) {
-  const q = normalize(query);
-  let visible = 0;
-  root.querySelectorAll('.main .card').forEach((card) => {
-    const rows = card.classList.contains('setting') ? [card] : [...card.querySelectorAll('.setting')];
-    const showAll = !q || cardTitle(card).includes(q);
-    let shown = 0;
-    rows.forEach((row) => {
-      const show = showAll || searchText(row).includes(q);
-      if (row !== card) row.hidden = !show;
-      if (show) shown += 1;
+  const cards = [...root.querySelectorAll('.main .card')];
+  // A card can be a single setting itself
+  const rows = cards.map(card => (card.classList.contains('setting') ? [card] : [...card.querySelectorAll('.setting')]));
+  const match = matchSettings(query, cards.map((card, i) => ({
+    title: cardTitle(card),
+    rows: rows[i].map(searchText),
+  })));
+  cards.forEach((card, i) => {
+    rows[i].forEach((row, j) => {
+      if (row !== card) row.hidden = !match.cards[i][j];
     });
-    card.hidden = shown === 0;
-    visible += shown;
+    card.hidden = !match.cards[i].some(Boolean);
   });
   root.querySelectorAll('.main .group-label, .main .shortcut-head, .main .callout')
-    .forEach((node) => { node.hidden = Boolean(q); });
+    .forEach((node) => { node.hidden = Boolean(match.query); });
   root.querySelectorAll('.main section.sections').forEach((section) => {
     section.hidden = !section.querySelector('.card:not([hidden])');
   });
-  return visible;
+  return match.visible;
 }
 
 function initFind() {
@@ -70,12 +69,8 @@ function trackNavHeight() {
 // Scrolls a menu that overflows sideways (narrow windows) to show the link
 function revealLink(nav, link) {
   const start = link.offsetLeft - nav.offsetLeft;
-  const end = start + link.offsetWidth;
-  if (start < nav.scrollLeft) {
-    nav.scrollLeft = start;
-  } else if (end > nav.scrollLeft + nav.clientWidth) {
-    nav.scrollLeft = end - nav.clientWidth;
-  }
+  const scrollLeft = revealScrollLeft({ start, end: start + link.offsetWidth }, nav);
+  if (scrollLeft !== null) nav.scrollLeft = scrollLeft;
 }
 
 function initScrollSpy() {
@@ -88,12 +83,9 @@ function initScrollSpy() {
   function update() {
     scheduled = false;
     const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
-    const line = navHeight() + 40;
-    let next = 0;
-    targets.forEach((target, i) => {
-      if (!target || target.hidden) return;
-      if (atBottom || target.getBoundingClientRect().top <= line) next = i;
-    });
+    const sections = targets.map(target => target
+      && { top: target.getBoundingClientRect().top, hidden: target.hidden });
+    const next = activeSection(sections, { line: navHeight() + 40, atBottom });
     if (next === current) return;
     current = next;
     links.forEach((link, i) => {

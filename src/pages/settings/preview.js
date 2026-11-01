@@ -3,6 +3,7 @@
 import debounce from 'debounce';
 import { el, clearChildNodes } from 'shell/dom/element';
 import { popupStateChanged } from 'core/settings/lookup';
+import { previewFit } from 'core/settings/layout';
 
 export const PREVIEW_URL = '../popup/index.html?preview';
 const RELOAD_DELAY = 150;
@@ -39,14 +40,12 @@ export function fitFrame(frame, width, popupWidth = width) {
   const label = document.getElementById('preview-width');
   const style = window.getComputedStyle(anchor);
   const room = anchor.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
-  const scale = room > 0 && width > 0 ? Math.min(1, room / width) : 1;
+  const { scale, label: text } = previewFit({ room, width, popupWidth });
   frame.style.transform = scale < 1 ? `scale(${scale})` : '';
   anchor.style.height = scale < 1
     ? `${frame.offsetHeight * scale + parseFloat(style.paddingTop)}px`
     : '';
-  label.textContent = scale < 1
-    ? `${popupWidth} px wide, shown at ${Math.floor(scale * 100)}%`
-    : `${popupWidth} px wide`;
+  label.textContent = text;
 }
 
 // Resolves once the popup has drawn its list (or gives up after a while)
