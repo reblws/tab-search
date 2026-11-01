@@ -4,7 +4,7 @@ import {
   resetKeyboardToDefaults,
   updateSecondaryKeybinding,
   removeSecondaryKeybinding,
-} from './actions';
+} from 'core/settings/actions';
 import {
   SHORTCUT_LIST_ID,
   SHORTCUT_RESET_BUTTON_ID,

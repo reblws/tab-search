@@ -1,126 +1,53 @@
-import reducerMap from 'core/settings/inputs-to-reducer';
 import {
-  updateFuzzyThresholdRange,
-  updateCheckbox,
-  updateFuzzyCheckbox,
-  updateFuzzySearchKeys,
-  updateNumber,
-  resetSetting,
-  updateColor,
-  updateSelect,
-} from './actions';
-import {
-  MRU_SORT,
-  MRU_POPUP_KEY,
-  MRU_ALL_KEY,
-  mruChoice,
-  mruSettings,
-} from 'core/settings/mru';
-import { findSetting } from 'core/settings/lookup';
+  isSettingInput,
+  inputDisplay,
+  settingChange,
+  resetActions,
+  atStepLimit,
+} from 'core/settings/inputs';
 
 // Setting inputs on the page, grouped by name (radio groups share one)
 function findInputs(root) {
-  return [...root.querySelectorAll('input[name]')]
-    .filter(({ name }) => name in reducerMap || name === MRU_SORT);
+  return [...root.querySelectorAll('input[name]')].filter(({ name }) => isSettingInput(name));
 }
+
+const inputValues = ({ name, type, value, checked, min, max }) =>
+  ({ name, type, value, checked, min, max });
 
 // Shows a setting's stored value in its input without dispatching anything
 function fillInput(node, settings) {
-  const { name, type } = node;
-  if (name === MRU_SORT) {
-    node.checked = node.value === mruChoice(settings.general || {});
-    return;
-  }
-  const value = findSetting(settings, reducerMap[name]);
-  if (value === undefined) return;
-  switch (type) {
-    case 'checkbox':
-      // showUrls is stored as the list of keys to search in; only 'url'
-      // can come and go
-      node.checked = Array.isArray(value) ? value.includes('url') : value;
-      break;
-    case 'radio':
-      node.checked = node.value === value;
-      break;
-    case 'range':
-      node.value = Math.round(value * 10);
-      break;
-    case 'number':
-      // Don't fight someone typing in it
-      if (document.activeElement !== node) node.value = value;
-      break;
-    case 'color':
-      node.value = value;
-      break;
-    default: break;
+  const shown = inputDisplay(inputValues(node), settings);
+  if (!shown) return;
+  if ('checked' in shown) {
+    node.checked = shown.checked;
+  } else if (!(node.type === 'number' && document.activeElement === node)) {
+    // Don't fight someone typing in a number
+    node.value = shown.value;
   }
 }
 
-function clamp(node) {
-  const value = parseInt(node.value, 10);
-  if (Number.isNaN(value)) return null;
-  return Math.min(Number(node.max), Math.max(Number(node.min), value));
-}
-
-// Decides which action to dispatch for an input that changed
+// Carries out what core/settings/inputs.js's settingChange says
 function settingChangeHandler(dispatch, getState) {
   return function onChange(event) {
     const node = event.currentTarget;
-    const { name, type, value, checked } = node;
-    if (name === MRU_SORT) {
-      const settings = mruSettings(value);
-      Object.keys(settings).forEach((key) => {
-        dispatch(updateCheckbox(key, settings[key]));
-      });
+    const change = settingChange(inputValues(node));
+    if (change.restore) {
+      fillInput(node, getState());
       return;
     }
-    const [reducer, key] = reducerMap[name].split('.');
-    switch (type) {
-      case 'range':
-        dispatch(updateFuzzyThresholdRange(parseInt(value, 10)));
-        break;
-      case 'checkbox':
-        if (name === 'showBookmarks' || name === 'showHistory') {
-          if (!checked) {
-            dispatch(updateCheckbox(name, false));
-            break;
+    if (change.value !== undefined) node.value = change.value;
+    if (change.requestPermission) {
+      browser.permissions.request({ permissions: [change.requestPermission] })
+        .then((granted) => {
+          if (granted) {
+            change.onGrant.forEach(dispatch);
+          } else {
+            node.checked = false;
           }
-          const permission = name.slice('show'.length).toLowerCase();
-          browser.permissions.request({ permissions: [permission] })
-            .then((granted) => {
-              if (granted) {
-                dispatch(updateCheckbox(name, true));
-              } else {
-                node.checked = false;
-              }
-            });
-        } else if (key === 'keys') {
-          dispatch(updateFuzzySearchKeys(checked));
-        } else if (reducer === 'fuzzy') {
-          dispatch(updateFuzzyCheckbox(key, checked));
-        } else {
-          dispatch(updateCheckbox(key, checked));
-        }
-        break;
-      case 'number': {
-        const clamped = clamp(node);
-        if (clamped === null) {
-          // Emptied: show the stored value again
-          fillInput(node, getState());
-        } else {
-          node.value = clamped;
-          dispatch(updateNumber(key, clamped));
-        }
-        break;
-      }
-      case 'color':
-        dispatch(updateColor(key, value));
-        break;
-      case 'radio':
-        if (checked) dispatch(updateSelect(key, value));
-        break;
-      default: break;
+        });
+      return;
     }
+    change.dispatch.forEach(dispatch);
   };
 }
 
@@ -157,12 +84,9 @@ function updateDerivedText(root) {
 
 function updateStepperButtons(stepper) {
   const input = stepper.querySelector('input');
-  const value = Number(input.value);
   stepper.querySelectorAll('[data-step]').forEach((button) => {
-    const atLimit = Number(button.dataset.step) < 0
-      ? value <= Number(input.min)
-      : value >= Number(input.max);
-    button.disabled = input.disabled || atLimit;
+    button.disabled = input.disabled
+      || atStepLimit(button.dataset.step, input.value, input.min, input.max);
   });
 }
 
@@ -187,11 +111,7 @@ function initResetButtons(root, dispatch) {
   root.querySelectorAll('[data-reset]').forEach((button) => {
     const section = button.closest('section');
     button.addEventListener('click', () => {
-      const names = new Set(findInputs(section).map(({ name }) => name));
-      names.forEach((name) => {
-        const keys = name === MRU_SORT ? [MRU_POPUP_KEY, MRU_ALL_KEY] : [name];
-        keys.forEach(key => dispatch(resetSetting(key)));
-      });
+      resetActions(findInputs(section).map(({ name }) => name)).forEach(dispatch);
     });
   });
 }
