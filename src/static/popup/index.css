@@ -485,3 +485,193 @@ p {
 .tab-img img[src$="file.svg"] {
   filter: light-dark(none, invert(1));
 }
+
+/* A frame that hasn't shown it was made by TabSearch's host script yet */
+html.is-unclaimed {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* ====== Experimental overlay (?surface=overlay) ======
+   The popup page fills a transparent frame over the whole web page: the
+   root is the dimmed backdrop and the body is the panel, centered near the
+   top like a command palette. A click on the root closes it. */
+
+html[data-surface="overlay"] {
+  --overlayBackdrop: light-dark(rgba(15, 20, 30, 0.32), rgba(0, 0, 0, 0.55));
+  --overlayShadow:
+    0 0 0 1px light-dark(rgba(15, 20, 30, 0.06), rgba(255, 255, 255, 0.06)),
+    0 24px 64px -12px rgba(0, 0, 0, 0.45),
+    0 8px 20px -8px rgba(0, 0, 0, 0.25);
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background-color: var(--overlayBackdrop);
+  animation: overlay-backdrop-in 140ms ease-out;
+}
+
+html[data-surface="overlay"] body {
+  display: flex;
+  flex-direction: column;
+  width: var(--overlayWidth, 600px);
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 14vh - 24px);
+  margin: 14vh auto 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--overlayShadow);
+  animation: overlay-panel-in 170ms cubic-bezier(0.2, 0.9, 0.25, 1);
+  transform-origin: 50% 0;
+}
+
+html[data-surface="overlay"] header {
+  width: auto;
+  height: auto;
+  min-height: 56px;
+  padding: 10px 10px 10px 8px;
+  gap: 6px;
+}
+
+/* A big, borderless field, as in a command palette */
+html[data-surface="overlay"] .search {
+  height: 36px;
+  line-height: 36px;
+  padding-left: 38px;
+  font-size: 15px;
+  background-position: 10px center;
+  background-size: 18px 18px;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+html[data-surface="overlay"] .search:focus {
+  box-shadow: none;
+}
+
+html[data-surface="overlay"] .tab-list {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+  max-height: var(--tabListHeight);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-bottom: none;
+}
+
+html[data-surface="overlay"] .tab-object {
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+}
+
+html[data-surface="overlay"] .no-result {
+  height: 220px;
+}
+
+.overlay-hints {
+  flex: 0 0 auto;
+  border-top: 1px solid var(--color-border-default);
+  background-color: var(--color-background-primary);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+}
+
+.overlay-hints__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 8px 12px;
+  list-style: none;
+}
+
+.overlay-hints__item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.overlay-hints__key {
+  display: inline-block;
+  min-width: 18px;
+  padding: 1px 5px;
+  border: 1px solid var(--color-border-default);
+  border-bottom-width: 2px;
+  border-radius: var(--border-radius-small);
+  background-color: var(--color-background-secondary);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-system);
+  font-size: 11px;
+  line-height: 16px;
+  text-align: center;
+}
+
+.overlay-hints__label {
+  margin-left: 2px;
+}
+
+/* Leaving: the panel fades and settles while the backdrop clears */
+html[data-surface="overlay"].is-closing {
+  background-color: transparent;
+  transition: background-color 120ms ease-in;
+}
+
+html[data-surface="overlay"].is-closing body {
+  opacity: 0;
+  transform: translateY(-4px) scale(0.985);
+  transition: opacity 120ms ease-in, transform 120ms ease-in;
+}
+
+@keyframes overlay-backdrop-in {
+  from { background-color: transparent; }
+}
+
+@keyframes overlay-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+}
+
+@media (max-height: 520px) {
+  html[data-surface="overlay"] body {
+    margin-top: 16px;
+    max-height: calc(100vh - 32px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-surface="overlay"],
+  html[data-surface="overlay"] body {
+    animation: none;
+  }
+
+  html[data-surface="overlay"].is-closing,
+  html[data-surface="overlay"].is-closing body {
+    transition: none;
+  }
+}
+
+/* ====== Fallback window (?surface=window) ======
+   A popup window of its own: the page fills it */
+html[data-surface="window"] body {
+  width: auto;
+  border: none;
+}
+
+html[data-surface="window"] header {
+  width: auto;
+}
+
+html[data-surface="window"] .tab-list {
+  height: calc(100vh - var(--headerHeight));
+}
+
+/* Browsers without light-dark() */
+@supports not (color: light-dark(red, red)) {
+  html[data-surface="overlay"] {
+    --overlayBackdrop: rgba(15, 20, 30, 0.4);
+    --overlayShadow: 0 0 0 1px rgba(15, 20, 30, 0.08), 0 24px 64px -12px rgba(0, 0, 0, 0.45);
+  }
+}

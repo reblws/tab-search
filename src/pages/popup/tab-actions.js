@@ -15,6 +15,7 @@ import { withFocusTimes } from 'core/tabs/recency';
 import { tabQueryOptions } from 'core/tabs/query';
 import { closedRowPlan } from 'core/results/list';
 import { tabList } from './nodes';
+import { surface, closeUI } from './surface';
 import {
   removeElementFromTabList,
   repaintElementWithType,
@@ -25,9 +26,13 @@ export function addTabsToPromiseChain(store) {
   return Object.assign({}, store, { tabQueryPromise: () => queryTabs(options) });
 }
 
+// The fallback window is a window of its own, so it's told which window it
+// opened for
 export function addCurrentWindowIdToPromiseChain(store) {
-  return getCurrentWindowId()
-    .then(currentWindowId => Object.assign({}, store, { currentWindowId }));
+  const windowId = surface.fromWindowId !== undefined
+    ? Promise.resolve(surface.fromWindowId)
+    : getCurrentWindowId();
+  return windowId.then(currentWindowId => Object.assign({}, store, { currentWindowId }));
 }
 
 // Closes the row's tab. The row goes away, or stays as a recently closed
@@ -58,17 +63,31 @@ export function deleteTab(elementToRemove, generalSettings, wasClicked = false) 
     });
 }
 
+// The toolbar popup closes right away, as it always has. The overlay waits
+// for the calls, since removing its frame could take them along.
+function closeAfter(calls) {
+  if (surface.close === 'window') {
+    closeUI();
+    return Promise.resolve();
+  }
+  return Promise.all(calls)
+    .catch((e) => {
+      console.error(`TabSearch: ${e}`);
+    })
+    .then(closeUI);
+}
+
 export function switchActiveTab(tabDataset) {
   const {
     window: windowId,
     id,
     type,
   } = tabDataset;
-  activateTab(id);
-  if (type === OTHER_WINDOW_TAB_TYPE) {
-    focusWindow(windowId);
+  const calls = [activateTab(id)];
+  if (type === OTHER_WINDOW_TAB_TYPE || surface.fromWindowId !== undefined) {
+    calls.push(focusWindow(windowId));
   }
-  window.close();
+  return closeAfter(calls);
 }
 
 export function restoreClosedTab(tabDataset) {
@@ -77,11 +96,11 @@ export function restoreClosedTab(tabDataset) {
     id,
     type,
   } = tabDataset;
-  restoreSession(id);
+  const calls = [restoreSession(id)];
   if (type === OTHER_WINDOW_TAB_TYPE) {
-    focusWindow(windowId);
+    calls.push(focusWindow(windowId));
   }
-  window.close();
+  return closeAfter(calls);
 }
 
 function queryTabs(queryOptions) {
@@ -105,13 +124,11 @@ export function openBookmark(dataset) {
     active: true,
     url: decodeUrl(id),
   })
-    .then(() => {
-      window.close();
-    });
+    .then(closeUI);
 }
 
 export function openHistoryItem(dataset) {
   const { url } = dataset;
   return createTab({ active: true, url: decodeUrl(url) })
-    .then(() => window.close());
+    .then(closeUI);
 }

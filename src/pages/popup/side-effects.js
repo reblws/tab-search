@@ -32,12 +32,14 @@ import {
   updateMenuTitles,
   runMenuItem,
 } from './context-menu';
+import { surface, closeUI } from './surface';
+import { renderOverlayHints } from './overlay-hints';
 
 function openSettingsPage() {
   createTab({
     url: browser.runtime.getURL('../settings/index.html'),
     active: true,
-  }).then(() => window.close());
+  }).then(closeUI);
 }
 
 export function applyPopupSize(store) {
@@ -48,6 +50,7 @@ export function applyPopupSize(store) {
   root.style.setProperty('--tabListHeight', preset.tabListHeight);
   root.style.setProperty('--searchWidth', preset.searchWidth);
   root.style.setProperty('--headerHeight', preset.headerHeight);
+  root.style.setProperty('--overlayWidth', preset.overlayWidth);
   markOverlayScrollbar();
   return store;
 }
@@ -92,12 +95,14 @@ export function addEventListeners(store) {
   deleteButton().addEventListener('click', clearInput);
   searchInput().addEventListener('input', handleSearchInput);
   prefsBtn().addEventListener('click', openSettingsPage);
-  // Firefox only: right-clicking a result opens its tab menu
-  tabList().addEventListener('contextmenu', overrideResultContextMenu, true);
-  if (browser.menus) {
+  // Firefox only: right-clicking a result opens its tab menu. The overlay's
+  // frame has no menus.overrideContext, so it keeps the plain menu.
+  if (surface.tabMenu && browser.menus && browser.menus.onShown) {
+    tabList().addEventListener('contextmenu', overrideResultContextMenu, true);
     browser.menus.onShown.addListener(updateMenuTitles);
     browser.menus.onClicked.addListener(info => runMenuItem(info, store.getState));
   }
+  if (surface.backdrop) renderOverlayHints(store.getState().keyboard);
 
   if (showLastQueryOnPopup) {
     searchInput().addEventListener('input', updateLastQueryOnKeydown(store));

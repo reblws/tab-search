@@ -26,23 +26,27 @@ export const POPUP_SIZE_PRESETS = {
     tabListHeight: '380px',
     searchWidth: '250px',
     headerHeight: '40px',
+    overlayWidth: '520px',
   },
   medium: {
     bodyWidth: '355px',
     tabListHeight: '450px',
     searchWidth: '300px',
     headerHeight: '48px',
+    overlayWidth: '600px',
   },
   large: {
     bodyWidth: '420px',
     tabListHeight: '520px',
     searchWidth: '355px',
     headerHeight: '56px',
+    overlayWidth: '680px',
   },
   xlarge: {
     bodyWidth: '500px',
     tabListHeight: '530px',
     searchWidth: '430px',
     headerHeight: '64px',
+    overlayWidth: '760px',
   },
 };
