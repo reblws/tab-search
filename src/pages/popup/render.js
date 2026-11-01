@@ -1,12 +1,7 @@
-import { initialGeneralSettings, initialColorSettings } from 'core/reducers/defaults';
+import { initialColorSettings } from 'core/reducers/defaults';
+import { rowView } from 'core/results/row';
+import { scrollDirection } from 'core/results/list';
 import { addTabListeners } from './side-effects';
-import { shouldWordBreak } from 'core/lib/word-break';
-import {
-  BOOKMARK_TYPE,
-  HISTORY_TYPE,
-  OTHER_WINDOW_TAB_TYPE,
-  TAB_TYPE,
-} from 'core/tabs/types';
 import {
   favIconFallback,
   alertCircle,
@@ -36,15 +31,6 @@ export function isTabListEmpty() {
   return !tabList().firstElementChild.classList.contains('tab-object');
 }
 
-// Save the default values for font sizes so we know when to inline the font
-// sizes when we append tab nodes
-const {
-  tabUrlSize: defaultTabUrlSize,
-  tabTitleSize: defaultTabTitleSize,
-} = initialGeneralSettings;
-
-
-// Store all the bad favIcons so we don't get loading jank if a favIcon !exist
 function clearChildren(node) {
   while (node.firstChild) {
     node.removeChild(node.firstChild);
@@ -60,191 +46,69 @@ function inlineOpts(setting) {
   }, {});
 }
 
+const TITLE_WRAP_CLASSNAMES = { breakAll: WORDBREAK_ALL_CLASSNAME, nowrap: 'nowrap' };
+
+const DELETE_BUTTON_SVG = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>`;
+
 export function tabToTag(getState) {
-  const { color: colorSettings } = getState();
-  const {
-    tabUrlSize,
-    tabTitleSize,
-    showRecentlyClosed,
-    showVisualDeleteTabButton,
-    oneLineTabTitles,
-  } = getState().general;
-  const inline = inlineOpts(colorSettings);
-  const assets = configureSvg(inline);
-  return function doCreateTabObject(tab) {
-    const {
-      favIconUrl,
-      title,
-      id,
-      url,
-      type,
-      sessionId,
-      windowId,
-      mutedInfo,
-      pinned,
-      isActive,
-      lastAccessed,
-      audible,
-    } = tab;
-    const isValidFavIconUrl = favIconUrl
-      && !badFavIconCache().has(favIconUrl);
-    // Since favicon url of bookmarks isn't readily available,
-    // check the type and assign all bookmarks to the static svg
-    // for now.
-    let favIconLink;
-    switch (type) {
-      case HISTORY_TYPE:
-        favIconLink = assets.historySvg;
-        break;
-      case BOOKMARK_TYPE:
-        favIconLink = assets.bookmarkSvg;
-        break;
-      default:
-        favIconLink = isValidFavIconUrl ? favIconUrl : favIconFallback;
-        break;
-    }
-    const ctoOpts = {
-      tabUrlSize,
-      tabTitleSize,
-      showRecentlyClosed,
-      oneLineTabTitles,
-      showVisualDeleteTabButton,
-      wordBreak: shouldWordBreak(title),
-    };
-    return createTabObject({
-      id,
-      url,
-      title,
-      favIconLink,
-      type,
-      sessionId,
-      windowId,
-      mutedInfo,
-      pinned,
-      isActive,
-      lastAccessed,
-      audible,
-    }, ctoOpts);
+  const { color: colorSettings, general } = getState();
+  const assets = configureSvg(inlineOpts(colorSettings));
+  const icons = {
+    history: assets.historySvg,
+    bookmark: assets.bookmarkSvg,
+    fallback: favIconFallback,
   };
+  return tab => createTabObject(rowView(tab, general, { icons, badFavIcons: badFavIconCache() }));
 }
 
-// Opt keys:
-//   - wordBreak: bool
-//   - inline: obj
-//   - tabUrlSize
-//   - tabTitleSize
-function createTabObject({
-  id,
-  sessionId,
-  type,
-  url,
-  title,
-  favIconLink,
-  windowId,
-  lastAccessed,
-  mutedInfo,
-  pinned,
-  isActive,
-  audible,
-}, opts) {
-  const {
-    wordBreak,
-    tabUrlSize,
-    tabTitleSize,
-    showVisualDeleteTabButton,
-    oneLineTabTitles,
-  } = opts;
-  const dataId = sessionId || id;
-  // Create the parent div
-  // <div class="tab-object" data-id="${id}" tabIndex="0" data-type="tab" data-window="1">
+function textNode(tag, className, { text, fontSize }) {
+  const node = document.createElement(tag);
+  node.classList.add(className);
+  node.appendChild(document.createTextNode(text));
+  if (fontSize !== null) node.style = `font-size: ${fontSize}px`;
+  return node;
+}
+
+// Builds a result row from core/results/row.js's rowView
+function createTabObject(view) {
   const tabObjectNode = document.createElement('div');
   tabObjectNode.setAttribute('tabindex', '0');
-  tabObjectNode.classList.add('tab-object');
-  tabObjectNode.classList.add(type);
-  // Declare id used for switching
-  tabObjectNode.setAttribute('data-id', dataId);
-  // Declare data type to know what to paint
-  tabObjectNode.setAttribute('data-type', type);
-  // Add window id
-  tabObjectNode.setAttribute('data-window', windowId);
-  // Add url
-  tabObjectNode.setAttribute('data-url', url);
-  // Add lastaccessed
-  tabObjectNode.setAttribute('data-last-accessed', lastAccessed);
+  tabObjectNode.classList.add('tab-object', view.type);
+  Object.assign(tabObjectNode.dataset, view.dataset);
 
-  // <img src="${favIconLink}">
   const iconContainerNode = document.createElement('div');
   iconContainerNode.classList.add('tab-img');
-
   const favIconNode = document.createElement('img');
-  favIconNode.setAttribute('src', favIconLink);
+  favIconNode.setAttribute('src', view.iconSrc);
   favIconNode.addEventListener('error', handleBadSvg);
-
   iconContainerNode.appendChild(favIconNode);
 
-  // tab-info
-  //    <div class="tab-info">
   const tabInfoNode = document.createElement('div');
   tabInfoNode.setAttribute('class', 'tab-info');
-
-  //      <strong>${title}</strong>
-  // INLINE tabTitleSize HERE
-  const titleNode = document.createElement('div');
-  titleNode.classList.add('tab-title');
-  if (wordBreak && !oneLineTabTitles) {
-    titleNode.classList.add(WORDBREAK_ALL_CLASSNAME);
-  } else if (oneLineTabTitles) {
-    titleNode.classList.add('nowrap');
-  }
-  titleNode.appendChild(document.createTextNode(title));
-  if (tabTitleSize !== defaultTabTitleSize) {
-    titleNode.style = `font-size: ${tabTitleSize}px`;
-  }
-
-  //      <p>${url}</p>
-  // INLINE tabUrlSize HERE
-  const urlNode = document.createElement('p');
-  urlNode.classList.add('tab-url');
-  urlNode.appendChild(document.createTextNode(url));
-  if (tabUrlSize !== defaultTabUrlSize) {
-    urlNode.style = `font-size: ${tabUrlSize}px`;
-  }
-
-  // Append all block elements
+  const titleNode = textNode('div', 'tab-title', view.title);
+  if (view.title.wrap) titleNode.classList.add(TITLE_WRAP_CLASSNAMES[view.title.wrap]);
   tabInfoNode.appendChild(titleNode);
-  // Don't show the url if user specifies 0 as the url font size
-  if (tabUrlSize > 0) {
-    tabInfoNode.appendChild(urlNode);
-  }
+  if (view.url) tabInfoNode.appendChild(textNode('p', 'tab-url', view.url));
 
   tabObjectNode.appendChild(iconContainerNode);
   tabObjectNode.appendChild(tabInfoNode);
 
-  // Close tab button — appended after tabInfoNode so it sits on the right in flex layout
-  if (showVisualDeleteTabButton && (type === OTHER_WINDOW_TAB_TYPE || type === TAB_TYPE)) {
+  // Appended after tabInfoNode so it sits on the right in flex layout
+  if (view.deleteButton) {
     const delBtn = document.createElement('button');
     delBtn.type = 'button';
     delBtn.title = 'Close Tab';
     delBtn.setAttribute('aria-label', 'Close Tab');
     delBtn.classList.add(TAB_DELETE_BTN_CLASSNAME);
-    delBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-      <path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-    </svg>`;
+    delBtn.innerHTML = DELETE_BUTTON_SVG;
     tabObjectNode.appendChild(delBtn);
   }
-  if (pinned) {
-    tabObjectNode.classList.add(TAB_PIN_CLASSNAME);
-  }
-  if (audible) {
-    tabObjectNode.classList.add(AUDIBLE_CLASSNAME);
-  }
-  if (mutedInfo && mutedInfo.muted) {
-    tabObjectNode.classList.add(TAB_MUTED_CLASSNAME);
-  }
-  if (isActive) {
-    tabObjectNode.id = TAB_ACTIVE_ID;
-  }
-
+  tabObjectNode.classList.toggle(TAB_PIN_CLASSNAME, view.pinned);
+  tabObjectNode.classList.toggle(AUDIBLE_CLASSNAME, view.audible);
+  tabObjectNode.classList.toggle(TAB_MUTED_CLASSNAME, view.muted);
+  if (view.active) tabObjectNode.id = TAB_ACTIVE_ID;
   return tabObjectNode;
 }
 
@@ -329,24 +193,10 @@ export function injectTabsInList(getState) {
   };
 }
 
+// If the focused row isn't completely visible in the list, scroll to it
 export function scrollIfNeeded(event) {
-  // If the selected tab isn't completely visible in the scrolled view,
-  // force scroll
-  const {
-    parentHeight,
-    selectedBottom,
-    selectedTop,
-  } = getNodePositions(event.target.parentNode, event.target);
-  const shouldScrollDown = selectedBottom > parentHeight;
-  const shouldScrollUp = selectedTop < 0;
-
-  if (!shouldScrollDown && !shouldScrollUp) return;
-
-  if (shouldScrollDown) {
-    event.target.scrollIntoView(false);
-  } else if (shouldScrollUp) {
-    event.target.scrollIntoView(true);
-  }
+  const direction = scrollDirection(getNodePositions(event.target.parentNode, event.target));
+  if (direction) event.target.scrollIntoView(direction === 'up');
 }
 
 export function removeElementFromTabList(element, wasClicked) {
@@ -409,21 +259,4 @@ export function setStyleSheetRule(selectorName, key, value) {
     return;
   }
   rule.style.setProperty(key, value);
-}
-
-// Finds the first element in tabList that has type
-// this should only be called if recently closed tabs are always shown at the
-// bottom of the tab list. If no recently recently closed tabs found,
-// returns undefined
-export function findLastElType(type, domNodes) {
-  let last;
-  // Iterate the array in reverse order
-  for (let i = domNodes.length - 1; i >= 0; i -= 1) {
-    const el = domNodes[i];
-    if (el.dataset.type !== type) {
-      return last;
-    }
-    last = el;
-  }
-  return last;
 }

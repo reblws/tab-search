@@ -1,6 +1,5 @@
 import debounce from 'debounce';
-import { initialColorSettings } from 'core/reducers/defaults';
-import { TYPE_COLOR_PROPERTY_MAP, COLOR_PROPERTY_TYPE_MAP } from 'core/tabs/types';
+import { changedTypeColors } from 'core/results/colors';
 import { POPUP_SIZE_PRESETS, OVERLAY_SCROLLBAR_CLASSNAME } from './classnames';
 import {
   searchInput,
@@ -64,21 +63,8 @@ function markOverlayScrollbar() {
 }
 
 export function overrideDomStyleSheets(store) {
-  const colorState = store.getState().color;
-  const typeClassName = type => `.${type}`;
-  const setColor = type =>
-    setStyleSheetRule(
-      typeClassName(type),
-      'border-left-color',
-      colorState[TYPE_COLOR_PROPERTY_MAP[type]],
-    );
-  Object.keys(colorState)
-    .filter(key =>
-      initialColorSettings[key] !== colorState[key]
-        && key in COLOR_PROPERTY_TYPE_MAP,
-    )
-    .map(key => COLOR_PROPERTY_TYPE_MAP[key])
-    .forEach(setColor);
+  changedTypeColors(store.getState().color)
+    .forEach(([type, color]) => setStyleSheetRule(`.${type}`, 'border-left-color', color));
   return store;
 }
 

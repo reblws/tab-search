@@ -1,10 +1,5 @@
-import { TAB_MENU_ITEMS } from 'core/tabs/menu-items';
+import { TAB_MENU_ITEMS, menuContext, menuTitles } from 'core/tabs/menu-items';
 import { navigateResults } from './commands';
-import {
-  TAB_TYPE,
-  OTHER_WINDOW_TAB_TYPE,
-  BOOKMARK_TYPE,
-} from 'core/tabs/types';
 
 // The result row that the open tab menu belongs to
 let menuRow = null;
@@ -14,30 +9,19 @@ let menuRow = null;
 export function overrideResultContextMenu(event) {
   // Chrome has no menus.overrideContext()
   if (!browser.menus?.overrideContext) return;
-  menuRow = null;
   const node = event.target.closest('.tab-object');
-  if (!node) return;
-  const { id, type } = node.dataset;
-  switch (type) {
-    case TAB_TYPE:
-    case OTHER_WINDOW_TAB_TYPE:
-      menuRow = node;
-      browser.menus.overrideContext({ context: 'tab', tabId: parseInt(id, 10) });
-      break;
-    case BOOKMARK_TYPE:
-      browser.menus.overrideContext({ context: 'bookmark', bookmarkId: id });
-      break;
-    default: break;
-  }
+  const context = node && menuContext(node.dataset);
+  // Only the tab menu has TabSearch's items, which act on this row
+  menuRow = context && context.context === 'tab' ? node : null;
+  if (context) browser.menus.overrideContext(context);
 }
 
-// Pin and Mute say what a click will do, like the real tab menu
 export function updateMenuTitles(info, tab) {
   if (!info.contexts.includes('tab') || !menuRow || !tab) return null;
-  return Promise.all([
-    browser.menus.update('tab-pin', { title: tab.pinned ? 'Unpin Tab' : 'Pin Tab' }),
-    browser.menus.update('tab-mute', { title: tab.mutedInfo.muted ? 'Unmute Tab' : 'Mute Tab' }),
-  ]).then(() => browser.menus.refresh());
+  const titles = menuTitles(tab);
+  return Promise.all(Object.keys(titles)
+    .map(id => browser.menus.update(id, { title: titles[id] })))
+    .then(() => browser.menus.refresh());
 }
 
 // Runs the item as its keyboard command on the menu row, so the row updates

@@ -12,28 +12,17 @@ import { fetchFocusTimes } from 'shell/platform/recency';
 import { SESSION_TYPE, OTHER_WINDOW_TAB_TYPE } from 'core/tabs/types';
 import { decodeUrl } from 'core/lib/url';
 import { withFocusTimes } from 'core/tabs/recency';
+import { tabQueryOptions } from 'core/tabs/query';
+import { closedRowPlan } from 'core/results/list';
 import { tabList } from './nodes';
 import {
   removeElementFromTabList,
   repaintElementWithType,
-  findLastElType,
 } from './render';
 
 export function addTabsToPromiseChain(store) {
-  const { getState } = store;
-  const {
-    searchAllWindows,
-    ignorePinnedTabs,
-  } = getState().general;
-  const tabQueryOptions = {};
-  if (!searchAllWindows) {
-    tabQueryOptions.currentWindow = true;
-  }
-  if (ignorePinnedTabs) {
-    tabQueryOptions.pinned = false;
-  }
-  const tabQueryPromise = () => queryTabs(tabQueryOptions);
-  return Object.assign({}, store, { tabQueryPromise });
+  const options = tabQueryOptions(store.getState().general);
+  return Object.assign({}, store, { tabQueryPromise: () => queryTabs(options) });
 }
 
 export function addCurrentWindowIdToPromiseChain(store) {
@@ -41,38 +30,25 @@ export function addCurrentWindowIdToPromiseChain(store) {
     .then(currentWindowId => Object.assign({}, store, { currentWindowId }));
 }
 
-export function deleteTab(
-  elementToRemove,
-  {
-    showRecentlyClosed,
-    alwaysShowRecentlyClosedAtTheBottom,
-  },
-  wasClicked = false,
-) {
-  const { id } = elementToRemove.dataset;
-  // Cache the deleted tabId since the current store passed into configureSearch
-  // isn't updated with the latest tabs after tab deletion`
-  // Don't have to worry about removing it since the only way
-  // to restore a tab is by entering it -> which closes the
-  // popup and flushes the cache
-  const tabId = parseInt(id, 10);
-  if (!showRecentlyClosed) {
+// Closes the row's tab. The row goes away, or stays as a recently closed
+// row when those are shown, as core/results/list.js's closedRowPlan says.
+export function deleteTab(elementToRemove, generalSettings, wasClicked = false) {
+  const rows = [...tabList().children];
+  const index = rows.indexOf(elementToRemove);
+  const plan = closedRowPlan(index, rows.map(row => row.dataset.type), generalSettings);
+  if (plan.remove) {
     removeElementFromTabList(elementToRemove, wasClicked);
   } else {
-    // Paint it with our indicator instead of removing it from the dom
-    // if we want to show recently closed tabs
     repaintElementWithType(elementToRemove, SESSION_TYPE);
-    // Get the most recently closed tab (should be the one we're deleting rn)
-    if (alwaysShowRecentlyClosedAtTheBottom) {
-      // Undefined if not found
-      const lastRecentlyClosedNode = findLastElType(SESSION_TYPE, tabList().children);
-      elementToRemove.parentElement.insertBefore(
-        elementToRemove,
-        // Need to pass null explicitly for append
-        lastRecentlyClosedNode || null,
-      );
+    if (plan.moveBefore !== undefined) {
+      // insertBefore(node, null) appends
+      tabList().insertBefore(elementToRemove, rows[plan.moveBefore] || null);
     }
   }
+  // The store passed into configureSearch doesn't learn about deleted tabs,
+  // so searches skip the ids in this cache. It never needs clearing: the
+  // only way to restore a tab is to open it, which closes the popup.
+  const tabId = parseInt(elementToRemove.dataset.id, 10);
   deletedTabsCache().add(tabId);
   removeTab(tabId)
     .then(() => getRecentlyClosed(1))
