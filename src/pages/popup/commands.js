@@ -1,16 +1,4 @@
-import {
-  TAB_DELETE,
-  TAB_OPEN,
-  TAB_NEXT,
-  TAB_PREV,
-  TAB_MOVE,
-  TAB_REFRESH,
-  TAB_PIN,
-  URL_COPY,
-  TAB_BOOKMARK,
-  DUPLICATE_TAB_DELETE,
-  MUTE_TOGGLE,
-} from 'core/keyboard';
+import { planNavigation, SEARCH } from 'core/navigation/plan';
 import {
   reloadTab,
   pinTab,
@@ -22,11 +10,6 @@ import {
   removeHeadTabListNodeSelectedStyle,
   selectNodeText,
 } from './render';
-import { findDuplicateTabs } from 'core/tabs/duplicates';
-import {
-  TAB_TYPE,
-  OTHER_WINDOW_TAB_TYPE,
-} from 'core/tabs/types';
 import {
   NO_RESULT_CLASSNAME,
   TAB_URL_CLASSNAME,
@@ -36,123 +19,64 @@ import {
 } from './classnames';
 import { tabList, searchInput } from './nodes';
 
+// The values planNavigation decides on, read off the result list. Focus
+// outside the list (-1) counts as the search input having it.
+function readView(rows) {
+  return {
+    items: rows.map(row => row.dataset),
+    focused: rows.indexOf(document.activeElement),
+    noResults: !!document.getElementById(NO_RESULT_CLASSNAME) || rows.length === 0,
+  };
+}
+
+function focus(target, rows) {
+  removeHeadTabListNodeSelectedStyle();
+  (target === SEARCH ? searchInput() : rows[target]).focus();
+}
+
+function reload(row) {
+  const img = row.querySelector('.tab-img img');
+  const originalSrc = img.src;
+  img.setAttribute('src', RELOAD_SVG_PATH);
+  reloadTab(row.dataset.id).then(() => {
+    setTimeout(() => { img.setAttribute('src', originalSrc); }, 500);
+  });
+}
+
+function togglePin(row) {
+  const { id } = row.dataset;
+  queryTab(id)
+    .then(({ pinned }) => pinTab(id, !pinned))
+    .then(({ pinned }) => row.classList.toggle(TAB_PIN_CLASSNAME, pinned));
+}
+
+// A muted tab that plays sound is still audible, so toggle mutedInfo
+function toggleMute(row) {
+  const { id } = row.dataset;
+  queryTab(id)
+    .then(({ mutedInfo }) => muteTab(id, !mutedInfo.muted))
+    .then(({ mutedInfo }) => row.classList.toggle(TAB_MUTED_CLASSNAME, mutedInfo.muted));
+}
+
+function copyUrl(row) {
+  selectNodeText(row.querySelector(`.${TAB_URL_CLASSNAME}`));
+  document.execCommand('copy');
+}
+
+// Gathers the list's state, lets core decide, then applies the plan
 export function navigateResults(cmdKey, getState) {
-  const generalSettings = getState().general;
-  const isNoResult = !!document.getElementById(NO_RESULT_CLASSNAME) || tabList().children.length === 0;
-  const isSearchActive = document.activeElement === searchInput();
-  const selectedTab = !isSearchActive
-    ? document.activeElement
-    : tabList().firstElementChild;
-  const isRegularTab = ({ type }) =>
-    type === OTHER_WINDOW_TAB_TYPE || type === TAB_TYPE;
-  const { id } = selectedTab.dataset;
-  switch (cmdKey) {
-    case TAB_NEXT: {
-      removeHeadTabListNodeSelectedStyle();
-      if (isSearchActive) {
-        selectedTab.focus();
-      } else if (selectedTab.nextElementSibling) {
-        selectedTab.nextElementSibling.focus();
-      } else { // If no nextElementSibling focus searchbar
-        searchInput().focus();
-      }
-      break;
-    }
-    case TAB_PREV: {
-      removeHeadTabListNodeSelectedStyle();
-      const prevSibling = selectedTab.previousElementSibling;
-      if (prevSibling) {
-        prevSibling.focus();
-      } else if (document.activeElement !== searchInput()) {
-        searchInput().focus();
-      } else { // We're at the top but searchInput is focused
-        tabList().lastChild.focus();
-      }
-      break;
-    }
-    case TAB_DELETE: {
-      if (!isRegularTab(selectedTab.dataset) || isSearchActive) {
-        break;
-      }
-      deleteTab(selectedTab, generalSettings);
-      break;
-    }
-    case TAB_OPEN: {
-      selectedTab.click();
-      break;
-    }
-    case TAB_REFRESH: {
-      if (!isRegularTab(selectedTab.dataset)) {
-        break;
-      }
-      const selectedTabImg = selectedTab.querySelector('.tab-img img');
-      const originalFavIconSrc = selectedTabImg.src;
-      selectedTabImg.setAttribute('src', RELOAD_SVG_PATH);
-      reloadTab(id).then(() => {
-        setTimeout(
-          () => { selectedTabImg.setAttribute('src', originalFavIconSrc); },
-          500,
-        );
-      });
-      break;
-    }
-    case TAB_PIN: {
-      if (!isRegularTab(selectedTab.dataset)) {
-        break;
-      }
-      const togglePinStatus = ({ pinned }) => pinTab(id, !pinned);
-      queryTab(id).then(togglePinStatus)
-        .then(({ pinned }) => {
-          if (pinned) {
-            selectedTab.classList.add(TAB_PIN_CLASSNAME);
-          } else {
-            selectedTab.classList.remove(TAB_PIN_CLASSNAME);
-          }
-        });
-      break;
-    }
-    // browser.tabs.update({ id, pinned = !pinned })
-    case URL_COPY: {
-      const copyNode = selectedTab.querySelector(`.${TAB_URL_CLASSNAME}`);
-      selectNodeText(copyNode);
-      document.execCommand('copy');
-      break;
-    }
-    case TAB_BOOKMARK: {
-      // This requires bookmarks permission
-      // browser.bookmarks.create()
-      // TODO: Add this when the bookmarks branch is merged
-      break;
-    }
-    case DUPLICATE_TAB_DELETE: {
-      // Only closes duplicates among the listed results
-      if (isNoResult) {
-        break;
-      }
-      const nodes = [...tabList().children];
-      findDuplicateTabs(nodes.map(node => node.dataset))
-        .forEach(index => deleteTab(nodes[index], generalSettings));
-      break;
-    }
-    case MUTE_TOGGLE: {
-      if (!isRegularTab(selectedTab.dataset)) {
-        break;
-      }
-      // A muted tab that plays sound is still audible, so toggle mutedInfo
-      const toggleMuteStatus = ({ mutedInfo }) => muteTab(id, !mutedInfo.muted);
-      queryTab(id).then(toggleMuteStatus).then(({ mutedInfo }) => {
-        if (mutedInfo.muted) {
-          selectedTab.classList.add(TAB_MUTED_CLASSNAME);
-        } else {
-          selectedTab.classList.remove(TAB_MUTED_CLASSNAME);
-        }
-      });
-      break;
-    }
-    case TAB_MOVE:
-      break;
-    // later
-    default:
-      break;
+  const rows = [...tabList().children];
+  const plan = planNavigation(cmdKey, readView(rows));
+  if (!plan) return undefined;
+  const [[effect, target]] = Object.entries(plan);
+  switch (effect) {
+    case 'focus': return focus(target, rows);
+    case 'close': return target.forEach(i => deleteTab(rows[i], getState().general));
+    case 'open': return rows[target].click();
+    case 'reload': return reload(rows[target]);
+    case 'pin': return togglePin(rows[target]);
+    case 'mute': return toggleMute(rows[target]);
+    case 'copyUrl': return copyUrl(rows[target]);
+    default: return undefined;
   }
 }
