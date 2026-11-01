@@ -1,5 +1,6 @@
 /* Main DOM event-handlers */
-import keyboard, { TAB_NEXT, TAB_PREV } from 'core/keyboard';
+import { commandBindings, interpretKey } from 'core/navigation/keys';
+import { clickIntent } from 'core/navigation/click';
 import {
   injectTabsInList,
   addHeadTabListNodeSelectedStyle,
@@ -12,13 +13,6 @@ import {
   openBookmark,
   openHistoryItem,
 } from './tab-actions';
-import {
-  SESSION_TYPE,
-  HISTORY_TYPE,
-  BOOKMARK_TYPE,
-  TAB_TYPE,
-  OTHER_WINDOW_TAB_TYPE,
-} from 'core/tabs/types';
 import { TAB_DELETE_BTN_CLASSNAME } from './classnames';
 import {
   deleteButton,
@@ -87,151 +81,45 @@ export function clearInput() {
   searchInput().dispatchEvent(new Event('input'));
 }
 
-// Merges maps into the one specified in target
-function mapAssign(target, ...sources) {
-  return sources.reduce(
-    (acc, map) => {
-      for (const [key, value] of map) {
-        acc.set(key, value);
-      }
-      return acc;
-    },
-    target,
-  );
-}
-
-// Given an object returns a Map with the keys and values swapped
-function swapKeyValueMap(obj, f = x => x) {
-  return Object.keys(obj)
-    .reduce(
-      (acc, key) => (f(obj[key]) ? acc.set(f(obj[key]), key) : acc),
-      new Map(),
-    );
-}
-
-function isModifierSingle(event) {
-  const modifiers = [
-    'Control',
-    'Ctrl',
-    'Alt',
-    'Shift',
-    'Meta',
-    'Shift',
-  ];
-  return modifiers.some(m => event.key === m);
-}
+// The keydown values interpretKey needs, without the live event
+const keyValues = ({ key, code, ctrlKey, altKey, shiftKey, metaKey }) =>
+  ({ key, code, ctrlKey, altKey, shiftKey, metaKey });
 
 export function keydownHandler(store) {
-  const navigate = cmdKey => navigateResults(cmdKey, store.getState);
-  const { keyboard: keyboardControls } = store.getState();
-  // The keyboard object is an object with the mapping { [ACTION]: kbdcommand }
-  // Mirror the keys and values so we have a Map:
-  // {[kbdCommand]: ACTION}
-  const kbdControlMap = mapAssign(
-    swapKeyValueMap(keyboardControls, x => x.command),
-    swapKeyValueMap(keyboardControls, x => x.secondaryCommand),
-  );
+  const bindings = commandBindings(store.getState().keyboard);
+  const focusTargets = {
+    first: () => tabList().firstChild,
+    last: () => tabList().lastChild,
+    search: searchInput,
+  };
   return function handleKeyDown(event) {
-    if (isModifierSingle(event)) {
-      event.preventDefault();
-    }
-    // Handle preventing default key actions
-    switch (event.key) {
-      case 'Tab':
-      //   // Change it so tab no longer focuses the entire popup window
-      //   // and behaves like a TAB_NEXT command
-      //   // This could break the tab-fix if the popup focus bug occurs
-      //   // so remove this if someone complains
-      //
-      case 'ArrowUp':
-      case 'ArrowDown':
-      case 'Enter':
-      case 'PageDown':
-      case 'PageUp':
-        event.preventDefault();
-        break;
-      default: break;
-    }
-    if (keyboard.isValid(event)) {
-      const cmd = keyboard.command(event);
-      const key = [...kbdControlMap.keys()].find(x => keyboard.isEqual(x, cmd));
-      return navigate(kbdControlMap.get(key));
-    }
-    // Keys that require special behavior
-    // In the case of 'End' or 'Home' this breaks the behavior of skipping to
-    // the beginning of the end of the line in the searchInput.
-    // Maybe we should only focus if the searchInput isn't active?
-    switch (event.key) {
-      case 'End':
-        if (document.activeElement !== searchInput()) {
-          event.preventDefault();
-          tabList().lastChild.focus();
-        }
-        break;
-      case 'Home':
-        if (document.activeElement !== searchInput()) {
-          event.preventDefault();
-          tabList().firstChild.focus();
-        }
-        break;
-      case 'PageDown':
-        return navigate(TAB_NEXT);
-      case 'PageUp':
-        return navigate(TAB_PREV);
-      case 'Tab':
-        return navigate(event.shiftKey ? TAB_PREV : TAB_NEXT);
-      default: break;
-    }
-    const shouldJustFocusSearchBar = (event.key === 'Backspace' && !isModifierSingle(event))
-      || (/^([A-Za-z]|\d)$/.test(event.key) && !isModifierSingle(event));
-    if (shouldJustFocusSearchBar) {
-      searchInput().focus();
-    }
-    return noop();
+    const searchFocused = document.activeElement === searchInput();
+    const { preventDefault, command, focus } =
+      interpretKey(keyValues(event), bindings, { searchFocused });
+    if (preventDefault) event.preventDefault();
+    if (command) navigateResults(command, store.getState);
+    if (focus) focusTargets[focus]().focus();
   };
 }
 
-function noop() {}
-
 export function handleTabClick(getState) {
+  const actions = {
+    close: row => deleteTab(row, getState().general, true),
+    switch: row => switchActiveTab(row.dataset),
+    restore: row => restoreClosedTab(row.dataset),
+    openBookmark: row => openBookmark(row.dataset),
+    openHistory: row => openHistoryItem(row.dataset),
+  };
   return function doHandleTabClick(event) {
-    const generalSettings = getState().general;
-    const { currentTarget, ctrlKey, target } = event;
-    // Check if click landed on the delete button or any of its children (SVG/path)
-    if (currentTarget.querySelector(`.${TAB_DELETE_BTN_CLASSNAME}`)?.contains(target)) {
-      return deleteTab(currentTarget, generalSettings, true);
-    }
-    const { dataset } = currentTarget;
-    const { type } = dataset;
-    // Decide what to do depending if ctrl is held
-    switch (type) {
-      case OTHER_WINDOW_TAB_TYPE:
-      case TAB_TYPE: {
-        if (ctrlKey) {
-          return deleteTab(currentTarget, generalSettings, true);
-        }
-        return switchActiveTab(dataset);
-      }
-      case SESSION_TYPE: {
-        if (ctrlKey) {
-          return noop();
-        }
-        return restoreClosedTab(dataset);
-      }
-      case BOOKMARK_TYPE: {
-        if (ctrlKey) {
-          return noop();
-        }
-        return openBookmark(dataset);
-      }
-      case HISTORY_TYPE: {
-        if (ctrlKey) {
-          return noop();
-        }
-        return openHistoryItem(dataset);
-      }
-      default: return noop();
-    }
+    const { currentTarget: row, ctrlKey, target } = event;
+    // The click can land on the delete button's SVG or path
+    const deleteBtn = row.querySelector(`.${TAB_DELETE_BTN_CLASSNAME}`);
+    const intent = clickIntent({
+      type: row.dataset.type,
+      ctrlKey,
+      onDeleteButton: !!deleteBtn && deleteBtn.contains(target),
+    });
+    return intent ? actions[intent](row) : undefined;
   };
 }
 
