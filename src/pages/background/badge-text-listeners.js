@@ -1,5 +1,6 @@
 import debounce from 'debounce';
 import { setBadgeText } from 'shell/platform/action-api';
+import { windowBadgeTexts } from 'core/badge/plan';
 
 const LOADING_TEXT = '...';
 
@@ -82,10 +83,8 @@ function setInitialBadgeTextInAllWindows() {
 }
 
 
-function updateWindowBadgeText(browserWindow) {
-  const { tabs } = browserWindow;
-  const text = String(tabs.length);
-  tabs.forEach(({ id: tabId }) => setBadgeText({ text, tabId }));
+function updateWindowBadgeText({ tabs }) {
+  windowBadgeTexts(tabs).forEach(setBadgeText);
 }
 
 function clearAllBadgeText() {

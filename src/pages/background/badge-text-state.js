@@ -7,6 +7,8 @@
 // every wake was the IPC storm behind reblws/tab-search#117 for users with
 // many tabs.
 
+import { badgeChanges, badgeOnStartup } from 'core/badge/plan';
+
 // Resolves once the startup count (if any) has started
 export function watchBadgeTextSetting({
   store,
@@ -25,10 +27,8 @@ export function watchBadgeTextSetting({
     stopCounting();
     return countedThisSession.set(false);
   };
-  const applyColor = ({ color }) => {
-    if (color.popupBadgeColor !== defaultColor) {
-      setBadgeBackgroundColor({ color: color.popupBadgeColor });
-    }
+  const setColor = (color) => {
+    if (color) setBadgeBackgroundColor({ color });
   };
 
   // Wait for the saved settings, not the defaults of a fresh store
@@ -36,26 +36,17 @@ export function watchBadgeTextSetting({
     let prevState = store.getState();
     store.subscribe(() => {
       const nextState = store.getState();
-      const { showTabCountBadgeText } = nextState.general;
-      if (showTabCountBadgeText !== prevState.general.showTabCountBadgeText) {
-        if (showTabCountBadgeText) {
-          start();
-          applyColor(nextState);
-        } else {
-          stop();
-        }
-      } else if (showTabCountBadgeText
-        && nextState.color.popupBadgeColor !== prevState.color.popupBadgeColor) {
-        setBadgeBackgroundColor({ color: nextState.color.popupBadgeColor });
-      }
+      const { counting, color } = badgeChanges(prevState, nextState, defaultColor);
+      if (counting === 'start') start();
+      if (counting === 'stop') stop();
+      setColor(color);
       prevState = nextState;
     });
 
-    if (!prevState.general.showTabCountBadgeText) {
-      return undefined;
-    }
+    const startup = badgeOnStartup(prevState, defaultColor);
+    if (!startup) return undefined;
     // A single IPC, so cheap enough on every wake; covers browser restarts
-    applyColor(prevState);
+    setColor(startup.color);
     return countedThisSession.get().then(counted => (counted ? undefined : start()));
   });
 }
