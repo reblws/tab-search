@@ -38,6 +38,7 @@
         <a class="nav__link" href="#results">Results</a>
         <a class="nav__link" href="#appearance">Appearance</a>
         <a class="nav__link" href="#colors">Colors</a>
+        <a class="nav__link" href="#experimental">Experimental</a>
         <a class="nav__link" href="#shortcuts">Keyboard shortcuts</a>
       </nav>
       <div class="find">
@@ -316,6 +317,23 @@
                 <p class="hex" data-hex-for="popupBadgeColor"></p>
               </div>
             </div>
+          </div>
+        </section>
+
+        <section class="card" id="experimental" aria-labelledby="experimental-title">
+          <div class="card__header">
+            <div>
+              <h2 id="experimental-title">Experimental <span class="tag-experimental">Preview</span></h2>
+              <p>Ideas that are still being tried out. They may change or go away.</p>
+            </div>
+            <button type="button" class="button" data-reset>Reset</button>
+          </div>
+          <div class="setting" data-keywords="overlay palette command spotlight centered center middle">
+            <div class="setting__text">
+              <label for="enableOverlay">Open over the page</label>
+              <p id="enableOverlay-desc">The toolbar button and its shortcut open TabSearch in the middle of the page you’re on, like a command palette. The new tab page and the browser’s own pages still get the popup.</p>
+            </div>
+            <input class="switch" type="checkbox" role="switch" id="enableOverlay" name="enableOverlay" aria-describedby="enableOverlay-desc">
           </div>
         </section>
       </form>
