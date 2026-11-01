@@ -38,6 +38,18 @@ describe('interpretKey', function () {
       .to.deep.equal({ preventDefault: true, command: undefined });
   });
 
+  it('should dismiss on a bare Escape', function () {
+    expect(interpretKey(press('Escape'), bindings, inSearch))
+      .to.deep.equal({ preventDefault: false, dismiss: true });
+    expect(interpretKey(press('Escape'), bindings, inList))
+      .to.deep.equal({ preventDefault: false, dismiss: true });
+  });
+
+  it('should not dismiss on Escape with a modifier', function () {
+    expect(interpretKey(press('Escape', { shiftKey: true }), bindings, inList).dismiss)
+      .to.equal(undefined);
+  });
+
   it('should stop the default of a lone modifier key', function () {
     expect(interpretKey(press('Shift', { shiftKey: true }), bindings, inList).preventDefault)
       .to.equal(true);

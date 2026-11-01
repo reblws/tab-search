@@ -7,6 +7,9 @@ const MODIFIERS = ['Control', 'Ctrl', 'Alt', 'Shift', 'Meta'];
 const OVERRIDDEN_KEYS = ['Tab', 'ArrowUp', 'ArrowDown', 'Enter', 'PageDown', 'PageUp'];
 const TYPING_KEY = /^([A-Za-z]|\d|Backspace)$/;
 
+const isBareEscape = key => key.key === 'Escape'
+  && !key.ctrlKey && !key.altKey && !key.shiftKey && !key.metaKey;
+
 // The user's shortcuts as [kbdCommand, action] pairs, primary and secondary.
 // keyboardState: { [action]: { command, secondaryCommand } }
 export function commandBindings(keyboardState) {
@@ -19,14 +22,20 @@ export function commandBindings(keyboardState) {
 // key: the event's { key, code, ctrlKey, altKey, shiftKey, metaKey }
 // Returns { preventDefault, command } to run a popup command,
 // { preventDefault, focus: 'first' | 'last' | 'search' } to move focus,
+// { preventDefault, dismiss: true } to close the popup page,
 // or { preventDefault } alone.
 export function interpretKey(key, bindings, { searchFocused }) {
   const preventDefault = MODIFIERS.includes(key.key) || OVERRIDDEN_KEYS.includes(key.key);
   if (keyboard.isValid(key)) {
     const cmd = keyboard.command(key);
     const binding = bindings.find(([bound]) => keyboard.isEqual(bound, cmd));
-    return { preventDefault, command: binding && binding[1] };
+    if (binding) return { preventDefault, command: binding[1] };
+    if (isBareEscape(key)) return { preventDefault, dismiss: true };
+    return { preventDefault, command: undefined };
   }
+  // The browser closes the toolbar popup on Escape by itself; the overlay
+  // and the fallback window close on dismiss (see core/surface)
+  if (isBareEscape(key)) return { preventDefault, dismiss: true };
   switch (key.key) {
     // Outside the search input, Home and End jump to the ends of the list;
     // inside it they keep moving the caret
