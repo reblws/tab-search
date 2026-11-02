@@ -7,6 +7,9 @@
   --bodyWidth: 355px;
   --tabListHeight: 450px;
   --searchWidth: 300px;
+  /* Space between the right edge and the column the menu button and each
+     row's close button share */
+  --edgeInset: 8px;
 }
 
 body {
@@ -34,11 +37,15 @@ header {
   flex-direction: row;
   align-items: center;
   gap: 4px;
-  padding: 12px 4px 12px 12px;
+  padding: 12px var(--edgeInset) 12px 12px;
   height: var(--headerHeight);
   width: var(--bodyWidth);
   box-sizing: border-box;
   border-bottom: 1px solid var(--color-border-default);
+  /* Reserves the same gutter as the list below, so the menu button lines
+     up with the close buttons whether scrollbars take space or not */
+  overflow: hidden;
+  scrollbar-gutter: stable;
 }
 
 /* Visually hidden but accessible to screen readers */
@@ -146,6 +153,7 @@ header {
 	flex-direction: column;
 	overflow-y: scroll;
 	overflow-x: hidden;
+	scrollbar-gutter: stable;
 	height: var(--tabListHeight);
   background-color: var(--color-background-secondary);
   border-color: var(--color-border-default);
@@ -304,10 +312,13 @@ removes the extra space added by the pseudoelement
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
+  /* As wide as the menu button and as far from the edge, so the two line
+     up. That also keeps the icon clear of an overlay scrollbar's thumb,
+     which draws over the edge and is about 15px wide while hovered */
+  width: 32px;
   flex-shrink: 0;
   align-self: stretch;
-  margin: -1rem -0.75rem -1rem 0;
+  margin: -1rem calc(var(--edgeInset) - 0.75rem) -1rem 0;
 
   /* Visual */
   border-radius: 0;
@@ -319,12 +330,6 @@ removes the extra space added by the pseudoelement
   /* Ghost: invisible by default */
   opacity: 0;
   pointer-events: none;
-}
-
-/* Keep clear of an overlay scrollbar, which draws over the list's right
-   edge; its thumb is approximately 15px wide while the pointer is on it */
-.tab-list--overlay-scrollbar .tab-object__delete-button {
-  margin-right: calc(-0.75rem + 16px);
 }
 
 /* Show on row hover */
@@ -512,6 +517,7 @@ html.is-unclaimed {
    top like a command palette. A click on the root closes it. */
 
 html[data-surface="overlay"] {
+  --edgeInset: 10px;
   --overlayBackdrop: light-dark(rgba(15, 20, 30, 0.32), rgba(0, 0, 0, 0.55));
   --overlayShadow:
     0 0 0 1px light-dark(rgba(15, 20, 30, 0.06), rgba(255, 255, 255, 0.06)),
@@ -585,7 +591,7 @@ html[data-surface="overlay"] header {
   width: auto;
   height: auto;
   min-height: 56px;
-  padding: 10px 10px 10px 8px;
+  padding: 10px var(--edgeInset) 10px 8px;
   gap: 6px;
 }
 

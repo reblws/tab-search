@@ -14,7 +14,6 @@ export const TAB_URL_CLASSNAME = 'tab-url';
 export const TAB_PIN_CLASSNAME = 'pin';
 export const TAB_MUTED_CLASSNAME = 'mute';
 export const TAB_DELETE_BTN_CLASSNAME = 'tab-object__delete-button';
-export const OVERLAY_SCROLLBAR_CLASSNAME = 'tab-list--overlay-scrollbar';
 
 // css ids
 export const TAB_ACTIVE_ID = 'activeTab';

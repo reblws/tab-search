@@ -1,6 +1,6 @@
 import debounce from 'debounce';
 import { changedTypeColors } from 'core/results/colors';
-import { POPUP_SIZE_PRESETS, OVERLAY_SCROLLBAR_CLASSNAME } from './classnames';
+import { POPUP_SIZE_PRESETS } from './classnames';
 import {
   searchInput,
   deleteButton,
@@ -51,18 +51,7 @@ export function applyPopupSize(store) {
   root.style.setProperty('--searchWidth', preset.searchWidth);
   root.style.setProperty('--headerHeight', preset.headerHeight);
   root.style.setProperty('--overlayWidth', preset.overlayWidth);
-  markOverlayScrollbar();
   return store;
-}
-
-// Overlay scrollbars (macOS, GTK) take no layout space and draw over the
-// right edge of the list, on top of the close buttons
-function markOverlayScrollbar() {
-  const list = tabList();
-  const style = getComputedStyle(list);
-  const borders = parseFloat(style.borderLeftWidth) + parseFloat(style.borderRightWidth);
-  const scrollbarWidth = list.offsetWidth - list.clientWidth - borders;
-  list.classList.toggle(OVERLAY_SCROLLBAR_CLASSNAME, scrollbarWidth === 0);
 }
 
 export function overrideDomStyleSheets(store) {
