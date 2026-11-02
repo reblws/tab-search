@@ -399,8 +399,6 @@ removes the extra space added by the pseudoelement
 .no-result__circle {
   height: 50px;
   margin-bottom: 0.8rem;
-  /* Invert for dark mode visibility using color-scheme awareness */
-  filter: light-dark(none, invert(1));
 }
 
 .no-result__msg {
@@ -475,15 +473,31 @@ p {
   border-left: 5px var(--color-history-indicator) solid;
 }
 
-/* Lighten volume/mute icons for dark mode */
-.tab-object.audible > .tab-img:before,
-.tab-object.mute > .tab-img:before {
-  filter: light-dark(none, invert(0.7));
-}
+/* The black SVG icons, lightened for dark mode. A media query, since
+   light-dark() only takes colors and a filter using it is dropped */
+@media (prefers-color-scheme: dark) {
+  .no-result__circle,
+  .tab-img img[src$="file.svg"] {
+    filter: invert(1);
+  }
 
-/* Invert fallback favicon (file.svg) for visibility on dark background */
-.tab-img img[src$="file.svg"] {
-  filter: light-dark(none, invert(1));
+  .tab-object.audible > .tab-img:before,
+  .tab-object.mute > .tab-img:before {
+    filter: invert(0.7);
+  }
+
+  /* Selected rows turn light in dark mode, so their icons stay dark */
+  .tab-object--selected > .tab-img img[src$="file.svg"],
+  .tab-object:hover > .tab-img img[src$="file.svg"],
+  .tab-object:focus > .tab-img img[src$="file.svg"],
+  .tab-object--selected.audible > .tab-img:before,
+  .tab-object--selected.mute > .tab-img:before,
+  .tab-object:hover.audible > .tab-img:before,
+  .tab-object:hover.mute > .tab-img:before,
+  .tab-object:focus.audible > .tab-img:before,
+  .tab-object:focus.mute > .tab-img:before {
+    filter: none;
+  }
 }
 
 /* A frame that hasn't shown it was made by TabSearch's host script yet */
