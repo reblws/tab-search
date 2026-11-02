@@ -10,6 +10,7 @@
   + Needs no new permissions in Firefox; Chrome asks for `activeTab` and `scripting`, which show no warning
 - The popup is unchanged while the overlay is off
 - Each result's close button now lines up with the menu button above it, with or without space-taking scrollbars, and stays clear of macOS's overlay scrollbar
+  + Restyled it to match the menu button: the same thinner X icon, and a small rounded highlight on hover instead of a full-height strip. Its keyboard focus ring now shows on the selected row too
 - Fixed icons staying black in dark mode: the icon of tabs without a favicon, like a new tab, the no-results icon and the audio icons
 
 ## 0.8.0 (2026-10-25)

@@ -98,9 +98,10 @@ function createTabObject(view) {
     delBtn.title = 'Close Tab';
     delBtn.setAttribute('aria-label', 'Close Tab');
     delBtn.classList.add(TAB_DELETE_BTN_CLASSNAME);
-    // A literal, so AMO's linter doesn't flag the innerHTML assignment
-    delBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-      <path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    // Acorn's close-16, as in the search box's clear button. A literal, so
+    // AMO's linter doesn't flag the innerHTML assignment
+    delBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+      <path d="M14 3.06 9.06 8 14 12.938 12.94 14 8 9.06 3.062 14 2 12.94 6.938 8 2 3.062 3.06 2 8 6.939 12.939 2z"/>
     </svg>`;
     tabObjectNode.appendChild(delBtn);
   }
