@@ -3,11 +3,14 @@
 // the experimental overlay and the fallback window.
 import { surfaceOf } from 'core/surface';
 import {
+  OVERLAY_ALIVE,
   OVERLAY_READY,
   OVERLAY_CLOSE,
   OVERLAY_DISMISS,
   OVERLAY_CLAIM,
   CLOSE_ANIMATION_MS,
+  OPENING_ANIMATION_MS,
+  REVEAL_CAP_MS,
 } from 'core/overlay/protocol';
 
 const query = typeof window !== 'undefined' && window.location
@@ -15,6 +18,8 @@ const query = typeof window !== 'undefined' && window.location
   : {};
 export const surface = surfaceOf(query);
 
+const OPEN_CLASSNAME = 'is-open';
+const OPENING_CLASSNAME = 'is-opening';
 const CLOSING_CLASSNAME = 'is-closing';
 let closing = false;
 
@@ -70,10 +75,24 @@ export function claimOverlay() {
 }
 
 // Marks the root for the surface's styles, and tells the host the frame
-// is alive, so it can show it
+// is alive, so it stops waiting for the frame to load
 export function startSurface() {
   document.documentElement.dataset.surface = surface.surface;
-  if (surface.close === 'host') tellHost(OVERLAY_READY);
+  if (surface.close === 'host') tellHost(OVERLAY_ALIVE);
+}
+
+// Shows the overlay once its first list, placeholder and key hints are in
+// (or after a short wait, if they're slow), so nothing pops in after it
+// appears. The panel then springs in and the first rows follow it down.
+export function revealOverlay(drawn) {
+  if (surface.close !== 'host') return Promise.resolve();
+  const cap = new Promise(resolve => window.setTimeout(resolve, REVEAL_CAP_MS));
+  return Promise.race([Promise.resolve(drawn).catch(() => {}), cap]).then(() => {
+    const root = document.documentElement;
+    root.classList.add(OPEN_CLASSNAME, OPENING_CLASSNAME);
+    tellHost(OVERLAY_READY);
+    window.setTimeout(() => root.classList.remove(OPENING_CLASSNAME), OPENING_ANIMATION_MS);
+  });
 }
 
 // Clicks on the backdrop (outside the panel), a dismiss from the host, and

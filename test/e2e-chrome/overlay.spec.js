@@ -139,7 +139,9 @@ describe('Experimental overlay (Chrome)', function () {
       // The search input has the focus
       expect(await browser.execute(() => document.activeElement.classList.contains('search'))).toBe(true);
       // The key hints follow the user's shortcuts
-      expect(await $('.overlay-hints').getText()).toContain('to open');
+      // (textContent: the row may still be fading in, and getText() skips it)
+      expect(await browser.execute(() => document.querySelector('.overlay-hints').textContent))
+        .toContain('to open');
     });
 
     it('should keep every keystroke from the page and close on Escape', async function () {

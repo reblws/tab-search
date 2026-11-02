@@ -21,6 +21,7 @@ import {
   watchDismiss,
   framedByPage,
   claimOverlay,
+  revealOverlay,
 } from './surface';
 
 const UNCLAIMED_CLASSNAME = 'is-unclaimed';
@@ -60,6 +61,7 @@ function start() {
     .then(addCurrentWindowIdToPromiseChain)
     .then(addEventListeners)
     .then(doFinalSideEffects)
+    .then(store => revealOverlay(store.drawn))
     .catch((e) => {
       throw new Error(`Ran into a problem initializing popup window: ${e.stack}`);
     });

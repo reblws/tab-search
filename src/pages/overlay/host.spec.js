@@ -1,7 +1,9 @@
 import sinon from 'sinon';
 import { JSDOM } from 'jsdom';
 import { mountOverlay, HOST_TAG } from './host.js';
-import { OVERLAY_READY, OVERLAY_CLOSE, OVERLAY_DISMISS } from 'core/overlay/protocol.js';
+import {
+  OVERLAY_ALIVE, OVERLAY_READY, OVERLAY_CLOSE, OVERLAY_DISMISS,
+} from 'core/overlay/protocol.js';
 
 const ORIGIN = 'moz-extension://abc';
 const SRC = `${ORIGIN}/popup/index.html?surface=overlay`;
@@ -58,8 +60,10 @@ describe('overlay host', function () {
     overlay.close();
   });
 
-  it('should show itself once the frame says it is ready', function () {
+  it('should stay hidden while the frame draws, and show once it has', function () {
     const overlay = mount();
+    fromFrame(overlay, OVERLAY_ALIVE);
+    expect(overlay.host.style.getPropertyValue('opacity')).to.equal('0');
     fromFrame(overlay, OVERLAY_READY);
     expect(overlay.host.style.getPropertyValue('opacity')).to.equal('1');
     overlay.close();
@@ -114,13 +118,25 @@ describe('overlay host', function () {
     expect(doc.querySelector(HOST_TAG)).to.equal(null);
   });
 
-  it('should not fail once the frame is ready', async function () {
+  it('should wait longer for a frame that is alive to draw', async function () {
     const onFailed = sinon.spy();
-    const overlay = mount({ onFailed, readyTimeoutMs: 5 });
-    fromFrame(overlay, OVERLAY_READY);
+    const overlay = mount({ onFailed, readyTimeoutMs: 5, drawTimeoutMs: 60 });
+    fromFrame(overlay, OVERLAY_ALIVE);
     await wait(30);
     expect(onFailed.called).to.equal(false);
+    fromFrame(overlay, OVERLAY_READY);
+    await wait(60);
+    expect(onFailed.called).to.equal(false);
     overlay.close();
+  });
+
+  it('should give up on a live frame that never draws', async function () {
+    const onFailed = sinon.spy();
+    const overlay = mount({ onFailed, readyTimeoutMs: 5, drawTimeoutMs: 20 });
+    fromFrame(overlay, OVERLAY_ALIVE);
+    await wait(60);
+    expect(onFailed.calledOnce).to.equal(true);
+    expect(doc.querySelector(HOST_TAG)).to.equal(null);
   });
 
   it('should close when the tab is hidden', function () {

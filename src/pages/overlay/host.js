@@ -3,10 +3,12 @@
 // draws its own backdrop and panel, so a click anywhere reaches TabSearch,
 // not the page, and the page's styles and key handlers never see it.
 import {
+  OVERLAY_ALIVE,
   OVERLAY_READY,
   OVERLAY_CLOSE,
   OVERLAY_DISMISS,
   READY_TIMEOUT_MS,
+  DRAW_TIMEOUT_MS,
 } from 'core/overlay/protocol';
 
 export const HOST_TAG = 'tabsearch-overlay';
@@ -36,7 +38,8 @@ const HOST_STYLES = {
   border: '0',
   background: 'transparent',
   'z-index': '2147483647',
-  // Shown once the frame says it's ready, so it never flashes unstyled
+  // Shown once the frame has drawn its list, so nothing pops in; the frame
+  // animates itself in from there
   opacity: '0',
   transition: 'none',
 };
@@ -67,6 +70,7 @@ export function mountOverlay({
   onFailed = () => {},
   onClosed = () => {},
   readyTimeoutMs = READY_TIMEOUT_MS,
+  drawTimeoutMs = DRAW_TIMEOUT_MS,
 }) {
   const returnFocus = doc.activeElement;
   // A video in fullscreen can't show the host on top of it
@@ -99,15 +103,20 @@ export function mountOverlay({
 
   let closed = false;
   let dismissTimer = null;
-  const readyTimer = win.setTimeout(() => {
+  const giveUp = () => {
     close();
     onFailed();
-  }, readyTimeoutMs);
+  };
+  // A frame that never runs (a page CSP with `sandbox`), or never draws
+  let readyTimer = win.setTimeout(giveUp, readyTimeoutMs);
 
   function onMessage(event) {
     if (event.source !== frame.contentWindow || event.origin !== origin) return;
     const type = event.data && event.data.type;
-    if (type === OVERLAY_READY) {
+    if (type === OVERLAY_ALIVE) {
+      win.clearTimeout(readyTimer);
+      readyTimer = win.setTimeout(giveUp, drawTimeoutMs);
+    } else if (type === OVERLAY_READY) {
       win.clearTimeout(readyTimer);
       host.style.setProperty('opacity', '1', 'important');
       // The frame focuses its search itself when it can. When Chrome didn't
