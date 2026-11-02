@@ -21,6 +21,7 @@ import {
 } from './nodes';
 import { updateLastQuery } from './actions';
 import filterResults from './search';
+import { surface, closeUI } from './surface';
 
 export function configureSearch(store) {
   const { getState, tabQueryPromise, currentWindowId } = store;
@@ -94,11 +95,13 @@ export function keydownHandler(store) {
   };
   return function handleKeyDown(event) {
     const searchFocused = document.activeElement === searchInput();
-    const { preventDefault, command, focus } =
-      interpretKey(keyValues(event), bindings, { searchFocused });
+    const {
+      preventDefault, command, focus, dismiss,
+    } = interpretKey(keyValues(event), bindings, { searchFocused });
     if (preventDefault) event.preventDefault();
     if (command) navigateResults(command, store.getState);
     if (focus) focusTargets[focus]().focus();
+    if (dismiss && surface.escape) closeUI();
   };
 }
 

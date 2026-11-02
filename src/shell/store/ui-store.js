@@ -21,6 +21,15 @@
 // focusing it first, so it never acts on stale state.
 import { CONNECTION_NAME, DISPATCH, UPDATE_STATE } from './protocol';
 
+// Firefox hands the overlay's frame (an extension page inside a web page)
+// the background's state as objects from another compartment: they read
+// fine, but their constructor isn't this page's Object, so deep-equal
+// checks like the keyboard's never match them. A copy made here is local.
+// The state is plain JSON (redux-persist stores it as such).
+const localCopy = data => (data === undefined || data === null
+  ? data
+  : JSON.parse(JSON.stringify(data)));
+
 export function createUIStore() {
   let state;
   let listeners = [];
@@ -36,7 +45,7 @@ export function createUIStore() {
     const connection = chrome.runtime.connect({ name: CONNECTION_NAME });
     connection.onMessage.addListener((msg) => {
       if (msg.type === UPDATE_STATE) {
-        setState(msg.data);
+        setState(localCopy(msg.data));
       }
     });
     connection.onDisconnect.addListener(() => {
@@ -53,7 +62,7 @@ export function createUIStore() {
     return new Promise((resolve) => {
       chrome.runtime.sendMessage({ type: UPDATE_STATE }, (res) => {
         void chrome.runtime.lastError;
-        resolve(res);
+        resolve(localCopy(res));
       });
     });
   }

@@ -24,6 +24,9 @@
       "background_bundle.js"
     ]
   },
+  "web_accessible_resources": [
+    "popup/index.html"
+  ],
   "options_ui": {
     "page": "settings/index.html",
     "open_in_tab": true,

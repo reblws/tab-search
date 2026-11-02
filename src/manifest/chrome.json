@@ -5,7 +5,9 @@
   "permissions": [
     "tabs",
     "storage",
-    "sessions"
+    "sessions",
+    "activeTab",
+    "scripting"
   ],
   "action": {
     "default_icon": "icons/logo-48.png",
@@ -15,6 +17,16 @@
   "background": {
     "service_worker": "background_bundle.js"
   },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "popup/index.html"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
   "options_ui": {
     "page": "settings/index.html",
     "open_in_tab": true

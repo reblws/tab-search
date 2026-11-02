@@ -3,8 +3,10 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Unpacked Chrome build. Run `pnpm build:chrome` first.
-const extensionPath = path.resolve(__dirname, './dist');
+// Unpacked Chrome build. Run `pnpm build:chrome` first. onPrepare copies it
+// to .e2e/chrome with host access to the overlay specs' fixture server
+// (test/e2e-extension.js).
+const extensionPath = path.resolve(__dirname, './.e2e/chrome');
 
 export const config = {
   runner: 'local',
@@ -46,6 +48,11 @@ export const config = {
   waitforTimeout: 10000,
   connectionRetryTimeout: 120000,
   connectionRetryCount: 3,
+
+  onPrepare: async function () {
+    const { prepareChromeExtension } = await import('./test/e2e-extension.js');
+    await prepareChromeExtension();
+  },
 
   framework: 'mocha',
   reporters: ['spec'],

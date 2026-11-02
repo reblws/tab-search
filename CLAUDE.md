@@ -78,12 +78,17 @@ src/
 │   ├── navigation/ popup command plan, key and click intents
 │   ├── results/   result row view, list placement and scroll, colors
 │   ├── badge/     tab count badge changes and texts
+│   ├── surface/   where the popup page runs (popup, preview, overlay,
+│   │              window) and what that means for it
+│   ├── overlay/   open plan (inject or fall back), protocol, remote API
+│   │              list, fallback window bounds, key hints
 │   ├── settings/  input map, setting lookup, MRU choice, actions, input
 │   │              display and changes, shortcut changes, find, layout
 │   └── lib/       fp, url, word-break
 ├── shell/         # side effects behind small functions
 │   ├── platform/  polyfill, action-api, tabs, windows, sessions, bookmarks,
-│   │              history, commands, os, recency, tab-menu
+│   │              history, commands, os, recency, tab-menu, scripting,
+│   │              remote-api (the Firefox overlay frame's missing APIs)
 │   ├── storage/   storage-adapter, persist, session-flag, focus-record,
 │   │              memory-area
 │   ├── store/     create-store, bridge, ui-store, protocol
@@ -93,15 +98,50 @@ src/
     ├── popup/     index (entry), nodes (lazy DOM lookups), classnames,
     │              render, events, commands, search, gather, tab-actions, ...
     ├── settings/  index (entry), dom, shortcuts, preview, nav, ...
-    └── background/ index (entry), store, badge text, tab-recency
+    ├── overlay/   index (entry), host: the overlay's host in a web page
+    └── background/ index (entry), store, badge text, tab-recency,
+                   overlay (launcher), remote-api
 ```
 
 ### Webpack Entry Points
 
-The extension has three webpack entry points in `src/pages/`:
+The extension has four webpack entry points in `src/pages/`:
 - **popup/** - Main search UI shown when clicking the extension icon
 - **background/** - Background script for persistent state and badge management
 - **settings/** - Options page for configuring the extension
+- **overlay/** - Host script the background injects into a tab for the
+  experimental overlay (`overlay_bundle.js`)
+
+### Experimental Overlay
+
+`general.enableOverlay` (Settings › Experimental) shows TabSearch centered
+over the page instead of in the toolbar popup.
+
+- While it's on, `background/overlay.js` sets the toolbar popup to `''`, so
+  the button and its shortcut fire `onClicked`. `core/overlay/open-plan.js`
+  decides: inject `overlay_bundle.js` (activeTab, no host permissions), or
+  fall back to the toolbar popup on pages the browser protects. The fallback
+  sets the popup back, calls `openPopup()` before any `await` (Firefox's
+  user action ends at the first one) and opens a popup window
+  (`?surface=window`) where the browser refuses.
+- `pages/overlay/host.js` adds one `tabsearch-overlay` element with the
+  popup page (`?surface=overlay`) in a frame inside its shadow root. The
+  frame draws the backdrop and panel; the host shows it once the frame
+  posts ready, and falls back (`OVERLAY_FAILED`) if it never does.
+  Messages are checked against the frame's window and the extension origin.
+- The popup page reads its surface with `core/surface` and closes through
+  `closeUI()` (`pages/popup/surface.js`), never `window.close()` directly.
+  The toolbar popup still closes at once; the overlay fades out first.
+- Firefox runs the overlay's frame with only the content script APIs.
+  `shell/platform/remote-api.js` fills in the rest from
+  `core/overlay/remote.js`'s list through `background/remote-api.js`, which
+  only answers the popup page in a tab's frame. The frame also receives the
+  background's state as cross-compartment objects, so `ui-store.js` copies
+  it before deep-equal checks see it.
+- `globalThis.TabSearchOverlay.open(tab)` in the background opens it as a
+  click would. The E2E specs use it, since WebDriver can't click the button;
+  `test/e2e-extension.js` gives their copies of the build host access to
+  the local fixture server (`test/e2e-fixtures.js`).
 
 ### State Management
 
@@ -158,6 +198,8 @@ in the browser files.
   lazily: before its next dispatch, or when the page is focused or shown.
 - Chrome E2E specs live in `test/e2e-chrome/` (config `wdio.chrome.conf.js`);
   `helpers/chrome.js` can stop the service worker through CDP.
+- In Firefox's E2E (WebDriver BiDi), enter the overlay's frame with
+  `switchFrame()`; `switchToFrame()` silently stays in the page.
 
 ### Module Patching
 

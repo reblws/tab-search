@@ -32,12 +32,14 @@ import {
   updateMenuTitles,
   runMenuItem,
 } from './context-menu';
+import { surface, closeUI } from './surface';
+import { renderOverlayHints } from './overlay-hints';
 
 function openSettingsPage() {
   createTab({
     url: browser.runtime.getURL('../settings/index.html'),
     active: true,
-  }).then(() => window.close());
+  }).then(closeUI);
 }
 
 export function applyPopupSize(store) {
@@ -48,6 +50,7 @@ export function applyPopupSize(store) {
   root.style.setProperty('--tabListHeight', preset.tabListHeight);
   root.style.setProperty('--searchWidth', preset.searchWidth);
   root.style.setProperty('--headerHeight', preset.headerHeight);
+  root.style.setProperty('--overlayWidth', preset.overlayWidth);
   markOverlayScrollbar();
   return store;
 }
@@ -92,12 +95,16 @@ export function addEventListeners(store) {
   deleteButton().addEventListener('click', clearInput);
   searchInput().addEventListener('input', handleSearchInput);
   prefsBtn().addEventListener('click', openSettingsPage);
-  // Firefox only: right-clicking a result opens its tab menu
-  tabList().addEventListener('contextmenu', overrideResultContextMenu, true);
-  if (browser.menus) {
+  // Firefox only: right-clicking a result opens its tab menu. The overlay's
+  // frame has no menus.overrideContext, so it keeps the plain menu.
+  if (surface.tabMenu && browser.menus && browser.menus.onShown) {
+    tabList().addEventListener('contextmenu', overrideResultContextMenu, true);
     browser.menus.onShown.addListener(updateMenuTitles);
     browser.menus.onClicked.addListener(info => runMenuItem(info, store.getState));
   }
+  const hintsDrawn = surface.backdrop
+    ? renderOverlayHints(store.getState().keyboard)
+    : Promise.resolve();
 
   if (showLastQueryOnPopup) {
     searchInput().addEventListener('input', updateLastQueryOnKeydown(store));
@@ -116,7 +123,7 @@ export function addEventListeners(store) {
   return Object.assign(
     {},
     store,
-    { updateSearchResults },
+    { updateSearchResults, hintsDrawn },
   );
 }
 
@@ -139,14 +146,14 @@ export function doFinalSideEffects(store) {
     searchInput().value = lastQuery;
   }
   // Give a shortcut hint
-  updatePlaceholderTextWithShortcutHint()
+  const placeholderDrawn = updatePlaceholderTextWithShortcutHint()
     .catch((err) => {
       // TODO: Find a place to put these error messages away so people can
       //       c/p logged errors
       console.error(`Can't update search input placeholder text! ${err.stack}`);
     });
   // Populate the initial tab list here.
-  populateTabList(updateSearchResults())
+  const listDrawn = populateTabList(updateSearchResults())
     .catch((err) => {
       console.error(`Can't populate initial tabList. ${err.stack}`);
     });
@@ -157,7 +164,10 @@ export function doFinalSideEffects(store) {
     overrideFontStylesWithSansSerif();
   }
 
-  return store;
+  // The overlay waits for all of these before it shows itself
+  return Object.assign({}, store, {
+    drawn: Promise.all([listDrawn, placeholderDrawn, store.hintsDrawn]),
+  });
 }
 
 // Possible input focus workaround

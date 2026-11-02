@@ -52,16 +52,11 @@ export const config = {
   },
 
   before: async function () {
-    // Path to the built extension .xpi file
-    // Run `npm run zip:firefox` before running E2E tests to create this
-    const fs = await import('fs/promises');
-    const manifest = JSON.parse(await fs.readFile(path.resolve(__dirname, './src/manifest/base.json'), 'utf8'));
-    const version = manifest.version;
-    const extensionPath = path.resolve(__dirname, `./web-ext-artifacts/tabsearch-${version}.zip`);
-
-    // Read the .xpi file and convert to base64
-    const extensionBuffer = await fs.readFile(extensionPath);
-    const extensionBase64 = extensionBuffer.toString('base64');
+    // The Firefox build in dist/, zipped with host access to the overlay
+    // specs' fixture server (test/e2e-extension.js). Run
+    // `npm run zip:firefox` before running E2E tests to build it
+    const { prepareFirefoxExtension } = await import('./test/e2e-extension.js');
+    const extensionBase64 = await prepareFirefoxExtension();
 
     // Install the extension as a temporary addon
     // Store the extension ID for test use
