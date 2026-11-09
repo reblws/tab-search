@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.9.0 (2026-11-08)
 
 - Added an experimental overlay, off by default: with Settings › Experimental › Open over the page on, the toolbar button and its shortcut open TabSearch centered over the page you're on, like a command palette
   + Type, move with the arrow keys and press Enter as in the popup; the bottom row shows your own shortcuts. Escape or a click outside closes it, and pressing the shortcut again does too
@@ -8,7 +8,7 @@
   + Its width follows the popup width setting
   + On the new tab page and the browser's own pages, which extensions can't draw on, the toolbar popup opens as before
   + Needs no new permissions in Firefox; Chrome asks for `activeTab` and `scripting`, which show no warning
-- The popup is unchanged while the overlay is off
+  + While it's off, the toolbar popup works as before
 - Each result's close button now lines up with the menu button above it, with or without space-taking scrollbars, and stays clear of macOS's overlay scrollbar
   + Restyled it to match the menu button: the same thinner X icon, and a small rounded highlight on hover instead of a full-height strip. Its keyboard focus ring now shows on the selected row too
   + It still takes clicks over the row's full height, so a click just above or below the X closes the tab instead of switching to it (#112)
