@@ -1,4 +1,4 @@
-import { scrollDirection, closedRowPlan } from './list.js';
+import { scrollDirection, closedRowPlan, closedSessionId } from './list.js';
 
 describe('scrollDirection', function () {
   it('should scroll down when the row ends below the list', function () {
@@ -39,5 +39,28 @@ describe('closedRowPlan', function () {
   it('should only count closed rows at the very end', function () {
     const types = ['session', 'tab', 'tab', 'bookmark'];
     expect(closedRowPlan(1, types, bottom)).to.deep.equal({ repaint: true, moveBefore: null });
+  });
+});
+
+describe('closedSessionId', function () {
+  const tab = (url, sessionId) => ({ tab: { url, sessionId } });
+
+  it('should take the newest closed tab with the URL', function () {
+    const sessions = [tab('https://b.test/', 'b'), tab('https://a.test/', 'a1'), tab('https://a.test/', 'a2')];
+    expect(closedSessionId(sessions, 'https://a.test/')).to.equal('a1');
+  });
+
+  it('should skip sessions other rows took', function () {
+    const sessions = [tab('https://a.test/', 'a1'), tab('https://a.test/', 'a2')];
+    expect(closedSessionId(sessions, 'https://a.test/', ['a1'])).to.equal('a2');
+  });
+
+  it('should skip closed windows', function () {
+    const sessions = [{ window: { sessionId: 'w' } }, tab('https://a.test/', 'a')];
+    expect(closedSessionId(sessions, 'https://a.test/')).to.equal('a');
+  });
+
+  it('should find nothing when the tab wasn\'t recorded, like a new tab', function () {
+    expect(closedSessionId([tab('https://b.test/', 'b')], 'about:newtab')).to.equal(undefined);
   });
 });

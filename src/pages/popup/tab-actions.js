@@ -13,8 +13,8 @@ import { SESSION_TYPE, OTHER_WINDOW_TAB_TYPE } from 'core/tabs/types';
 import { decodeUrl } from 'core/lib/url';
 import { withFocusTimes } from 'core/tabs/recency';
 import { tabQueryOptions } from 'core/tabs/query';
-import { closedRowPlan } from 'core/results/list';
-import { tabList } from './nodes';
+import { closedRowPlan, closedSessionId } from 'core/results/list';
+import { tabList, searchInput } from './nodes';
 import { surface, closeUI } from './surface';
 import {
   removeElementFromTabList,
@@ -35,14 +35,23 @@ export function addCurrentWindowIdToPromiseChain(store) {
   return windowId.then(currentWindowId => Object.assign({}, store, { currentWindowId }));
 }
 
+// Enough to find a tab closed among a few others at once
+const RECENTLY_CLOSED_LOOKUP = 10;
+
 // Closes the row's tab. The row goes away, or stays as a recently closed
 // row when those are shown, as core/results/list.js's closedRowPlan says.
 export function deleteTab(elementToRemove, generalSettings, wasClicked = false) {
   const rows = [...tabList().children];
   const index = rows.indexOf(elementToRemove);
   const plan = closedRowPlan(index, rows.map(row => row.dataset.type), generalSettings);
+  // Closed from the keyboard, the focused row hands the focus to the next
+  // one. Left on the row, it would be lost when the row moves, or stay on
+  // a closed row that can't be closed again (#76)
+  if (!wasClicked && elementToRemove.contains(document.activeElement)) {
+    (rows[index + 1] || rows[index - 1] || searchInput()).focus();
+  }
   if (plan.remove) {
-    removeElementFromTabList(elementToRemove, wasClicked);
+    removeElementFromTabList(elementToRemove);
   } else {
     repaintElementWithType(elementToRemove, SESSION_TYPE);
     if (plan.moveBefore !== undefined) {
@@ -55,11 +64,22 @@ export function deleteTab(elementToRemove, generalSettings, wasClicked = false) 
   // only way to restore a tab is to open it, which closes the popup.
   const tabId = parseInt(elementToRemove.dataset.id, 10);
   deletedTabsCache().add(tabId);
+  if (plan.remove) {
+    removeTab(tabId);
+    return;
+  }
+  // The row restores the closed tab by its session id (#53)
   removeTab(tabId)
-    .then(() => getRecentlyClosed(1))
-    .then(sessions => sessions[0].tab.sessionId)
-    .then((sessionId) => {
-      elementToRemove.dataset.id = sessionId;
+    .then(() => getRecentlyClosed(RECENTLY_CLOSED_LOOKUP))
+    .then((sessions) => {
+      const takenIds = [...tabList().children].map(row => row.dataset.id);
+      const sessionId = closedSessionId(sessions, elementToRemove.dataset.url, takenIds);
+      if (sessionId === undefined) {
+        // Not recorded, like a new tab or a private one: nothing to restore
+        removeElementFromTabList(elementToRemove);
+      } else {
+        elementToRemove.dataset.id = sessionId;
+      }
     });
 }
 

@@ -13,6 +13,8 @@
   + Restyled it to match the menu button: the same thinner X icon, and a small rounded highlight on hover instead of a full-height strip. Its keyboard focus ring now shows on the selected row too
   + It still takes clicks over the row's full height, so a click just above or below the X closes the tab instead of switching to it (#112)
 - With "Reopen with your last search" on, the popup now shows that search's results instead of every tab, and the query is selected so typing replaces it (#96)
+- Closing a tab with the keyboard now moves the focus to the next result, so you can keep closing tabs; before, it was lost when the tab stayed as a recently closed result (#76)
+- Fixed a just-closed tab's result sometimes reopening a different tab. A closed tab the browser doesn't keep, like a new tab or a private tab, now leaves the list (#53)
 - Fixed icons staying black in dark mode: the icon of tabs without a favicon, like a new tab, the no-results icon and the audio icons
 
 ## 0.8.0 (2026-10-25)

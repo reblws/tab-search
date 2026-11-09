@@ -199,14 +199,9 @@ export function scrollIfNeeded(event) {
   if (direction) event.target.scrollIntoView(direction === 'up');
 }
 
-export function removeElementFromTabList(element, wasClicked) {
-  const nextElementToFocus = element.nextSibling
-    ? element.nextSibling
-    : element.previousSibling;
-  tabList().removeChild(element);
-  if (!wasClicked) {
-    nextElementToFocus.focus();
-  }
+// deleteTab moves the focus first, when the row had it
+export function removeElementFromTabList(element) {
+  if (element.parentNode) element.parentNode.removeChild(element);
 }
 
 // Changes both the type classname (for styling)

@@ -35,3 +35,15 @@ export function closedRowPlan(index, types, {
   const start = closedRunStart(repainted);
   return { repaint: true, moveBefore: start < 0 ? null : start };
 }
+
+// The session id of a just-closed tab, from browser.sessions'
+// getRecentlyClosed. The newest entry isn't always that tab: browsers skip
+// new and private tabs, the newest entry can be a window, and another
+// close can land first. Matched by URL, skipping the session ids other
+// rows already took; undefined when no tab matches.
+export function closedSessionId(sessions, url, takenIds = []) {
+  const match = sessions.find(({ tab }) => tab
+    && tab.url === url
+    && !takenIds.includes(tab.sessionId));
+  return match ? match.tab.sessionId : undefined;
+}
