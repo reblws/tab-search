@@ -202,8 +202,9 @@ header {
 	align-items: center;
 	justify-content: center;
 	width: 100%;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  --rowPaddingBlock: 1rem;
+  padding-top: var(--rowPaddingBlock);
+  padding-bottom: var(--rowPaddingBlock);
   padding-left: 0;
   padding-right: 0.75rem;
   cursor: pointer;
@@ -297,10 +298,12 @@ removes the extra space added by the pseudoelement
 }
 
 /* ====== Close Tab Button ======
-   A compact icon button, drawn like the menu button: the same 16px icon
-   and a rounded fill on hover. It shows on the hovered, selected or
-   focused row, which always has the accent background, so it takes the
-   row's text color and tints its fill from that. */
+   Drawn like the menu button: the same 16px icon and a 28px rounded fill
+   on hover. The button itself spans the row's full height, so a click
+   just above or below the icon closes the tab instead of switching to it
+   (#112); the fill is drawn by ::before. It shows on the hovered,
+   selected or focused row, which always has the accent background, so it
+   takes the row's text color and tints its fill from that. */
 
 .tab-object__delete-button {
   -webkit-appearance: none;
@@ -309,30 +312,44 @@ removes the extra space added by the pseudoelement
   padding: 0;
   font: inherit;
 
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  /* Centered in a 32px column as far from the edge as the menu button, so
-     the two line up. That also keeps the icon clear of an overlay
-     scrollbar's thumb, which draws over the edge and is about 15px wide
-     while hovered. The right margin cancels the row's padding */
-  margin: 0 calc(var(--edgeInset) - 0.75rem + 2px) 0 6px;
+  align-self: stretch;
+  /* A 32px column as far from the edge as the menu button, so the two
+     line up. That also keeps the icon clear of an overlay scrollbar's
+     thumb, which draws over the edge and is about 15px wide while
+     hovered. The margins cancel the row's padding */
+  width: 32px;
+  margin: calc(-1 * var(--rowPaddingBlock)) calc(var(--edgeInset) - 0.75rem)
+    calc(-1 * var(--rowPaddingBlock)) 4px;
 
-  border-radius: var(--border-radius-small);
-  background-color: transparent;
+  background: none;
   color: inherit;
   cursor: pointer;
-  transition: background-color 0.12s ease, opacity 0.12s ease;
+  transition: opacity 0.12s ease;
 
   /* Hidden until its row is active */
   opacity: 0;
   pointer-events: none;
 }
 
+.tab-object__delete-button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  width: 28px;
+  height: 28px;
+  margin-top: -14px;
+  border-radius: var(--border-radius-small);
+  transition: background-color 0.12s ease;
+}
+
 .tab-object__delete-button svg {
+  position: relative;
   width: 16px;
   height: 16px;
 }
@@ -345,17 +362,21 @@ removes the extra space added by the pseudoelement
   pointer-events: auto;
 }
 
-.tab-object__delete-button:hover {
+.tab-object__delete-button:hover::before {
   background-color: color-mix(in srgb, currentColor 16%, transparent);
 }
 
-.tab-object__delete-button:active {
+.tab-object__delete-button:active::before {
   background-color: color-mix(in srgb, currentColor 26%, transparent);
 }
 
-/* In the row's text color: the usual accent ring would vanish on the
-   accent row */
+/* Around the fill, in the row's text color: the usual accent ring would
+   vanish on the accent row */
 .tab-object__delete-button:focus-visible {
+  outline: none;
+}
+
+.tab-object__delete-button:focus-visible::before {
   outline: var(--focus-outline-width) solid currentColor;
   outline-offset: -2px;
 }
@@ -602,8 +623,7 @@ html[data-surface="overlay"] .tab-list {
 }
 
 html[data-surface="overlay"] .tab-object {
-  padding-top: 0.8rem;
-  padding-bottom: 0.8rem;
+  --rowPaddingBlock: 0.8rem;
 }
 
 html[data-surface="overlay"] .no-result {

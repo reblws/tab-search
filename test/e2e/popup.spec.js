@@ -72,6 +72,24 @@ describe('Popup', function () {
       // right edge; a hovered thumb is approximately 15px wide
       expect(listRight - iconRight).toBeGreaterThanOrEqual(16);
     });
+
+    // #112: a click just above or below the icon must not switch tabs
+    it('should span the full height of its row', async function () {
+      await $('.tab-list .tab-object__delete-button').waitForExist();
+      const { rowTop, rowBottom, buttonTop, buttonBottom } = await browser.execute(() => {
+        const button = document.querySelector('.tab-list .tab-object__delete-button');
+        const row = button.closest('.tab-object').getBoundingClientRect();
+        const rect = button.getBoundingClientRect();
+        return {
+          rowTop: row.top,
+          rowBottom: row.bottom,
+          buttonTop: rect.top,
+          buttonBottom: rect.bottom,
+        };
+      });
+      expect(Math.abs(buttonTop - rowTop)).toBeLessThanOrEqual(1);
+      expect(Math.abs(buttonBottom - rowBottom)).toBeLessThanOrEqual(1);
+    });
   });
 
   describe('UI Elements', function () {
