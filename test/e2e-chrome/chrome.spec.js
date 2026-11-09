@@ -294,6 +294,15 @@ describe('Chrome MV3 build', function () {
       await browser.waitUntil(async () => (await $('input.search').getValue()) === 'fixture query', {
         timeoutMsg: 'The popup did not show the last query after a worker restart',
       });
+      // #96: searched and selected, so typing replaces it
+      const restored = await browser.execute(() => {
+        const input = document.querySelector('input.search');
+        return {
+          selected: input.selectionStart === 0 && input.selectionEnd === input.value.length,
+          clearShown: !document.querySelector('.clear-button').classList.contains('hidden'),
+        };
+      });
+      expect(restored).toEqual({ selected: true, clearShown: true });
 
       // Restore
       await $('input.search').clearValue();

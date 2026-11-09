@@ -132,7 +132,14 @@ export function doFinalSideEffects(store) {
 
   if (showLastQueryOnPopup) {
     const { lastQuery } = store.getState().state;
-    searchInput().value = lastQuery;
+    const input = searchInput();
+    // Typing before the store arrived wins over the last query
+    if (lastQuery && !input.value) {
+      input.value = lastQuery;
+      // Selected, so typing replaces it (#96); not in the settings
+      // preview, which must not take the focus
+      if (surface.focus !== 'none') input.select();
+    }
   }
   // Give a shortcut hint
   const placeholderDrawn = updatePlaceholderTextWithShortcutHint()
@@ -141,8 +148,9 @@ export function doFinalSideEffects(store) {
       //       c/p logged errors
       console.error(`Can't update search input placeholder text! ${err.stack}`);
     });
-  // Populate the initial tab list here.
-  const listDrawn = populateTabList(updateSearchResults())
+  // Populate the initial tab list here, filtered by the last query when
+  // it was restored (#96)
+  const listDrawn = populateTabList(updateSearchResults({ currentTarget: searchInput() }))
     .catch((err) => {
       console.error(`Can't populate initial tabList. ${err.stack}`);
     });
