@@ -34,7 +34,7 @@
   "commands": {
     "_execute_action": {
       "suggested_key": {
-        "default": "Ctrl+Shift+L",
+        "default": "Ctrl+Shift+F",
         "mac": "MacCtrl+Shift+L"
       },
       "description": "Open TabSearch"

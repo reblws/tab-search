@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Chrome's default popup shortcut on Windows and Linux is <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd> again: Chrome keeps <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>L</kbd> for itself, so 0.9.0's Chrome build had no working shortcut there. Firefox keeps <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>L</kbd>
+
 ## 0.9.0 (2026-11-08)
 
 - Added an experimental overlay, off by default: with Settings › Experimental › Open over the page on, the toolbar button and its shortcut open TabSearch centered over the page you're on, like a command palette
