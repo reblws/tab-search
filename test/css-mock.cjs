@@ -15,7 +15,7 @@ const photonColors = {
 // Acorn design system tokens for testing
 const acornColors = {
   ':root': {
-    colorBlue60: '#0060df',
+    colorBlue60: '#0062fa',
     colorYellow50: '#ffe900',
     colorRed60: '#d70022',
     colorInk70: '#363959',

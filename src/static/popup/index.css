@@ -2,7 +2,7 @@
 :root {
   /* Map semantic tokens to Acorn variables for backward compatibility */
   --bgColor: var(--color-background-primary);
-  --tabFocusColor: var(--color-accent-primary);
+  --tabFocusColor: var(--color-accent-primary-deemphasized);
   --headerHeight: 48px;
   --bodyWidth: 355px;
   --tabListHeight: 450px;
@@ -211,18 +211,31 @@ header {
   box-sizing: border-box;
   /* For chrome to prevent box shrinking */
   flex-shrink: 0;
+  border-radius: var(--border-radius-medium);
 }
 
-.tab-object:focus {
-  outline: var(--focus-outline-width) dotted var(--color-text-secondary);
-  outline-offset: var(--focus-outline-offset);
+.tab-object:hover {
+  background-color: var(--button-background-color-hover);
 }
 
 .tab-object--selected,
-.tab-object:hover,
 .tab-object:focus {
   background-color: var(--tabFocusColor);
-  color: var(--color-text-inverted);
+  box-shadow: inset 0 0 0 1px var(--color-accent-primary);
+}
+
+.tab-object--selected:hover,
+.tab-object:focus:hover {
+  background-color: color-mix(in srgb, var(--color-accent-primary) 12%, var(--color-background-secondary));
+}
+
+.tab-object:active {
+  background-color: var(--button-background-color-active);
+}
+
+.tab-object:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: -2px;
 }
 
 .tab-img {
@@ -301,9 +314,9 @@ removes the extra space added by the pseudoelement
    Drawn like the menu button: the same 16px icon and a 28px rounded fill
    on hover. The button itself spans the row's full height, so a click
    just above or below the icon closes the tab instead of switching to it
-   (#112); the fill is drawn by ::before. It shows on the hovered,
-   selected or focused row, which always has the accent background, so it
-   takes the row's text color and tints its fill from that. */
+   (#112); the fill is drawn by ::before. It shows on hovered, selected or
+   focused rows and takes their text color, which stays readable on the
+   soft selection tint in either theme. */
 
 .tab-object__delete-button {
   -webkit-appearance: none;
@@ -370,8 +383,7 @@ removes the extra space added by the pseudoelement
   background-color: color-mix(in srgb, currentColor 26%, transparent);
 }
 
-/* Around the fill, in the row's text color: the usual accent ring would
-   vanish on the accent row */
+/* Keep the focus ring inside the close button's visible fill. */
 .tab-object__delete-button:focus-visible {
   outline: none;
 }
@@ -439,12 +451,6 @@ removes the extra space added by the pseudoelement
   color: var(--color-text-secondary);
 }
 
-.tab-object--selected > .tab-info > p,
-.tab-object:hover > .tab-info > p,
-.tab-object:focus > .tab-info > p {
-  color: var(--color-text-inverted);
-}
-
 .tab-info > strong {
   padding-right: 0.5em;
 }
@@ -488,21 +494,31 @@ p {
   }
 
   .tab-object.audible > .tab-img:before,
+  .tab-object.pin > .tab-img:before,
   .tab-object.mute > .tab-img:before {
     filter: invert(0.7);
   }
+}
 
-  /* Selected rows turn light in dark mode, so their icons stay dark */
-  .tab-object--selected > .tab-img img[src$="file.svg"],
-  .tab-object:hover > .tab-img img[src$="file.svg"],
-  .tab-object:focus > .tab-img img[src$="file.svg"],
-  .tab-object--selected.audible > .tab-img:before,
-  .tab-object--selected.mute > .tab-img:before,
-  .tab-object:hover.audible > .tab-img:before,
-  .tab-object:hover.mute > .tab-img:before,
-  .tab-object:focus.audible > .tab-img:before,
-  .tab-object:focus.mute > .tab-img:before {
-    filter: none;
+@media (hover: none) {
+  .tab-object__delete-button {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* Selection must survive when forced colors suppress background fills
+   and box shadows. Keyboard focus still has its separate outline. */
+@media (forced-colors: active) {
+  .tab-object--selected,
+  .tab-object:focus {
+    outline: 1px solid Highlight;
+    outline-offset: -1px;
+  }
+
+  .tab-object:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -3px;
   }
 }
 

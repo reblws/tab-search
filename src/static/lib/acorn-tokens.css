@@ -12,9 +12,12 @@
   --color-blue-40: #45a1ff;
   --color-blue-50: #0a84ff;
   --color-blue-50-a30: rgba(10, 132, 255, 0.3);
-  --color-blue-60: #0060df;
-  --color-blue-70: #003eaa;
-  --color-cyan-30: #80ebff;
+  --color-blue-60: #0062fa;
+  --color-blue-70: #0053cb;
+  --color-blue-80: #0041a4;
+  --color-cyan-10: #a6ecf4;
+  --color-cyan-20: #61dce9;
+  --color-cyan-30: #00cadb;
   --color-gray-05: #fbfbfe;
   --color-gray-10: #f9f9fb;
   --color-gray-20: #ededf0;
@@ -42,12 +45,14 @@
 
   /* ====== APPLICATION TOKENS (with light-dark) ====== */
   --color-accent-primary: light-dark(var(--color-blue-60), var(--color-cyan-30));
-  --color-accent-primary-hover: light-dark(var(--color-blue-70), var(--color-blue-40));
+  --color-accent-primary-hover: light-dark(var(--color-blue-70), var(--color-cyan-20));
+  --color-accent-primary-active: light-dark(var(--color-blue-80), var(--color-cyan-10));
+  --color-accent-primary-deemphasized: light-dark(rgba(0, 98, 250, 0.08), rgba(0, 202, 219, 0.08));
   --color-background-primary: light-dark(var(--color-gray-10), var(--color-gray-80));
   --color-background-secondary: light-dark(var(--color-white), var(--color-gray-90));
   --color-background-tertiary: light-dark(var(--color-gray-20), var(--color-gray-70));
   --color-text-primary: light-dark(var(--color-gray-90), var(--color-gray-05));
-  --color-text-secondary: light-dark(var(--color-gray-50), var(--color-gray-40));
+  --color-text-secondary: light-dark(rgba(21, 20, 26, 0.69), rgba(251, 251, 254, 0.69));
   --color-text-inverted: light-dark(var(--color-white), var(--color-gray-90));
   --color-border-default: light-dark(var(--color-gray-30), var(--color-gray-70));
   --color-border-strong: light-dark(var(--color-gray-40), var(--color-gray-60));
