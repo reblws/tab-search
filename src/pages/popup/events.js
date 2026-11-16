@@ -4,6 +4,7 @@ import { clickIntent } from 'core/navigation/click';
 import {
   injectTabsInList,
   addHeadTabListNodeSelectedStyle,
+  dismissTypeHint,
 } from './render';
 import { navigateResults } from './commands';
 import {
@@ -94,6 +95,10 @@ export function keydownHandler(store) {
     search: searchInput,
   };
   return function handleKeyDown(event) {
+    if (event.key === 'Escape' && dismissTypeHint()) {
+      event.preventDefault();
+      return;
+    }
     const searchFocused = document.activeElement === searchInput();
     const {
       preventDefault, command, focus, dismiss,

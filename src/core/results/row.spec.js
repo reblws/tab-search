@@ -1,4 +1,4 @@
-import { rowView } from './row.js';
+import { rowView, resultTypeLabel } from './row.js';
 
 describe('rowView', function () {
   const icons = { history: 'H', bookmark: 'B', fallback: 'F' };
@@ -18,6 +18,12 @@ describe('rowView', function () {
 
   it('should use the session id for recently closed tabs', function () {
     expect(rowView(tab({ type: 'session', sessionId: 's9' }), settings, deps).dataset.id).to.equal('s9');
+  });
+
+  it('should describe row types independently of their colors', function () {
+    expect(['tab', 'other-window-tab', 'session', 'bookmark', 'history'].map(resultTypeLabel))
+      .to.deep.equal(['This window', 'Other window', 'Recently closed', 'Bookmark', 'History']);
+    expect(rowView(tab({ type: 'other-window-tab' }), settings, deps).typeLabel).to.equal('Other window');
   });
 
   it('should pick the icon by type and favicon', function () {
@@ -60,10 +66,11 @@ describe('rowView', function () {
 
   it('should flag pinned, audible, muted and active tabs', function () {
     const view = rowView(tab({
-      pinned: true, audible: true, mutedInfo: { muted: true }, isActive: true,
+      pinned: true, audible: true, mutedInfo: { muted: true }, active: true,
     }), settings, deps);
     expect([view.pinned, view.audible, view.muted, view.active]).to.deep.equal([true, true, true, true]);
     const plain = rowView(tab(), settings, deps);
     expect([plain.pinned, plain.audible, plain.muted, plain.active]).to.deep.equal([false, false, false, false]);
+    expect(rowView(tab({ type: 'other-window-tab', active: true }), settings, deps).active).to.equal(false);
   });
 });

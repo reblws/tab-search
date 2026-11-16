@@ -6,6 +6,7 @@ import {
   getExtensionId,
 } from './helpers/chrome.js';
 import { startFixtureServer } from '../e2e-fixtures.js';
+import { expectSwitcherAppearance } from '../e2e/helpers/appearance.js';
 
 // The overlay is opened through the background's TabSearchOverlay.open(),
 // the code a click on the toolbar button runs: WebDriver can't click the
@@ -142,6 +143,7 @@ describe('Experimental overlay (Chrome)', function () {
       // (textContent: the row may still be fading in, and getText() skips it)
       expect(await browser.execute(() => document.querySelector('.overlay-hints').textContent))
         .toContain('to open');
+      await expectSwitcherAppearance();
     });
 
     it('should keep every keystroke from the page and close on Escape', async function () {

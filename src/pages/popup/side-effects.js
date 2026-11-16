@@ -56,7 +56,7 @@ export function applyPopupSize(store) {
 
 export function overrideDomStyleSheets(store) {
   changedTypeColors(store.getState().color)
-    .forEach(([type, color]) => setStyleSheetRule(`.${type}`, 'border-left-color', color));
+    .forEach(([type, color]) => setStyleSheetRule(`.${type}`, '--tab-type-color', color));
   return store;
 }
 

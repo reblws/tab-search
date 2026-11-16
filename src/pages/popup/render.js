@@ -1,5 +1,5 @@
 import { initialColorSettings } from 'core/reducers/defaults';
-import { rowView } from 'core/results/row';
+import { rowView, resultTypeLabel } from 'core/results/row';
 import { scrollDirection } from 'core/results/list';
 import { addTabListeners } from './side-effects';
 import {
@@ -78,14 +78,49 @@ function createTabObject(view) {
   iconContainerNode.classList.add('tab-img');
   const favIconNode = document.createElement('img');
   favIconNode.setAttribute('src', view.iconSrc);
+  favIconNode.alt = '';
   favIconNode.addEventListener('error', handleBadSvg);
   iconContainerNode.appendChild(favIconNode);
+
+  const typeBadge = document.createElement('span');
+  typeBadge.className = 'tab-type-badge';
+  const typeDot = document.createElement('span');
+  typeDot.className = 'tab-type-dot';
+  typeDot.setAttribute('aria-hidden', 'true');
+  const typeLabel = document.createElement('span');
+  typeLabel.className = 'tab-type-label';
+  typeLabel.id = `tab-type-${encodeURIComponent(view.type)}-${encodeURIComponent(view.dataset.id)}`;
+  typeLabel.setAttribute('role', 'tooltip');
+  typeLabel.textContent = view.typeLabel;
+  tabObjectNode.setAttribute('aria-describedby', typeLabel.id);
+  typeBadge.append(typeDot, typeLabel);
+  // Keep a short grace period between the small dot and its wider label.
+  // This also avoids relying on cross-element :hover hit testing in Firefox.
+  let hideTypeLabel;
+  const showTypeLabel = () => {
+    clearTimeout(hideTypeLabel);
+    if (!typeBadge.classList.contains('is-dismissed')) typeBadge.classList.add('is-type-hovered');
+  };
+  const scheduleHideTypeLabel = () => {
+    clearTimeout(hideTypeLabel);
+    hideTypeLabel = setTimeout(() => {
+      typeBadge.classList.remove('is-type-hovered', 'is-dismissed');
+    }, 150);
+  };
+  [typeBadge, typeLabel].forEach((node) => {
+    node.addEventListener('pointerenter', showTypeLabel);
+    node.addEventListener('pointerleave', scheduleHideTypeLabel);
+  });
+  iconContainerNode.appendChild(typeBadge);
 
   const tabInfoNode = document.createElement('div');
   tabInfoNode.setAttribute('class', 'tab-info');
   const titleNode = textNode('div', 'tab-title', view.title);
   if (view.title.wrap) titleNode.classList.add(TITLE_WRAP_CLASSNAMES[view.title.wrap]);
-  tabInfoNode.appendChild(titleNode);
+  const titleLine = document.createElement('div');
+  titleLine.className = 'tab-title-line';
+  titleLine.appendChild(titleNode);
+  tabInfoNode.appendChild(titleLine);
   if (view.url) tabInfoNode.appendChild(textNode('p', 'tab-url', view.url));
 
   tabObjectNode.appendChild(iconContainerNode);
@@ -96,7 +131,7 @@ function createTabObject(view) {
     const delBtn = document.createElement('button');
     delBtn.type = 'button';
     delBtn.title = 'Close Tab';
-    delBtn.setAttribute('aria-label', 'Close Tab');
+    delBtn.setAttribute('aria-label', `Close tab: ${view.title.text}`);
     delBtn.classList.add(TAB_DELETE_BTN_CLASSNAME);
     // Acorn's close-16, as in the search box's clear button. A literal, so
     // AMO's linter doesn't flag the innerHTML assignment
@@ -108,8 +143,21 @@ function createTabObject(view) {
   tabObjectNode.classList.toggle(TAB_PIN_CLASSNAME, view.pinned);
   tabObjectNode.classList.toggle(AUDIBLE_CLASSNAME, view.audible);
   tabObjectNode.classList.toggle(TAB_MUTED_CLASSNAME, view.muted);
-  if (view.active) tabObjectNode.id = TAB_ACTIVE_ID;
+  if (view.active) {
+    tabObjectNode.id = TAB_ACTIVE_ID;
+    const current = document.createElement('span');
+    current.className = 'tab-current';
+    current.textContent = 'Current';
+    titleLine.appendChild(current);
+  }
   return tabObjectNode;
+}
+
+export function dismissTypeHint() {
+  const badge = tabList().querySelector('.tab-type-badge.is-type-hovered:not(.is-dismissed)');
+  if (!badge) return false;
+  badge.classList.add('is-dismissed');
+  return true;
 }
 
 function handleBadSvg(event) {
@@ -211,6 +259,14 @@ export function repaintElementWithType(element, typeToAdd) {
   element.classList.remove(typeToRemove);
   element.classList.add(typeToAdd);
   element.dataset.type = typeToAdd;
+  const label = element.querySelector('.tab-type-label');
+  if (label) label.textContent = resultTypeLabel(typeToAdd);
+  if (typeToAdd === 'session') {
+    element.querySelector('.tab-current')?.remove();
+    element.querySelector(`.${TAB_DELETE_BTN_CLASSNAME}`)?.remove();
+    element.classList.remove(TAB_PIN_CLASSNAME, AUDIBLE_CLASSNAME, TAB_MUTED_CLASSNAME);
+    if (element.id === TAB_ACTIVE_ID) element.removeAttribute('id');
+  }
 }
 
 // Function for initializing the lists

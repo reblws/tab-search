@@ -1,6 +1,7 @@
 import { Key } from 'webdriverio';
 import { getExtensionId } from './helpers/extension.js';
 import { startFixtureServer } from '../e2e-fixtures.js';
+import { expectSwitcherAppearance } from './helpers/appearance.js';
 
 // Firefox runs the overlay's frame with only the content script APIs, so
 // these also check that its tab calls and events go through the background
@@ -142,6 +143,7 @@ describe('Experimental overlay (Firefox)', function () {
     // The frame really is missing the tabs API; the list comes from the background
     expect(await browser.execute(() => typeof browser.tabs.query)).toBe('function');
     expect(await visibleTitles()).toEqual(expect.arrayContaining(['Firefox Other Tab', 'Firefox Host Page']));
+    await expectSwitcherAppearance();
   });
 
   it('should keep keystrokes from the page and close on Escape', async function () {

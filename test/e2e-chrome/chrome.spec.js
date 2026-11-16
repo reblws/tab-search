@@ -12,6 +12,7 @@ import {
   inExtension,
 } from './helpers/chrome.js';
 import { GET_FOCUSED_AT } from '../../src/core/tabs/recency.js';
+import { expectSwitcherAppearance } from '../e2e/helpers/appearance.js';
 
 const pageUrl = title => `data:text/html,<title>${encodeURIComponent(title)}</title><h1>${encodeURIComponent(title)}</h1>`;
 const TEST_TABS = ['Alpha Fixture', 'Beta Fixture', 'Gamma Fixture'];
@@ -168,6 +169,8 @@ describe('Chrome MV3 build', function () {
       const titles = await visibleTabTitles();
       TEST_TABS.forEach(title => expect(titles).toContain(title));
     });
+
+    it('should reveal type labels only on dot hover, and preserve colors on selection', expectSwitcherAppearance);
 
     it('should filter the list by the search query', async function () {
       await $('input.search').setValue('beta');

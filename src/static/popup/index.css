@@ -161,6 +161,7 @@ header {
   border-bottom: 1px;
   border-left: 1px;
   border-top: 1px;
+  padding-block: 4px;
 }
 
 .search {
@@ -201,12 +202,13 @@ header {
   display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 100%;
-  --rowPaddingBlock: 1rem;
+	width: calc(100% - 12px);
+  margin: 2px 6px;
+  --rowPaddingBlock: 12px;
   padding-top: var(--rowPaddingBlock);
   padding-bottom: var(--rowPaddingBlock);
   padding-left: 0;
-  padding-right: 0.75rem;
+  padding-right: calc(0.75rem - 6px);
   cursor: pointer;
   box-sizing: border-box;
   /* For chrome to prevent box shrinking */
@@ -239,27 +241,126 @@ header {
 }
 
 .tab-img {
+  position: relative;
   height: 2rem;
-  width: 4rem;
+  width: 48px;
+  flex-shrink: 0;
 }
 
 .tab-img img {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  height: 2rem;
-  width: 2rem;
+  height: 24px;
+  width: 24px;
+  margin-top: 4px;
+}
+
+/* The dot stays compact, including on selected and keyboard-focused rows.
+   Only hovering the dot reveals its explanation below the favicon. */
+.tab-type-badge {
+  position: absolute;
+  top: -6px;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  height: 20px;
+  width: 18px;
+  padding: 0 3px;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-circle);
+  background-color: transparent;
+  color: var(--color-text-primary);
+  box-sizing: border-box;
+}
+
+.tab-type-dot {
+  flex: 0 0 10px;
+  height: 10px;
+  border: 2px solid var(--color-background-secondary);
+  box-sizing: border-box;
+  border-radius: var(--border-radius-circle);
+  background-color: var(--tab-type-color);
+}
+
+.tab-type-label {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: max-content;
+  max-width: 12rem;
+  padding: 2px 6px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--border-radius-small);
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-md);
+  white-space: nowrap;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  font-size: 11px;
+  line-height: 16px;
+  transition: opacity 100ms ease-out;
+}
+
+.tab-type-badge.is-type-hovered .tab-type-label {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Cover diagonal pointer paths as well as the vertical gap, so moving
+   from the small dot to the wider label does not close it. */
+.tab-type-label::before {
+  content: "";
+  position: absolute;
+  top: -16px;
+  left: -4px;
+  right: 0;
+  height: 16px;
+}
+
+.tab-type-badge.is-dismissed .tab-type-label {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tab-current {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 4px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-small);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: normal;
+  line-height: 16px;
+  vertical-align: baseline;
+  flex-shrink: 0;
+}
+
+.tab-title-line {
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.tab-title-line > .tab-title {
+  min-width: 0;
+}
+
+.tab-title.nowrap {
+  overflow: hidden;
 }
 
 .tab-title.nowrap {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-/* Positioning for tab status indicators */
-/*
-Negative margins set to the height/width of relative positioned element
-removes the extra space added by the pseudoelement
-*/
+/* Pin and audio states sit to the favicon's right, clear of the type dot. */
 .tab-object.audible.pin > .tab-img:before {
   background : url('../assets/pin.svg'), url('../assets/volume.svg');
 }
@@ -274,9 +375,8 @@ removes the extra space added by the pseudoelement
 .tab-object.mute.pin > .tab-img:before {
   background-position: top, bottom;
   background-repeat: no-repeat, no-repeat;
-  height: 32px;
-  margin-top: -32px;
-  top: 24px;
+  height: 24px;
+  top: 4px;
 }
 
 .tab-object.audible.mute > .tab-img:before,
@@ -297,13 +397,11 @@ removes the extra space added by the pseudoelement
 .tab-object.audible > .tab-img:before,
 .tab-object.pin > .tab-img:before,
 .tab-object.mute > .tab-img:before {
-  position: relative;
-  top: 12px;
-  left: 2.66rem;
-  width: 16px;
-  margin-right: -16px;
-  height: 16px;
-  margin-top: -16px;
+  position: absolute;
+  top: 16px;
+  right: 0;
+  width: 12px;
+  height: 12px;
   display: block;
   content: "";
   background-size: 100%;
@@ -466,23 +564,23 @@ p {
 
 /* tablist types - use Acorn semantic tokens */
 .tab {
-  border-left: 5px var(--color-tab-indicator) solid;
+  --tab-type-color: var(--color-tab-indicator);
 }
 
 .session {
-  border-left: 5px var(--color-session-indicator) solid;
+  --tab-type-color: var(--color-session-indicator);
 }
 
 .other-window-tab {
-  border-left: 5px var(--color-other-window-indicator) solid;
+  --tab-type-color: var(--color-other-window-indicator);
 }
 
 .bookmark {
-  border-left: 5px var(--color-bookmark-indicator) solid;
+  --tab-type-color: var(--color-bookmark-indicator);
 }
 
 .history {
-  border-left: 5px var(--color-history-indicator) solid;
+  --tab-type-color: var(--color-history-indicator);
 }
 
 /* The black SVG icons, lightened for dark mode. A media query, since
@@ -510,6 +608,10 @@ p {
 /* Selection must survive when forced colors suppress background fills
    and box shadows. Keyboard focus still has its separate outline. */
 @media (forced-colors: active) {
+  .tab-type-dot {
+    background-color: CanvasText;
+  }
+
   .tab-object--selected,
   .tab-object:focus {
     outline: 1px solid Highlight;
@@ -720,6 +822,9 @@ html[data-surface="overlay"].is-closing body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .tab-type-label {
+    transition: none;
+  }
   html[data-surface="overlay"],
   html[data-surface="overlay"] body,
   html[data-surface="overlay"].is-closing,

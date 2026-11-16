@@ -4,8 +4,19 @@ import {
   BOOKMARK_TYPE,
   HISTORY_TYPE,
   OTHER_WINDOW_TAB_TYPE,
+  SESSION_TYPE,
   TAB_TYPE,
 } from '../tabs/types';
+
+const TYPE_LABELS = {
+  [TAB_TYPE]: 'This window',
+  [OTHER_WINDOW_TAB_TYPE]: 'Other window',
+  [SESSION_TYPE]: 'Recently closed',
+  [BOOKMARK_TYPE]: 'Bookmark',
+  [HISTORY_TYPE]: 'History',
+};
+
+export const resultTypeLabel = type => TYPE_LABELS[type] || 'Tab';
 
 const {
   tabUrlSize: defaultUrlSize,
@@ -41,6 +52,7 @@ export function rowView(tab, settings, { icons, badFavIcons }) {
   else if (shouldWordBreak(title)) titleWrap = 'breakAll';
   return {
     type,
+    typeLabel: resultTypeLabel(type),
     dataset: {
       id: String(sessionId || id),
       type,
@@ -57,6 +69,6 @@ export function rowView(tab, settings, { icons, badFavIcons }) {
     pinned: !!tab.pinned,
     audible: !!tab.audible,
     muted: !!(tab.mutedInfo && tab.mutedInfo.muted),
-    active: !!tab.isActive,
+    active: type === TAB_TYPE && !!tab.active,
   };
 }

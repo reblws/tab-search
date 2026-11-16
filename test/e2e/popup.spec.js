@@ -1,4 +1,5 @@
 import { openPopup } from './helpers/extension.js';
+import { expectSwitcherAppearance } from './helpers/appearance.js';
 
 describe('Popup', function () {
   beforeEach(async function () {
@@ -8,6 +9,8 @@ describe('Popup', function () {
   });
 
   describe('Tab Display', function () {
+    it('should reveal type labels only on dot hover, and preserve colors on selection', expectSwitcherAppearance);
+
     it('should display the popup header', async function () {
       const header = await $('header');
       await expect(header).toBeDisplayed();

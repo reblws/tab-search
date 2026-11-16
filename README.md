@@ -92,6 +92,28 @@ Firefox build stays on Manifest V2. The Chrome E2E suite downloads Chrome for
 Testing on its first run, because branded Chrome doesn't load unpacked
 extensions from the command line.
 
+### Run the built extension manually
+
+Both builds write to `dist/`. Build for the browser you want to use before
+loading that directory:
+
+- **Firefox:** run `pnpm build:firefox`, open `about:debugging#/runtime/this-firefox`,
+  choose **Load Temporary Add-on**, and select `dist/manifest.json`.
+- **Chrome:** run `pnpm build:chrome`, open `chrome://extensions`, enable
+  **Developer mode**, choose **Load unpacked**, and select `dist/`.
+
+Open a few tabs and launch TabSearch with the toolbar button or its shortcut.
+Search by title or URL, move with the arrow keys, and press Enter to switch.
+The color dot at each favicon's top-left identifies the result type. Hover the
+dot to reveal its label; Escape dismisses it. Row focus leaves the dot compact,
+while screen readers can read its type description. Type colors remain
+customizable in Settings.
+
+To try the other surface, enable **Settings → Experimental → Open over the page**
+and launch TabSearch over a regular web page. Protected browser pages use the
+popup fallback. `pnpm test:all` builds and checks both browsers, including
+search, switching, closing tabs, overlay dismissal, and the type badges.
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md).
